@@ -1,0 +1,9 @@
+&.data-raw {
+  overflow: auto;
+  max-height: 100%;
+
+  .code-block {
+    margin: 0;
+    overflow: auto;
+  }
+}

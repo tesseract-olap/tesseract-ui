@@ -1,0 +1,23 @@
+&.data-tree {
+  display: flex;
+  flex-direction: column;
+
+  .tree {
+    &-filter {
+      flex: 0 0 auto;
+      margin-bottom: 1rem;
+    }
+
+    &-content {
+      flex: 1 1 auto;
+      height: 0;
+      overflow: auto;
+    }
+
+    &-struct span {
+      display: inline-block;
+      min-width: 100px;
+      user-select: all;
+    }
+  }
+}

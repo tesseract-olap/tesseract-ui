@@ -1,0 +1,78 @@
+@import "~react-perfect-scrollbar/dist/css/styles.css";
+
+@import "./style/variables";
+
+@import "./style/CubeAnimation";
+
+.explorer {
+  &-wrapper {
+    background: $pt-app-background-color;
+    display: flex;
+    flex-flow: column nowrap;
+    height: 100vh;
+    justify-content: stretch;
+
+    &.bp3-dark {
+      background-color: $pt-dark-app-background-color;
+    }
+
+    .loading-screen {
+      .bp3-spinner .bp3-spinner-head {
+        stroke: #fff;
+      }
+      .bp3-heading {
+        color: #fff;
+      }
+    }
+  }
+
+  &-navbar {
+    flex: 0 0;
+    width: 100%;
+
+    .module-tabs {
+      margin-left: 1rem;
+    }
+
+    .bp3-tab {
+      line-height: 50px;
+    }
+  }
+
+  &-content {
+    flex: 1 0;
+    width: 100%;
+    padding: 1rem 1rem 1rem 0;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: 290px 1fr;
+    grid-gap: 1em;
+  }
+
+  &-params {
+    border-radius: 0 3px 3px 0;
+    box-shadow: 0 0 0 1px #10161a26,0 0 0 #10161a00,0 0 0 #10161a00;
+    background-color: #fff;
+
+    &-content {
+      margin: 1rem;
+    }
+
+    @import "./style/PanelQuery";
+  }
+
+  &-results {
+    margin: 0;
+
+    @import "./style/PanelDataRaw";
+    @import "./style/PanelDataTree";
+
+    &.initial-view .animated-cube {
+      font-size: 4rem;
+    }
+  }
+}
+
+@import "./style/DebugDrawer"
+
+//https://markus.oberlehner.net/blog/building-a-good-old-12-column-css-grid-framework-with-css-grid-layout/

@@ -1,0 +1,10 @@
+.debug-drawer {
+  &-content {
+    padding: 1rem;
+    overflow: auto;
+
+    & > *:first-child {
+      margin-top: 0;
+    }
+  }
+}

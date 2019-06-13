@@ -1,0 +1,55 @@
+$ani-cube-color1: #5C7080;
+$ani-cube-color2: #738694;
+$ani-cube-color3: #8A9BA8;
+
+@keyframes color-shift {
+  0%,
+  100% {
+    background: $ani-cube-color1;
+  }
+  33% {
+    background: $ani-cube-color2;
+  }
+  66% {
+    background: $ani-cube-color3;
+  }
+}
+
+.animated-cube {
+  position: relative;
+  height: 2em;
+  width: 1.8em;
+
+  .cube {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    &:nth-child(2) {
+      transform: rotate(180deg) scale(0.5);
+    }
+
+    span {
+      transform-origin: 0 0;
+      position: absolute;
+      height: 2em;
+      width: 2em;
+      animation: color-shift 2.4s infinite;
+
+      &:nth-child(1) {
+        transform: rotate(210deg) skewX(-30deg) scaleY(0.864);
+        background: $ani-cube-color3;
+      }
+      &:nth-child(2) {
+        transform: rotate(90deg) skewX(-30deg) scaleY(0.864);
+        background: $ani-cube-color1;
+        animation-delay: -1.6s;
+      }
+      &:nth-child(3) {
+        transform: rotate(-30deg) skewX(-30deg) scaleY(0.864);
+        background: $ani-cube-color2;
+        animation-delay: -0.8s;
+      }
+    }
+  }
+}
