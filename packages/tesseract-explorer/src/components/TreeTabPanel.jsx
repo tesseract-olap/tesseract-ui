@@ -4,6 +4,8 @@ import React, {PureComponent} from "react";
 
 import {safeRegExp} from "../utils/format";
 
+const VISIBLE_AMOUNT = 50;
+
 class TreeTabPanel extends PureComponent {
   state = {
     filterExpression: /./i
@@ -15,21 +17,30 @@ class TreeTabPanel extends PureComponent {
     this.setState({filterExpression});
   };
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data) {
+      // this.setState()
+    }
+  }
+
   render() {
     const {className, data} = this.props;
     const {filterExpression} = this.state;
 
-    const filteredData = data.filter(item =>
-      Object.keys(item).some(key => filterExpression.test(`${item[key]}`))
-    );
+    const dataKeys = Object.keys(data[0] || {});
+    const filteredData = data.reduce((target, item, index) => {
+      const show = dataKeys.some(key => filterExpression.test(`${item[key]}`));
+      if (show) target.push({index, item});
+      return target;
+    }, []);
 
-    const dataToShow = filteredData.slice(0, 30);
+    const dataToShow = filteredData.slice(0, VISIBLE_AMOUNT);
     const contentTree = jsonToContentTree(dataToShow);
-    if (filteredData.length > 30) {
+    if (filteredData.length > VISIBLE_AMOUNT) {
       contentTree.push({
         id: "root-more",
         icon: "more",
-        label: `And other ${filteredData.length - 30} elements`
+        label: `And other ${filteredData.length - VISIBLE_AMOUNT} elements`
       });
     }
 
@@ -50,26 +61,30 @@ class TreeTabPanel extends PureComponent {
 
 function jsonToContentTree(root, parent) {
   parent = parent || "root";
-  return Object.keys(root).map(key => {
-    const value = root[key];
-    const id = `${parent}.${key}`;
-    if (typeof value === "object") {
+  return Object.keys(root).map((key, index) => {
+    let item = root[key];
+    if (typeof item === "object") {
+      if ("index" in item && "item" in item) {
+        index = item.index;
+        item = item.item;
+      }
+      const id = `${parent}.${index}`;
       return {
-        childNodes: jsonToContentTree(value, id),
+        childNodes: jsonToContentTree(item, id),
         hasCaret: false,
         icon: "folder-open",
         id,
         isExpanded: true,
-        label: key
+        label: index || key
       };
     }
     return {
-      id,
-      icon: typeof value === "number" ? "numerical" : "tag",
+      id: `${parent}.${key}`,
+      icon: typeof item === "number" ? "numerical" : "tag",
       label: (
         <span className="tree-struct">
           <span className="tree-key">{key}</span>
-          <span className="tree-value">{value}</span>
+          <span className="tree-value">{item}</span>
         </span>
       )
     };
