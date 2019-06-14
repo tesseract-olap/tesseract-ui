@@ -1,6 +1,13 @@
 import React from "react";
-import urljoin from "url-join";
-import {Drawer, Code, InputGroup, Classes, H3} from "@blueprintjs/core";
+import {
+  Drawer,
+  Code,
+  InputGroup,
+  Classes,
+  H3,
+  AnchorButton,
+  Intent
+} from "@blueprintjs/core";
 import {connect} from "react-redux";
 
 import {UI_DEBUG_TOGGLE} from "../actions/ui";
@@ -29,14 +36,40 @@ function DebugDrawer(props) {
           {aggregateUrl && (
             <React.Fragment>
               <H3>Tesseract Aggregate API URL</H3>
-              <InputGroup leftIcon="globe" readOnly={true} value={aggregateUrl} />
+              <InputGroup
+                leftIcon="globe"
+                readOnly={true}
+                rightElement={
+                  <AnchorButton
+                    href={aggregateUrl}
+                    icon="share"
+                    intent={Intent.PRIMARY}
+                    target="_blank"
+                    text="Open"
+                  />
+                }
+                value={aggregateUrl}
+              />
             </React.Fragment>
           )}
 
           {logicLayerUrl && (
             <React.Fragment>
               <H3>Tesseract LogicLayer API URL</H3>
-              <InputGroup leftIcon="globe" readOnly={true} value={logicLayerUrl} />
+              <InputGroup
+                leftIcon="globe"
+                readOnly={true}
+                rightElement={
+                  <AnchorButton
+                    href={logicLayerUrl}
+                    icon="share"
+                    intent={Intent.PRIMARY}
+                    target="_blank"
+                    text="Open"
+                  />
+                }
+                value={logicLayerUrl}
+              />
             </React.Fragment>
           )}
 

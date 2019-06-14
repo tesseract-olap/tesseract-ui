@@ -3,6 +3,10 @@
     padding: 1rem;
     overflow: auto;
 
+    .#{$ns}-heading {
+      margin-top: 1em;
+    }
+
     & > *:first-child {
       margin-top: 0;
     }
