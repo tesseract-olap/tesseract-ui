@@ -18,7 +18,7 @@
 .item-drilldown.hidden {
   opacity: 0.5;
 }
-.item-cut .bp3-button .bp3-icon {
+.item-cut .#{$ns}-button .#{$ns}-icon {
   color: #fff;
 }
 .cut-submenu {
@@ -38,7 +38,7 @@
   width: 100%;
 }
 
-.bp3-popover-target > div {
+.#{$ns}-popover-target > div {
   border-radius: inherit;
 }
 
@@ -47,7 +47,22 @@
 }
 
 .tag-multiselect {
-  .bp3-tag {
+  .#{$ns}-tag {
     margin-bottom: 1px;
+  }
+}
+
+.#{$ns}-control-group > .#{$ns}-form-group {
+  margin-bottom: 0;
+
+  > .#{$ns}-form-content {
+    width: 100%;
+  }
+}
+
+.topn-input {
+  .#{$ns}-label {
+    padding-left: 10px;
+    min-width: 80px;
   }
 }

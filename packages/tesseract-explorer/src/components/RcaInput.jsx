@@ -32,15 +32,22 @@ class RcaInput extends PureComponent {
 
     return (
       <ControlGroup className="rca-input" vertical={true}>
-        <ControlGroup className="rca-input-levels" fill={true}>
-          <LevelSelector activeItem={level1} fill={true} onItemSelect={this.lvl1SelectHandler} />
-          <LevelSelector activeItem={level2} fill={true} onItemSelect={this.lvl2SelectHandler} />
-        </ControlGroup>
-
+        <LevelSelector
+          activeItem={level1}
+          fill={true}
+          icon="layer"
+          onItemSelect={this.lvl1SelectHandler}
+        />
+        <LevelSelector
+          activeItem={level2}
+          fill={true}
+          icon="layer"
+          onItemSelect={this.lvl2SelectHandler}
+        />
         <MeasureSelector
           activeItem={measure}
           fill={true}
-          icon={measure ? "th-list" : false}
+          icon="th-list"
           onItemSelect={this.msrSelectHandler}
         />
       </ControlGroup>

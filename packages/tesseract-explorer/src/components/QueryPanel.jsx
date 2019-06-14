@@ -4,23 +4,23 @@ import {connect} from "react-redux";
 
 import {
   QUERY_DRILLDOWNS_ADD,
-  QUERY_PARENTS_TOGGLE,
   QUERY_GROWTH_UPDATE,
+  QUERY_PARENTS_TOGGLE,
   QUERY_RCA_UPDATE,
   QUERY_TOPN_UPDATE
 } from "../actions/query";
-import {addCutAndFetchMembers, executeQuery, applyQueryParams} from "../utils/api";
+import {addCutAndFetchMembers, applyQueryParams, executeQuery} from "../utils/api";
+import {countActive} from "../utils/array";
+import {getTopItemsSummary} from "../utils/format";
 import {checkDrilldowns, checkMeasures} from "../utils/validation";
+import GrowthInput from "./GrowthInput";
 import DimensionsMenu from "./MenuDimensions";
 import QueryGroup from "./QueryGroup";
+import RcaInput from "./RcaInput";
 import TagCut from "./TagCut";
 import TagDrilldown from "./TagDrilldown";
 import TagMeasure from "./TagMeasure";
-import GrowthInput from "./GrowthInput";
-import RcaInput from "./RcaInput";
-import {countActive} from "../utils/array";
 import TopItemsInput from "./TopItemsInput";
-import { getTopItemsSummary } from "../utils/format";
 
 function QueryPanel(props) {
   const drilldownCheck = checkDrilldowns(props);
@@ -77,15 +77,17 @@ function QueryPanel(props) {
         </Popover>
       </QueryGroup>
 
-      <QueryGroup className="area-growth" label="Calculate growth" open={false}>
-        <GrowthInput cube={props.cube} onChange={props.growthSetHandler} />
-      </QueryGroup>
+      {props.hasTimeDim && (
+        <QueryGroup className="area-growth" label="Calculate growth" open={false}>
+          <GrowthInput cube={props.cube} onChange={props.growthSetHandler} />
+        </QueryGroup>
+      )}
 
-      <QueryGroup className="area-rca" label="Calculate RCA" open={!false}>
+      <QueryGroup className="area-rca" label="Calculate RCA" open={false}>
         <RcaInput cube={props.cube} onChange={props.rcaSetHandler} />
       </QueryGroup>
 
-      <QueryGroup className="area-top" label={topItemsLabel} open={!false}>
+      <QueryGroup className="area-topn" label={topItemsLabel} open={false}>
         <TopItemsInput cube={props.cube} onChange={props.topSetHandler} />
       </QueryGroup>
 
@@ -111,14 +113,17 @@ function QueryPanel(props) {
   );
 }
 
+/** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   const query = state.explorerQuery;
+  const cube = state.explorerCubes.current;
   return {
     ...query,
+    activeCut: query.cuts.reduce(countActive, 0),
     activeDdn: query.drilldowns.reduce(countActive, 0),
     activeMsr: query.measures.reduce(countActive, 0),
-    activeCut: query.cuts.reduce(countActive, 0),
-    cube: state.explorerCubes.current,
+    cube: cube,
+    hasTimeDim: cube && cube.timeDimension !== undefined,
     optionsOpen: state.explorerUi.queryOptions
   };
 }

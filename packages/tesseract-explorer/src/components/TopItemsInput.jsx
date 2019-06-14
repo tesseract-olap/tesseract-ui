@@ -1,4 +1,4 @@
-import {ControlGroup, NumericInput, HTMLSelect, FormGroup} from "@blueprintjs/core";
+import {ControlGroup, FormGroup, HTMLSelect, NumericInput} from "@blueprintjs/core";
 import React, {PureComponent} from "react";
 
 import LevelSelector from "./SelectorLevel";
@@ -33,41 +33,43 @@ class TopItemsInput extends PureComponent {
     const {amount, descendent, level, measure} = this.state;
 
     return (
-      <div className="topn-input-wrapper">
-        <div className="topn-input-control">
-          <FormGroup inline={true} label="Level" labelFor="topn-input-level">
-            <LevelSelector
-              activeItem={level}
-              fill={true}
-              name="topn-input-level"
-              onItemSelect={this.lvlSelectHandler}
-            />
-          </FormGroup>
-          <FormGroup inline={true} label="Measure" labelFor="topn-input-measure">
-            <MeasureSelector
-              activeItem={measure}
-              fill={true}
-              name="topn-input-measure"
-              onItemSelect={this.msrSelectHandler}
-            />
-          </FormGroup>
-          <ControlGroup fill={true}>
-            <FormGroup inline={true} label="Limit" labelFor="topn-input-amount">
-              <NumericInput value={amount} onValueChange={this.amountSetHandler} />
-            </FormGroup>
-            <FormGroup inline={true} label="Order" labelFor="topn-input-order">
-              <HTMLSelect
-                options={[
-                  {value: "desc", label: "descendent"},
-                  {value: "asc", label: "ascendent"}
-                ]}
-                value={descendent ? "desc" : "asc"}
-                onChange={this.desSelectHandler}
-              />
-            </FormGroup>
-          </ControlGroup>
-        </div>
-      </div>
+      <ControlGroup className="topn-input" vertical={true}>
+        <LevelSelector
+          activeItem={level}
+          fill={true}
+          icon="layer"
+          name="topn-input-level"
+          onItemSelect={this.lvlSelectHandler}
+        />
+        <MeasureSelector
+          activeItem={measure}
+          fill={true}
+          icon="th-list"
+          name="topn-input-measure"
+          onItemSelect={this.msrSelectHandler}
+        />
+        <FormGroup inline={true} label="Amount">
+          <NumericInput
+            active={true}
+            fill={true}
+            name="topn-input-amount"
+            onValueChange={this.amountSetHandler}
+            value={amount}
+          />
+        </FormGroup>
+        <FormGroup inline={true} label="Order">
+          <HTMLSelect
+            fill={true}
+            name="topn-input-order"
+            onChange={this.desSelectHandler}
+            options={[
+              {value: "desc", label: "descendent"},
+              {value: "asc", label: "ascendent"}
+            ]}
+            value={descendent ? "desc" : "asc"}
+          />
+        </FormGroup>
+      </ControlGroup>
     );
   }
 }

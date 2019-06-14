@@ -12,15 +12,15 @@
     height: 100vh;
     justify-content: stretch;
 
-    &.bp3-dark {
+    &.#{$ns}-dark {
       background-color: $pt-dark-app-background-color;
     }
 
     .loading-screen {
-      .bp3-spinner .bp3-spinner-head {
+      .#{$ns}-spinner .#{$ns}-spinner-head {
         stroke: #fff;
       }
-      .bp3-heading {
+      .#{$ns}-heading {
         color: #fff;
       }
     }
@@ -34,7 +34,7 @@
       margin-left: 1rem;
     }
 
-    .bp3-tab {
+    .#{$ns}-tab {
       line-height: 50px;
     }
   }
@@ -50,9 +50,17 @@
   }
 
   &-params {
-    border-radius: 0 3px 3px 0;
-    box-shadow: 0 0 0 1px #10161a26,0 0 0 #10161a00,0 0 0 #10161a00;
-    background-color: #fff;
+    $card-background-color: $white !default;
+    $dark-card-background-color: $dark-gray4 !default;
+
+    border-radius: 0 $pt-border-radius $pt-border-radius 0;
+    box-shadow: $pt-elevation-shadow-0;
+    background-color: $card-background-color;
+
+    .#{$ns}-dark & {
+      box-shadow: $pt-dark-elevation-shadow-0;
+      background-color: $dark-card-background-color;
+    }
 
     &-content {
       margin: 1rem;

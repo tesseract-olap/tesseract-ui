@@ -35,11 +35,11 @@ class GrowthInput extends PureComponent {
   render() {
     const {level, measure} = this.state;
     return (
-      <ControlGroup className="growth-input" fill={true}>
+      <ControlGroup className="growth-input" vertical={true}>
         <SelectorMeasure
           activeItem={measure}
-          className={Classes.FIXED}
-          icon={measure ? "th-list" : false}
+          fill={true}
+          icon="th-list"
           onItemSelect={this.msrSelectHandler}
         />
         <Popover
@@ -51,7 +51,7 @@ class GrowthInput extends PureComponent {
           <Button
             alignText={Alignment.LEFT}
             fill={true}
-            icon={level ? "layer" : false}
+            icon="calendar"
             rightIcon="double-caret-vertical"
             text={level ? level.fullName : "Time level..."}
           />

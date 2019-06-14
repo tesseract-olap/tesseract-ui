@@ -1,4 +1,4 @@
-import {Alignment, Button, MenuItem, Text} from "@blueprintjs/core";
+import {Alignment, Button, MenuItem} from "@blueprintjs/core";
 import {Select} from "@blueprintjs/select";
 import React from "react";
 

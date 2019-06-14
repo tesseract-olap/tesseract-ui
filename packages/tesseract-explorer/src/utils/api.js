@@ -1,8 +1,4 @@
-import {
-  Client as TesseractClient,
-  Query,
-  AllowedOrder
-} from "@datawheel/tesseract-client";
+import {AllowedOrder, Client as TesseractClient} from "@datawheel/tesseract-client";
 
 import {
   CUBE_FETCH_FAILURE,
@@ -14,6 +10,9 @@ import {DATASET_FAILURE, DATASET_REQUEST, DATASET_SUCCESS} from "../actions/data
 import {QUERY_CUTS_ADD, QUERY_CUTS_UPDATE} from "../actions/query";
 import {UI_SERVER_INFO} from "../actions/ui";
 
+/** @typedef {import("@datawheel/tesseract-client").Query} Query */
+
+/** @type {TesseractClient} */
 let client;
 
 export function initializeClient(dispatch, src) {
@@ -51,10 +50,11 @@ export function addCutAndFetchMembers(dispatch, basePayload) {
   return fetchMembers(dispatch, basePayload);
 }
 
+/** @param {Query} query */
 export function executeQuery(dispatch, query) {
   dispatch({type: DATASET_REQUEST, payload: query});
   return client
-    .execQuery(query, "jsonrecords")
+    .execQuery(query)
     .then(
       aggregation => dispatch({type: DATASET_SUCCESS, payload: aggregation}),
       error => dispatch({type: DATASET_FAILURE, payload: error})

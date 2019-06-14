@@ -13,8 +13,8 @@ export function safeRegExp(pattern, flags) {
 
 export function getTopItemsSummary(top) {
   if (top.amount > 0) {
-    const pluralLevelName = pluralize(top.level.name, top.amount);
-    return `Showing the top ${top.amount} ${pluralLevelName} by ${top.measure
+    const pluralMsrName = pluralize(top.measure.name, top.amount);
+    return `Showing the top ${top.amount} ${pluralMsrName} by ${top.level
       .name} (${top.descendent ? "desc" : "asc"})`;
   }
 }

@@ -1,4 +1,4 @@
-import {Alignment, Button, Popover, Position, Text} from "@blueprintjs/core";
+import {Alignment, Button, Popover, Position} from "@blueprintjs/core";
 import React from "react";
 
 import DimensionMenu from "./MenuDimensions";
