@@ -1,0 +1,25 @@
+{
+  "name": "tesseract-ui-template",
+  "private": true,
+  "scripts": {
+    "dev": "poi --serve",
+    "build": "poi --prod --no-clear-console"
+  },
+  "dependencies": {
+    "@blueprintjs/core": "^3.15.1",
+    "@blueprintjs/select": "^3.8.1",
+    "@blueprintjs/table": "^3.5.0",
+    "@datawheel/tesseract-explorer": "latest",
+    "react-dom": "^16.8.0",
+    "react-redux": "^7.1.0",
+    "react": "^16.8.0",
+    "redux": "^4.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "poi": "^12.6.10"
+  }
+}
