@@ -1,6 +1,6 @@
 .rpt2_cache/
 .vscode/
-app/
+dev/
 node_modules/
 src/
 tests/

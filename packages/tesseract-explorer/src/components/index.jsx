@@ -54,6 +54,7 @@ ExplorerComponent.defaultProps = {
   defaultLocale: "en"
 };
 
+/** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   return {
     currentTab: state.explorerUi.tab,

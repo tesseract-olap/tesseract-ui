@@ -1,21 +1,33 @@
 {
   "name": "@datawheel/tesseract-explorer",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "A react component to explore data from a tesseract-olap server.",
   "main": "dist/index.umd.js",
   "module": "dist/index.esm.js",
   "scripts": {
     "dev:serve": "poi --serve ./dev/index.js",
-    "dev:build": "cross-env NODE_ENV=development BABEL_ENV=development rollup --config rollup.config.js --watch",
+    "dev:watch": "cross-env NODE_ENV=development BABEL_ENV=development rollup --config rollup.config.js --watch",
     "build": "cross-env NODE_ENV=production BABEL_ENV=production rollup --config rollup.config.js"
   },
   "author": "Francisco Abarzúa",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Datawheel/tesseract-ui.git",
+    "directory": "packages/tesseract-explorer"
+  },
+  "keywords": [
+    "tesseract-explorer",
+    "tesseract-olap",
+    "tesseract-ui"
+  ],
   "dependencies": {
-    "@datawheel/tesseract-client": "^0.3.1",
+    "@datawheel/tesseract-client": "^0.3.2",
     "classnames": "^2.2.6",
+    "form-urlencoded": "^3.0.1",
     "pluralize": "^8.0.0",
-    "react-perfect-scrollbar": "^1.5.3"
+    "react-perfect-scrollbar": "^1.5.3",
+    "url-join": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -40,7 +52,6 @@
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-terser": "^5.0.0",
     "sass": "^1.20.1"
   },
   "peerDependencies": {

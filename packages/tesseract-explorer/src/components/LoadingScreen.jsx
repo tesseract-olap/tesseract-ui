@@ -23,6 +23,7 @@ function LoadingScreen(props) {
   );
 }
 
+/** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   return state.explorerLoading;
 }

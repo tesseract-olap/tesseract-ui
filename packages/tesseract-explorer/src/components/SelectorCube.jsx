@@ -9,6 +9,7 @@ function itemRenderer(item, {handleClick, index, modifiers, query}) {
   return <MenuItem icon="cube" key={item.name} onClick={handleClick} text={item.name} />;
 }
 
+/** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   return {
     activeItem: state.explorerCubes.current,

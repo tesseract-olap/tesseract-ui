@@ -35,6 +35,7 @@ function normalizeActiveItems(activeItems) {
   }, []);
 }
 
+/** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   const cube = state.explorerCubes.current;
   const timeDimension = cube && cube.timeDimension;

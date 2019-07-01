@@ -1,4 +1,3 @@
-import {terser} from "rollup-plugin-terser";
 import babel from "rollup-plugin-babel";
 import commonjs from "rollup-plugin-commonjs";
 import postcss from "rollup-plugin-postcss";
@@ -14,9 +13,9 @@ import {
 } from "./package.json";
 
 const environment = process.env.NODE_ENV;
-const isDevelopment = environment === "development";
-const isProduction = environment === "production";
-const sourcemap = isDevelopment ? "inline" : false;
+const inDevelopment = environment === "development";
+const inProduction = environment === "production";
+const sourcemap = inDevelopment ? "inline" : false;
 
 const globals = {
   "@blueprintjs/core": "Blueprint.Core",
@@ -24,12 +23,14 @@ const globals = {
   "@blueprintjs/table": "Blueprint.Table",
   "@datawheel/tesseract-client": "TesseractOlap",
   "classnames": "classNames",
+  "form-urlencoded": "formurlencoded",
   "pluralize": "pluralize",
-  "react-perfect-scrollbar": "react-perfect-scrollbar",
   "react-dom": "ReactDOM",
+  "react-perfect-scrollbar": "react-perfect-scrollbar",
   "react-redux": "ReactRedux",
   "react": "React",
-  "redux": "Redux"
+  "redux": "Redux",
+  "url-join": "urljoin"
 };
 const external = Object.keys(globals);
 
@@ -60,13 +61,13 @@ export default commandLineArgs => {
         ENVIRONMENT: JSON.stringify(environment)
       }),
       resolve({
-        extensions: [".mjs", ".js", ".jsx", ".json"]
+        extensions: [".mjs", ".js", ".jsx"]
       }),
       postcss({
-        extract: true,
-        sourcemap: isDevelopment,
-        minimize: !isDevelopment,
-        plugins: [autoprefixer()]
+        extract: "./dist/explorer.css",
+        minimize: inProduction,
+        plugins: [autoprefixer()],
+        sourcemap: inDevelopment
       }),
       babel({
         exclude: "node_modules/**"
@@ -74,21 +75,13 @@ export default commandLineArgs => {
       commonjs({
         include: ["node_modules/**"],
         namedExports: {}
-      }),
-      isProduction &&
-        terser({
-          keep_classnames: true,
-          keep_fnames: true,
-          mangle: {
-            reserved: external
-          }
-        })
+      })
     ],
     external,
     watch: {
       include: ["src/**"],
       exclude: "node_modules/**",
-      clearScreen: true
+      clearScreen: !inProduction
     }
   };
 };

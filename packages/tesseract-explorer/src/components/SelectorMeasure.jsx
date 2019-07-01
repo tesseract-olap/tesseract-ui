@@ -10,6 +10,7 @@ function itemRenderer(item, {handleClick, index, modifiers, query}) {
   );
 }
 
+/** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   const cube = state.explorerCubes.current;
   return {

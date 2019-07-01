@@ -21,6 +21,7 @@ function Tabs(props) {
   );
 }
 
+/** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   return {
     currentTab: state.explorerUi.tab

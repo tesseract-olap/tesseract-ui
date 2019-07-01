@@ -47,6 +47,7 @@ function normalizeActiveItems(activeItems) {
   }, []);
 }
 
+/** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   return {
     dimensions: state.explorerCubes.current ? state.explorerCubes.current.dimensions : []
