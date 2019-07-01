@@ -8,7 +8,7 @@ function StarredButton(props) {
   return (
     <Button
       disabled={props.disabled}
-      icon="code-block"
+      icon="star"
       large={true}
       minimal={true}
       onClick={props.toggleDrawerHandler}

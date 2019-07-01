@@ -9,6 +9,7 @@ import DisplayedComponent from "./DisplayedComponent";
 import LoadingScreen from "./LoadingScreen";
 import Navbar from "./Navbar";
 import QueryPanel from "./QueryPanel";
+import StarredDrawer from "./StarredDrawer";
 
 class ExplorerComponent extends PureComponent {
   constructor(props) {
@@ -42,6 +43,7 @@ class ExplorerComponent extends PureComponent {
           </PerfectScrollbar>
           <DisplayedComponent className="explorer-results" />
         </div>
+        <StarredDrawer />
         <DebugDrawer />
       </div>
     );

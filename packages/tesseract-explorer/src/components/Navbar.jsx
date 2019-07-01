@@ -11,6 +11,7 @@ import DebugButton from "./DebugButton";
 import Tabs from "./Tabs";
 import ThemeButton from "./ThemeButton";
 import ServerStatus from "./ServerStatus";
+import StarredButton from "./StarredButton";
 
 function NavigationBar(props) {
   return (
@@ -25,6 +26,7 @@ function NavigationBar(props) {
       <Navbar.Group align={Alignment.RIGHT}>
         <ButtonGroup>
           <ThemeButton />
+          <StarredButton />
           <DebugButton />
           <Divider />
         </ButtonGroup>

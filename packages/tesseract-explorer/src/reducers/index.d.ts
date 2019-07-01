@@ -25,6 +25,7 @@ export interface ExplorerState {
   explorerDataset: DatasetState;
   explorerLoading: LoadingState;
   explorerQuery: QueryState;
+  explorerStarred: StarredState;
   explorerUi: UiState;
 }
 
@@ -47,6 +48,13 @@ export interface LoadingState {
   status: STATUS_EMPTY | STATUS_FETCHING | STATUS_SUCCESS | STATUS_FAILURE;
 }
 
+export interface StarredState {
+  index: {
+    [hash: string]: number;
+  };
+  items: SerializedQuery[]
+}
+
 export interface UiState {
   darkTheme: boolean;
   debugDrawer: boolean;
@@ -54,5 +62,6 @@ export interface UiState {
   serverStatus: string;
   serverUrl: string;
   serverVersion: string;
+  starredDrawer: boolean;
   tab: TAB_TABLE | TAB_RAW | TAB_TREE;
 }

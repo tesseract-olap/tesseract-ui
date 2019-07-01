@@ -21,6 +21,7 @@ import TagCut from "./TagCut";
 import TagDrilldown from "./TagDrilldown";
 import TagMeasure from "./TagMeasure";
 import TopItemsInput from "./TopItemsInput";
+import StarredItemButton from "./StarredItemButton";
 
 function QueryPanel(props) {
   const drilldownCheck = checkDrilldowns(props);
@@ -118,6 +119,8 @@ function QueryPanel(props) {
         fill={true}
         onClick={() => props.executeQuery(props)}
       />
+
+      <StarredItemButton />
     </div>
   );
 }
