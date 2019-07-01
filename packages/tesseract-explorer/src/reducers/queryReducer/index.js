@@ -5,7 +5,7 @@ import {
   QUERY_MEASURES_UPDATE,
   QUERY_PARENTS_TOGGLE,
   QUERY_RCA_UPDATE,
-  QUERY_TOPN_UPDATE
+  QUERY_TOP_UPDATE
 } from "../../actions/query";
 import cutsReducer from "./cutsReducer";
 import drilldownsReducer from "./drilldownsReducer";
@@ -69,7 +69,7 @@ function queryReducer(state = initialState, action) {
       return {...state, rca};
     }
 
-    case QUERY_TOPN_UPDATE: {
+    case QUERY_TOP_UPDATE: {
       const top = action.payload;
       return {...state, top};
     }

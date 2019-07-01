@@ -1,10 +1,12 @@
-export const filterActive = item => item.active;
+import {isActiveItem} from "./validation";
 
-export const countActive = (sum, item) => sum + (item.active ? 1 : 0);
+const defaultIndexOf = (haystack, needle) => haystack.indexOf(needle);
 
-export function toggleFromArray(haystack, needle) {
+export const activeItemCounter = (sum, item) => sum + (isActiveItem(item) ? 1 : 0);
+
+export function toggleFromArray(haystack, needle, finder = defaultIndexOf) {
+  const index = finder(haystack, needle);
   const haystackClone = haystack.slice();
-  const index = haystackClone.indexOf(needle);
   if (index > -1) {
     haystackClone.splice(index, 1);
   }
@@ -14,9 +16,9 @@ export function toggleFromArray(haystack, needle) {
   return haystackClone;
 }
 
-export function removeFromArray(haystack, needle) {
+export function removeFromArray(haystack, needle, finder = defaultIndexOf) {
+  const index = finder(haystack, needle);
   const haystackClone = haystack.slice();
-  const index = haystackClone.indexOf(needle);
   if (index > -1) {
     haystackClone.splice(index, 1);
   }

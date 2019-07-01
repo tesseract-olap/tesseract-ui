@@ -14,7 +14,7 @@ function TagDrilldown(props) {
       icon="layer"
       interactive={true}
       large={true}
-      onClick={props.disableHandler}
+      onClick={props.toggleHandler}
       onRemove={props.removeHandler}
     >
       {drillable.fullName}
@@ -24,7 +24,7 @@ function TagDrilldown(props) {
 
 function mapDispatchToProps(dispatch, props) {
   return {
-    disableHandler() {
+    toggleHandler() {
       const drillable = props.drillable;
       const payload = {key: drillable.fullName, drillable, active: !props.active};
       return dispatch({type: QUERY_DRILLDOWNS_UPDATE, payload});

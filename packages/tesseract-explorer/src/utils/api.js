@@ -1,5 +1,4 @@
-import {AllowedOrder, Client as TesseractClient} from "@datawheel/tesseract-client";
-
+import {Client as TesseractClient} from "@datawheel/tesseract-client";
 import {
   CUBE_FETCH_FAILURE,
   CUBE_FETCH_REQUEST,
@@ -9,6 +8,13 @@ import {
 import {DATASET_FAILURE, DATASET_REQUEST, DATASET_SUCCESS} from "../actions/dataset";
 import {QUERY_CUTS_ADD, QUERY_CUTS_UPDATE} from "../actions/query";
 import {UI_SERVER_INFO} from "../actions/ui";
+import {
+  isActiveCut,
+  isActiveItem,
+  validGrowthState,
+  validRcaState,
+  validTopState
+} from "./validation";
 
 /** @typedef {import("@datawheel/tesseract-client").Query} Query */
 
@@ -66,26 +72,25 @@ export function executeQuery(dispatch, query) {
  * @param {import("../reducers/queryReducer").QueryState} params
  */
 export function applyQueryParams(query, params) {
-  params.drilldowns.forEach(ddn => {
-    ddn.active && query.addDrilldown(ddn.drillable);
+  params.drilldowns.forEach(item => {
+    isActiveItem(item) && query.addDrilldown(item.drillable);
   });
-  params.measures.forEach(msr => {
-    msr.active && query.addMeasure(msr.measure);
+  params.measures.forEach(item => {
+    isActiveItem(item) && query.addMeasure(item.measure);
   });
-  params.cuts.forEach(cut => {
-    cut.active && query.addCut(cut.drillable, cut.members);
+  params.cuts.forEach(item => {
+    isActiveCut(item) && query.addCut(item.drillable, item.members);
   });
 
   const {growth, rca, top} = params;
-  if (growth.level && growth.measure) {
+  if (validGrowthState(growth)) {
     query.setGrowth(growth.level, growth.measure);
   }
-  if (rca.level1 && rca.level2 && rca.measure) {
+  if (validRcaState(rca)) {
     query.setRCA(rca.level1, rca.level2, rca.measure);
   }
-  if (top.amount > 0 && top.level && top.measure) {
-    const order = top.descendent ? AllowedOrder.desc : AllowedOrder.asc;
-    query.setTop(top.amount, top.level, top.measure, order);
+  if (validTopState(top)) {
+    query.setTop(top.amount, top.level, top.measure, top.order);
   }
 
   query.setOption("parents", params.parents);

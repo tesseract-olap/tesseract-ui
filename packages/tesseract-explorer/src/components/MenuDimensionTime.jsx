@@ -37,13 +37,9 @@ function normalizeActiveItems(activeItems) {
 
 function mapStateToProps(state) {
   const cube = state.explorerCubes.current;
-  const {timeDimension = undefined} = cube || {};
-  const fallbackTimeDimension =
-    cube.dimensionsByName.Date || cube.dimensionsByName.Year || {};
+  const timeDimension = cube && cube.timeDimension;
   return {
-    hierarchies: timeDimension
-      ? timeDimension.hierarchies
-      : cube ? fallbackTimeDimension.hierarchies : []
+    hierarchies: timeDimension ? timeDimension.hierarchies : []
   };
 }
 

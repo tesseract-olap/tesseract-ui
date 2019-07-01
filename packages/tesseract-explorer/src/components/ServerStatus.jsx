@@ -7,6 +7,7 @@ function ServerStatus(props) {
       <AnchorButton
         intent={Intent.SUCCESS}
         minimal={true}
+        tabIndex={null}
         text={`Running tesseract v${props.version}`}
       />
     );
@@ -16,11 +17,14 @@ function ServerStatus(props) {
       <AnchorButton
         intent={Intent.WARNING}
         minimal={true}
-        text={`Running tesseract v${props.version}`}
+        tabIndex={null}
+        text="Server unavailable"
       />
     );
   }
-  return <AnchorButton disabled={true} text="Retrieving server info..." />;
+  return (
+    <AnchorButton disabled={true} tabIndex={null} text="Retrieving server info..." />
+  );
 }
 
 export default ServerStatus;

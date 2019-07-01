@@ -7,12 +7,12 @@ import {
   QUERY_GROWTH_UPDATE,
   QUERY_PARENTS_TOGGLE,
   QUERY_RCA_UPDATE,
-  QUERY_TOPN_UPDATE
+  QUERY_TOP_UPDATE
 } from "../actions/query";
 import {addCutAndFetchMembers, applyQueryParams, executeQuery} from "../utils/api";
-import {countActive} from "../utils/array";
+import {activeItemCounter} from "../utils/array";
 import {getTopItemsSummary} from "../utils/format";
-import {checkDrilldowns, checkMeasures} from "../utils/validation";
+import {checkDrilldowns, checkMeasures, checkCuts} from "../utils/validation";
 import GrowthInput from "./GrowthInput";
 import DimensionsMenu from "./MenuDimensions";
 import QueryGroup from "./QueryGroup";
@@ -25,6 +25,9 @@ import TopItemsInput from "./TopItemsInput";
 function QueryPanel(props) {
   const drilldownCheck = checkDrilldowns(props);
   const measureCheck = checkMeasures(props);
+  const cutCheck = checkCuts(props);
+
+  const allChecks = [].concat(drilldownCheck, measureCheck, cutCheck);
 
   const topItemsLabel = getTopItemsSummary(props.top) || "Calculate top items";
 
@@ -63,7 +66,13 @@ function QueryPanel(props) {
         {props.measures.map(item => <TagMeasure {...item} />)}
       </QueryGroup>
 
-      <QueryGroup labelInfo={props.activeCut} className="area-cuts" label="Cuts">
+      <QueryGroup
+        className="area-cuts"
+        helperText={cutCheck.join("\n")}
+        intent={cutCheck.length > 0 ? Intent.DANGER : undefined}
+        label="Cuts"
+        labelInfo={props.activeCut}
+      >
         {props.cuts.map(item => <TagCut {...item} />)}
         <Popover targetTagName="div">
           <Button
@@ -87,7 +96,7 @@ function QueryPanel(props) {
         <RcaInput cube={props.cube} onChange={props.rcaSetHandler} />
       </QueryGroup>
 
-      <QueryGroup className="area-topn" label={topItemsLabel} open={false}>
+      <QueryGroup className="area-top" label={topItemsLabel} open={false}>
         <TopItemsInput cube={props.cube} onChange={props.topSetHandler} />
       </QueryGroup>
 
@@ -104,7 +113,7 @@ function QueryPanel(props) {
         className="action-query"
         text="Execute query"
         icon="database"
-        disabled={drilldownCheck.length + measureCheck.length > 0}
+        disabled={allChecks.length > 0}
         intent={Intent.PRIMARY}
         fill={true}
         onClick={() => props.executeQuery(props)}
@@ -119,9 +128,9 @@ function mapStateToProps(state) {
   const cube = state.explorerCubes.current;
   return {
     ...query,
-    activeCut: query.cuts.reduce(countActive, 0),
-    activeDdn: query.drilldowns.reduce(countActive, 0),
-    activeMsr: query.measures.reduce(countActive, 0),
+    activeCut: query.cuts.reduce(activeItemCounter, 0),
+    activeDdn: query.drilldowns.reduce(activeItemCounter, 0),
+    activeMsr: query.measures.reduce(activeItemCounter, 0),
     cube: cube,
     hasTimeDim: cube && cube.timeDimension !== undefined,
     optionsOpen: state.explorerUi.queryOptions
@@ -152,9 +161,9 @@ function mapDispatchToProps(dispatch) {
     rcaSetHandler(level1, level2, measure) {
       return dispatch({type: QUERY_RCA_UPDATE, payload: {level1, level2, measure}});
     },
-    topSetHandler(amount, level, measure, descendent) {
-      const payload = {amount, level, measure, descendent};
-      return dispatch({type: QUERY_TOPN_UPDATE, payload});
+    topSetHandler(amount, level, measure, order) {
+      const payload = {amount, level, measure, order};
+      return dispatch({type: QUERY_TOP_UPDATE, payload});
     }
   };
 }

@@ -1,4 +1,5 @@
 import {ControlGroup, FormGroup, HTMLSelect, NumericInput} from "@blueprintjs/core";
+import {AllowedOrder} from "@datawheel/tesseract-client";
 import React, {PureComponent} from "react";
 
 import LevelSelector from "./SelectorLevel";
@@ -6,7 +7,7 @@ import MeasureSelector from "./SelectorMeasure";
 
 const initialState = {
   amount: 0,
-  descendent: true,
+  order: AllowedOrder.desc,
   level: null,
   measure: null
 };
@@ -15,7 +16,7 @@ class TopItemsInput extends PureComponent {
   state = initialState;
 
   amountSetHandler = amount => this.setState({amount});
-  desSelectHandler = _ => this.setState(state => ({descendent: !state.descendent}));
+  ordSelectHandler = evt => this.setState({order: evt.target.value});
   lvlSelectHandler = level => this.setState({level});
   msrSelectHandler = measure => this.setState({measure});
 
@@ -25,34 +26,34 @@ class TopItemsInput extends PureComponent {
       return this.setState(initialState);
     }
     if (state.level && state.measure) {
-      this.props.onChange(state.amount, state.level, state.measure, state.descendent);
+      this.props.onChange(state.amount, state.level, state.measure, state.order);
     }
   }
 
   render() {
-    const {amount, descendent, level, measure} = this.state;
+    const {amount, order, level, measure} = this.state;
 
     return (
-      <ControlGroup className="topn-input" vertical={true}>
+      <ControlGroup className="top-input" vertical={true}>
         <LevelSelector
           activeItem={level}
           fill={true}
           icon="layer"
-          name="topn-input-level"
+          name="top-input-level"
           onItemSelect={this.lvlSelectHandler}
         />
         <MeasureSelector
           activeItem={measure}
           fill={true}
           icon="th-list"
-          name="topn-input-measure"
+          name="top-input-measure"
           onItemSelect={this.msrSelectHandler}
         />
         <FormGroup inline={true} label="Amount">
           <NumericInput
             active={true}
             fill={true}
-            name="topn-input-amount"
+            name="top-input-amount"
             onValueChange={this.amountSetHandler}
             value={amount}
           />
@@ -60,13 +61,13 @@ class TopItemsInput extends PureComponent {
         <FormGroup inline={true} label="Order">
           <HTMLSelect
             fill={true}
-            name="topn-input-order"
-            onChange={this.desSelectHandler}
+            name="top-input-order"
+            onChange={this.ordSelectHandler}
             options={[
-              {value: "desc", label: "descendent"},
-              {value: "asc", label: "ascendent"}
+              {value: AllowedOrder.desc, label: "descendent"},
+              {value: AllowedOrder.asc, label: "ascendent"}
             ]}
-            value={descendent ? "desc" : "asc"}
+            value={order}
           />
         </FormGroup>
       </ControlGroup>

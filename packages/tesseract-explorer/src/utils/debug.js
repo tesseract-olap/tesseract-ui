@@ -1,12 +1,15 @@
 import formurlencode from "form-urlencoded";
 import urljoin from "url-join";
 
-import {filterActive} from "./array";
 import {applyQueryParams} from "./api";
+import {serializeState} from "./format";
+import {isActiveCut, isActiveItem} from "./validation";
 
 /** @typedef {import("../reducers/queryReducer").QueryState} QueryState */
 
 /**
+ * Returns the parent cube to the elements in the passed query.
+ * We can assume there will always be at least one measure, so it's safe.
  * @param {QueryState} query
  */
 export function getCube(query) {
@@ -17,29 +20,20 @@ export function getCube(query) {
  * @param {QueryState} query
  */
 export function buildJavascriptCall(query) {
-  if (!query) return "";
+  const q = serializeState(query);
 
-  const drilldowns = query.drilldowns
-    .filter(filterActive)
-    .map(item => `.addDrilldown("${item.key}")`);
-  const measures = query.measures
-    .filter(filterActive)
-    .map(item => `.addMeasure("${item.key}")`);
-  const cuts = query.cuts
-    .filter(filterActive)
-    .map(
-      item =>
-        `.addCut("${item.drillable.fullName}.${item.members.map(m => m.key).join(",")}")`
-    );
+  const drilldowns = q.drilldowns.map(item => `.addDrilldown("${item}")`);
+  const measures = q.measures.map(item => `.addMeasure("${item}")`);
+  const cuts = q.cuts.map(item => `.addCut("${item}")`);
 
-  const growth =
-    query.growth.level &&
-    query.growth.measure &&
-    `.setGrowth("${query.growth.level.fullName}", "${query.growth.measure.name}")`;
+  const growth = q.growth && `.setGrowth("${q.growth.level}", "${q.growth.measure}")`;
+  const rca =
+    q.rca && `.setRCA("${q.rca.level1}", "${q.rca.level2}", "${q.rca.measure}")`;
+  const top = q.top && `.setTop(top.amount, top.level, top.measure, top.descendent)`;
 
-  const options = ["parents"].map(opt => `.setOption("${opt}", ${query[opt]})`);
+  const options = ["parents"].map(opt => `.setOption("${opt}", ${q[opt]})`);
 
-  const output = [].concat(measures, drilldowns, cuts, growth, options);
+  const output = [].concat(measures, drilldowns, cuts, growth, rca, top, options);
 
   return "query\n  " + output.filter(Boolean).join("\n  ");
 }
@@ -59,39 +53,40 @@ export function buildLogicLayerUrl(query) {
   const cube = getCube(query);
   if (!query || !cube) return "";
 
+  // cube=exports_and_imports
+  // measures=Total
+  // drilldowns=HS6,Year
+  // Flow=1
+  // Year=2018,2017
+  // locale=et
+  // growth=Year,Total
+  // parents=true
+
   const params = {
     cube: cube.name,
-    parents: query.parents
+    parents: query.parents,
+    measures: query.measures
+      .reduce((measures, item) => {
+        isActiveItem(item) && measures.push(item.measure.name);
+        return measures;
+      }, [])
+      .join(","),
+    drilldowns: query.drilldowns
+      .reduce((drilldowns, item) => {
+        isActiveItem(item) && drilldowns.push(item.drillable.name);
+        return drilldowns;
+      }, [])
+      .join(",")
   };
 
-  // cube=exports_and_imports
-  // drilldowns=HS6,Year&
-  // measures=Total&
-  // parents=true
-  // Year=2018,2017&
-  // locale=et&
-  // Flow=1&
-  // growth=Year,Total
-
-  const drilldowns = [];
-  query.drilldowns.forEach(item => {
-    item.active && drilldowns.push(item.drillable.name);
-  });
-  params.drilldowns = drilldowns.join(",");
-
-  const measures = [];
-  query.measures.forEach(item => {
-    item.active && measures.push(item.measure.name);
-  });
-  params.measures = measures.join(",");
-
   query.cuts.forEach(item => {
-    if (item.active) {
+    if (isActiveCut(item)) {
       const key = item.drillable.name;
       params[key] = item.members.map(member => member.key).join(",");
     }
   });
 
+  // TODO: implement locale in UI
   // params.locale = query.locale;
 
   return urljoin(
