@@ -1,4 +1,7 @@
 {
   "name": "@datawheel/tesseract-ui-repo",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "cross-spawn": "^6.0.5"
+  }
 }
