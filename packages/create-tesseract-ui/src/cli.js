@@ -6,8 +6,8 @@ const spawn = require("cross-spawn");
 const path = require("path");
 const prompts = require("prompts");
 
+const package = require("../package.json");
 const create = require("./create");
-const package = require("./package.json");
 const utils = require("./utils");
 const validate = require("./validate");
 

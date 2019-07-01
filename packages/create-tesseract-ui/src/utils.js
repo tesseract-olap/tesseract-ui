@@ -22,13 +22,13 @@ function makeDirectory(targetPath) {
 
 function copyTemplateFile(fileName, targetPath) {
   return fs.copyFileSync(
-    require.resolve(`./template/${fileName}`),
+    require.resolve(`../template/${fileName}`),
     path.join(targetPath, fileName)
   );
 }
 
 function readTemplateFile(fileName) {
-  return fs.readFileSync(require.resolve(`./template/${fileName}`), "utf8");
+  return fs.readFileSync(require.resolve(`../template/${fileName}`), "utf8");
 }
 
 function writeFile(fileName, targetPath, contents) {
