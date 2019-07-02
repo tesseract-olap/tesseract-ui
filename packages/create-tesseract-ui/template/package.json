@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "poi --serve",
-    "build": "poi --prod --no-clear-console"
+    "build": "poi --prod --no-clear-console",
+    "upgrade": "npm i @datawheel/tesseract-explorer && npm run build"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.15.1",
