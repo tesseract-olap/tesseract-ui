@@ -1,7 +1,6 @@
 import {Client as TesseractClient} from "@datawheel/tesseract-client";
-import {updateAggregation, updateQueryUrls} from "../actions/aggregation";
+import {updateAggregation} from "../actions/aggregation";
 import {
-  CLIENT_BUILDURLS,
   CLIENT_CHECKSERVER,
   CLIENT_FETCH_FAILURE,
   CLIENT_FETCH_REQUEST,
@@ -17,8 +16,8 @@ import {cubesUpdate} from "../actions/cubes";
 import {queryCubeSet, queryCutReplace, queryCutUpdate} from "../actions/query";
 import {uiServerInfo} from "../actions/ui";
 import {buildJavascriptCall} from "../utils/debug";
+import {serializePermalink} from "../utils/format";
 import {applyQueryParams, buildCut, buildMeasure, buildMember} from "../utils/query";
-import { serializePermalink } from "../utils/format";
 
 /** @type {import("redux").Middleware<{}, import("../reducers").ExplorerState>} */
 function tesseractClientMiddleware({dispatch, getState}) {

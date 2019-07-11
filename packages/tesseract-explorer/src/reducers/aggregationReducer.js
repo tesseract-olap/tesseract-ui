@@ -1,4 +1,4 @@
-import {AGGREGATION_UPDATE, AGGREGATION_URLS} from "../actions/aggregation";
+import {AGGREGATION_UPDATE} from "../actions/aggregation";
 import {QUERY_CUBE_UPDATE} from "../actions/query";
 
 /**
@@ -18,7 +18,7 @@ const initialState = {
   jsCall: "",
   logicLayerUrl: "",
   options: {},
-  permalink: "",
+  permalink: ""
 };
 
 /** @type {import("redux").Reducer<AggregationState>} */

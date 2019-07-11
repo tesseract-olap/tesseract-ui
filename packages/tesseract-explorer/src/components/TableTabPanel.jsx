@@ -1,5 +1,5 @@
 import {NonIdealState} from "@blueprintjs/core";
-import {Cell, Column, Table, SelectionModes} from "@blueprintjs/table";
+import {Cell, Column, Table} from "@blueprintjs/table";
 import cn from "classnames";
 import React from "react";
 
