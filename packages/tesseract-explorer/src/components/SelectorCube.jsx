@@ -1,29 +1,26 @@
 import {MenuItem} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-
-import {CUBE_SELECT} from "../actions/cubes";
+import {setCube} from "../actions/client";
 import GenericSelector from "./SelectorGeneric";
 
 function itemRenderer(item, {handleClick, index, modifiers, query}) {
-  return <MenuItem icon="cube" key={item.name} onClick={handleClick} text={item.name} />;
+  return <MenuItem icon="cube" key={item} onClick={handleClick} text={item} />;
 }
 
 /** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   return {
-    activeItem: state.explorerCubes.current,
+    selectedItem: state.explorerQuery.cube,
     icon: "cube",
     itemRenderer,
-    items: state.explorerCubes.available,
-    noOptionsText: "Loading cubes...",
-    noSelectedText: "No cube selected"
+    items: state.explorerCubes._all
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    onItemSelect: payload => dispatch({type: CUBE_SELECT, payload})
+    onItemSelect: cubeName => dispatch(setCube(cubeName))
   };
 }
 

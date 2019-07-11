@@ -1,36 +1,50 @@
-export const STATUS_EMPTY = "EMPTY";
 export const STATUS_FETCHING = "FETCHING";
 export const STATUS_SUCCESS = "SUCCESS";
 export const STATUS_FAILURE = "FAILURE";
 
+/**
+ * @typedef LoadingState
+ * @property {string} error
+ * @property {boolean} loading
+ * @property {string} status
+ * @property {string} trigger
+ */
+
+/** @type {LoadingState} */
 const initialState = {
-  action: null,
   error: null,
-  status: STATUS_FETCHING
+  loading: true,
+  status: STATUS_FETCHING,
+  trigger: null
 };
 
+/** @type {import("redux").Reducer<LoadingState>} */
 function loadingReducer(state = initialState, action) {
-  const type = action.type;
+  const type = `${action.type}`;
+  const trigger = (action.action || action).type;
 
-  if (/_REQUEST$/.test(type)) {
+  if (type.endsWith(":REQUEST")) {
     return {
-      action,
       error: null,
-      status: STATUS_FETCHING
+      loading: true,
+      status: STATUS_FETCHING,
+      trigger
     };
   }
-  else if (/_SUCCESS$/.test(type)) {
+  else if (type.endsWith(":SUCCESS")) {
     return {
-      action: state.action,
       error: null,
-      status: STATUS_SUCCESS
+      loading: false,
+      status: STATUS_SUCCESS,
+      trigger
     };
   }
-  else if (/_FAILURE$/.test(type)) {
+  else if (type.endsWith(":FAILURE")) {
     return {
-      action: state.action,
       error: action.payload,
-      status: STATUS_FAILURE
+      loading: false,
+      status: STATUS_FAILURE,
+      trigger
     };
   }
 

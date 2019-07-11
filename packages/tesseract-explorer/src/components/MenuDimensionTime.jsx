@@ -1,9 +1,10 @@
 import React from "react";
 import {Menu, MenuItem} from "@blueprintjs/core";
 import {connect} from "react-redux";
+import memoizeOne from "memoize-one";
 
 function TimeDimensionMenu(props) {
-  const activeItems = normalizeActiveItems(props.activeItems);
+  const selectedItems = normalizeSelectedItems(props.selectedItems);
   const hierarchies = props.hierarchies;
 
   const levelRenderer = lvl => (
@@ -11,7 +12,7 @@ function TimeDimensionMenu(props) {
       key={lvl.name}
       icon="layer"
       text={lvl.name}
-      disabled={activeItems.indexOf(lvl) > -1}
+      disabled={selectedItems.indexOf(lvl) > -1}
       onClick={props.onClick.bind(null, lvl)}
     />
   );
@@ -28,17 +29,22 @@ function TimeDimensionMenu(props) {
   return <Menu>{items}</Menu>;
 }
 
-function normalizeActiveItems(activeItems) {
-  return [].concat(activeItems).reduce((array, item) => {
+function normalizeSelectedItems(selectedItems) {
+  return [].concat(selectedItems).reduce((array, item) => {
     item && array.push(item.drillable);
     return array;
   }, []);
 }
 
+const getTimeDimension = memoizeOne(cube =>
+  cube.dimensions.find(dim => dim.type === "time")
+);
+
 /** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
-  const cube = state.explorerCubes.current;
-  const timeDimension = cube && cube.timeDimension;
+  const {cube: cubeName} = state.explorerQuery;
+  const cube = state.explorerCubes[cubeName];
+  const timeDimension = cube && getTimeDimension(cube);
   return {
     hierarchies: timeDimension ? timeDimension.hierarchies : []
   };

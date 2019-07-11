@@ -1,44 +1,77 @@
-import {Button} from "@blueprintjs/core";
+import {Button, Intent, Tooltip} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
+import {createStarredItem, removeStarredItem} from "../actions/starred";
+import {serializePermalink} from "../utils/format";
+import {isValidQuery} from "../utils/validation";
 
-import {STARRED_ADD, STARRED_REMOVE} from "../actions/starred";
-import {serializeState} from "../utils/format";
+/**
+ * @typedef OwnProps
+ * @property {string} className
+ * @property {boolean} disabled
+ */
 
-function StarredItemButton(props) {
-  const serializedQuery = props.cube && serializeState(props.query);
-  const queryHash = JSON.stringify(serializedQuery);
-  const isStarred = queryHash in props.index;
-  const toggleStarredState = isStarred ? props.unstarQuery : props.starQuery;
-  return (
-    <Button
-      className="action-star"
-      text={isStarred ? "Remove from saved" : "Save this query"}
-      icon={isStarred ? "star-empty" : "star"}
-      fill={true}
-      onClick={toggleStarredState.bind(this, serializedQuery, queryHash)}
-    />
+/**
+ * @typedef StateProps
+ * @property {string} hash
+ * @property {boolean} isStarred
+ * @property {import("../reducers/queryReducer").QueryState} query
+ */
+
+/**
+ * @typedef DispatchProps
+ * @property {(query: import("../reducers/queryReducer").QueryState, hash: string) => any} starQuery
+ * @property {(query: import("../reducers/queryReducer").QueryState, hash: string) => any} unstarQuery
+ */
+
+/** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
+const StarredItemButton = function(props) {
+  const {query, hash, isStarred, disabled} = props;
+
+  const invalidMsg = "This query can't be saved because is invalid";
+
+  return isStarred ? (
+    <Tooltip content={disabled ? invalidMsg : "Remove query from starred items"}>
+      <Button
+        className={props.className}
+        disabled={disabled}
+        icon="star"
+        intent={Intent.WARNING}
+        onClick={props.unstarQuery.bind(null, query, hash)}
+      />
+    </Tooltip>
+  ) : (
+    <Tooltip content={disabled ? invalidMsg : "Save query to starred items"}>
+      <Button
+        className={props.className}
+        disabled={disabled}
+        icon="star-empty"
+        intent={Intent.NONE}
+        onClick={props.starQuery.bind(null, query, hash)}
+      />
+    </Tooltip>
   );
-}
+};
 
-/** @param {import("../reducers").ExplorerState} state */
+/** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
+  const query = state.explorerQuery;
+  const permalink = serializePermalink(query);
   return {
-    cube: state.explorerCubes.current,
-    index: state.explorerStarred.index,
-    query: state.explorerQuery
+    hash: permalink,
+    isStarred: state.explorerStarred.some(item => item.key == permalink),
+    query
   };
 }
 
-function mapDispatchToProps(dispatch, props) {
+/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, {}>} */
+function mapDispatchToProps(dispatch) {
   return {
     starQuery(query, hash) {
-      const date = new Date().toISOString();
-      return dispatch({type: STARRED_ADD, payload: {date, hash, query}});
+      return dispatch(createStarredItem(query, hash));
     },
-    unstarQuery(query, hash) {
-      const date = new Date().toISOString();
-      return dispatch({type: STARRED_REMOVE, payload: {date, hash, query}});
+    unstarQuery(_, hash) {
+      return dispatch(removeStarredItem(hash));
     }
   };
 }

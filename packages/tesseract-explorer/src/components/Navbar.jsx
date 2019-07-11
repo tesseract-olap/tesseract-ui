@@ -1,9 +1,4 @@
-import {
-  Alignment,
-  ButtonGroup,
-  Divider,
-  Navbar,
-} from "@blueprintjs/core";
+import {Alignment, ButtonGroup, Divider, Navbar} from "@blueprintjs/core";
 import React from "react";
 
 import CubeSelector from "./SelectorCube";
@@ -19,9 +14,16 @@ function NavigationBar(props) {
       <Navbar.Group align={Alignment.LEFT}>
         <Navbar.Heading>{props.title}</Navbar.Heading>
         <Navbar.Divider />
-        <ServerStatus status={props.serverStatus} version={props.serverVersion} />
+        <ServerStatus
+          status={props.serverStatus}
+          url={props.serverUrl}
+          version={props.serverVersion}
+        />
         <Navbar.Divider />
-        <CubeSelector />
+        <CubeSelector
+          noOptionsText="Loading cubes..."
+          noSelectedText="No cube selected"
+        />
       </Navbar.Group>
       <Navbar.Group align={Alignment.RIGHT}>
         <ButtonGroup>

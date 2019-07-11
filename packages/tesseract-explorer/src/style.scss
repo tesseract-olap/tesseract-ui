@@ -9,6 +9,7 @@
     background: $pt-app-background-color;
     display: flex;
     flex-flow: column nowrap;
+    min-width: 320px;
     height: 100vh;
     justify-content: stretch;
 
@@ -42,18 +43,15 @@
   &-content {
     flex: 1 0;
     width: 100%;
-    padding: 1rem 1rem 1rem 0;
     overflow: auto;
     display: grid;
     grid-template-columns: 290px 1fr;
-    grid-gap: 1em;
   }
 
   &-params {
     $card-background-color: $white !default;
     $dark-card-background-color: $dark-gray4 !default;
 
-    border-radius: 0 $pt-border-radius $pt-border-radius 0;
     box-shadow: $pt-elevation-shadow-0;
     background-color: $card-background-color;
 
@@ -71,6 +69,7 @@
 
   &-results {
     margin: 0;
+    outline: 0 none;
 
     @import "./style/PanelDataRaw";
     @import "./style/PanelDataTree";

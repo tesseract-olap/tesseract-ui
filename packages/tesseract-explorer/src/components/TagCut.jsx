@@ -1,41 +1,43 @@
 import {
-  Button,
+  ButtonGroup,
   Callout,
+  Classes,
+  Icon,
   Intent,
   Popover,
   PopoverInteractionKind,
   Spinner,
-  Tag,
-  ButtonGroup,
-  Classes,
-  Icon
+  Tag
 } from "@blueprintjs/core";
 import cn from "classnames";
 import React from "react";
 import {connect} from "react-redux";
+import {fetchMembers} from "../actions/client";
+import {queryCutRemove, queryCutUpdate} from "../actions/query";
+import {abbreviateFullName} from "../utils/format";
+import {isActiveItem} from "../utils/validation";
+import MemberSelector from "./MultiSelector";
 
-import {QUERY_CUTS_REMOVE, QUERY_CUTS_UPDATE} from "../actions/query";
-import {fetchMembers} from "../utils/api";
-import MemberSelector from "./TagCutSelector";
+/**
+ * @typedef OwnProps
+ * @property {import("../reducers").CutItem} item
+ */
 
-function TagCut(props) {
-  const drillable = props.drillable;
-  const label = drillable.fullName.replace(/\./g, "/");
+/**
+ * @typedef DispatchProps
+ * @property {() => any} toggleHandler
+ * @property {(members: import("../reducers").MemberItem[]) => any} updateMembersHandler
+ * @property {() => any} reloadMembersHandler
+ * @property {(evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => any} removeHandler
+ */
 
-  if (props.loading) {
-    return (
-      <Button
-        text={label}
-        icon={<Spinner size={Spinner.SIZE_SMALL} />}
-        fill={true}
-        disabled={true}
-      />
-    );
-  }
+/** @type {React.FC<OwnProps & DispatchProps>} */
+const TagCut = function(props) {
+  const {active, drillable, members, error, membersLoaded} = props.item;
+  const label = abbreviateFullName(drillable);
 
   let target, content;
-  const allMembers = props.allMembers || [];
-  if (props.error) {
+  if (error) {
     const toolbar = (
       <ButtonGroup minimal={true}>
         <button
@@ -49,8 +51,7 @@ function TagCut(props) {
     );
     target = (
       <Tag
-        className={cn("item-cut", {hidden: !props.active})}
-        disabled={true}
+        className={cn("item-cut error", {hidden: !active})}
         large={true}
         fill={true}
         icon="warning-sign"
@@ -70,15 +71,31 @@ function TagCut(props) {
           title="Error while loading member list"
         >
           <div>An error ocurred while loading the member list.</div>
-          <div>{props.error.message}</div>
+          <div>{error}</div>
         </Callout>
       </div>
     );
   }
+  else if (!membersLoaded) {
+    return (
+      <Tag
+        className="item-cut loading"
+        fill={true}
+        icon={<Spinner size={Spinner.SIZE_SMALL} />}
+        large={true}
+        minimal={true}
+        onRemove={props.removeHandler}
+      >
+        {label}
+      </Tag>
+    );
+  }
   else {
+    const activeMembers = members.filter(isActiveItem);
+    const activeCount = activeMembers.length;
     target = (
       <Tag
-        className={cn("item-cut", {hidden: !props.active})}
+        className={cn("item-cut", {hidden: !active})}
         icon="comparison"
         large={true}
         fill={true}
@@ -86,59 +103,48 @@ function TagCut(props) {
         onClick={props.toggleHandler}
         onRemove={props.removeHandler}
       >
-        {label + ` (${props.members.length})`}
+        {`${label} (${activeCount === 1
+          ? activeMembers[0].name
+          : activeCount + " categories"})`}
       </Tag>
     );
     content = (
       <div className="cut-submenu">
-        <MemberSelector
-          activeItems={props.members}
-          items={allMembers}
-          onChange={props.updateMembersHandler}
-        />
+        <MemberSelector items={members} onChange={props.updateMembersHandler} />
       </div>
     );
   }
 
   return (
     <Popover
+      autoFocus={false}
+      boundary="viewport"
       content={content}
       interactionKind={PopoverInteractionKind.HOVER}
       target={target}
       targetTagName="div"
     />
   );
-}
+};
 
-function getCutFromProps(props) {
-  const drillable = props.drillable;
-  return {
-    active: props.active,
-    allMembers: props.allMembers,
-    drillable,
-    key: drillable.fullName,
-    members: props.members
-  };
-}
-
+/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
 function mapDispatchToProps(dispatch, props) {
   return {
     toggleHandler() {
-      const payload = getCutFromProps(props);
-      payload.active = !props.active;
-      return dispatch({type: QUERY_CUTS_UPDATE, payload});
+      const item = props.item;
+      return dispatch(queryCutUpdate({...item, active: !item.active}));
     },
     updateMembersHandler(members) {
-      const payload = getCutFromProps(props);
-      payload.members = members;
-      return dispatch({type: QUERY_CUTS_UPDATE, payload});
+      const item = props.item;
+      return dispatch(queryCutUpdate({...item, members}));
     },
     reloadMembersHandler() {
-      return fetchMembers(dispatch, props);
+      return dispatch(fetchMembers(props.item));
     },
     removeHandler(evt) {
       evt.stopPropagation();
-      return dispatch({type: QUERY_CUTS_REMOVE, payload: props.drillable});
+      debugger;
+      return dispatch(queryCutRemove(props.item));
     }
   };
 }

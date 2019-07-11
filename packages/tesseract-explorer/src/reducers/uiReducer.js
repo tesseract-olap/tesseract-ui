@@ -4,14 +4,25 @@ import {
   UI_SERVER_INFO,
   UI_TABS_SELECT,
   UI_THEME_TOGGLE,
-  UI_STARRED_TOGGLE
+  UI_STARRED_TOGGLE,
+  UITAB_TABLE
 } from "../actions/ui";
+import { STARRED_CREATE } from "../actions/starred";
 
-export const TAB_TABLE = "tab-table";
-export const TAB_RAW = "tab-raw";
-export const TAB_TREE = "tab-tree";
+/**
+ * @typedef UiState
+ * @property {boolean} darkTheme
+ * @property {boolean} debugDrawer
+ * @property {boolean} queryOptions
+ * @property {string} serverStatus
+ * @property {string} serverUrl
+ * @property {string} serverVersion
+ * @property {boolean} starredDrawer
+ * @property {string} tab
+ */
 
-const initialState = {
+/** @type {UiState} */
+export const initialState = {
   darkTheme: false,
   debugDrawer: false,
   queryOptions: false,
@@ -19,9 +30,10 @@ const initialState = {
   serverUrl: "",
   serverVersion: "",
   starredDrawer: false,
-  tab: TAB_TABLE
+  tab: UITAB_TABLE
 };
 
+/** @type {import("redux").Reducer<UiState>} */
 function uiReducer(state = initialState, action) {
   switch (action.type) {
     case UI_DEBUG_TOGGLE:
@@ -34,18 +46,24 @@ function uiReducer(state = initialState, action) {
       return {...state, queryOptions: !state.queryOptions};
 
     case UI_SERVER_INFO:
+      const server = action.payload;
       return {
         ...state,
-        serverStatus: action.payload.status,
-        serverUrl: action.payload.url,
-        serverVersion: action.payload.version
+        serverStatus: server.status,
+        serverUrl: server.url,
+        serverVersion: server.version
       };
 
     case UI_STARRED_TOGGLE:
+      const starredDrawer = action.payload;
       return {
         ...state,
-        starredDrawer: "payload" in action ? action.payload : !state.starredDrawer
+        starredDrawer:
+          typeof starredDrawer === "boolean" ? starredDrawer : !state.starredDrawer
       };
+
+    case STARRED_CREATE:
+      return {...state, starredDrawer: true};
 
     case UI_TABS_SELECT:
       return {...state, tab: action.payload};

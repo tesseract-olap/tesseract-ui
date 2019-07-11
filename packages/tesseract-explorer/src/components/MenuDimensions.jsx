@@ -1,18 +1,33 @@
-import React from "react";
 import {Menu, MenuItem} from "@blueprintjs/core";
+import React from "react";
 import {connect} from "react-redux";
 
-function DimensionsMenu(props) {
-  const activeItems = normalizeActiveItems(props.activeItems);
-  const levelRenderer = lvl => (
+/**
+ * @typedef OwnProps
+ * @property {(item: import("../reducers/cubesReducer").JSONLevel) => boolean} isItemSelected
+ * @property {(item: import("../reducers/cubesReducer").JSONLevel) => any} onItemSelected
+ */
+
+/**
+ * @typedef StateProps
+ * @property {import("../reducers/cubesReducer").JSONDimension[]} dimensions
+ */
+
+/** @type {React.FC<OwnProps & StateProps>} */
+const DimensionsMenu = function(props) {
+  const {isItemSelected, onItemSelected} = props;
+
+  /** @param {import("../reducers/cubesReducer").JSONLevel} level */
+  const levelRenderer = level => (
     <MenuItem
-      key={lvl.name}
+      disabled={isItemSelected(level)}
       icon="layer"
-      text={lvl.name}
-      disabled={activeItems.indexOf(lvl) > -1}
-      onClick={props.onClick.bind(null, lvl)}
+      key={level.name}
+      onClick={() => onItemSelected(level)}
+      text={level.name}
     />
   );
+
   return (
     <Menu>
       {props.dimensions.map(dim => {
@@ -30,7 +45,9 @@ function DimensionsMenu(props) {
           ));
         }
 
-        return (
+        return menuItems.length === 1 ? (
+          menuItems[0]
+        ) : (
           <MenuItem key={dim.name} icon="layers" text={dim.name}>
             {menuItems}
           </MenuItem>
@@ -38,19 +55,13 @@ function DimensionsMenu(props) {
       })}
     </Menu>
   );
-}
+};
 
-function normalizeActiveItems(activeItems) {
-  return [].concat(activeItems).reduce((array, item) => {
-    item && array.push(item.drillable);
-    return array;
-  }, []);
-}
-
-/** @param {import("../reducers").ExplorerState} state */
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
+  const cube = state.explorerCubes[state.explorerQuery.cube];
   return {
-    dimensions: state.explorerCubes.current ? state.explorerCubes.current.dimensions : []
+    dimensions: cube ? cube.dimensions : []
   };
 }
 

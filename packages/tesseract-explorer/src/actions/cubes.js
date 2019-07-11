@@ -1,4 +1,3 @@
-export const CUBE_FETCH_REQUEST = "EXPLORER/CUBES/FETCH_REQUEST";
-export const CUBE_FETCH_SUCCESS = "EXPLORER/CUBES/FETCH_SUCCESS";
-export const CUBE_FETCH_FAILURE = "EXPLORER/CUBES/FETCH_FAILURE";
-export const CUBE_SELECT = "EXPLORER/CUBES/SELECT";
+export const CUBES_UPDATE = "explorer/CUBES/UPDATE";
+
+export const cubesUpdate = cubeList => ({type: CUBES_UPDATE, payload: cubeList})

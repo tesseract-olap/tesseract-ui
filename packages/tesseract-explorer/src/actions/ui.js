@@ -1,6 +1,16 @@
-export const UI_DEBUG_TOGGLE = "EXPLORER/UI/DEBUG/TOGGLE";
-export const UI_QUERY_OPTIONS_TOGGLE = "EXPLORER/UI/QUERYPANEL/OPTIONS/TOGGLE";
-export const UI_SERVER_INFO = "EXPLORER/UI/SERVER_INFO";
-export const UI_STARRED_TOGGLE = "EXPLORER/UI/STARRED/TOGGLE";
-export const UI_TABS_SELECT = "EXPLORER/UI/TABS/SELECT";
-export const UI_THEME_TOGGLE = "EXPLORER/UI/THEME/TOGGLE";
+export const UI_DEBUG_TOGGLE         = "explorer/UI/DEBUG/TOGGLE";
+export const UI_QUERY_OPTIONS_TOGGLE = "explorer/UI/QUERYPANEL/OPTIONS/TOGGLE";
+export const UI_SERVER_INFO          = "explorer/UI/SERVER_INFO";
+export const UI_STARRED_TOGGLE       = "explorer/UI/STARRED/TOGGLE";
+export const UI_TABS_SELECT          = "explorer/UI/TABS/SELECT";
+export const UI_THEME_TOGGLE         = "explorer/UI/THEME/TOGGLE";
+
+export const UITAB_TABLE = "tab-table";
+export const UITAB_RAW = "tab-raw";
+export const UITAB_TREE = "tab-tree";
+
+export const uiServerInfo = (info) => ({type: UI_SERVER_INFO, payload: info});
+
+export const uiTabChange = (tab) => ({type: UI_TABS_SELECT, payload: tab});
+
+export const toggleStarredDrawer = (payload) => ({type: UI_STARRED_TOGGLE, payload});

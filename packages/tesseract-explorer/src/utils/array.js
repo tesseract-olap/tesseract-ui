@@ -1,8 +1,6 @@
-import {isActiveItem} from "./validation";
-
 const defaultIndexOf = (haystack, needle) => haystack.indexOf(needle);
-
-export const activeItemCounter = (sum, item) => sum + (isActiveItem(item) ? 1 : 0);
+export const findByProperty = property => (haystack, needle) =>
+  haystack.findIndex(item => item[property] === needle[property]);
 
 export function toggleFromArray(haystack, needle, finder = defaultIndexOf) {
   const index = finder(haystack, needle);
@@ -12,6 +10,15 @@ export function toggleFromArray(haystack, needle, finder = defaultIndexOf) {
   }
   else {
     haystackClone.push(needle);
+  }
+  return haystackClone;
+}
+
+export function replaceFromArray(haystack, needle, finder = defaultIndexOf) {
+  const index = finder(haystack, needle);
+  const haystackClone = haystack.slice();
+  if (index > -1) {
+    haystackClone[index] = needle;
   }
   return haystackClone;
 }

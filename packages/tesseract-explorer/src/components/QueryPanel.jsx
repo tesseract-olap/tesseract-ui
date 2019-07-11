@@ -1,172 +1,229 @@
-import {Button, Checkbox, Intent, Popover} from "@blueprintjs/core";
+import {Button, Checkbox, Intent, ButtonGroup} from "@blueprintjs/core";
+import memoizeOne from "memoize-one";
 import React from "react";
 import {connect} from "react-redux";
-
+import {fetchMembers, runQuery} from "../actions/client";
 import {
-  QUERY_DRILLDOWNS_ADD,
-  QUERY_GROWTH_UPDATE,
-  QUERY_PARENTS_TOGGLE,
-  QUERY_RCA_UPDATE,
-  QUERY_TOP_UPDATE
+  queryCutAdd,
+  queryDrilldownAdd,
+  queryGrowthClear,
+  queryGrowthUpdate,
+  queryParentsToggle,
+  queryRcaClear,
+  queryRcaUpdate,
+  querySparseToggle,
+  queryTopClear,
+  queryTopUpdate
 } from "../actions/query";
-import {addCutAndFetchMembers, applyQueryParams, executeQuery} from "../utils/api";
-import {activeItemCounter} from "../utils/array";
 import {getTopItemsSummary} from "../utils/format";
-import {checkDrilldowns, checkMeasures, checkCuts} from "../utils/validation";
+import {buildCut, buildDrilldown} from "../utils/query";
+import {
+  activeItemCounter,
+  checkCuts,
+  checkDrilldowns,
+  checkMeasures
+} from "../utils/validation";
 import GrowthInput from "./GrowthInput";
-import DimensionsMenu from "./MenuDimensions";
 import QueryGroup from "./QueryGroup";
 import RcaInput from "./RcaInput";
+import SelectorLevelMulti from "./SelectorLevelMulti";
+import StarredItemButton from "./StarredItemButton";
 import TagCut from "./TagCut";
 import TagDrilldown from "./TagDrilldown";
 import TagMeasure from "./TagMeasure";
 import TopItemsInput from "./TopItemsInput";
-import StarredItemButton from "./StarredItemButton";
 
-function QueryPanel(props) {
-  const drilldownCheck = checkDrilldowns(props);
-  const measureCheck = checkMeasures(props);
-  const cutCheck = checkCuts(props);
+/**
+ * @typedef OwnProps
+ * @property {string} className
+ */
 
-  const allChecks = [].concat(drilldownCheck, measureCheck, cutCheck);
+/**
+ * @typedef StateProps
+ * @property {import("../reducers/queryReducer").QueryState} query
+ * @property {boolean} hasTimeDim
+ * @property {boolean} optionsOpen
+ */
 
-  const topItemsLabel = getTopItemsSummary(props.top) || "Calculate top items";
+/**
+ * @typedef DispatchProps
+ * @property {(drillable: import("../reducers/cubesReducer").JSONLevel) => any} addCutHandler
+ * @property {(drillable: import("../reducers/cubesReducer").JSONLevel) => any} addDrilldownHandler
+ * @property {() => any} clearGrowthHandler
+ * @property {() => any} clearRcaHandler
+ * @property {() => any} clearTopHandler
+ * @property {() => any} executeQuery
+ * @property {() => any} toggleParentsHandler
+ * @property {() => any} toggleSparseHandler
+ * @property {(values: Partial<import("../reducers/queryReducer").GrowthQueryState>) => any} updateGrowthHandler
+ * @property {(values: Partial<import("../reducers/queryReducer").RcaQueryState>) => any} updateRcaHandler
+ * @property {(values: Partial<import("../reducers/queryReducer").TopQueryState>) => any} updateTopHandler
+ */
+
+/** @type {React.FunctionComponent<OwnProps & StateProps & DispatchProps>} */
+const QueryPanel = function(props) {
+  const {query} = props;
+
+  const ddCheck = checkDrilldowns(query);
+  const msCheck = checkMeasures(query);
+  const ctCheck = checkCuts(query);
+  const allChecks = [].concat(ddCheck, msCheck, ctCheck);
+
+  const ctCount = query.cuts.reduce(activeItemCounter, 0);
+  const ddCount = query.drilldowns.reduce(activeItemCounter, 0);
+  const msCount = query.measures.reduce(activeItemCounter, 0);
 
   return (
     <div className={props.className}>
       <QueryGroup
-        labelInfo={props.activeDdn}
         className="area-drilldowns"
-        helperText={drilldownCheck.join("\n")}
-        intent={drilldownCheck.length > 0 ? Intent.DANGER : undefined}
         label="Drilldowns"
+        labelInfo={ddCount}
+        validation={ddCheck}
       >
-        {props.drilldowns.map(item => <TagDrilldown {...item} />)}
-        <Popover targetTagName="div">
-          <Button
-            className="action-add"
-            fill={true}
-            icon="insert"
-            small={true}
-            text="Add drilldown"
-          />
-          <DimensionsMenu
-            activeItems={props.drilldowns}
-            onClick={props.drilldownAddHandler}
-          />
-        </Popover>
+        {query.drilldowns.map(item => <TagDrilldown key={item.key} item={item} />)}
+        <SelectorLevelMulti
+          onItemSelected={props.addDrilldownHandler}
+          selectedItems={query.drilldowns}
+          text="Add drilldown"
+        />
       </QueryGroup>
 
       <QueryGroup
-        labelInfo={props.activeMsr}
         className="area-measures"
-        helperText={measureCheck.join("\n")}
-        intent={measureCheck.length > 0 ? Intent.DANGER : undefined}
         label="Measures"
+        labelInfo={msCount}
+        validation={msCheck}
       >
-        {props.measures.map(item => <TagMeasure {...item} />)}
+        {query.measures.map(item => <TagMeasure key={item.key} item={item} />)}
       </QueryGroup>
 
       <QueryGroup
         className="area-cuts"
-        helperText={cutCheck.join("\n")}
-        intent={cutCheck.length > 0 ? Intent.DANGER : undefined}
         label="Cuts"
-        labelInfo={props.activeCut}
+        labelInfo={ctCount}
+        validation={ctCheck}
       >
-        {props.cuts.map(item => <TagCut {...item} />)}
-        <Popover targetTagName="div">
-          <Button
-            className="action-add"
-            fill={true}
-            icon="insert"
-            small={true}
-            text="Add cut"
-          />
-          <DimensionsMenu activeItems={props.cuts} onClick={props.cutAddHandler} />
-        </Popover>
+        {query.cuts.map(item => <TagCut key={item.key} item={item} />)}
+        <SelectorLevelMulti
+          onItemSelected={props.addCutHandler}
+          selectedItems={query.cuts}
+          text="Add cut"
+        />
       </QueryGroup>
 
       {props.hasTimeDim && (
-        <QueryGroup className="area-growth" label="Calculate growth" open={false}>
-          <GrowthInput cube={props.cube} onChange={props.growthSetHandler} />
+        <QueryGroup
+          className="area-growth"
+          label="Calculate growth"
+          onClear={props.clearGrowthHandler}
+          open={false}
+        >
+          <GrowthInput {...query.growth} onChange={props.updateGrowthHandler} />
         </QueryGroup>
       )}
 
-      <QueryGroup className="area-rca" label="Calculate RCA" open={false}>
-        <RcaInput cube={props.cube} onChange={props.rcaSetHandler} />
+      <QueryGroup
+        className="area-rca"
+        label="Calculate RCA"
+        onClear={props.clearRcaHandler}
+        open={false}
+      >
+        <RcaInput {...query.rca} onChange={props.updateRcaHandler} />
       </QueryGroup>
 
-      <QueryGroup className="area-top" label={topItemsLabel} open={false}>
-        <TopItemsInput cube={props.cube} onChange={props.topSetHandler} />
+      <QueryGroup
+        className="area-top"
+        label={getTopItemsSummary(query.top) || "Calculate top items"}
+        onClear={props.clearTopHandler}
+        open={false}
+      >
+        <TopItemsInput {...query.top} onChange={props.updateTopHandler} />
       </QueryGroup>
 
       <QueryGroup className="area-options" label="Options">
         <Checkbox
           className="item-option"
           label="Include parent levels"
-          checked={props.parents}
-          onChange={props.parentsToggleHandler}
+          checked={query.parents}
+          onChange={props.toggleParentsHandler}
+        />
+        <Checkbox
+          className="item-option"
+          label="Optimize sparse results"
+          checked={query.sparse}
+          onChange={props.toggleSparseHandler}
         />
       </QueryGroup>
 
-      <Button
-        className="action-query"
-        text="Execute query"
-        icon="database"
-        disabled={allChecks.length > 0}
-        intent={Intent.PRIMARY}
-        fill={true}
-        onClick={() => props.executeQuery(props)}
-      />
-
-      <StarredItemButton />
+      <ButtonGroup fill={true}>
+        <Button
+          className="action-query"
+          text="Execute query"
+          icon="database"
+          disabled={allChecks.length > 0}
+          intent={Intent.PRIMARY}
+          fill={true}
+          onClick={props.executeQuery}
+        />
+        <StarredItemButton className="action-star" disabled={allChecks.length > 0} />
+      </ButtonGroup>
     </div>
   );
-}
+};
 
-/** @param {import("../reducers").ExplorerState} state */
+/** @type {(dimensions: any[]) => boolean} */
+const hasTimeDim = memoizeOne(dimensions => dimensions.some(dim => dim.type === "time"));
+
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   const query = state.explorerQuery;
-  const cube = state.explorerCubes.current;
+  const cube = state.explorerCubes[query.cube];
   return {
-    ...query,
-    activeCut: query.cuts.reduce(activeItemCounter, 0),
-    activeDdn: query.drilldowns.reduce(activeItemCounter, 0),
-    activeMsr: query.measures.reduce(activeItemCounter, 0),
-    cube: cube,
-    hasTimeDim: cube && cube.timeDimension !== undefined,
+    query,
+    hasTimeDim: cube && hasTimeDim(cube.dimensions),
     optionsOpen: state.explorerUi.queryOptions
   };
 }
 
+/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
 function mapDispatchToProps(dispatch) {
   return {
-    cutAddHandler(drillable) {
-      const payload = {key: drillable.fullName, drillable, members: [], active: true};
-      return addCutAndFetchMembers(dispatch, payload);
+    addCutHandler(level) {
+      const cutItem = buildCut(level);
+      dispatch(queryCutAdd(cutItem));
+      return dispatch(fetchMembers(cutItem));
     },
-    drilldownAddHandler(drillable) {
-      const payload = {key: drillable.fullName, drillable, active: true};
-      return dispatch({type: QUERY_DRILLDOWNS_ADD, payload});
+    addDrilldownHandler(drillable) {
+      const drilldownItem = buildDrilldown(drillable);
+      return dispatch(queryDrilldownAdd(drilldownItem));
     },
-    executeQuery(props) {
-      const query = props.cube.query;
-      applyQueryParams(query, props);
-      return executeQuery(dispatch, query);
+    clearGrowthHandler() {
+      return dispatch(queryGrowthClear());
     },
-    growthSetHandler(level, measure) {
-      return dispatch({type: QUERY_GROWTH_UPDATE, payload: {level, measure}});
+    clearRcaHandler() {
+      return dispatch(queryRcaClear());
     },
-    parentsToggleHandler() {
-      return dispatch({type: QUERY_PARENTS_TOGGLE});
+    clearTopHandler() {
+      return dispatch(queryTopClear());
     },
-    rcaSetHandler(level1, level2, measure) {
-      return dispatch({type: QUERY_RCA_UPDATE, payload: {level1, level2, measure}});
+    executeQuery() {
+      return dispatch(runQuery());
     },
-    topSetHandler(amount, level, measure, order) {
-      const payload = {amount, level, measure, order};
-      return dispatch({type: QUERY_TOP_UPDATE, payload});
+    toggleParentsHandler() {
+      return dispatch(queryParentsToggle());
+    },
+    toggleSparseHandler() {
+      return dispatch(querySparseToggle());
+    },
+    updateGrowthHandler(values) {
+      return dispatch(queryGrowthUpdate(values));
+    },
+    updateRcaHandler(values) {
+      return dispatch(queryRcaUpdate(values));
+    },
+    updateTopHandler(values) {
+      return dispatch(queryTopUpdate(values));
     }
   };
 }

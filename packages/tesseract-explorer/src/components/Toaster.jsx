@@ -33,10 +33,10 @@ class Toaster extends React.Component {
   }
 }
 
-/** @param {import("../reducers").ExplorerState} state */
+/** @param {import("../oldReducers").ExplorerState} state */
 function mapStateToProps(state) {
   return {
-    queryError: state.explorerDataset.error
+    queryError: state.explorerLoading.error
   };
 }
 

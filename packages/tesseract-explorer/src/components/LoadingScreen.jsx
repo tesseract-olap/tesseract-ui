@@ -1,8 +1,6 @@
-import {Spinner, Overlay, NonIdealState} from "@blueprintjs/core";
+import {NonIdealState, Overlay, Spinner} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-
-import {STATUS_FETCHING} from "../reducers/loadingReducer";
 
 function LoadingScreen(props) {
   return (
@@ -10,13 +8,11 @@ function LoadingScreen(props) {
       canEscapeKeyClose={false}
       canOutsideClickClose={false}
       {...props}
-      isOpen={props.status === STATUS_FETCHING}
+      isOpen={props.isOpen}
     >
       <NonIdealState
         className="loading-screen"
-        icon={
-          <Spinner size={Spinner.SIZE_LARGE} />
-        }
+        icon={<Spinner size={Spinner.SIZE_LARGE} />}
         title="Loading..."
       />
     </Overlay>
@@ -25,7 +21,9 @@ function LoadingScreen(props) {
 
 /** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
-  return state.explorerLoading;
+  return {
+    isOpen: state.explorerLoading.loading
+  };
 }
 
 export default connect(mapStateToProps)(LoadingScreen);

@@ -1,67 +1,55 @@
-import {Cube} from "@datawheel/tesseract-client";
-import {QueryOptions} from "@datawheel/tesseract-client/dist/dts/common";
-
+import {AggregationState} from "./aggregationReducer";
+import {CubesState} from "./cubesReducer";
+import {LoadingState} from "./loadingReducer";
 import {QueryState} from "./queryReducer";
-import {TAB_RAW, TAB_TABLE, TAB_TREE} from "./uiReducer";
-import {
-  STATUS_EMPTY,
-  STATUS_FETCHING,
-  STATUS_SUCCESS,
-  STATUS_FAILURE
-} from "./loadingReducer";
+import {StarredState} from "./starredReducer";
+import {UiState} from "./uiReducer";
 
-export default function explorerReducer(
-  state: ExplorerState,
-  action: ReduxAction
-): ExplorerState;
+type DrillableItem = DrilldownItem | CutItem;
+type MeasurableItem = MeasureItem | FilterItem;
 
-export interface ReduxAction {
-  type: string;
-  payload: any;
+interface QueryItem {
+  active: boolean;
+  readonly key: string;
 }
 
-export interface ExplorerState {
+interface CutItem extends QueryItem {
+  drillable: string;
+  error?: Error;
+  members: MemberItem[];
+  membersLoaded: boolean;
+}
+
+interface DrilldownItem extends QueryItem {
+  drillable: string;
+}
+
+interface MeasureItem extends QueryItem {
+  measure: string;
+}
+
+interface FilterItem extends QueryItem {
+  measure: string;
+  comparison: FilterComparison;
+  inputtedValue: string;
+  interpretedValue: number;
+}
+
+interface MemberItem extends QueryItem {
+  name: string;
+}
+
+interface StarredItem {
+  date: string;
+  key: string;
+  query: QueryState;
+}
+
+interface ExplorerState {
+  explorerAggregation: AggregationState;
   explorerCubes: CubesState;
-  explorerDataset: DatasetState;
   explorerLoading: LoadingState;
   explorerQuery: QueryState;
   explorerStarred: StarredState;
   explorerUi: UiState;
-}
-
-export interface CubesState {
-  available: Cube[];
-  current: Cube;
-}
-
-export interface DatasetState {
-  data: any[];
-  error: Error;
-  loading: boolean;
-  options: QueryOptions;
-  url: string;
-}
-
-export interface LoadingState {
-  action: string;
-  error: Error;
-  status: STATUS_EMPTY | STATUS_FETCHING | STATUS_SUCCESS | STATUS_FAILURE;
-}
-
-export interface StarredState {
-  index: {
-    [hash: string]: number;
-  };
-  items: SerializedQuery[]
-}
-
-export interface UiState {
-  darkTheme: boolean;
-  debugDrawer: boolean;
-  queryOptions: boolean;
-  serverStatus: string;
-  serverUrl: string;
-  serverVersion: string;
-  starredDrawer: boolean;
-  tab: TAB_TABLE | TAB_RAW | TAB_TREE;
 }

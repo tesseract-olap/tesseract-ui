@@ -1,12 +1,12 @@
 import {
-  QUERY_FILTERS_ADD,
+  QUERY_FILTERS_CREATE,
   QUERY_FILTERS_CLEAR,
   QUERY_FILTERS_REMOVE
-} from "../../actions/query";
+} from "../actions/query";
 
 export default function(state, action) {
   switch (action.type) {
-    case QUERY_FILTERS_ADD: {
+    case QUERY_FILTERS_CREATE: {
       return {
         ...state,
         filters: [].concat(state.filters, action.payload)
@@ -14,10 +14,10 @@ export default function(state, action) {
     }
 
     case QUERY_FILTERS_REMOVE: {
-      const name = action.payload.name || action.payload;
+      const {key} = action.payload;
       return {
         ...state,
-        filters: state.filters.filter(item => item.name !== name)
+        filters: state.filters.filter(item => item.key !== key)
       };
     }
 

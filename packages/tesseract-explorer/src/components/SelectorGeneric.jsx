@@ -17,7 +17,7 @@ function GenericSelector(props) {
     );
   }
 
-  const activeItem = props.activeItem;
+  const selectedItem = props.selectedItem;
   const popoverProps = {
     ...props.popoverProps,
     targetTagName: props.fill ? "div" : props.popoverProps.targetTagName || "span",
@@ -32,7 +32,7 @@ function GenericSelector(props) {
         icon={props.icon}
         minimal={props.minimal}
         rightIcon="double-caret-vertical"
-        text={activeItem ? activeItem.name || activeItem.key : props.noSelectedText}
+        text={selectedItem || props.noSelectedText}
       />
     </Select>
   );
@@ -50,7 +50,8 @@ GenericSelector.defaultProps = {
   },
   minimal: false,
   popoverProps: {
-    minimal: true
+    boundary: "viewport",
+    minimal: true,
   }
 };
 

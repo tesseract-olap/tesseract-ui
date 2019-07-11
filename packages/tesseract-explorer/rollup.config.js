@@ -24,13 +24,14 @@ const globals = {
   "@datawheel/tesseract-client": "TesseractOlap",
   "classnames": "classNames",
   "form-urlencoded": "formurlencoded",
+  "memoize-one": "memoizeOne",
   "pluralize": "pluralize",
+  "query-string": "queryString",
   "react-dom": "ReactDOM",
-  "react-perfect-scrollbar": "react-perfect-scrollbar",
+  "react-perfect-scrollbar": "reactPerfectScrollbar",
   "react-redux": "ReactRedux",
   "react": "React",
-  "redux": "Redux",
-  "url-join": "urljoin"
+  "redux": "Redux"
 };
 const external = Object.keys(globals);
 

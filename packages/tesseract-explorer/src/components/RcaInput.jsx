@@ -1,58 +1,32 @@
 import {ControlGroup} from "@blueprintjs/core";
-import React, {PureComponent} from "react";
-
+import React from "react";
 import LevelSelector from "./SelectorLevel";
 import MeasureSelector from "./SelectorMeasure";
 
-const initialState = {
-  level1: null,
-  level2: null,
-  measure: null
-};
-
-class RcaInput extends PureComponent {
-  state = initialState;
-
-  lvl1SelectHandler = level1 => this.setState({level1});
-  lvl2SelectHandler = level2 => this.setState({level2});
-  msrSelectHandler = measure => this.setState({measure});
-
-  componentDidUpdate(prevProps) {
-    const state = this.state;
-    if (prevProps.cube != this.props.cube) {
-      return this.setState(initialState);
-    }
-    if (state.level1 && state.level2 && state.measure) {
-      this.props.onChange(state.level1, state.level2, state.measure);
-    }
-  }
-
-  render() {
-    const {level1, level2, measure} = this.state;
-
-    return (
-      <ControlGroup className="rca-input" vertical={true}>
-        <LevelSelector
-          activeItem={level1}
-          fill={true}
-          icon="layer"
-          onItemSelect={this.lvl1SelectHandler}
-        />
-        <LevelSelector
-          activeItem={level2}
-          fill={true}
-          icon="layer"
-          onItemSelect={this.lvl2SelectHandler}
-        />
-        <MeasureSelector
-          activeItem={measure}
-          fill={true}
-          icon="th-list"
-          onItemSelect={this.msrSelectHandler}
-        />
-      </ControlGroup>
-    );
-  }
+function RcaInput(props) {
+  const {level1, level2, measure} = props;
+  return (
+    <ControlGroup className="rca-input" vertical={true}>
+      <LevelSelector
+        selectedItem={level1}
+        fill={true}
+        icon="layer"
+        onItemSelect={level => props.onChange({level1: level.fullName})}
+      />
+      <LevelSelector
+        selectedItem={level2}
+        fill={true}
+        icon="layer"
+        onItemSelect={level => props.onChange({level2: level.fullName})}
+      />
+      <MeasureSelector
+        selectedItem={measure}
+        fill={true}
+        icon="th-list"
+        onItemSelect={measure => props.onChange({measure})}
+      />
+    </ControlGroup>
+  );
 }
 
 export default RcaInput;

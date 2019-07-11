@@ -15,7 +15,7 @@ function ThemeButton(props) {
   );
 }
 
-/** @param {import("../reducers").ExplorerState} state */
+/** @param {import("../oldReducers").ExplorerState} state */
 function mapStateToProps(state) {
   return {
     darkTheme: state.explorerUi.darkTheme

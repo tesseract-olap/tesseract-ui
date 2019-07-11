@@ -31,7 +31,6 @@ function TableTabPanel(props) {
       isColumnResizable={false}
       isRowResizable={false}
       rowHeights={data.map(() => 22)}
-      selectionModes={SelectionModes.NONE}
     >
       {columns}
     </Table>

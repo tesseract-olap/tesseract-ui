@@ -1,27 +1,22 @@
-import React from "react";
 import {Tag} from "@blueprintjs/core";
-import {toggleFromArray} from "../utils/array";
+import React from "react";
 
 class TagMultiSelector extends React.Component {
   toggleHandler(item) {
-    const nextActiveItems = toggleFromArray(this.props.activeItems, item);
-    nextActiveItems.sort((a, b) => `${a.key}`.localeCompare(`${b.key}`));
-    this.props.onChange(nextActiveItems);
+    const key = item.key;
+    const newItem = {...item, active: !item.active};
+    const nextItems = this.props.items.map(item => (item.key === key ? newItem : item));
+    this.props.onChange(nextItems);
   }
 
   render() {
-    const {activeItems, itemRenderer, items} = this.props;
-    const nonActiveItems = items.filter(item => !activeItems.includes(item));
+    const {itemRenderer, items} = this.props;
     const internalRenderer = item =>
       itemRenderer(item, {
-        active: activeItems.includes(item),
+        active: item.active,
         handleClick: this.toggleHandler.bind(this, item)
       });
-    return (
-      <div className="tag-multiselect">
-        {[].concat(activeItems, nonActiveItems).map(internalRenderer)}
-      </div>
-    );
+    return <div className="tag-multiselect">{items.map(internalRenderer)}</div>;
   }
 }
 

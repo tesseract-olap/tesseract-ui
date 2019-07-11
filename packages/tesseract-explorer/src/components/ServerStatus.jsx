@@ -8,7 +8,9 @@ function ServerStatus(props) {
         intent={Intent.SUCCESS}
         minimal={true}
         tabIndex={null}
-        text={`Running tesseract v${props.version}`}
+        href={props.url}
+        target="_blank"
+        text={props.version}
       />
     );
   }

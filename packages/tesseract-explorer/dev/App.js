@@ -1,7 +1,13 @@
 import React from "react";
-import {createStore} from "redux";
 import {Provider} from "react-redux";
-import {Explorer, explorerReducer} from "../dist/index.esm";
+import {applyMiddleware, compose, createStore} from "redux";
+import {
+  Explorer,
+  explorerInitialState,
+  explorerReducer,
+  permalinkMiddleware,
+  tesseractMiddleware
+} from "../dist/index.esm";
 
 import "normalize.css/normalize.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
@@ -10,16 +16,21 @@ import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "@blueprintjs/table/lib/css/table.css";
 import "../dist/explorer.css";
 
-const reduxDevTools =
-  typeof window !== undefined &&
-  window.__REDUX_DEVTOOLS_EXTENSION__ &&
-  window.__REDUX_DEVTOOLS_EXTENSION__();
-const store = createStore(explorerReducer, reduxDevTools);
+const composeEnhancers =
+  typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    : compose;
+const enhancers = composeEnhancers(
+  applyMiddleware(permalinkMiddleware, tesseractMiddleware)
+);
+
+const initialState = explorerInitialState();
+const store = createStore(explorerReducer, initialState, enhancers);
 
 function App() {
   return (
     <Provider store={store}>
-      <Explorer src="https://api.oec.world/tesseract/" />
+      <Explorer src="https://api.datamexico.org/tesseract/" />
     </Provider>
   );
 }

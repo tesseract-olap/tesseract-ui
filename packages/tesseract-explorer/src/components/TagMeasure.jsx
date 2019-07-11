@@ -1,15 +1,15 @@
-import {Checkbox, Switch} from "@blueprintjs/core";
+import {Switch} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-
-import {QUERY_MEASURES_UPDATE} from "../actions/query";
+import {queryMeasureToggle} from "../actions/query";
 
 function TagMeasure(props) {
+  const item = props.item;
   return (
     <Switch
       className="item-measure"
-      label={props.measure.name}
-      checked={props.active}
+      label={item.measure}
+      checked={item.active}
       onChange={props.changeHandler}
     />
   );
@@ -17,10 +17,8 @@ function TagMeasure(props) {
 
 function mapDispatchToProps(dispatch, props) {
   return {
-    changeHandler(evt) {
-      const measure = props.measure;
-      const payload = {key: measure.name, measure, active: evt.target.checked};
-      return dispatch({type: QUERY_MEASURES_UPDATE, payload});
+    changeHandler() {
+      return dispatch(queryMeasureToggle(props.item));
     }
   };
 }

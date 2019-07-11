@@ -1,6 +1,7 @@
+import formUrlEncode from "form-urlencoded";
 import pluralize from "pluralize";
-
-import {getCube} from "./debug";
+import {parse} from "query-string";
+import {buildCut, buildDrilldown, buildFilter, buildMeasure, buildMember} from "./query";
 import {
   isActiveCut,
   isActiveItem,
@@ -9,12 +10,24 @@ import {
   validTopState
 } from "./validation";
 
+export function abbreviateFullName(fullName) {
+  if (!fullName) return;
+
+  const nameParts = `${fullName}`.split(".");
+  let token = nameParts.shift();
+  while (nameParts.length > 0 && nameParts[0] === token) {
+    token = nameParts.shift();
+  }
+  nameParts.unshift(token);
+  return nameParts.join("/");
+}
+
+/** @param {import("../reducers/queryReducer").TopQueryState} top */
 export function getTopItemsSummary(top) {
   if (!validTopState(top)) return;
-
-  const pluralMsrName = pluralize(top.measure.name, top.amount);
-  return `Showing the top ${top.amount} ${pluralMsrName} by ${top.level
-    .name} (${top.order})`;
+  const measureName = pluralize(top.measure, top.amount);
+  const levelName = abbreviateFullName(top.level);
+  return `Showing the top ${top.amount} ${measureName} by ${levelName} (${top.order})`;
 }
 
 export function safeRegExp(pattern, flags) {
@@ -28,54 +41,77 @@ export function safeRegExp(pattern, flags) {
   return regex;
 }
 
-export function serializeCut(cutItem) {
-  return cutItem.drillable.fullName + "." + cutItem.members.map(m => m.key).join(",");
-}
+/** @param {import("../reducers").CutItem} item */
+export const serializeCut = item =>
+  item.drillable + "." + item.members.filter(isActiveItem).map(m => m.key).join(",");
+
+/** @param {import("../reducers").FilterItem} item */
+export const serializeFilter = item =>
+  `${item.measure},${item.comparison},${item.interpretedValue}`;
 
 /**
  * @param {import("../reducers/queryReducer").QueryState} query
- * @returns {import("../reducers/queryReducer").SerializedQuery}
+ * @returns {SerializedQuery}
  */
 export function serializeState(query) {
-  const keyAccesor = item => item.key;
+  const cuts = query.cuts.filter(isActiveCut).map(serializeCut);
+  const drilldowns = query.drilldowns.filter(isActiveItem).map(i => i.drillable);
+  const filters = query.filters.filter(isActiveItem).map(serializeFilter);
+  const measures = query.measures.filter(isActiveItem).map(i => i.measure);
 
-  const cube = getCube(query);
-  const plainQuery = {
-    cube: cube && cube.name,
-    measures: query.measures.filter(isActiveItem).map(keyAccesor),
-    drilldowns: query.drilldowns.filter(isActiveItem).map(keyAccesor),
-    cuts: query.cuts.filter(isActiveCut).map(serializeCut),
-    filter: query.filters.filter(isActiveItem),
-    parents: query.parents
+  return {
+    cube: query.cube,
+    cuts: cuts.length > 0 ? cuts : undefined,
+    drilldowns: drilldowns.length > 0 ? drilldowns : undefined,
+    filters: filters.length > 0 ? filters : undefined,
+    growth: validGrowthState(query.growth) ? query.growth : undefined,
+    measures: measures.length > 0 ? measures : undefined,
+    parents: query.parents,
+    rca: validRcaState(query.rca) ? query.rca : undefined,
+    sparse: query.sparse,
+    top: validTopState(query.top) ? query.top : undefined
   };
-
-  if (validGrowthState(query.growth)) {
-    plainQuery.growth = {
-      level: query.growth.level.fullName,
-      measure: query.growth.measure.name
-    };
-  }
-
-  if (validRcaState(query.rca)) {
-    plainQuery.rca = {
-      level1: query.rca.level1.fullName,
-      level2: query.rca.level2.fullName,
-      measure: query.rca.measure.name
-    };
-  }
-
-  if (validTopState(query.top)) {
-    plainQuery.top = {
-      amount: query.top.amount,
-      order: query.top.order,
-      level: query.top.level.fullName,
-      measure: query.top.measure.name
-    };
-  }
-
-  return plainQuery;
 }
 
-export function parseState(cube, serializedState) {
-  return Promise.resolve({});
+/**
+ * @param {SerializedQuery} query
+ * @returns {import("../reducers/queryReducer").QueryState}
+ */
+export function hydrateState(query) {
+  return {
+    cube: query.cube,
+    cuts: (query.cuts || []).map(item => {
+      const drillableParts = item.split(".");
+      const members = drillableParts.pop().split(",");
+      return buildCut(drillableParts.join("."), {
+        active: true,
+        members: members.map(key => buildMember(key, {active: true}))
+      });
+    }),
+    drilldowns: (query.drilldowns || []).map(item => buildDrilldown(item)),
+    filters: (query.filters || []).map(item => buildFilter(item)),
+    growth: {},
+    measures: (query.measures || []).map(item => buildMeasure(item)),
+    parents: query.parents,
+    rca: {},
+    sparse: query.sparse,
+    top: {}
+  };
 }
+
+export const serializePermalink = query =>
+  formUrlEncode(serializeState(query), {
+    sorted: true,
+    ignorenull: true,
+    skipIndex: true
+  });
+
+export const hydratePermalink = searchString =>
+  hydrateState(
+    // @ts-ignore
+    parse(searchString, {
+      decode: true,
+      arrayFormat: "bracket",
+      parseBooleans: true
+    })
+  );

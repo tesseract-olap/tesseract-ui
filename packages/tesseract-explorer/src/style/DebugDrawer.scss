@@ -3,6 +3,10 @@
     padding: 1rem;
     overflow: auto;
 
+    .jscall {
+      overflow: auto;
+    }
+
     .#{$ns}-heading {
       margin-top: 1em;
     }

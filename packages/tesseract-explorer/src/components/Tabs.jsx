@@ -1,11 +1,25 @@
 import {Tab, Tabs as Bp3Tabs} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
+import {uiTabChange, UITAB_RAW, UITAB_TABLE, UITAB_TREE} from "../actions/ui";
 
-import {UI_TABS_SELECT} from "../actions/ui";
-import {TAB_RAW, TAB_TABLE, TAB_TREE} from "../reducers/uiReducer";
+/**
+ * @typedef OwnProps
+ * @property {string} [className]
+ */
 
-function Tabs(props) {
+/**
+ * @typedef StateProps
+ * @property {string} currentTab
+ */
+
+/**
+ * @typedef DispatchProps
+ * @property {(tab: string) => any} onTabSelected
+ */
+
+/** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
+const Tabs = function(props) {
   return (
     <Bp3Tabs
       className={props.className}
@@ -14,23 +28,26 @@ function Tabs(props) {
       onChange={props.onTabSelected}
       selectedTabId={props.currentTab}
     >
-      <Tab id={TAB_TABLE} title="Table" />
-      <Tab id={TAB_TREE} title="Tree" />
-      <Tab id={TAB_RAW} title="Raw JSON" />
+      <Tab id={UITAB_TABLE} title="Table" />
+      <Tab id={UITAB_TREE} title="Tree" />
+      <Tab id={UITAB_RAW} title="Raw JSON" />
     </Bp3Tabs>
   );
-}
+};
 
-/** @param {import("../reducers").ExplorerState} state */
+/** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   return {
     currentTab: state.explorerUi.tab
   };
 }
 
+/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, {}>} */
 function mapDispatchToProps(dispatch) {
   return {
-    onTabSelected: payload => dispatch({type: UI_TABS_SELECT, payload})
+    onTabSelected(tab) {
+      dispatch(uiTabChange(tab));
+    }
   };
 }
 

@@ -2,14 +2,15 @@ import {Tag} from "@blueprintjs/core";
 import cn from "classnames";
 import React from "react";
 import {connect} from "react-redux";
-
-import {QUERY_DRILLDOWNS_REMOVE, QUERY_DRILLDOWNS_UPDATE} from "../actions/query";
+import {queryDrilldownRemove, queryDrilldownUpdate} from "../actions/query";
+import {abbreviateFullName} from "../utils/format";
 
 function TagDrilldown(props) {
-  const drillable = props.drillable;
+  const {item} = props;
+  const label = abbreviateFullName(item.drillable);
   return (
     <Tag
-      className={cn("item-drilldown", {hidden: !props.active})}
+      className={cn("item-drilldown", {hidden: !item.active})}
       fill={true}
       icon="layer"
       interactive={true}
@@ -17,7 +18,7 @@ function TagDrilldown(props) {
       onClick={props.toggleHandler}
       onRemove={props.removeHandler}
     >
-      {drillable.fullName}
+      {label}
     </Tag>
   );
 }
@@ -25,13 +26,12 @@ function TagDrilldown(props) {
 function mapDispatchToProps(dispatch, props) {
   return {
     toggleHandler() {
-      const drillable = props.drillable;
-      const payload = {key: drillable.fullName, drillable, active: !props.active};
-      return dispatch({type: QUERY_DRILLDOWNS_UPDATE, payload});
+      const item = props.item;
+      return dispatch(queryDrilldownUpdate({...item, active: !item.active}));
     },
     removeHandler(evt) {
       evt.stopPropagation();
-      return dispatch({type: QUERY_DRILLDOWNS_REMOVE, payload: props.drillable});
+      return dispatch(queryDrilldownRemove(props.item));
     }
   };
 }

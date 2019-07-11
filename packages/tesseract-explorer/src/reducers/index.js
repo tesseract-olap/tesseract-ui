@@ -1,16 +1,16 @@
-import cubeReducer from "./cubeReducer";
-import datasetReducer from "./datasetReducer";
-import loadingReducer from "./loadingReducer";
 import queryReducer from "./queryReducer";
-import starredReducer from "./starredReducer";
+import aggregationReducer from "./aggregationReducer";
 import uiReducer from "./uiReducer";
+import loadingReducer from "./loadingReducer";
+import cubesReducer from "./cubesReducer";
+import starredReducer from "./starredReducer";
 
 // this is the same as redux.combineReducers
 export default (state = {}, action) => ({
-  explorerCubes: cubeReducer(state.explorerCubes, action),
-  explorerDataset: datasetReducer(state.explorerDataset, action),
+  explorerAggregation: aggregationReducer(state.explorerAggregation, action),
+  explorerCubes: cubesReducer(state.explorerCubes, action),
   explorerLoading: loadingReducer(state.explorerLoading, action),
   explorerQuery: queryReducer(state.explorerQuery, action),
   explorerStarred: starredReducer(state.explorerStarred, action),
-  explorerUi: uiReducer(state.explorerUi, action)
+  explorerUi: uiReducer(state.explorerUi, action),
 });

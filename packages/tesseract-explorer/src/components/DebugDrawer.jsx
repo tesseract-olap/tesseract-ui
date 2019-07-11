@@ -10,18 +10,12 @@ import {
 import React from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
-
+import classNames from "classnames";
 import {UI_DEBUG_TOGGLE} from "../actions/ui";
-import {activeItemCounter} from "../utils/array";
-import {buildAggregateUrl, buildJavascriptCall, buildLogicLayerUrl} from "../utils/debug";
+import JsonRenderer from "./JsonRenderer";
 
 function DebugDrawer(props) {
-  const {query} = props;
-
-  const activeDrilldowns = query.drilldowns.reduce(activeItemCounter, 0);
-  const aggregateUrl = activeDrilldowns > 0 && buildAggregateUrl(query);
-  const logicLayerUrl = activeDrilldowns > 0 && buildLogicLayerUrl(query);
-  const javascriptCall = props.cube && buildJavascriptCall(query);
+  const {query, javascriptCall, aggregateUrl, logicLayerUrl} = props;
 
   return (
     <Drawer
@@ -37,7 +31,7 @@ function DebugDrawer(props) {
           <H3>
             Javascript call for <Code>tesseract-client</Code>
           </H3>
-          <pre className={Classes.CODE_BLOCK}>{javascriptCall}</pre>
+          <pre className={classNames(Classes.CODE_BLOCK, "jscall")}>{javascriptCall}</pre>
 
           {aggregateUrl && (
             <React.Fragment>
@@ -80,34 +74,7 @@ function DebugDrawer(props) {
           )}
 
           <H3>Query state</H3>
-          <details>
-            <summary>Drilldowns</summary>
-            <pre>{JSON.stringify(query.drilldowns, null, 2)}</pre>
-          </details>
-          <details>
-            <summary>Measures</summary>
-            <pre>{JSON.stringify(query.measures, null, 2)}</pre>
-          </details>
-          <details>
-            <summary>Cuts</summary>
-            <pre>{JSON.stringify(query.cuts, null, 2)}</pre>
-          </details>
-          <details>
-            <summary>Growth</summary>
-            <pre>{JSON.stringify(query.growth, null, 2)}</pre>
-          </details>
-          <details>
-            <summary>RCA</summary>
-            <pre>{JSON.stringify(query.rca, null, 2)}</pre>
-          </details>
-          <details>
-            <summary>Top N</summary>
-            <pre>{JSON.stringify(query.top, null, 2)}</pre>
-          </details>
-          <details>
-            <summary>Options</summary>
-            <pre>{JSON.stringify({parents: query.parents}, null, 2)}</pre>
-          </details>
+          <JsonRenderer name="query" value={query} defaultExpanded={true} />
         </div>
       </PerfectScrollbar>
     </Drawer>
@@ -117,9 +84,11 @@ function DebugDrawer(props) {
 /** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   return {
-    cube: Boolean(state.explorerCubes.current),
+    aggregateUrl: state.explorerAggregation.aggregateUrl,
     isOpen: state.explorerUi.debugDrawer,
-    query: state.explorerQuery,
+    javascriptCall: state.explorerAggregation.jsCall,
+    logicLayerUrl: state.explorerAggregation.logicLayerUrl,
+    query: state.explorerQuery
   };
 }
 
