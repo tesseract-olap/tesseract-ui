@@ -5,17 +5,20 @@ import CubeSelector from "./SelectorCube";
 import ServerStatus from "./ServerStatus";
 import Tabs from "./Tabs";
 
-function NavigationBar(props) {
+/**
+ * @typedef OwnProps
+ * @property {string} className
+ * @property {string} title
+ */
+
+/** @type {React.FC<OwnProps>} */
+const NavigationBar = function (props) {
   return (
     <Navbar className={props.className}>
       <Navbar.Group align={Alignment.LEFT}>
         <Navbar.Heading>{props.title}</Navbar.Heading>
         <Navbar.Divider />
-        <ServerStatus
-          status={props.serverStatus}
-          url={props.serverUrl}
-          version={props.serverVersion}
-        />
+        <ServerStatus />
         <Navbar.Divider />
         <CubeSelector
           noOptionsText="Loading cubes..."

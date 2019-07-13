@@ -1,7 +1,16 @@
 import React from "react";
+import {connect} from "react-redux"
 import {Intent, AnchorButton} from "@blueprintjs/core";
 
-function ServerStatus(props) {
+/**
+ * @typedef StateProps
+ * @property {string} status
+ * @property {string} url
+ * @property {string} version
+ */
+
+/** @type {React.FC<StateProps>} */
+const ServerStatus = function(props) {
   if (props.status === "ok") {
     return (
       <AnchorButton
@@ -29,4 +38,13 @@ function ServerStatus(props) {
   );
 }
 
-export default ServerStatus;
+/** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
+function mapStateToProps(state) {
+  return {
+    status: state.explorerUi.serverStatus,
+    url: state.explorerUi.serverUrl,
+    version: state.explorerUi.serverVersion
+  }
+}
+
+export default connect(mapStateToProps)(ServerStatus);
