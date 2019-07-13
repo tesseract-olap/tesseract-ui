@@ -45,7 +45,7 @@
     width: 100%;
     overflow: auto;
     display: grid;
-    grid-template-columns: 290px 1fr;
+    grid-template-columns: 300px 1fr;
   }
 
   &-params {
@@ -72,6 +72,7 @@
     outline: 0 none;
 
     @import "./style/PanelDataRaw";
+    @import "./style/PanelDataTable";
     @import "./style/PanelDataTree";
 
     &.initial-view .animated-cube {
