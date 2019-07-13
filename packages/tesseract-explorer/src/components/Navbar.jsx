@@ -1,12 +1,9 @@
-import {Alignment, ButtonGroup, Divider, Navbar} from "@blueprintjs/core";
+import {Alignment, Navbar} from "@blueprintjs/core";
 import React from "react";
-
+import NavButtons from "./NavButtons";
 import CubeSelector from "./SelectorCube";
-import DebugButton from "./DebugButton";
-import Tabs from "./Tabs";
-import ThemeButton from "./ThemeButton";
 import ServerStatus from "./ServerStatus";
-import StarredButton from "./StarredButton";
+import Tabs from "./Tabs";
 
 function NavigationBar(props) {
   return (
@@ -26,12 +23,8 @@ function NavigationBar(props) {
         />
       </Navbar.Group>
       <Navbar.Group align={Alignment.RIGHT}>
-        <ButtonGroup>
-          <ThemeButton />
-          <StarredButton />
-          <DebugButton />
-          <Divider />
-        </ButtonGroup>
+        <NavButtons />
+        <Navbar.Divider />
         <Tabs className="module-tabs" />
       </Navbar.Group>
     </Navbar>
