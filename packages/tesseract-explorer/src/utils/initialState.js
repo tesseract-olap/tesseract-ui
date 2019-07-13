@@ -33,7 +33,8 @@ function initialStateBuilder() {
 
   let newPermalink = window.location.pathname;
   if (isValidQuery(explorerQuery)) {
-    newPermalink += "?" + serializePermalink(explorerQuery);
+    explorerQuery.permalink = serializePermalink(explorerQuery);
+    newPermalink += "?" + explorerQuery.permalink;
   }
   history.replaceState(explorerQuery, "", newPermalink);
 

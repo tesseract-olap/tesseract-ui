@@ -53,3 +53,21 @@ interface ExplorerState {
   explorerStarred: StarredState;
   explorerUi: UiState;
 }
+
+interface GrowthQueryState {
+  level?: string;
+  measure?: string;
+}
+
+interface RcaQueryState {
+  level1?: string;
+  level2?: string;
+  measure?: string;
+}
+
+interface TopQueryState {
+  amount?: number;
+  level?: string;
+  measure?: string;
+  order?: "asc" | "desc";
+}

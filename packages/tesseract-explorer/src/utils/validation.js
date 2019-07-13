@@ -18,13 +18,13 @@ export const isActiveCut = item => isActiveItem(item) && item.members.some(isAct
 /** @param {import("../reducers").QueryItem} item */
 export const isActiveItem = item => item.active;
 
-/** @param {import("../reducers/queryReducer").GrowthQueryState} growth */
+/** @param {import("../reducers").GrowthQueryState} growth */
 export const validGrowthState = growth => growth.level && growth.measure;
 
-/** @param {import("../reducers/queryReducer").RcaQueryState} rca */
+/** @param {import("../reducers").RcaQueryState} rca */
 export const validRcaState = rca => rca.level1 && rca.level2 && rca.measure;
 
-/** @param {import("../reducers/queryReducer").TopQueryState} top */
+/** @param {import("../reducers").TopQueryState} top */
 export const validTopState = top => top.amount > 0 && top.level && top.measure;
 
 /** @type {(sum: number, item: import("../reducers").QueryItem) => number} */

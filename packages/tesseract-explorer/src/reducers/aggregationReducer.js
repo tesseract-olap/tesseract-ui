@@ -7,7 +7,6 @@ import {QUERY_CUBE_UPDATE} from "../actions/query";
  * @property {any[]} data
  * @property {string} jsCall
  * @property {string} logicLayerUrl
- * @property {string} permalink
  * @property {any} options
  */
 
@@ -17,8 +16,7 @@ const initialState = {
   data: [],
   jsCall: "",
   logicLayerUrl: "",
-  options: {},
-  permalink: ""
+  options: {}
 };
 
 /** @type {import("redux").Reducer<AggregationState>} */
@@ -34,8 +32,7 @@ function aggregationReducer(state = initialState, action) {
         data: aggregation.data,
         jsCall: urls.jsCall,
         logicLayerUrl: urls.llUrl,
-        options: aggregation.options,
-        permalink: urls.permalink
+        options: aggregation.options
       };
 
     default:

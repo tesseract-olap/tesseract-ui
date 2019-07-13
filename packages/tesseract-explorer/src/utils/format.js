@@ -93,6 +93,7 @@ export function hydrateState(query) {
     growth: {},
     measures: (query.measures || []).map(item => buildMeasure(item)),
     parents: query.parents,
+    permalink: "",
     rca: {},
     sparse: query.sparse,
     top: {}

@@ -7,6 +7,7 @@ import {
 } from "../actions/query";
 import {findByProperty, replaceFromArray} from "../utils/array";
 
+/** @type {import("redux").Reducer<import("./queryReducer").QueryState>} */
 export default function(state, action) {
   switch (action.type) {
     case QUERY_CUTS_CREATE: {

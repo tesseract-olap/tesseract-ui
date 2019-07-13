@@ -118,12 +118,11 @@ function tesseractClientMiddleware({dispatch, getState}) {
             .then(cube => {
               const query = cube.query;
               applyQueryParams(query, currentQuery);
-              const permalink = serializePermalink(currentQuery);
               const llUrl = query.getLogicLayerUrl();
               const jsCall = buildJavascriptCall(currentQuery);
 
               return client.execQuery(query).then(aggregation => {
-                dispatch(updateAggregation(aggregation, {jsCall, llUrl, permalink}));
+                dispatch(updateAggregation(aggregation, {jsCall, llUrl}));
               });
             })
             .then(
