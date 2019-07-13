@@ -8,7 +8,7 @@ import PanelRawTab from "./RawTabPanel";
 import PanelDataTable from "./TableTabPanel";
 import PanelDataTree from "./TreeTabPanel";
 
-function DisplayedComponent(props) {
+function ResultPanel(props) {
   if (props.error) {
     return (
       <NonIdealState
@@ -23,6 +23,7 @@ function DisplayedComponent(props) {
       />
     );
   }
+
   if (props.loading || props.data.length === 0) {
     return (
       <NonIdealState
@@ -31,6 +32,7 @@ function DisplayedComponent(props) {
       />
     );
   }
+
   switch (props.currentTab) {
     case UITAB_TREE:
       return <PanelDataTree {...props} />;
@@ -52,4 +54,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(DisplayedComponent);
+export default connect(mapStateToProps)(ResultPanel);

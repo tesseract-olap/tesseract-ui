@@ -14,9 +14,8 @@ import {
 } from "../actions/client";
 import {cubesUpdate} from "../actions/cubes";
 import {queryCubeSet, queryCutReplace, queryCutUpdate} from "../actions/query";
-import {uiServerInfo} from "../actions/ui";
+import {setServerInfo} from "../actions/ui";
 import {buildJavascriptCall} from "../utils/debug";
-import {serializePermalink} from "../utils/format";
 import {applyQueryParams, buildCut, buildMeasure, buildMember} from "../utils/query";
 
 /** @type {import("redux").Middleware<{}, import("../reducers").ExplorerState>} */
@@ -38,11 +37,15 @@ function tesseractClientMiddleware({dispatch, getState}) {
             info => {
               info.version = `tesseract-olap v${info.version}`;
               dispatch({type: CLIENT_FETCH_SUCCESS, action, payload: info});
-              dispatch(uiServerInfo(info));
+              dispatch(setServerInfo(info));
               return dispatch({type: CLIENT_INITIALLOAD});
             },
-            error =>
-              dispatch({type: CLIENT_FETCH_FAILURE, action, payload: error.message})
+            error => {
+              dispatch({type: CLIENT_FETCH_FAILURE, action, payload: error.message});
+              dispatch(
+                setServerInfo({status: "error", url: error.config.url, version: ""})
+              );
+            }
           );
         }
 

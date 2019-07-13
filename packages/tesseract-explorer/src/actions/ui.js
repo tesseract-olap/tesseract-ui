@@ -9,8 +9,8 @@ export const UITAB_TABLE = "tab-table";
 export const UITAB_RAW = "tab-raw";
 export const UITAB_TREE = "tab-tree";
 
-export const uiServerInfo = (info) => ({type: UI_SERVER_INFO, payload: info});
-
-export const uiTabChange = (tab) => ({type: UI_TABS_SELECT, payload: tab});
-
-export const toggleStarredDrawer = (payload) => ({type: UI_STARRED_TOGGLE, payload});
+export const setServerInfo = info => ({type: UI_SERVER_INFO, payload: info});
+export const setTabPanel = tab => ({type: UI_TABS_SELECT, payload: tab});
+export const toggleDarkTheme = () => ({type: UI_THEME_TOGGLE});
+export const toggleDebugDrawer = () => ({type: UI_DEBUG_TOGGLE});
+export const toggleStarredDrawer = payload => ({type: UI_STARRED_TOGGLE, payload});

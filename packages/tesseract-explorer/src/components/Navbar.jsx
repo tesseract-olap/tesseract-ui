@@ -34,8 +34,4 @@ const NavigationBar = function (props) {
   );
 }
 
-NavigationBar.defaultProps = {
-  title: process.env.REACT_APP_TITLE || "tesseract-olap"
-};
-
 export default NavigationBar;

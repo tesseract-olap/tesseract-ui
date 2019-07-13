@@ -1,7 +1,7 @@
 import {Tab, Tabs as Bp3Tabs} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import {uiTabChange, UITAB_RAW, UITAB_TABLE, UITAB_TREE} from "../actions/ui";
+import {setTabPanel, UITAB_RAW, UITAB_TABLE, UITAB_TREE} from "../actions/ui";
 
 /**
  * @typedef OwnProps
@@ -46,7 +46,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     onTabSelected(tab) {
-      dispatch(uiTabChange(tab));
+      dispatch(setTabPanel(tab));
     }
   };
 }
