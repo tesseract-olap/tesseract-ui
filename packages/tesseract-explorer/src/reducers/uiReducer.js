@@ -69,7 +69,10 @@ function uiReducer(state = initialState, action) {
       return {...state, tab: action.payload};
 
     case UI_THEME_TOGGLE:
-      return {...state, darkTheme: !state.darkTheme};
+      const darkTheme = !state.darkTheme;
+      typeof window === "object" &&
+        window.localStorage.setItem("darkTheme", darkTheme.toString());
+      return {...state, darkTheme};
 
     default:
       return state;

@@ -22,7 +22,11 @@ function initialStateBuilder() {
     }
 
     explorerUi = {...uiInitialState};
-    if (typeof window.matchMedia === "function") {
+    const savedDarkTheme = window.localStorage.getItem("darkTheme");
+    if (typeof savedDarkTheme === "string") {
+      explorerUi.darkTheme = savedDarkTheme === "true";
+    }
+    else if (typeof window.matchMedia === "function") {
       explorerUi.darkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
   }
