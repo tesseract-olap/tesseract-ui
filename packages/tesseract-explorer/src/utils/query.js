@@ -45,6 +45,10 @@ function QueryItem(name) {
   this.key = Math.random().toString(16).substr(2);
 }
 
+function getKey(item) {
+  return item.key == null ? (item.uri == null ? item.toString() : item.uri) : item.key;
+}
+
 /**
  * @param {Partial<import("../reducers").CutItem>} [props]
  * @returns {import("../reducers").CutItem}
@@ -58,7 +62,7 @@ export function buildCut(item, props) {
     membersLoaded: false,
     ...props,
     drillable: item.drillable || item.fullName,
-    key: item.key == null ? item.uri : item.key,
+    key: getKey(item)
   };
 }
 
@@ -72,7 +76,7 @@ export function buildDrilldown(item, props) {
     active: typeof item.active === "boolean" ? item.active : true,
     ...props,
     drillable: item.drillable || item.fullName,
-    key: item.key == null ? item.uri : item.key,
+    key: getKey(item)
   };
 }
 
@@ -88,7 +92,7 @@ export function buildFilter(item, props) {
     inputtedValue: "inputtedValue" in item ? item.inputtedValue : "0",
     interpretedValue: "interpretedValue" in item ? item.interpretedValue : 0,
     ...props,
-    key: item.key == null ? item.uri : item.key,
+    key: getKey(item),
     measure: item.measure || item.name
   };
 }
@@ -102,7 +106,7 @@ export function buildMeasure(item, props) {
   return {
     active: typeof item.active === "boolean" ? item.active : true,
     ...props,
-    key: item.key == null ? item.uri : item.key,
+    key: getKey(item),
     measure: item.measure || item.name
   };
 }
@@ -116,6 +120,6 @@ export function buildMember(item, props) {
     active: typeof item.active === "boolean" ? item.active : false,
     name: item.name || item,
     ...props,
-    key: item.key == null ? item : item.key,
+    key: getKey(item)
   };
 }
