@@ -44,8 +44,8 @@ const TopItemsInput = function(props) {
           onChange={evt =>
             props.onChange({order: evt.target.value == "asc" ? "asc" : "desc"})}
           options={[
-            {value: "desc", label: "descendent"},
-            {value: "asc", label: "ascendent"}
+            {value: "desc", label: "descending"},
+            {value: "asc", label: "ascending"}
           ]}
           value={order}
         />
