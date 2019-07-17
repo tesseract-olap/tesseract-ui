@@ -1,5 +1,5 @@
 import {NonIdealState} from "@blueprintjs/core";
-import cn from "classnames";
+import classNames from "classnames";
 import React from "react";
 import {connect} from "react-redux";
 import {UITAB_RAW, UITAB_TABLE, UITAB_TREE} from "../actions/ui";
@@ -12,7 +12,7 @@ function ResultPanel(props) {
   if (props.error) {
     return (
       <NonIdealState
-        className={cn("initial-view error", props.className)}
+        className={classNames("initial-view error", props.className)}
         icon="error"
         description={
           <div className="error-description">
@@ -27,7 +27,7 @@ function ResultPanel(props) {
   if (props.loading || props.data.length === 0) {
     return (
       <NonIdealState
-        className={cn("initial-view", props.className)}
+        className={classNames("initial-view", props.className)}
         icon={<AnimatedCube />}
       />
     );

@@ -1,68 +1,49 @@
+import autoprefixer from "autoprefixer";
 import babel from "rollup-plugin-babel";
+import cleanup from "rollup-plugin-cleanup";
 import commonjs from "rollup-plugin-commonjs";
+import json from "rollup-plugin-json";
+import resolve from "rollup-plugin-node-resolve";
+import external from "rollup-plugin-peer-deps-external";
 import postcss from "rollup-plugin-postcss";
 import replace from "rollup-plugin-replace";
-import resolve from "rollup-plugin-node-resolve";
-import autoprefixer from "autoprefixer";
-
-import {
-  dependencies,
-  peerDependencies,
-  module as esModulePath,
-  main as cjsModulePath
-} from "./package.json";
+import pkg from "./package.json";
 
 const environment = process.env.NODE_ENV;
 const inDevelopment = environment === "development";
 const inProduction = environment === "production";
+
 const sourcemap = inDevelopment ? "inline" : false;
 
-const globals = {
-  "@blueprintjs/core": "Blueprint.Core",
-  "@blueprintjs/select": "Blueprint.Select",
-  "@blueprintjs/table": "Blueprint.Table",
-  "@datawheel/tesseract-client": "TesseractOlap",
-  "classnames": "classNames",
-  "form-urlencoded": "formurlencoded",
-  "memoize-one": "memoizeOne",
-  "pluralize": "pluralize",
-  "query-string": "queryString",
-  "react-dom": "ReactDOM",
-  "react-perfect-scrollbar": "reactPerfectScrollbar",
-  "react-redux": "ReactRedux",
-  "react": "React",
-  "redux": "Redux"
-};
-const external = Object.keys(globals);
-
-const dependencyList = Object.keys({...dependencies, ...peerDependencies});
-if (dependencyList.length !== external.length) {
-  throw new Error("Remember to also update the dependencies in the rollup configuration.");
-}
-
+/** @return {import("rollup").RollupOptions} */
 export default commandLineArgs => {
   return {
     input: "src/index.js",
     output: [
       {
-        file: cjsModulePath,
-        format: "umd",
-        name: "TesseractExplorer",
-        globals,
-        esModule: false
+        exports: "named",
+        file: pkg.main,
+        format: "cjs",
+        sourcemap
       },
       {
-        file: esModulePath,
+        exports: "named",
+        file: pkg.module,
         format: "esm",
         sourcemap
       }
     ],
     plugins: [
+      json(),
       replace({
         ENVIRONMENT: JSON.stringify(environment)
       }),
+      external({
+        includeDependencies: true
+      }),
       resolve({
-        extensions: [".mjs", ".js", ".jsx"]
+        extensions: [".mjs", ".js", ".jsx"],
+        preferBuiltins: true
       }),
       postcss({
         extract: "./dist/explorer.css",
@@ -74,11 +55,11 @@ export default commandLineArgs => {
         exclude: "node_modules/**"
       }),
       commonjs({
-        include: ["node_modules/**"],
-        namedExports: {}
-      })
+        include: ["node_modules/**"]
+      }),
+      cleanup()
     ],
-    external,
+    // external: Object.keys({...pkg.dependencies, ...pkg.peerDependencies}),
     watch: {
       include: ["src/**"],
       exclude: "node_modules/**",

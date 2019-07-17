@@ -11,7 +11,7 @@ import {
 import classNames from "classnames";
 import copy from "clipboard-copy";
 import pluralize from "pluralize";
-import React from "react";
+import React, {Fragment} from "react";
 import {connect} from "react-redux";
 import {queryInyect} from "../actions/query";
 import {removeStarredItem, updateStarredItemLabel} from "../actions/starred";
@@ -117,7 +117,7 @@ const StarredItem = function(props) {
               const activeMembers = dd.members.filter(isActiveItem);
               const shownMembers = activeMembers.slice(0, nMembers);
               return (
-                <React.Fragment key={dd.key}>
+                <Fragment key={dd.key}>
                   <dt className={dd.active ? "" : "disabled"}>
                     {`Cut on "${abbreviateFullName(dd.drillable)}"`}
                   </dt>
@@ -136,7 +136,7 @@ const StarredItem = function(props) {
                       true
                     )}`}</dd>
                   )}
-                </React.Fragment>
+                </Fragment>
               );
             })}
             {query.filters.length > 0 && <dt>Cuts:</dt>}

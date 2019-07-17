@@ -7,7 +7,7 @@ import {
   explorerReducer,
   permalinkMiddleware,
   tesseractMiddleware
-} from "../dist/index.esm";
+} from "../dist/explorer.esm";
 
 import "normalize.css/normalize.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";

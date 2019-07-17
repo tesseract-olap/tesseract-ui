@@ -1,7 +1,6 @@
 import {InputGroup, Tree} from "@blueprintjs/core";
-import cn from "classnames";
+import classNames from "classnames";
 import React, {PureComponent} from "react";
-
 import {safeRegExp} from "../utils/format";
 
 const VISIBLE_AMOUNT = 50;
@@ -45,7 +44,7 @@ class TreeTabPanel extends PureComponent {
     }
 
     return (
-      <div className={cn("data-tree", className)}>
+      <div className={classNames("data-tree", className)}>
         <InputGroup
           className="tree-filter"
           leftIcon="search"

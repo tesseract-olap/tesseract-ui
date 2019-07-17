@@ -1,8 +1,8 @@
-import React from "react";
+import {Intent, Toaster as BpToaster} from "@blueprintjs/core";
+import React, {Component} from "react";
 import {connect} from "react-redux";
-import {Toaster as BpToaster, Intent} from "@blueprintjs/core";
 
-class Toaster extends React.Component {
+class Toaster extends Component {
   constructor(props) {
     super(props);
 

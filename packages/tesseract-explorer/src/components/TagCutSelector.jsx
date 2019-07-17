@@ -1,7 +1,7 @@
 import {Tag} from "@blueprintjs/core";
-import React from "react";
+import React, {Component} from "react";
 
-class TagMultiSelector extends React.Component {
+class TagMultiSelector extends Component {
   toggleHandler(item) {
     const key = item.key;
     const newItem = {...item, active: !item.active};

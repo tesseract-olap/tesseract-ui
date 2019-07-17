@@ -1,5 +1,5 @@
 import {Tag} from "@blueprintjs/core";
-import cn from "classnames";
+import classNames from "classnames";
 import React from "react";
 import {connect} from "react-redux";
 import {queryDrilldownRemove, queryDrilldownUpdate} from "../actions/query";
@@ -10,7 +10,7 @@ function TagDrilldown(props) {
   const label = abbreviateFullName(item.drillable);
   return (
     <Tag
-      className={cn("item-drilldown", {hidden: !item.active})}
+      className={classNames("item-drilldown", {hidden: !item.active})}
       fill={true}
       icon="layer"
       interactive={true}

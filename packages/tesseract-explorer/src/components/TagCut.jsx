@@ -9,7 +9,7 @@ import {
   Spinner,
   Tag
 } from "@blueprintjs/core";
-import cn from "classnames";
+import classNames from "classnames";
 import React from "react";
 import {connect} from "react-redux";
 import {fetchMembers} from "../actions/client";
@@ -51,7 +51,7 @@ const TagCut = function(props) {
     );
     target = (
       <Tag
-        className={cn("item-cut error", {hidden: !active})}
+        className={classNames("item-cut error", {hidden: !active})}
         large={true}
         fill={true}
         icon="warning-sign"
@@ -95,7 +95,7 @@ const TagCut = function(props) {
     const activeCount = activeMembers.length;
     target = (
       <Tag
-        className={cn("item-cut", {hidden: !active})}
+        className={classNames("item-cut", {hidden: !active})}
         icon="comparison"
         large={true}
         fill={true}

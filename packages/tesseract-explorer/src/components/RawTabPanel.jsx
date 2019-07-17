@@ -1,5 +1,5 @@
+import classNames from "classnames";
 import React from "react";
-import cn from "classnames";
 
 function RawTabPanel(props) {
   let output = "[]";
@@ -19,7 +19,7 @@ function RawTabPanel(props) {
   }
 
   return (
-    <div className={cn("data-raw", props.className)}>
+    <div className={classNames("data-raw", props.className)}>
       <pre className="bp3-code-block code-block">{output}</pre>
     </div>
   );

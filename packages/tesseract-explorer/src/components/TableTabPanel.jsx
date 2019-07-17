@@ -1,6 +1,6 @@
 import {NonIdealState} from "@blueprintjs/core";
 import {Cell, Column, Table} from "@blueprintjs/table";
-import cn from "classnames";
+import classNames from "classnames";
 import React from "react";
 
 /**
@@ -38,7 +38,7 @@ const TableTabPanel = function(props) {
 
   return (
     <Table
-      className={cn("data-table", props.className)}
+      className={classNames("data-table", props.className)}
       enableColumnResizing={false}
       // enableGhostCells={true}
       // enableMultipleSelection={false}

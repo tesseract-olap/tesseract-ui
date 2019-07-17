@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, {Children, Component} from "react";
 import "../style/JsonRenderer.scss";
 
 /**
@@ -10,7 +9,7 @@ import "../style/JsonRenderer.scss";
  */
 
 /** @type {React.Component<JsonRendererExpandableProps, {isOpen: boolean}>} */
-class JsonRendererExpandable extends React.Component {
+class JsonRendererExpandable extends Component {
   constructor(props) {
     super(props);
     this.state = {isOpen: Boolean(props.defaultExpanded)};
@@ -22,11 +21,14 @@ class JsonRendererExpandable extends React.Component {
     const {isOpen} = this.state;
 
     const type = isArray ? "Array" : "Object";
-    const count = React.Children.count(children);
+    const count = Children.count(children);
 
     return (
       <div className={`json-parent ${isOpen ? "open" : ""}`}>
-        <div className={`json-property ${type.toLowerCase()}`} onClick={this.toggleOpenState}>
+        <div
+          className={`json-property ${type.toLowerCase()}`}
+          onClick={this.toggleOpenState}
+        >
           <span className="json-name">{name}</span>
           <span className="json-value">{`${type}(${count}) ${isOpen ? "-" : "+"}`}</span>
         </div>
@@ -44,7 +46,7 @@ class JsonRendererExpandable extends React.Component {
  */
 
 /** @type {React.FC<JsonRendererProps>} */
-const JsonRenderer = function (props) {
+const JsonRenderer = function(props) {
   const {name, value} = props;
   if (/number|string|boolean/.test(typeof value) || !value) {
     const type = value == null ? `${value}` : typeof value;
@@ -68,6 +70,6 @@ const JsonRenderer = function (props) {
       </JsonRendererExpandable>
     );
   }
-}
+};
 
 export default JsonRenderer;

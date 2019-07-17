@@ -7,10 +7,10 @@ import {
   InputGroup,
   Intent
 } from "@blueprintjs/core";
-import React from "react";
+import classNames from "classnames";
+import React, {Fragment} from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
-import classNames from "classnames";
 import {UI_DEBUG_TOGGLE} from "../actions/ui";
 import JsonRenderer from "./JsonRenderer";
 
@@ -34,7 +34,7 @@ function DebugDrawer(props) {
           <pre className={classNames(Classes.CODE_BLOCK, "jscall")}>{javascriptCall}</pre>
 
           {aggregateUrl && (
-            <React.Fragment>
+            <Fragment>
               <H3>Tesseract Aggregate API URL</H3>
               <InputGroup
                 leftIcon="globe"
@@ -50,11 +50,11 @@ function DebugDrawer(props) {
                 }
                 value={aggregateUrl}
               />
-            </React.Fragment>
+            </Fragment>
           )}
 
           {logicLayerUrl && (
-            <React.Fragment>
+            <Fragment>
               <H3>Tesseract LogicLayer API URL</H3>
               <InputGroup
                 leftIcon="globe"
@@ -70,7 +70,7 @@ function DebugDrawer(props) {
                 }
                 value={logicLayerUrl}
               />
-            </React.Fragment>
+            </Fragment>
           )}
 
           <H3>Query state</H3>

@@ -1,13 +1,13 @@
 import {Button, Classes, InputGroup, Menu, MenuItem} from "@blueprintjs/core";
 import classNames from "classnames";
 import memoizeOne from "memoize-one";
-import React from "react";
+import React, {Component} from "react";
 import {safeRegExp} from "../utils/format";
 import {activeItemCounter} from "../utils/validation";
 
 import "../style/MultiSelector.scss";
 
-class MultiSelector extends React.Component {
+class MultiSelector extends Component {
   state = {
     filter: ""
   };
