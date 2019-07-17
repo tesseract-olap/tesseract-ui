@@ -37,6 +37,9 @@ function initialStateBuilder() {
 
   let newPermalink = window.location.pathname;
   if (isValidQuery(explorerQuery)) {
+    explorerQuery.growth = {...queryInitialState.growth, ...explorerQuery.growth};
+    explorerQuery.rca = {...queryInitialState.rca, ...explorerQuery.rca};
+    explorerQuery.top = {...queryInitialState.top, ...explorerQuery.top};
     explorerQuery.permalink = serializePermalink(explorerQuery);
     newPermalink += "?" + explorerQuery.permalink;
   }
