@@ -166,7 +166,7 @@ const QueryPanel = function(props) {
           fill={true}
           onClick={props.executeQuery}
         />
-        <StarredItemButton className="action-star" disabled={allChecks.length > 0} />
+        <StarredItemButton query={query} className="action-star" disabled={allChecks.length > 0} />
       </ButtonGroup>
     </div>
   );

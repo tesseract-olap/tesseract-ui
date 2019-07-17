@@ -7,7 +7,7 @@ import {
   UI_STARRED_TOGGLE,
   UITAB_TABLE
 } from "../actions/ui";
-import { STARRED_CREATE } from "../actions/starred";
+import {STARRED_CREATE} from "../actions/starred";
 
 /**
  * @typedef UiState

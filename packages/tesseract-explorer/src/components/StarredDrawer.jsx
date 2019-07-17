@@ -1,16 +1,15 @@
-import {Button, ButtonGroup, Classes, Divider, Drawer, Intent} from "@blueprintjs/core";
-import classNames from "classnames";
+import {Drawer} from "@blueprintjs/core";
 import React from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
-import {queryInyect} from "../actions/query";
-import {removeStarredItem} from "../actions/starred";
 import {toggleStarredDrawer} from "../actions/ui";
+import StarredItem from "./StarredItem";
+
 import "../style/starredDrawer.scss";
-import JsonRenderer from "./JsonRenderer";
 
 /**
  * @typedef StateProps
+ * @property {string} currentPermalink
  * @property {boolean} isOpen
  * @property {import("../reducers").StarredItem[]} items
  */
@@ -18,8 +17,6 @@ import JsonRenderer from "./JsonRenderer";
 /**
  * @typedef DispatchProps
  * @property {() => any} closeDrawerHandler
- * @property {(query: import("../reducers/queryReducer").QueryState) => any} loadStarredQuery
- * @property {(key: string) => any} removeStarredItem
  */
 
 /** @type {React.FC<StateProps & DispatchProps>} */
@@ -36,29 +33,11 @@ const StarredDrawer = function(props) {
       <PerfectScrollbar>
         <div className="starred-drawer-content">
           {props.items.map(item => (
-            <div
+            <StarredItem
+              active={props.currentPermalink === item.key}
+              item={item}
               key={item.key}
-              className={classNames("starred-drawer-item", Classes.CARD)}
-            >
-              <ButtonGroup className="item-header" fill={true} minimal={true}>
-                <span className={Classes.FILL}>{item.date}</span>
-                <Button
-                  icon="import"
-                  text="Load"
-                  onClick={props.loadStarredQuery.bind(null, item.query)}
-                />
-                <Divider />
-                <Button
-                  icon="trash"
-                  text="Remove"
-                  intent={Intent.DANGER}
-                  onClick={props.removeStarredItem.bind(null, item.key)}
-                />
-              </ButtonGroup>
-              {Object.keys(item.query).map(key => (
-                <JsonRenderer key={key} name={key} value={item.query[key]} />
-              ))}
-            </div>
+            />
           ))}
         </div>
       </PerfectScrollbar>
@@ -69,6 +48,7 @@ const StarredDrawer = function(props) {
 /** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   return {
+    currentPermalink: state.explorerQuery.permalink,
     isOpen: state.explorerUi.starredDrawer,
     items: state.explorerStarred
   };
@@ -79,12 +59,6 @@ function mapDispatchToProps(dispatch) {
   return {
     closeDrawerHandler() {
       return dispatch(toggleStarredDrawer(false));
-    },
-    loadStarredQuery(query) {
-      return dispatch(queryInyect(query));
-    },
-    removeStarredItem(key) {
-      return dispatch(removeStarredItem(key));
     }
   };
 }

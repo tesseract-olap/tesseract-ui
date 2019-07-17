@@ -1,11 +1,12 @@
-import {STARRED_CREATE, STARRED_REMOVE} from "../actions/starred";
+import {STARRED_CREATE, STARRED_REMOVE, STARRED_UPDATE} from "../actions/starred";
+import {replaceFromArray, findByProperty} from "../utils/array";
 
 /**
  * @typedef {import(".").StarredItem[]} StarredState
  */
 
 /** @type {StarredState} */
-const initialState = JSON.parse(localStorage.getItem("starred") || "[]");
+export const initialState = [];
 
 /** @type {import("redux").Reducer<StarredState>} */
 function starredReducer(state = initialState, action) {
@@ -13,15 +14,21 @@ function starredReducer(state = initialState, action) {
     case STARRED_CREATE: {
       const item = action.payload;
       const newState = [].concat(item, state);
-      localStorage.setItem("starred", JSON.stringify(newState));
+      typeof window === "object" &&
+        window.localStorage.setItem("starred", JSON.stringify(newState));
       return newState;
     }
 
     case STARRED_REMOVE: {
       const key = action.payload;
       const newState = state.filter(item => item.key !== key);
-      localStorage.setItem("starred", JSON.stringify(newState));
+      typeof window === "object" &&
+        window.localStorage.setItem("starred", JSON.stringify(newState));
       return newState;
+    }
+
+    case STARRED_UPDATE: {
+      return replaceFromArray(state, action.payload, findByProperty("key"));
     }
 
     default:

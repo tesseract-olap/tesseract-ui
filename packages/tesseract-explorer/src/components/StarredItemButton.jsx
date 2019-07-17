@@ -2,31 +2,28 @@ import {Button, Intent, Tooltip} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import {createStarredItem, removeStarredItem} from "../actions/starred";
-import {serializePermalink} from "../utils/format";
-import {isValidQuery} from "../utils/validation";
 
 /**
  * @typedef OwnProps
  * @property {string} className
  * @property {boolean} disabled
- */
-
-/**
- * @typedef StateProps
- * @property {string} hash
- * @property {boolean} isStarred
  * @property {import("../reducers/queryReducer").QueryState} query
  */
 
 /**
+ * @typedef StateProps
+ * @property {boolean} isStarred
+ */
+
+/**
  * @typedef DispatchProps
- * @property {(query: import("../reducers/queryReducer").QueryState, hash: string) => any} starQuery
- * @property {(query: import("../reducers/queryReducer").QueryState, hash: string) => any} unstarQuery
+ * @property {() => any} starQuery
+ * @property {() => any} unstarQuery
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const StarredItemButton = function(props) {
-  const {query, hash, isStarred, disabled} = props;
+  const {isStarred, disabled} = props;
 
   const invalidMsg = "This query can't be saved because is invalid";
 
@@ -37,7 +34,7 @@ const StarredItemButton = function(props) {
         disabled={disabled}
         icon="star"
         intent={Intent.WARNING}
-        onClick={props.unstarQuery.bind(null, query, hash)}
+        onClick={props.unstarQuery}
       />
     </Tooltip>
   ) : (
@@ -47,7 +44,7 @@ const StarredItemButton = function(props) {
         disabled={disabled}
         icon="star-empty"
         intent={Intent.NONE}
-        onClick={props.starQuery.bind(null, query, hash)}
+        onClick={props.starQuery}
       />
     </Tooltip>
   );
@@ -55,23 +52,20 @@ const StarredItemButton = function(props) {
 
 /** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
-  const query = state.explorerQuery;
-  const permalink = serializePermalink(query);
+  const {permalink} = state.explorerQuery;
   return {
-    hash: permalink,
-    isStarred: state.explorerStarred.some(item => item.key == permalink),
-    query
+    isStarred: state.explorerStarred.some(item => item.key == permalink)
   };
 }
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, {}>} */
-function mapDispatchToProps(dispatch) {
+/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+function mapDispatchToProps(dispatch, props) {
   return {
-    starQuery(query, hash) {
-      return dispatch(createStarredItem(query, hash));
+    starQuery() {
+      return dispatch(createStarredItem(props.query));
     },
-    unstarQuery(_, hash) {
-      return dispatch(removeStarredItem(hash));
+    unstarQuery() {
+      return dispatch(removeStarredItem(props.query.permalink));
     }
   };
 }
