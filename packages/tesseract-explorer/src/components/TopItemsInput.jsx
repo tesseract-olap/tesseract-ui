@@ -5,11 +5,11 @@ import MeasureSelector from "./SelectorMeasure";
 
 /**
  * @typedef OwnProps
- * @property {(value: Partial<import("../reducers/queryReducer").TopQueryState>) => any} onChange
+ * @property {(value: import("../reducers").TopQueryState) => any} onChange
  */
 
 /**
- * @type {React.FunctionComponent<import("../reducers/queryReducer").TopQueryState & OwnProps>}
+ * @type {React.FC<import("../reducers").TopQueryState & OwnProps>}
  */
 const TopItemsInput = function(props) {
   const {amount, order, level, measure} = props;

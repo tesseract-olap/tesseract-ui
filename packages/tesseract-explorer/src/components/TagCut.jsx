@@ -143,7 +143,6 @@ function mapDispatchToProps(dispatch, props) {
     },
     removeHandler(evt) {
       evt.stopPropagation();
-      debugger;
       return dispatch(queryCutRemove(props.item));
     }
   };

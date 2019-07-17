@@ -1,6 +1,7 @@
 import {Menu, MenuItem} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
+import {abbreviateFullName} from "../utils/format";
 
 /**
  * @typedef OwnProps
@@ -17,23 +18,23 @@ import {connect} from "react-redux";
 const DimensionsMenu = function(props) {
   const {isItemSelected, onItemSelected} = props;
 
-  /** @param {import("../reducers/cubesReducer").JSONLevel} level */
-  const levelRenderer = level => (
-    <MenuItem
-      disabled={isItemSelected(level)}
-      icon="layer"
-      key={level.name}
-      onClick={() => onItemSelected(level)}
-      text={level.name}
-    />
-  );
-
   return (
     <Menu>
       {props.dimensions.map(dim => {
-        let menuItems;
-
+        let menuItems, nameFormatter;
         const hierarchies = dim.hierarchies;
+
+        /** @param {import("../reducers/cubesReducer").JSONLevel} level */
+        const levelRenderer = (level, index, levels) => (
+          <MenuItem
+            disabled={isItemSelected(level)}
+            icon="layer"
+            key={level.fullName}
+            onClick={() => onItemSelected(level)}
+            text={levels.length === 1 ? abbreviateFullName(level.fullName) : level.name}
+          />
+        );
+
         if (hierarchies.length === 1 && hierarchies[0].name === dim.name) {
           menuItems = hierarchies[0].levels.map(levelRenderer);
         }

@@ -1,7 +1,7 @@
-import {Button, ButtonGroup, Divider} from "@blueprintjs/core";
+import {Button, ButtonGroup} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import {toggleStarredDrawer, UI_DEBUG_TOGGLE, UI_THEME_TOGGLE} from "../actions/ui";
+import {toggleDarkTheme, toggleDebugDrawer, toggleStarredDrawer} from "../actions/ui";
 
 /**
  * @typedef StateProps
@@ -61,5 +61,3 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavbarButtons);
-
-

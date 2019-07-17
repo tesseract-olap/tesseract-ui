@@ -75,7 +75,7 @@ export default function(state, action) {
           amount: "amount" in top ? top.amount : state.top.amount,
           level: top.level || state.top.level,
           measure: top.measure || state.top.measure,
-          order: top.order || state.top.order
+          order: top.order || state.top.order || "desc"
         }
       };
     }

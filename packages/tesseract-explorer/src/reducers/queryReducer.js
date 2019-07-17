@@ -44,6 +44,8 @@ function queryReducer(state = initialState, action) {
 
   if (action.type === QUERY_INYECT) {
     state = {...initialState, ...action.payload};
+    // create a validator/normalizator
+    state.top.order = state.top.order || "desc";
   }
   else if (action.type === QUERY_CUBE_UPDATE) {
     const {cube, measures} = action.payload;

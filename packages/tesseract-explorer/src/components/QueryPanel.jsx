@@ -1,4 +1,4 @@
-import {Button, Checkbox, Intent, ButtonGroup} from "@blueprintjs/core";
+import {Button, ButtonGroup, Checkbox, Intent} from "@blueprintjs/core";
 import memoizeOne from "memoize-one";
 import React from "react";
 import {connect} from "react-redux";
@@ -15,7 +15,7 @@ import {
   queryTopClear,
   queryTopUpdate
 } from "../actions/query";
-import {getTopItemsSummary} from "../utils/format";
+import {summaryTopItems, summaryRca, summaryGrowth} from "../utils/format";
 import {buildCut, buildDrilldown} from "../utils/query";
 import {
   activeItemCounter,
@@ -55,12 +55,12 @@ import TopItemsInput from "./TopItemsInput";
  * @property {() => any} executeQuery
  * @property {() => any} toggleParentsHandler
  * @property {() => any} toggleSparseHandler
- * @property {(values: Partial<import("../reducers/queryReducer").GrowthQueryState>) => any} updateGrowthHandler
- * @property {(values: Partial<import("../reducers/queryReducer").RcaQueryState>) => any} updateRcaHandler
- * @property {(values: Partial<import("../reducers/queryReducer").TopQueryState>) => any} updateTopHandler
+ * @property {(values: import("../reducers").GrowthQueryState) => any} updateGrowthHandler
+ * @property {(values: import("../reducers").RcaQueryState) => any} updateRcaHandler
+ * @property {(values: import("../reducers").TopQueryState) => any} updateTopHandler
  */
 
-/** @type {React.FunctionComponent<OwnProps & StateProps & DispatchProps>} */
+/** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const QueryPanel = function(props) {
   const {query} = props;
 
@@ -115,7 +115,7 @@ const QueryPanel = function(props) {
       {props.hasTimeDim && (
         <QueryGroup
           className="area-growth"
-          label="Calculate growth"
+          label={summaryGrowth(query.growth) || "Calculate growth"}
           onClear={props.clearGrowthHandler}
           open={false}
         >
@@ -125,7 +125,7 @@ const QueryPanel = function(props) {
 
       <QueryGroup
         className="area-rca"
-        label="Calculate RCA"
+        label={summaryRca(query.rca) || "Calculate RCA"}
         onClear={props.clearRcaHandler}
         open={false}
       >
@@ -134,7 +134,7 @@ const QueryPanel = function(props) {
 
       <QueryGroup
         className="area-top"
-        label={getTopItemsSummary(query.top) || "Calculate top items"}
+        label={summaryTopItems(query.top) || "Calculate top items"}
         onClear={props.clearTopHandler}
         open={false}
       >

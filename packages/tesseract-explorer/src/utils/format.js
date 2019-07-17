@@ -10,24 +10,47 @@ import {
   validTopState
 } from "./validation";
 
-export function abbreviateFullName(fullName) {
+export function splitFullName(fullName) {
+  return fullName
+    ? `${fullName}`.split(".").map(token => token.replace(/^\[|\]$/g, ""))
+    : undefined;
+}
+
+export function abbreviateFullName(fullName, joint = "/") {
   if (!fullName) return;
 
-  const nameParts = `${fullName}`.split(".");
+  const nameParts = splitFullName(fullName);
   let token = nameParts.shift();
   while (nameParts.length > 0 && nameParts[0] === token) {
     token = nameParts.shift();
   }
   nameParts.unshift(token);
-  return nameParts.join("/");
+  return nameParts.join(joint);
 }
 
-/** @param {import("../reducers/queryReducer").TopQueryState} top */
-export function getTopItemsSummary(top) {
-  if (!validTopState(top)) return;
+/** @param {import("../reducers").GrowthQueryState} growth */
+export function summaryGrowth(growth) {
+  if (!validGrowthState(growth)) return "";
+  const measureName = growth.measure;
+  const levelName = abbreviateFullName(growth.level);
+  return `Growth of ${measureName} by ${levelName}`;
+}
+
+/** @param {import("../reducers").RcaQueryState} rca */
+export function summaryRca(rca) {
+  if (!validRcaState(rca)) return "";
+  const measureName = rca.measure;
+  const level1Name = abbreviateFullName(rca.level1);
+  const level2Name = abbreviateFullName(rca.level2);
+  return `RCA for ${level1Name} on ${measureName} by ${level2Name}`;
+}
+
+/** @param {import("../reducers").TopQueryState} top */
+export function summaryTopItems(top) {
+  if (!validTopState(top)) return "";
   const measureName = pluralize(top.measure, top.amount);
   const levelName = abbreviateFullName(top.level);
-  return `Showing the top ${top.amount} ${measureName} by ${levelName} (${top.order})`;
+  return `Top ${top.amount} ${measureName} by ${levelName} (${top.order})`;
 }
 
 export function safeRegExp(pattern, flags) {

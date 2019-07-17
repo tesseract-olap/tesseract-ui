@@ -14,10 +14,11 @@ const ServerStatus = function(props) {
   if (props.status === "ok") {
     return (
       <AnchorButton
+        href={props.url}
+        icon="database"
         intent={Intent.SUCCESS}
         minimal={true}
         tabIndex={null}
-        href={props.url}
         target="_blank"
         text={props.version}
       />
