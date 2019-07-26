@@ -24,7 +24,8 @@ function ResultPanel(props) {
     );
   }
 
-  if (props.loading || props.data.length === 0) {
+  const {data} = props.aggregation;
+  if (props.loading || data.length === 0) {
     return (
       <NonIdealState
         className={classNames("initial-view", props.className)}
@@ -35,22 +36,22 @@ function ResultPanel(props) {
 
   switch (props.currentTab) {
     case UITAB_TREE:
-      return <PanelDataTree {...props} />;
+      return <PanelDataTree {...props.aggregation} />;
     case UITAB_RAW:
-      return <PanelRawTab {...props} />;
+      return <PanelRawTab {...props.aggregation} />;
     case UITAB_TABLE:
     default:
-      return <PanelDataTable {...props} />;
+      return <PanelDataTable {...props.aggregation} />;
   }
 }
 
 /** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   return {
+    aggregation: state.explorerAggregation,
+    currentTab: state.explorerUi.tab,
     error: state.explorerLoading.error,
     loading: state.explorerLoading.loading,
-    currentTab: state.explorerUi.tab,
-    data: state.explorerAggregation.data
   };
 }
 

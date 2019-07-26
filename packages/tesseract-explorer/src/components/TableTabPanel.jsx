@@ -1,60 +1,116 @@
-import {NonIdealState} from "@blueprintjs/core";
-import {Cell, Column, Table} from "@blueprintjs/table";
+import {NonIdealState, Menu, MenuItem} from "@blueprintjs/core";
+import {Cell, Column, Table, ColumnHeaderCell} from "@blueprintjs/table";
 import classNames from "classnames";
-import React from "react";
+import memoizeOne from "memoize-one";
+import React, {PureComponent} from "react";
+import {sortByKey} from "../utils/array";
 
 /**
  * @typedef OwnProps
- * @property {(row: number, col: number) => any} cellClipboardData
  * @property {string} className
- * @property {any[]} data
  */
 
-/** @type {React.FC<OwnProps>} */
-const TableTabPanel = function(props) {
-  const {data} = props;
+/**
+ * @typedef OwnState
+ * @property {string} sortKey
+ * @property {boolean} sortDescending
+ */
 
-  if (data.length === 0) {
+/**
+ * @type {PureComponent<import("../reducers/aggregationReducer").AggregationState & OwnProps>}
+ */
+class TableTabPanel extends PureComponent {
+  state = {
+    sortKey: "",
+    sortDescending: true
+  };
+
+  cellClipboardData(data, keys, rowIndex, columnIndex) {
+    return data[rowIndex][keys[columnIndex]];
+  }
+
+  dataSorter = memoizeOne(sortByKey);
+
+  setSortingHandler(sortKey, sortDescending) {
+    this.setState({sortKey, sortDescending});
+  }
+
+  render() {
+    const {data} = this.props;
+    const {sortDescending, sortKey} = this.state;
+
+    if (data.length === 0) {
+      return (
+        <NonIdealState
+          icon="issue"
+          title="Empty dataset"
+          description="The query didn't return elements. Try again with different parameters."
+        />
+      );
+    }
+
+    const sortedData = this.dataSorter(data, sortKey, sortDescending);
+
+    const columnKeys = Object.keys(sortedData[0]);
+    const columns = columnKeys.map((columnKey, columnIndex) => {
+      const cellRenderer = rowIndex => (
+        <Cell columnIndex={columnIndex} rowIndex={rowIndex}>
+          {sortedData[rowIndex][columnKey]}
+        </Cell>
+      );
+      const menuRenderer = this.renderColumnMenu.bind(this, columnKey);
+      const columnHeaderCellRenderer = () => (
+        <ColumnHeaderCell name={columnKey} menuRenderer={menuRenderer} />
+      );
+      return (
+        <Column
+          cellRenderer={cellRenderer}
+          columnHeaderCellRenderer={columnHeaderCellRenderer}
+          key={columnKey}
+          id={columnKey}
+          name={columnKey}
+        />
+      );
+    });
+
+    const cellClipboardData = this.cellClipboardData.bind(null, sortedData, columnKeys);
+
     return (
-      <NonIdealState
-        icon="issue"
-        title="Empty dataset"
-        description="The query didn't return elements. Try again with different parameters."
-      />
+      <Table
+        className={classNames("data-table", this.props.className)}
+        enableColumnResizing={false}
+        // enableGhostCells={true}
+        // enableMultipleSelection={false}
+        enableRowResizing={false}
+        getCellClipboardData={cellClipboardData}
+        numRows={sortedData.length}
+        rowHeights={sortedData.map(() => 22)}
+      >
+        {columns}
+      </Table>
     );
   }
 
-  const columnKeys = Object.keys(data[0]);
-  const columns = columnKeys.map((key, columnIndex) => {
-    const cellRenderer = rowIndex => (
-      <Cell columnIndex={columnIndex} rowIndex={rowIndex}>
-        {data[rowIndex][key]}
-      </Cell>
+  renderColumnMenu(columnKey) {
+    return (
+      <Menu>
+        <MenuItem
+          icon="sort-asc"
+          onClick={this.setSortingHandler.bind(this, columnKey, false)}
+          text="Sort Asc"
+        />
+        <MenuItem
+          icon="sort-desc"
+          onClick={this.setSortingHandler.bind(this, columnKey, true)}
+          text="Sort Desc"
+        />
+      </Menu>
     );
-    return <Column key={key} id={key} name={key} cellRenderer={cellRenderer} />;
-  });
-
-  const cellClipboardData = props.cellClipboardData.bind(null, data, columnKeys);
-
-  return (
-    <Table
-      className={classNames("data-table", props.className)}
-      enableColumnResizing={false}
-      // enableGhostCells={true}
-      // enableMultipleSelection={false}
-      enableRowResizing={false}
-      getCellClipboardData={cellClipboardData}
-      numRows={data.length}
-      rowHeights={data.map(() => 22)}
-    >
-      {columns}
-    </Table>
-  );
-};
+  }
+}
 
 TableTabPanel.defaultProps = {
-  cellClipboardData: (data, keys, rowIndex, columnIndex) =>
-    data[rowIndex][keys[columnIndex]]
+  data: []
 };
 
 export default TableTabPanel;

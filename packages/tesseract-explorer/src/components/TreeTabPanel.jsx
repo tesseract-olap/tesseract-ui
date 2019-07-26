@@ -5,6 +5,14 @@ import {safeRegExp} from "../utils/format";
 
 const VISIBLE_AMOUNT = 50;
 
+/**
+ * @typedef OwnState
+ * @property {RegExp} filterExpression
+ */
+
+/**
+ * @augments {PureComponent<import("../reducers/aggregationReducer").AggregationState & {className?: string}, OwnState>}
+ */
 class TreeTabPanel extends PureComponent {
   state = {
     filterExpression: /./i
@@ -15,12 +23,6 @@ class TreeTabPanel extends PureComponent {
     const filterExpression = pattern ? safeRegExp(pattern, "i") : /./i;
     this.setState({filterExpression});
   };
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.data !== this.props.data) {
-      // this.setState()
-    }
-  }
 
   render() {
     const {className, data} = this.props;
