@@ -10,6 +10,7 @@
     "dist/explorer.css"
   ],
   "scripts": {
+    "dev": "multiview [npm run dev:watch] [npm run dev:serve] -x 2000",
     "dev:serve": "poi --serve ./dev/index.js",
     "dev:watch": "cross-env NODE_ENV=development BABEL_ENV=development rollup --config rollup.config.js --watch",
     "build": "cross-env NODE_ENV=production BABEL_ENV=production rollup --config rollup.config.js"
@@ -47,6 +48,7 @@
     "autoprefixer": "^9.6.0",
     "cross-env": "^5.2.0",
     "eslint": "^5.16.0",
+    "multiview": "^2.5.3",
     "poi": "^12.6.10",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

@@ -4,7 +4,6 @@ import cleanup from "rollup-plugin-cleanup";
 import commonjs from "rollup-plugin-commonjs";
 import json from "rollup-plugin-json";
 import resolve from "rollup-plugin-node-resolve";
-import external from "rollup-plugin-peer-deps-external";
 import postcss from "rollup-plugin-postcss";
 import replace from "rollup-plugin-replace";
 import pkg from "./package.json";
@@ -38,9 +37,6 @@ export default commandLineArgs => {
       replace({
         ENVIRONMENT: JSON.stringify(environment)
       }),
-      external({
-        includeDependencies: true
-      }),
       resolve({
         extensions: [".mjs", ".js", ".jsx"],
         preferBuiltins: true
@@ -59,7 +55,7 @@ export default commandLineArgs => {
       }),
       cleanup()
     ],
-    // external: Object.keys({...pkg.dependencies, ...pkg.peerDependencies}),
+    external: Object.keys({...pkg.dependencies, ...pkg.peerDependencies}),
     watch: {
       include: ["src/**"],
       exclude: "node_modules/**",
