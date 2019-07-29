@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-const chalk = require("chalk");
 const cli = require("cac")("create-tesseract-ui");
 const spawn = require("cross-spawn");
+const {green, grey} = require("kleur");
 const path = require("path");
 const prompts = require("prompts");
 
-const package = require("../package.json");
+const pkg = require("../package.json");
 const create = require("./create");
 const utils = require("./utils");
 const validate = require("./validate");
@@ -24,7 +24,7 @@ cli
     console.log(`Creating a new tesseract-ui instance`);
 
     const targetPath = path.resolve(targetFolder);
-    console.log(chalk.grey("Target directory: "), chalk.green(targetPath));
+    console.log(grey("Target directory: "), green(targetPath));
     console.log(LINE);
 
     utils.makeDirectory(targetPath);
@@ -76,11 +76,14 @@ cli
     spawn.sync("npx", ["poi", "--prod", "--no-clear-console"], spawnSyncOptions);
 
     console.log(LINE);
-    console.log(`The tesseract-ui boilerplate was successfully built on ${chalk.green(path.join(targetPath, "dist"))}.`);
+    console.log(
+      `The tesseract-ui boilerplate was successfully built on `,
+      green(path.join(targetPath, "dist"))
+    );
     console.log(`We suggest you to point the virtual server root folder to this path.`);
   });
 
 cli.help();
-cli.version(package.version);
+cli.version(pkg.version);
 
 cli.parse();

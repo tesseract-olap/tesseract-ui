@@ -1,11 +1,11 @@
 "use strict";
 
-const chalk = require("chalk");
+const {red} = require("kleur");
 const fs = require("fs");
 const path = require("path");
 
 function printError(message) {
-  console.error(`${chalk.red("Error:")} ${message}`);
+  console.error(`${red("Error:")} ${message}`);
 }
 
 function makeDirectory(targetPath) {
