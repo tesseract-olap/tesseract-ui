@@ -27,10 +27,10 @@ const enhancers = composeEnhancers(
 const initialState = explorerInitialState();
 const store = createStore(explorerReducer, initialState, enhancers);
 
-function App() {
+function App(props) {
   return (
     <Provider store={store}>
-      <Explorer src={process.env.APP_TESSERACT_URL} title={process.env.APP_TITLE} />
+      <Explorer src={props.serverUrl} title={props.appTitle} />
     </Provider>
   );
 }

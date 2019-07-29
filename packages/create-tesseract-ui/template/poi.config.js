@@ -1,18 +1,32 @@
+const inProduction = process.env.NODE_ENV == "production";
+
 var title = `$TEMPLATE_TITLE`;
 var serverUrl = `$TEMPLATE_SERVER`;
 var publicUrl = `$TEMPLATE_PUBLIC`;
 
 // Reference to this config available at https://poi.js.org/config.html
+/** @type {import("poi").Config} */
 module.exports = {
   entry: "./index.js",
   output: {
     html: {title},
     minimize: false,
     publicUrl,
-    sourceMap: true,
+    sourceMap: true
   },
   envs: {
-    APP_TESSERACT_URL: serverUrl,
-    APP_TITLE: title
+    __SERVER_URL__: inProduction ? serverUrl : "/tesseract/",
+    __APP_TITLE__: title
+  },
+  devServer: {
+    proxy: {
+      "/tesseract/": {
+        target: serverUrl,
+        changeOrigin: true,
+        pathRewrite: {
+          "^/tesseract/": "/"
+        }
+      }
+    }
   }
 };

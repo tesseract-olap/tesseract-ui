@@ -29,30 +29,52 @@ cli
 
     utils.makeDirectory(targetPath);
 
+    const promptOptions = {onCancel: () => process.exit(0)};
+
+    const environment = await prompts(
+      {
+        name: "type",
+        type: "select",
+        message: "Where will this instance run?",
+        choices: [
+          {title: "A local computer", value: "local"},
+          {title: "A production server", value: "production"}
+        ]
+      },
+      promptOptions
+    );
+
+    /** @type {prompts.PromptObject[]} */
     const questions = [
       {
         type: options.title ? false : "text",
         name: "title",
-        message: "Enter the title for the UI",
+        message: "Enter the title for the web application",
         initial: targetFolder
       },
       {
         type: options.server ? false : "text",
         name: "server",
-        message: "Enter the URL for the tesseract-server",
-        validate: validate.url
+        message: "Enter the full URL for the tesseract-server",
+        validate: validate.absoluteUrl
       },
       {
-        type: options.public ? false : "text",
+        type: environment.type === "production" && !options.public ? "text" : null,
         name: "public",
-        message: "Enter the full URL where this app will be available",
-        initial: (_, values) =>
-          (values.server || options.server).replace(/\/tesseract\/$/, "/ui/"),
+        message: "Enter the URL where this app will be available",
+        initial: (_, values) => {
+          const value = `${values.server || options.server}`;
+          return value.replace(/\/tesseract\/$/, "/ui/");
+        },
         validate: validate.url
       }
     ];
-    const promptOptions = {onCancel: () => process.exit(0)};
     const responses = await prompts(questions, promptOptions);
+
+    if (environment.type === "local") {
+      options.public = "/";
+    }
+
     Object.assign(options, responses);
 
     console.log(LINE);
