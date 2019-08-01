@@ -16,11 +16,11 @@ class MultiSelector extends Component {
   updateFilter = evt => this.setState({filter: evt.target.value});
 
   getSelected = memoizeOne((items, filter) => {
-    const tester = safeRegExp(filter);
+    const tester = safeRegExp(filter, "i");
     return items.filter(item => item.active && tester.test(item.name));
   });
   getUnselected = memoizeOne((items, filter) => {
-    const tester = safeRegExp(filter);
+    const tester = safeRegExp(filter, "i");
     return items.filter(item => !item.active && tester.test(item.name));
   });
 
