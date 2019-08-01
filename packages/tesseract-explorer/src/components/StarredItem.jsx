@@ -50,7 +50,13 @@ const StarredItem = function(props) {
   const top = summaryTopItems(query.top);
 
   return (
-    <article className={classNames("starred-drawer-item", Classes.CARD)}>
+    <article
+      className={classNames("starred-drawer-item", {
+        [Classes.CARD]: true,
+        [Classes.ELEVATION_2]: props.active
+      })}
+      tabIndex={0}
+    >
       <header className="item-header">
         <div className="header-title">
           <EditableText
@@ -94,22 +100,20 @@ const StarredItem = function(props) {
         </div>
       </div>
       <div className="item-content">
-        <div>
-          <dl>
-            <dt>Measures:</dt>
-            {query.measures.filter(isActiveItem).map(ms => (
-              <dd key={ms.key} className={ms.active ? "" : "disabled"}>
-                {ms.measure}
-              </dd>
-            ))}
-            <dt>Drilldowns:</dt>
-            {query.drilldowns.map(dd => (
-              <dd key={dd.key} className={dd.active ? "" : "disabled"}>
-                {abbreviateFullName(dd.drillable)}
-              </dd>
-            ))}
-          </dl>
-        </div>
+        <dl>
+          <dt>Measures:</dt>
+          {query.measures.filter(isActiveItem).map(ms => (
+            <dd key={ms.key} className={ms.active ? "" : "disabled"}>
+              {ms.measure}
+            </dd>
+          ))}
+          <dt>Drilldowns:</dt>
+          {query.drilldowns.map(dd => (
+            <dd key={dd.key} className={dd.active ? "" : "disabled"}>
+              {abbreviateFullName(dd.drillable)}
+            </dd>
+          ))}
+        </dl>
         {ctCount + fiCount > 0 && (
           <dl>
             {query.cuts.map(dd => {
