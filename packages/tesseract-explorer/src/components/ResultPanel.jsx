@@ -36,12 +36,12 @@ function ResultPanel(props) {
 
   switch (props.currentTab) {
     case UITAB_TREE:
-      return <PanelDataTree {...props.aggregation} />;
+      return <PanelDataTree className={props.className} {...props.aggregation} />;
     case UITAB_RAW:
-      return <PanelRawTab {...props.aggregation} />;
+      return <PanelRawTab className={props.className} {...props.aggregation} />;
     case UITAB_TABLE:
     default:
-      return <PanelDataTable {...props.aggregation} />;
+      return <PanelDataTable className={props.className} {...props.aggregation} />;
   }
 }
 
@@ -51,7 +51,7 @@ function mapStateToProps(state) {
     aggregation: state.explorerAggregation,
     currentTab: state.explorerUi.tab,
     error: state.explorerLoading.error,
-    loading: state.explorerLoading.loading,
+    loading: state.explorerLoading.loading
   };
 }
 
