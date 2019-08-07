@@ -6,6 +6,7 @@ import {
   Intent,
   Popover,
   PopoverInteractionKind,
+  Position,
   Spinner,
   Tag
 } from "@blueprintjs/core";
@@ -117,10 +118,12 @@ const TagCut = function(props) {
 
   return (
     <Popover
-      autoFocus={false}
+      autoFocus={true}
       boundary="viewport"
       content={content}
+      hoverCloseDelay={500}
       interactionKind={PopoverInteractionKind.HOVER}
+      position={Position.RIGHT_TOP}
       target={target}
       targetTagName="div"
     />
