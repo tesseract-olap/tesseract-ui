@@ -78,7 +78,7 @@ class TableTabPanel extends PureComponent {
     return (
       <Table
         className={classNames("data-table", this.props.className)}
-        enableColumnResizing={false}
+        enableColumnResizing={true}
         // enableGhostCells={true}
         // enableMultipleSelection={false}
         enableRowResizing={false}
