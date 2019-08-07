@@ -65,11 +65,11 @@ function tesseractClientMiddleware({dispatch, getState}) {
               const cubeName = explorerQuery.cube || cubes[0].name;
               return dispatch({type: CLIENT_HYDRATEQUERY, payload: cubeName});
             })
-            .then(_ => dispatch({type: CLIENT_QUERY}))
             .then(
               _ => dispatch({type: CLIENT_FETCH_SUCCESS, action}),
               err => dispatch({type: CLIENT_FETCH_FAILURE, action, payload: err.message})
-            );
+            )
+            .then(_ => dispatch({type: CLIENT_QUERY}));
         }
 
         case CLIENT_SETCUBE: {
