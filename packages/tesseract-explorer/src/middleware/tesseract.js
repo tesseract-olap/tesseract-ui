@@ -17,6 +17,7 @@ import {queryCubeSet, queryCutReplace, queryCutUpdate} from "../actions/query";
 import {setServerInfo} from "../actions/ui";
 import {buildJavascriptCall} from "../utils/debug";
 import {applyQueryParams, buildCut, buildMeasure, buildMember} from "../utils/query";
+import { isValidQuery } from "../utils/validation";
 
 /** @type {import("redux").Middleware<{}, import("../reducers").ExplorerState>} */
 function tesseractClientMiddleware({dispatch, getState}) {
@@ -113,9 +114,12 @@ function tesseractClientMiddleware({dispatch, getState}) {
         }
 
         case CLIENT_QUERY: {
-          dispatch({type: CLIENT_FETCH_REQUEST, action});
-
           const currentQuery = getState().explorerQuery;
+          if (!isValidQuery(currentQuery)) {
+            return;
+          }
+
+          dispatch({type: CLIENT_FETCH_REQUEST, action});
           return client
             .cube(currentQuery.cube)
             .then(cube => {
