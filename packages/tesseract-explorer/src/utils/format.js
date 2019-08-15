@@ -1,6 +1,6 @@
+import formUrlDecode from "./form-urldecoded";
 import formUrlEncode from "form-urlencoded";
 import pluralize from "pluralize";
-import {parse} from "query-string";
 import {buildCut, buildDrilldown, buildFilter, buildMeasure, buildMember} from "./query";
 import {
   isActiveCut,
@@ -101,6 +101,7 @@ export function serializeState(query) {
  * @returns {import("../reducers/queryReducer").QueryState}
  */
 export function hydrateState(query) {
+  const accesor = (key, obj = {}) => obj[key];
   return {
     cube: query.cube,
     cuts: (query.cuts || []).map(item => {
@@ -113,29 +114,39 @@ export function hydrateState(query) {
     }),
     drilldowns: (query.drilldowns || []).map(item => buildDrilldown(item)),
     filters: (query.filters || []).map(item => buildFilter(item)),
-    growth: {},
+    growth: {
+      level: accesor("level", query.growth),
+      measure: accesor("measure", query.growth)
+    },
     measures: (query.measures || []).map(item => buildMeasure(item)),
     parents: query.parents,
     permalink: "",
-    rca: {},
+    rca: {
+      level1: accesor("level1", query.rca),
+      level2: accesor("level2", query.rca),
+      measure: accesor("measure", query.rca)
+    },
     sparse: query.sparse,
-    top: {}
+    top: {
+      amount: accesor("amount", query.top),
+      level: accesor("level", query.top),
+      measure: accesor("measure", query.top),
+      order: accesor("order", query.top) || "desc"
+    }
   };
 }
 
 export const serializePermalink = query =>
   formUrlEncode(serializeState(query), {
-    sorted: true,
     ignorenull: true,
-    skipIndex: true
+    skipIndex: false,
+    sorted: true
   });
 
 export const hydratePermalink = searchString =>
   hydrateState(
-    // @ts-ignore
-    parse(searchString, {
-      decode: true,
-      arrayFormat: "bracket",
-      parseBooleans: true
+    formUrlDecode(searchString, {
+      ignorenull: true,
+      skipIndex: false
     })
   );

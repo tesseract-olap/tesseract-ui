@@ -31,10 +31,9 @@
     "@datawheel/tesseract-client": "^0.3.6",
     "classnames": "^2.2.6",
     "clipboard-copy": "^3.0.0",
-    "form-urlencoded": "^3.0.1",
+    "form-urlencoded": "^4.0.0",
     "memoize-one": "^5.0.5",
     "pluralize": "^8.0.0",
-    "query-string": "^6.8.1",
     "react-perfect-scrollbar": "^1.5.3"
   },
   "devDependencies": {
