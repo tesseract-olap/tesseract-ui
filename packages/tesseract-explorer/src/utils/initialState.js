@@ -39,7 +39,7 @@ function initialStateBuilder() {
   if (isValidQuery(explorerQuery)) {
     explorerQuery.growth = {...queryInitialState.growth, ...explorerQuery.growth};
     explorerQuery.rca = {...queryInitialState.rca, ...explorerQuery.rca};
-    explorerQuery.top = {...queryInitialState.top, ...explorerQuery.top};
+    explorerQuery.topk = {...queryInitialState.topk, ...explorerQuery.topk};
     explorerQuery.permalink = serializePermalink(explorerQuery);
     newPermalink += "?" + explorerQuery.permalink;
   }

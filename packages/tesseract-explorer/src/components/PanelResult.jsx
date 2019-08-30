@@ -4,9 +4,9 @@ import React from "react";
 import {connect} from "react-redux";
 import {UITAB_RAW, UITAB_TABLE, UITAB_TREE} from "../actions/ui";
 import AnimatedCube from "./AnimatedCube";
-import PanelRawTab from "./RawTabPanel";
-import PanelDataTable from "./TableTabPanel";
-import PanelDataTree from "./TreeTabPanel";
+import PanelRawTab from "./PanelTabRaw";
+import PanelDataTable from "./PanelTabTable";
+import PanelDataTree from "./PanelTabTree";
 
 function ResultPanel(props) {
   if (props.error) {

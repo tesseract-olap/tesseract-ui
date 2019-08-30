@@ -8,5 +8,5 @@ interface SerializedQuery {
   parents: boolean;
   rca: any;
   sparse: boolean;
-  top: any;
+  topk: any;
 }

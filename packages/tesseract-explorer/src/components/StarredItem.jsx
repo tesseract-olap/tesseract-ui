@@ -19,7 +19,7 @@ import {
   abbreviateFullName,
   summaryGrowth,
   summaryRca,
-  summaryTopItems
+  summaryTopk
 } from "../utils/format";
 import {isActiveItem} from "../utils/validation";
 
@@ -47,7 +47,7 @@ const StarredItem = function(props) {
 
   const growth = summaryGrowth(query.growth);
   const rca = summaryRca(query.rca);
-  const top = summaryTopItems(query.top);
+  const topk = summaryTopk(query.topk);
 
   return (
     <article
@@ -151,12 +151,12 @@ const StarredItem = function(props) {
             ))}
           </dl>
         )}
-        {(growth || rca || top) && (
+        {(growth || rca || topk) && (
           <dl>
             <dt>Calculations:</dt>
             {growth && <dd>{growth}</dd>}
             {rca && <dd>{rca}</dd>}
-            {top && <dd>{top}</dd>}
+            {topk && <dd>{topk}</dd>}
           </dl>
         )}
       </div>

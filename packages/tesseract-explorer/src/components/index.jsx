@@ -8,8 +8,8 @@ import AnimatedCube from "./AnimatedCube";
 import DebugDrawer from "./DebugDrawer";
 import LoadingScreen from "./LoadingScreen";
 import Navbar from "./Navbar";
-import QueryPanel from "./QueryPanel";
-import ResultPanel from "./ResultPanel";
+import QueryPanel from "./PanelQuery";
+import ResultPanel from "./PanelResult";
 import StarredDrawer from "./StarredDrawer";
 
 /**

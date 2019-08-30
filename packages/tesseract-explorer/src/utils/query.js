@@ -3,7 +3,7 @@ import {
   isActiveItem,
   validGrowthState,
   validRcaState,
-  validTopState
+  validTopkState
 } from "./validation";
 
 /**
@@ -22,15 +22,15 @@ export function applyQueryParams(query, params) {
       query.addCut(item.drillable, item.members.filter(isActiveItem).map(m => m.key));
   });
 
-  const {growth, rca, top} = params;
+  const {growth, rca, topk} = params;
   if (validGrowthState(growth)) {
     query.setGrowth(growth.level, growth.measure);
   }
   if (validRcaState(rca)) {
     query.setRCA(rca.level1, rca.level2, rca.measure);
   }
-  if (validTopState(top)) {
-    query.setTop(top.amount, top.level, top.measure, top.order);
+  if (validTopkState(topk)) {
+    query.setTop(topk.amount, topk.level, topk.measure, topk.order);
   }
 
   query.setOption("parents", params.parents);
@@ -42,7 +42,7 @@ export function applyQueryParams(query, params) {
 function QueryItem(name) {
   this.name = name;
   this.fullName = name;
-  this.key = Math.random().toString(16).substr(2);
+  this.key = Math.random().toString(16).slice(2);
 }
 
 function getKey(item) {

@@ -7,7 +7,7 @@ import {
   isActiveItem,
   validGrowthState,
   validRcaState,
-  validTopState
+  validTopkState
 } from "./validation";
 
 export function splitFullName(fullName) {
@@ -45,12 +45,12 @@ export function summaryRca(rca) {
   return `RCA for ${level1Name} on ${measureName} by ${level2Name}`;
 }
 
-/** @param {import("../reducers").TopQueryState} top */
-export function summaryTopItems(top) {
-  if (!validTopState(top)) return "";
-  const measureName = pluralize(top.measure, top.amount);
-  const levelName = abbreviateFullName(top.level);
-  return `Top ${top.amount} ${measureName} by ${levelName} (${top.order})`;
+/** @param {import("../reducers").TopkQueryState} topk */
+export function summaryTopk(topk) {
+  if (!validTopkState(topk)) return "";
+  const measureName = pluralize(topk.measure, topk.amount);
+  const levelName = abbreviateFullName(topk.level);
+  return `Top ${topk.amount} ${measureName} by ${levelName} (${topk.order})`;
 }
 
 export function safeRegExp(pattern, flags) {
@@ -92,7 +92,7 @@ export function serializeState(query) {
     parents: query.parents,
     rca: validRcaState(query.rca) ? query.rca : undefined,
     sparse: query.sparse,
-    top: validTopState(query.top) ? query.top : undefined
+    topk: validTopkState(query.topk) ? query.topk : undefined
   };
 }
 
@@ -127,11 +127,11 @@ export function hydrateState(query) {
       measure: accesor("measure", query.rca)
     },
     sparse: query.sparse,
-    top: {
-      amount: accesor("amount", query.top),
-      level: accesor("level", query.top),
-      measure: accesor("measure", query.top),
-      order: accesor("order", query.top) || "desc"
+    topk: {
+      amount: accesor("amount", query.topk),
+      level: accesor("level", query.topk),
+      measure: accesor("measure", query.topk),
+      order: accesor("order", query.topk) || "desc"
     }
   };
 }

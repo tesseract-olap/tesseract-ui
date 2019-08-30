@@ -1,29 +1,29 @@
 import {ControlGroup, FormGroup, HTMLSelect, NumericInput} from "@blueprintjs/core";
 import React from "react";
-import LevelSelector from "./SelectorLevel";
+import LevelSelector from "./SelectorLevelMono";
 import MeasureSelector from "./SelectorMeasure";
 
 /**
  * @typedef OwnProps
- * @property {(value: import("../reducers").TopQueryState) => any} onChange
+ * @property {(value: import("../reducers").TopkQueryState) => any} onChange
  */
 
 /**
- * @type {React.FC<import("../reducers").TopQueryState & OwnProps>}
+ * @type {React.FC<import("../reducers").TopkQueryState & OwnProps>}
  */
-const TopItemsInput = function(props) {
+const InputTopK = function(props) {
   const {amount, order, level, measure} = props;
   return (
-    <ControlGroup className="top-input" vertical={true}>
+    <ControlGroup className="topk-input" vertical={true}>
       <LevelSelector
-        className="top-input-level"
+        className="topk-input-level"
         fill={true}
         icon="layer"
-        onItemSelect={level => props.onChange({level: level.fullName})}
+        onItemSelect={level => props.onChange({level: level.fullname})}
         selectedItem={level}
       />
       <MeasureSelector
-        className="top-input-measure"
+        className="topk-input-measure"
         fill={true}
         icon="th-list"
         onItemSelect={measure => props.onChange({measure})}
@@ -31,7 +31,7 @@ const TopItemsInput = function(props) {
       />
       <FormGroup inline={true} label="Amount">
         <NumericInput
-          className="top-input-amount"
+          className="topk-input-amount"
           fill={true}
           onValueChange={amount => props.onChange({amount})}
           value={amount}
@@ -39,7 +39,7 @@ const TopItemsInput = function(props) {
       </FormGroup>
       <FormGroup inline={true} label="Order">
         <HTMLSelect
-          className="top-input-order"
+          className="topk-input-order"
           fill={true}
           onChange={evt =>
             props.onChange({order: evt.target.value == "asc" ? "asc" : "desc"})}
@@ -54,4 +54,4 @@ const TopItemsInput = function(props) {
   );
 };
 
-export default TopItemsInput;
+export default InputTopK;

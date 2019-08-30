@@ -3,7 +3,7 @@ import React from "react";
 import NavButtons from "./NavButtons";
 import CubeSelector from "./SelectorCube";
 import ServerStatus from "./ServerStatus";
-import Tabs from "./Tabs";
+import Tabs from "./NavbarTabs";
 
 /**
  * @typedef OwnProps

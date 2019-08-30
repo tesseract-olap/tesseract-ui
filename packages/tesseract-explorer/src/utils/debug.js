@@ -3,15 +3,14 @@ import {
   isActiveItem,
   validGrowthState,
   validRcaState,
-  validTopState
+  validTopkState
 } from "./validation";
-import {serializeCut, serializeFilter} from "./format";
 
 /**
  * @param {import("../reducers/queryReducer").QueryState} query
  */
 export function buildJavascriptCall(query) {
-  const {growth, rca, top} = query;
+  const {growth, rca, topk} = query;
   return (
     "query\n  " +
     []
@@ -40,8 +39,8 @@ export function buildJavascriptCall(query) {
         validRcaState(rca) &&
           `.setRCA("${rca.level1}", "${rca.level2}", "${rca.measure}")`,
         // top
-        validTopState(top) &&
-          `.setTop("${top.amount}", "${top.level}", "${top.measure}", "${top.order}")`,
+        validTopkState(topk) &&
+          `.setTop("${topk.amount}", "${topk.level}", "${topk.measure}", "${topk.order}")`,
         // options
         ["parents", "sparse"].map(opt => `.setOption("${opt}", ${query[opt]})`)
       )

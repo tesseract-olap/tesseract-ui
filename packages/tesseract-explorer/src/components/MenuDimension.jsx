@@ -5,17 +5,17 @@ import {abbreviateFullName} from "../utils/format";
 
 /**
  * @typedef OwnProps
- * @property {(item: import("../reducers/cubesReducer").JSONLevel) => boolean} isItemSelected
- * @property {(item: import("../reducers/cubesReducer").JSONLevel) => any} onItemSelected
+ * @property {(item: import("../reducers").JSONLevel) => boolean} isItemSelected
+ * @property {(item: import("../reducers").JSONLevel) => any} onItemSelected
  */
 
 /**
  * @typedef StateProps
- * @property {import("../reducers/cubesReducer").JSONDimension[]} dimensions
+ * @property {import("../reducers").JSONDimension[]} dimensions
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */
-const DimensionsMenu = function(props) {
+const DimensionMenu = function(props) {
   const {isItemSelected, onItemSelected} = props;
 
   return (
@@ -24,7 +24,7 @@ const DimensionsMenu = function(props) {
         let menuItems, nameFormatter;
         const hierarchies = dim.hierarchies;
 
-        /** @param {import("../reducers/cubesReducer").JSONLevel} level */
+        /** @param {import("../reducers").JSONLevel} level */
         const levelRenderer = (level, index, levels) => (
           <MenuItem
             disabled={isItemSelected(level)}
@@ -35,13 +35,18 @@ const DimensionsMenu = function(props) {
           />
         );
 
-        if (hierarchies.length === 1 && hierarchies[0].name === dim.name) {
-          menuItems = hierarchies[0].levels.map(levelRenderer);
+        const shouldAbbreviate = hierarchies.length === 1;
+        if (shouldAbbreviate && hierarchies[0].name === dim.name) {
+          menuItems = hierarchies[0].levels.filter(hideMondrianAll).map(levelRenderer);
         }
         else {
           menuItems = hierarchies.map(hie => (
-            <MenuItem key={hie.name} icon="layers" text={hie.name}>
-              {hie.levels.map(levelRenderer)}
+            <MenuItem
+              key={hie.fullname}
+              icon="layers"
+              text={shouldAbbreviate ? abbreviateFullName(hie.fullname) : hie.name}
+            >
+              {hie.levels.filter(hideMondrianAll).map(levelRenderer)}
             </MenuItem>
           ));
         }
@@ -58,6 +63,8 @@ const DimensionsMenu = function(props) {
   );
 };
 
+const hideMondrianAll = level => level.name !== "(All)";
+
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   const cube = state.explorerCubes[state.explorerQuery.cube];
@@ -66,4 +73,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(DimensionsMenu);
+export default connect(mapStateToProps)(DimensionMenu);

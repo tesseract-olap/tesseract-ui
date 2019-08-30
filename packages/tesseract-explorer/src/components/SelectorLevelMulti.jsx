@@ -1,13 +1,13 @@
 import {Button, Popover} from "@blueprintjs/core";
 import React from "react";
-import DimensionsMenu from "./MenuDimensions";
+import MenuDimensions from "./MenuDimension";
 
 /**
  * @typedef OwnProps
  * @property {import("@blueprintjs/core").IconName} [icon]
  * @property {import("../reducers").DrillableItem[]} selectedItems
  * @property {string} text
- * @property {(item: import("../reducers/cubesReducer").JSONLevel) => any} onItemSelected
+ * @property {(item: import("../reducers").JSONLevel) => any} onItemSelected
  */
 
 /** @type {React.FC<OwnProps>} */
@@ -22,7 +22,7 @@ const SelectorLevelMulti = function(props) {
         small={true}
         text={props.text}
       />
-      <DimensionsMenu
+      <MenuDimensions
         isItemSelected={item => selectedItems.includes(item.fullName)}
         onItemSelected={props.onItemSelected}
       />

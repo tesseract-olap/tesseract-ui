@@ -1,7 +1,7 @@
 import {Alignment, Button, Popover, Position} from "@blueprintjs/core";
 import React from "react";
 import {abbreviateFullName} from "../utils/format";
-import DimensionMenu from "./MenuDimensions";
+import MenuDimensions from "./MenuDimension";
 
 /**
  * @typedef OwnProps
@@ -36,8 +36,8 @@ const LevelSelector = function(props) {
         rightIcon="double-caret-vertical"
         text={abbreviateFullName(selectedItem) || props.placeholder}
       />
-      <DimensionMenu
-        isItemSelected={item => item.fullName === selectedItem}
+      <MenuDimensions
+        isItemSelected={item => item.fullname === selectedItem}
         onItemSelected={props.onItemSelect}
       />
     </Popover>

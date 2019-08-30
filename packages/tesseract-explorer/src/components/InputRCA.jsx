@@ -1,6 +1,6 @@
 import {ControlGroup} from "@blueprintjs/core";
 import React from "react";
-import LevelSelector from "./SelectorLevel";
+import LevelSelector from "./SelectorLevelMono";
 import MeasureSelector from "./SelectorMeasure";
 
 function RcaInput(props) {
@@ -11,13 +11,13 @@ function RcaInput(props) {
         selectedItem={level1}
         fill={true}
         icon="layer"
-        onItemSelect={level => props.onChange({level1: level.fullName})}
+        onItemSelect={level => props.onChange({level1: level.fullname})}
       />
       <LevelSelector
         selectedItem={level2}
         fill={true}
         icon="layer"
-        onItemSelect={level => props.onChange({level2: level.fullName})}
+        onItemSelect={level => props.onChange({level2: level.fullname})}
       />
       <MeasureSelector
         selectedItem={measure}

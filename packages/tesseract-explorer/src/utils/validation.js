@@ -1,3 +1,5 @@
+export const isNumeric = str => isFinite(str) && !isNaN(str);
+
 export const isQuery = query =>
   typeof query === "object" &&
   query !== null &&
@@ -24,12 +26,13 @@ export const validGrowthState = growth => growth.level && growth.measure;
 /** @param {import("../reducers").RcaQueryState} rca */
 export const validRcaState = rca => rca.level1 && rca.level2 && rca.measure;
 
-/** @param {import("../reducers").TopQueryState} top */
-export const validTopState = top => top.amount > 0 && top.level && top.measure;
+/** @param {import("../reducers").TopkQueryState} topk */
+export const validTopkState = topk => topk.amount > 0 && topk.level && topk.measure;
 
 /** @type {(sum: number, item: import("../reducers").QueryItem) => number} */
 export const activeItemCounter = (sum, item) => sum + (isActiveItem(item) ? 1 : 0);
 
+// TODO
 export function deepQueryValidation(query) {}
 
 /** @param {import("../reducers/queryReducer").QueryState} query */

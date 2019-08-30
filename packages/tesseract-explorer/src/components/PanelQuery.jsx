@@ -12,10 +12,10 @@ import {
   queryRcaClear,
   queryRcaUpdate,
   querySparseToggle,
-  queryTopClear,
-  queryTopUpdate
+  queryTopkClear,
+  queryTopkUpdate
 } from "../actions/query";
-import {summaryTopItems, summaryRca, summaryGrowth} from "../utils/format";
+import {summaryGrowth, summaryRca, summaryTopk} from "../utils/format";
 import {buildCut, buildDrilldown} from "../utils/query";
 import {
   activeItemCounter,
@@ -23,15 +23,15 @@ import {
   checkDrilldowns,
   checkMeasures
 } from "../utils/validation";
-import GrowthInput from "./GrowthInput";
+import InputGrowth from "./InputGrowth";
+import InputRCA from "./InputRCA";
+import InputTopK from "./InputTopK";
 import QueryGroup from "./QueryGroup";
-import RcaInput from "./RcaInput";
+import TagCut from "./QueryTagCut";
+import TagDrilldown from "./QueryTagDrilldown";
+import TagMeasure from "./QueryTagMeasure";
 import SelectorLevelMulti from "./SelectorLevelMulti";
 import StarredItemButton from "./StarredItemButton";
-import TagCut from "./TagCut";
-import TagDrilldown from "./TagDrilldown";
-import TagMeasure from "./TagMeasure";
-import TopItemsInput from "./TopItemsInput";
 
 /**
  * @typedef OwnProps
@@ -51,13 +51,13 @@ import TopItemsInput from "./TopItemsInput";
  * @property {(drillable: import("../reducers/cubesReducer").JSONLevel) => any} addDrilldownHandler
  * @property {() => any} clearGrowthHandler
  * @property {() => any} clearRcaHandler
- * @property {() => any} clearTopHandler
+ * @property {() => any} clearTopkHandler
  * @property {() => any} executeQuery
  * @property {() => any} toggleParentsHandler
  * @property {() => any} toggleSparseHandler
  * @property {(values: import("../reducers").GrowthQueryState) => any} updateGrowthHandler
  * @property {(values: import("../reducers").RcaQueryState) => any} updateRcaHandler
- * @property {(values: import("../reducers").TopQueryState) => any} updateTopHandler
+ * @property {(values: import("../reducers").TopkQueryState) => any} updateTopkHandler
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
@@ -119,7 +119,7 @@ const QueryPanel = function(props) {
           onClear={props.clearGrowthHandler}
           open={false}
         >
-          <GrowthInput {...query.growth} onChange={props.updateGrowthHandler} />
+          <InputGrowth {...query.growth} onChange={props.updateGrowthHandler} />
         </QueryGroup>
       )}
 
@@ -129,16 +129,16 @@ const QueryPanel = function(props) {
         onClear={props.clearRcaHandler}
         open={false}
       >
-        <RcaInput {...query.rca} onChange={props.updateRcaHandler} />
+        <InputRCA {...query.rca} onChange={props.updateRcaHandler} />
       </QueryGroup>
 
       <QueryGroup
-        className="area-top"
-        label={summaryTopItems(query.top) || "Calculate top items"}
-        onClear={props.clearTopHandler}
+        className="area-topk"
+        label={summaryTopk(query.topk) || "Calculate Top K"}
+        onClear={props.clearTopkHandler}
         open={false}
       >
-        <TopItemsInput {...query.top} onChange={props.updateTopHandler} />
+        <InputTopK {...query.topk} onChange={props.updateTopkHandler} />
       </QueryGroup>
 
       <QueryGroup className="area-options" label="Options">
@@ -166,7 +166,11 @@ const QueryPanel = function(props) {
           fill={true}
           onClick={props.executeQuery}
         />
-        <StarredItemButton query={query} className="action-star" disabled={allChecks.length > 0} />
+        <StarredItemButton
+          query={query}
+          className="action-star"
+          disabled={allChecks.length > 0}
+        />
       </ButtonGroup>
     </div>
   );
@@ -204,8 +208,8 @@ function mapDispatchToProps(dispatch) {
     clearRcaHandler() {
       return dispatch(queryRcaClear());
     },
-    clearTopHandler() {
-      return dispatch(queryTopClear());
+    clearTopkHandler() {
+      return dispatch(queryTopkClear());
     },
     executeQuery() {
       return dispatch(runQuery());
@@ -222,8 +226,8 @@ function mapDispatchToProps(dispatch) {
     updateRcaHandler(values) {
       return dispatch(queryRcaUpdate(values));
     },
-    updateTopHandler(values) {
-      return dispatch(queryTopUpdate(values));
+    updateTopkHandler(values) {
+      return dispatch(queryTopkUpdate(values));
     }
   };
 }

@@ -66,7 +66,7 @@ interface RcaQueryState {
   measure?: string;
 }
 
-interface TopQueryState {
+interface TopkQueryState {
   amount?: number;
   level?: string;
   measure?: string;
