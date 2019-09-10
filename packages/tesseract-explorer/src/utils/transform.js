@@ -56,6 +56,12 @@ export function parseName(name) {
   if (typeof name === "string") {
     name = splitName(name);
   }
+  if (name.length === 1) {
+    name.unshift(name[0]);
+  }
+  if (name.length === 2) {
+    name.unshift(name[0]);
+  }
   return levelArrayToRef(name);
 }
 
@@ -64,7 +70,14 @@ export function parseName(name) {
  * @param {LevelDescriptor} ref
  */
 export function stringifyName(ref) {
-  return joinName(levelRefToArray(ref));
+  const nameParts = levelRefToArray(ref);
+  if (nameParts[1] === nameParts[2]) {
+    nameParts.splice(1, 1);
+  }
+  if (nameParts[0] === nameParts[1]) {
+    nameParts.splice(0, 1);
+  }
+  return joinName(nameParts);
 }
 
 /**

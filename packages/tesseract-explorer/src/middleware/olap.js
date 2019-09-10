@@ -83,7 +83,7 @@ const actionMap = {
       const partialItem = queryStateMeasures.find(i => i.measure === measureName);
       return buildMeasure({...measure.toJSON(), active: !index, ...partialItem});
     });
-    return dispatch(queryCubeSet(cube.name, measures));
+    dispatch(queryCubeSet(cube.name, measures));
   },
 
   /**
@@ -95,8 +95,8 @@ const actionMap = {
     const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
     fetchRequest();
 
-    const {explorerQuery: queryState} = getState();
-    const cubeName = action.payload || queryState.cube;
+    const {explorerQuery: queryState, explorerCubes: cubesList} = getState();
+    const cubeName = queryState.cube in cubesList ? queryState.cube : action.payload;
 
     try {
       const cube = await client.getCube(cubeName);
@@ -111,7 +111,7 @@ const actionMap = {
 
       fetchSuccess();
     } catch (error) {
-      fetchFailure();
+      fetchFailure(error);
     }
   },
 
@@ -224,7 +224,6 @@ function olapClientMiddleware({dispatch, getState}) {
   const client = new OLAPClient();
 
   return next => action => {
-    console.log(action.type, action);
     return action.type in actionMap
       ? actionMap[action.type]({action, client, dispatch, getState, next})
       : next(action);

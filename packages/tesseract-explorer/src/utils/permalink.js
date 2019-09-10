@@ -52,17 +52,20 @@ export function serializeState(query) {
  */
 export function hydrateState(query) {
   const accesor = (key, obj = {}) => obj[key];
+  const random = () => Math.random().toString(16).slice(2);
 
   /** @param {string} item */
   const parseCut = item => {
     const [fullName, members] = item.split(".&");
-    const cutItem = parseName(fullName);
-    cutItem.active = true;
-    cutItem.members = members
-      .split(",")
-      .filter(Boolean)
-      .map(key => buildMember({active: true, key}));
-    return buildCut(cutItem);
+    return buildCut({
+      ...parseName(fullName),
+      active: true,
+      key: random(),
+      members: members
+        .split(",")
+        .filter(Boolean)
+        .map(key => buildMember({active: true, key}))
+    });
   };
 
   /** @param {string} item */
@@ -73,7 +76,7 @@ export function hydrateState(query) {
       comparison,
       inputtedValue,
       interpretedValue: Number.parseFloat(inputtedValue),
-      key: Math.random().toString(16).slice(2),
+      key: random(),
       measure
     });
   };
@@ -83,13 +86,17 @@ export function hydrateState(query) {
     cuts: ensureArray(query.cuts).map(parseCut),
     debug: query.debug,
     distinct: query.distinct,
-    drilldowns: ensureArray(query.drilldowns).map(fn => buildDrilldown(parseName(fn))),
+    drilldowns: ensureArray(query.drilldowns).map(fn =>
+      buildDrilldown({...parseName(fn), active: true, key: random()})
+    ),
     filters: ensureArray(query.filters).map(parseFilter),
     growth: {
       level: accesor("level", query.growth),
       measure: accesor("measure", query.growth)
     },
-    measures: ensureArray(query.measures).map(measure => buildMeasure({measure})),
+    measures: ensureArray(query.measures).map(measure =>
+      buildMeasure({active: true, key: random(), measure})
+    ),
     nonempty: query.nonempty,
     parents: query.parents,
     rca: {
