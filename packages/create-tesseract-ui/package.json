@@ -1,6 +1,6 @@
 {
   "name": "@datawheel/create-tesseract-ui",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A quick script to create a new tesseract-ui instance.",
   "bin": "src/cli.js",
   "scripts": {
