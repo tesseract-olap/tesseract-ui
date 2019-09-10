@@ -2,7 +2,7 @@ import formUrlDecode from "form-urldecoded";
 import formUrlEncode from "form-urlencoded";
 import {ensureArray} from "./array";
 import {buildCut, buildDrilldown, buildFilter, buildMeasure, buildMember} from "./query";
-import {joinName, levelRefToArray, parseName, stringifyName} from "./transform";
+import {parseName, stringifyName} from "./transform";
 import {
   isActiveCut,
   isActiveItem,
@@ -19,10 +19,7 @@ export function serializeState(query) {
   const cuts = query.cuts
     .filter(isActiveCut)
     .map(i =>
-      [
-        joinName(levelRefToArray(i)),
-        i.members.filter(isActiveItem).map(m => m.key).join(",")
-      ].join(".&")
+      [stringifyName(i)].concat(i.members.filter(isActiveItem).map(m => m.key)).join(",")
     );
 
   const filters = query.filters
@@ -56,21 +53,18 @@ export function hydrateState(query) {
 
   /** @param {string} item */
   const parseCut = item => {
-    const [fullName, members] = item.split(".&");
+    const [fullName, ...members] = item.split(",");
     return buildCut({
       ...parseName(fullName),
       active: true,
       key: random(),
-      members: members
-        .split(",")
-        .filter(Boolean)
-        .map(key => buildMember({active: true, key}))
+      members: members.filter(Boolean).map(key => buildMember({active: true, key}))
     });
   };
 
   /** @param {string} item */
   const parseFilter = item => {
-    const [measure, comparison, inputtedValue] = item.split("|");
+    const [measure, comparison, inputtedValue] = item.split(",");
     return buildFilter({
       active: true,
       comparison,
