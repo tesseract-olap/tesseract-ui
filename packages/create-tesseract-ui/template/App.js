@@ -2,8 +2,8 @@ import {
   Explorer,
   explorerInitialState,
   explorerReducer,
+  olapMiddleware,
   permalinkMiddleware,
-  tesseractMiddleware
 } from "@datawheel/tesseract-explorer";
 import React from "react";
 import {Provider} from "react-redux";
@@ -21,7 +21,7 @@ const composeEnhancers =
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     : compose;
 const enhancers = composeEnhancers(
-  applyMiddleware(permalinkMiddleware, tesseractMiddleware)
+  applyMiddleware(olapMiddleware, permalinkMiddleware)
 );
 
 const initialState = explorerInitialState();
