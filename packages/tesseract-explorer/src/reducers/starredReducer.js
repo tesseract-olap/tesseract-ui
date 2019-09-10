@@ -1,14 +1,10 @@
 import {STARRED_CREATE, STARRED_REMOVE, STARRED_UPDATE} from "../actions/starred";
 import {replaceFromArray, findByProperty} from "../utils/array";
 
-/**
- * @typedef {import(".").StarredItem[]} StarredState
- */
-
-/** @type {StarredState} */
+/** @type {import(".").StarredItem[]} */
 export const initialState = [];
 
-/** @type {import("redux").Reducer<StarredState>} */
+/** @type {import("redux").Reducer<import(".").StarredItem[]>} */
 function starredReducer(state = initialState, action) {
   switch (action.type) {
     case STARRED_CREATE: {

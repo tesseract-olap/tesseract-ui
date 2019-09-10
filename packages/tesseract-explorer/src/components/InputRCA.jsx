@@ -1,32 +1,41 @@
 import {ControlGroup} from "@blueprintjs/core";
-import React from "react";
-import LevelSelector from "./SelectorLevelMono";
-import MeasureSelector from "./SelectorMeasure";
+import React, {memo} from "react";
+import {stringifyName} from "../utils/transform";
+import {shallowEqualExceptFns} from "../utils/validation";
+import SelectorLevelMono from "./SelectorLevelMono";
+import SelectorMeasure from "./SelectorMeasure";
 
-function RcaInput(props) {
-  const {level1, level2, measure} = props;
+/**
+ * @typedef OwnProps
+ * @property {(value: Partial<import("../reducers").RcaQueryState>) => any} onChange
+ */
+
+/**
+ * @type {React.FC<import("../reducers").RcaQueryState & OwnProps>}
+ */
+const InputRCA = function({level1, level2, measure, onChange}) {
   return (
     <ControlGroup className="rca-input" vertical={true}>
-      <LevelSelector
+      <SelectorLevelMono
         selectedItem={level1}
         fill={true}
         icon="layer"
-        onItemSelect={level => props.onChange({level1: level.fullname})}
+        onItemSelect={level => onChange({level1: stringifyName(level)})}
       />
-      <LevelSelector
+      <SelectorLevelMono
         selectedItem={level2}
         fill={true}
         icon="layer"
-        onItemSelect={level => props.onChange({level2: level.fullname})}
+        onItemSelect={level => onChange({level2: stringifyName(level)})}
       />
-      <MeasureSelector
+      <SelectorMeasure
         selectedItem={measure}
         fill={true}
         icon="th-list"
-        onItemSelect={measure => props.onChange({measure})}
+        onItemSelect={measure => onChange({measure})}
       />
     </ControlGroup>
   );
-}
+};
 
-export default RcaInput;
+export default memo(InputRCA, shallowEqualExceptFns);

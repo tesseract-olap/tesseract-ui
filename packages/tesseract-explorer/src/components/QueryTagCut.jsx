@@ -18,6 +18,7 @@ import {queryCutRemove, queryCutUpdate} from "../actions/query";
 import {abbreviateFullName} from "../utils/format";
 import {isActiveItem} from "../utils/validation";
 import MemberSelector from "./MultiSelector";
+import {levelRefToArray} from "../utils/transform";
 
 /**
  * @typedef OwnProps
@@ -33,9 +34,15 @@ import MemberSelector from "./MultiSelector";
  */
 
 /** @type {React.FC<OwnProps & DispatchProps>} */
-const TagCut = function(props) {
-  const {active, drillable, members, error, membersLoaded} = props.item;
-  const label = abbreviateFullName(drillable);
+const TagCut = function({
+  item,
+  reloadMembersHandler,
+  removeHandler,
+  toggleHandler,
+  updateMembersHandler
+}) {
+  const {active, members, error, membersLoaded} = item;
+  const label = abbreviateFullName(levelRefToArray(item));
 
   let target, content;
   if (error) {
@@ -44,7 +51,7 @@ const TagCut = function(props) {
         <button
           type="button"
           className={Classes.TAG_REMOVE}
-          onClick={props.reloadMembersHandler}
+          onClick={reloadMembersHandler}
         >
           <Icon icon="refresh" iconSize={Icon.SIZE_STANDARD} />
         </button>
@@ -58,8 +65,8 @@ const TagCut = function(props) {
         icon="warning-sign"
         rightIcon={toolbar}
         intent={Intent.WARNING}
-        onClick={props.toggleHandler}
-        onRemove={props.removeHandler}
+        onClick={toggleHandler}
+        onRemove={removeHandler}
       >
         {label}
       </Tag>
@@ -85,7 +92,7 @@ const TagCut = function(props) {
         icon={<Spinner size={Spinner.SIZE_SMALL} />}
         large={true}
         minimal={true}
-        onRemove={props.removeHandler}
+        onRemove={removeHandler}
       >
         {label}
       </Tag>
@@ -101,8 +108,8 @@ const TagCut = function(props) {
         large={true}
         fill={true}
         interactive={true}
-        onClick={props.toggleHandler}
-        onRemove={props.removeHandler}
+        onClick={toggleHandler}
+        onRemove={removeHandler}
       >
         {`${label} (${activeCount === 1
           ? activeMembers[0].name
@@ -111,7 +118,7 @@ const TagCut = function(props) {
     );
     content = (
       <div className="cut-submenu">
-        <MemberSelector items={members} onChange={props.updateMembersHandler} />
+        <MemberSelector items={members} onChange={updateMembersHandler} />
       </div>
     );
   }

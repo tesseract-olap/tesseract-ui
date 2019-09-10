@@ -1,5 +1,7 @@
 import {Button, Popover} from "@blueprintjs/core";
-import React from "react";
+import React, {memo} from "react";
+import {stringifyName} from "../utils/transform";
+import {shallowEqualExceptFns} from "../utils/validation";
 import MenuDimensions from "./MenuDimension";
 
 /**
@@ -11,20 +13,13 @@ import MenuDimensions from "./MenuDimension";
  */
 
 /** @type {React.FC<OwnProps>} */
-const SelectorLevelMulti = function(props) {
-  const selectedItems = props.selectedItems.map(item => item.drillable);
+const SelectorLevelMulti = function({selectedItems, onItemSelected, icon, text}) {
   return (
     <Popover autoFocus={false} boundary="viewport" targetTagName="div">
-      <Button
-        className="action-add"
-        fill={true}
-        icon={props.icon}
-        small={true}
-        text={props.text}
-      />
+      <Button className="action-add" fill={true} icon={icon} small={true} text={text} />
       <MenuDimensions
-        isItemSelected={item => selectedItems.includes(item.fullName)}
-        onItemSelected={props.onItemSelected}
+        selectedItems={selectedItems.map(stringifyName)}
+        onItemSelected={onItemSelected}
       />
     </Popover>
   );
@@ -34,4 +29,4 @@ SelectorLevelMulti.defaultProps = {
   icon: "insert"
 };
 
-export default SelectorLevelMulti;
+export default memo(SelectorLevelMulti, shallowEqualExceptFns);

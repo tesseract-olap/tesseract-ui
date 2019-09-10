@@ -11,7 +11,8 @@
           "Firefox > 20",
           "chrome > 30"
         ]
-      }
+      },
+      "useBuiltIns": "usage"
     }],
     "@babel/preset-react"
   ]

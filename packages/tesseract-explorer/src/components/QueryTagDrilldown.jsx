@@ -4,24 +4,37 @@ import React from "react";
 import {connect} from "react-redux";
 import {queryDrilldownRemove, queryDrilldownUpdate} from "../actions/query";
 import {abbreviateFullName} from "../utils/format";
+import {levelRefToArray} from "../utils/transform";
 
-function TagDrilldown(props) {
-  const {item} = props;
-  const label = abbreviateFullName(item.drillable);
+/**
+ * @typedef OwnProps
+ * @property {import("../reducers").DrilldownItem} item
+ */
+
+/**
+ * @typedef DispatchProps
+ * @property {() => any} toggleHandler
+ * @property {(evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => any} removeHandler
+ */
+
+/** @type {React.FC<OwnProps & DispatchProps>} */
+const TagDrilldown = function({item, removeHandler, toggleHandler}) {
+  const {active} = item;
+  const label = abbreviateFullName(levelRefToArray(item));
   return (
     <Tag
-      className={classNames("item-drilldown", {hidden: !item.active})}
+      className={classNames("item-drilldown", {hidden: !active})}
       fill={true}
       icon="layer"
       interactive={true}
       large={true}
-      onClick={props.toggleHandler}
-      onRemove={props.removeHandler}
+      onClick={toggleHandler}
+      onRemove={removeHandler}
     >
       {label}
     </Tag>
   );
-}
+};
 
 function mapDispatchToProps(dispatch, props) {
   return {

@@ -1,18 +1,27 @@
 import {Alignment, Button, ControlGroup, Popover, Position} from "@blueprintjs/core";
-import React from "react";
-
+import React, {memo} from "react";
+import {ensureArray} from "../utils/array";
+import {stringifyName} from "../utils/transform";
+import {shallowEqualExceptFns} from "../utils/validation";
 import TimeDimensionMenu from "./MenuDimensionTime";
 import SelectorMeasure from "./SelectorMeasure";
 
-function GrowthInput(props) {
-  const {level = undefined, measure = undefined} = props.growth || {};
+/**
+ * @typedef OwnProps
+ * @property {(value: Partial<import("../reducers").GrowthQueryState>) => any} onChange
+ */
+
+/**
+ * @type {React.FC<import("../reducers").GrowthQueryState & OwnProps>}
+ */
+const InputGrowth = function({level, measure, onChange}) {
   return (
     <ControlGroup className="growth-input" vertical={true}>
       <SelectorMeasure
         selectedItem={measure}
         fill={true}
         icon="th-list"
-        onItemSelect={measure => props.onChange({measure})}
+        onItemSelect={measure => onChange({measure})}
       />
       <Popover
         autoFocus={false}
@@ -30,12 +39,12 @@ function GrowthInput(props) {
           text={level || "Time level..."}
         />
         <TimeDimensionMenu
-          selectedItems={level}
-          onClick={level => props.onChange({level})}
+          selectedItems={ensureArray(level)}
+          onClick={level => onChange({level: stringifyName(level)})}
         />
       </Popover>
     </ControlGroup>
   );
-}
+};
 
-export default GrowthInput;
+export default memo(InputGrowth, shallowEqualExceptFns);

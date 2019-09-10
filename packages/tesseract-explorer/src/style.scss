@@ -16,15 +16,6 @@
     &.#{$ns}-dark {
       background-color: $pt-dark-app-background-color;
     }
-
-    .loading-screen {
-      .#{$ns}-spinner .#{$ns}-spinner-head {
-        stroke: #fff;
-      }
-      .#{$ns}-heading {
-        color: #fff;
-      }
-    }
   }
 
   &-navbar {
@@ -37,6 +28,18 @@
 
     .#{$ns}-tab {
       line-height: 50px;
+    }
+  }
+
+  &-loading {
+    .loading-screen {
+      .#{$ns}-spinner .#{$ns}-spinner-head {
+        stroke: #fff;
+      }
+      .#{$ns}-heading {
+        color: #fff;
+        // text-shadow: #fff 0 0 20px, #fff 0 0 20px;
+      }
     }
   }
 
@@ -75,12 +78,16 @@
     @import "./style/PanelDataTable";
     @import "./style/PanelDataTree";
 
-    &.initial-view .animated-cube {
-      font-size: 4rem;
+    &.initial-view {
+      .animated-cube {
+        font-size: 4rem;
+      }
+
+      .error-detail {
+        font-style: italic;
+      }
     }
   }
 }
 
-@import "./style/DebugDrawer"
-
-//https://markus.oberlehner.net/blog/building-a-good-old-12-column-css-grid-framework-with-css-grid-layout/
+@import "./style/DebugDrawer";

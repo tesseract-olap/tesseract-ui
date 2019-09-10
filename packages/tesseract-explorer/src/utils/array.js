@@ -2,6 +2,18 @@ const defaultIndexOf = (haystack, needle) => haystack.indexOf(needle);
 export const findByProperty = property => (haystack, needle) =>
   haystack.findIndex(item => item[property] === needle[property]);
 
+/**
+ * Ensures the returned value is always an array.
+ * @template T
+ * @param {T|T[]} [value]
+ * @returns {T[]}
+ */
+export function ensureArray(value) {
+  /** @type {T[]} */
+  const target = [];
+  return value == null ? target : target.concat(value);
+}
+
 export function toggleFromArray(haystack, needle, finder = defaultIndexOf) {
   const index = finder(haystack, needle);
   const haystackClone = haystack.slice();
@@ -53,5 +65,5 @@ export function sortByKey(array, key, descendent = true) {
       ? (a, b) => `${b[key]}`.localeCompare(`${a[key]}`)
       : (a, b) => `${a[key]}`.localeCompare(`${b[key]}`);
   }
-  return array.sort(sorterFunction);
+  return array.slice().sort(sorterFunction);
 }

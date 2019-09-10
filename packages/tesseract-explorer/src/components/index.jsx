@@ -15,12 +15,12 @@ import StarredDrawer from "./StarredDrawer";
 /**
  * @typedef OwnProps
  * @property {string} src The URL for the data server.
- * @property {string} [title="tesseract-olap"] A title to show on the navbar.
+ * @property {string} [title] A title to show on the navbar.
  */
 
 /**
  * @typedef StateProps
- * @property {string} serverStatus
+ * @property {boolean | undefined} serverOnline
  * @property {string} serverUrl
  * @property {boolean} darkTheme
  */
@@ -49,55 +49,16 @@ class ExplorerComponent extends PureComponent {
   }
 
   render() {
-    const props = this.props;
+    const {darkTheme, serverOnline, serverUrl, title} = this.props;
     return (
-      <div className={classNames("explorer-wrapper", {[Classes.DARK]: props.darkTheme})}>
-        <Navbar className="explorer-navbar" title={props.title} />
-        <LoadingScreen />
-        {this.renderContent(props.serverStatus, props.serverUrl)}
+      <div className={classNames("explorer-wrapper", {[Classes.DARK]: darkTheme})}>
+        <Navbar className="explorer-navbar" title={title} />
+        <LoadingScreen className="explorer-loading" />
+        <ExplorerContent online={serverOnline} url={serverUrl} />
         <StarredDrawer />
         <DebugDrawer />
       </div>
     );
-  }
-
-  renderContent(status, url) {
-    if (status === "error") {
-      return window.navigator.onLine === false ? (
-        <NonIdealState
-          className="explorer-error"
-          icon="globe-network"
-          title="You are not connected to the internet."
-        />
-      ) : (
-        <NonIdealState
-          className="explorer-error"
-          icon="error"
-          title="There's a problem contacting with the server"
-          description={
-            <span>
-              Check the availability of the URL{" "}
-              <a href={url} target="_blank" rel="noopener">
-                {url}
-              </a>.
-            </span>
-          }
-        />
-      );
-    }
-    else if (status === "ok") {
-      return (
-        <div className="explorer-content">
-          <PerfectScrollbar className="explorer-params">
-            <QueryPanel className="explorer-params-content" />
-          </PerfectScrollbar>
-          <ResultPanel className="explorer-results" />
-        </div>
-      );
-    }
-    else {
-      return <NonIdealState className="explorer-loading" icon={<AnimatedCube />} />;
-    }
   }
 }
 
@@ -105,13 +66,48 @@ ExplorerComponent.defaultProps = {
   title: process.env.REACT_APP_TITLE || "tesseract-olap"
 };
 
+const ExplorerContent = function({online, url}) {
+  if (online === false) {
+    return typeof window === "object" && window.navigator.onLine === false ? (
+      <NonIdealState
+        className="explorer-error"
+        icon="globe-network"
+        title="You are not connected to the internet."
+      />
+    ) : (
+      <NonIdealState
+        className="explorer-error"
+        icon="error"
+        title="There's a problem contacting with the server"
+        description={
+          <span>
+            {"Check the availability of the URL "}
+            <a href={url} target="_blank" rel="noopener">
+              {url}
+            </a>.
+          </span>
+        }
+      />
+    );
+  }
+  else if (online === true) {
+    return (
+      <div className="explorer-content">
+        <PerfectScrollbar className="explorer-params">
+          <QueryPanel className="explorer-params-content" />
+        </PerfectScrollbar>
+        <ResultPanel className="explorer-results" />
+      </div>
+    );
+  }
+  else {
+    return <NonIdealState className="explorer-loading" icon={<AnimatedCube />} />;
+  }
+};
+
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
-  return {
-    darkTheme: state.explorerUi.darkTheme,
-    serverStatus: state.explorerUi.serverStatus,
-    serverUrl: state.explorerUi.serverUrl
-  };
+  return state.explorerUi;
 }
 
 /** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */

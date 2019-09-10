@@ -1,7 +1,7 @@
 import {initialState as queryInitialState} from "../reducers/queryReducer";
-import {initialState as uiInitialState} from "../reducers/uiReducer";
 import {initialState as starredInitialState} from "../reducers/starredReducer";
-import {hydratePermalink, serializePermalink} from "./format";
+import {initialState as uiInitialState} from "../reducers/uiReducer";
+import {hydratePermalink, serializePermalink} from "./permalink";
 import {isQuery, isValidQuery} from "./validation";
 
 /** @returns {Partial<import("../reducers").ExplorerState>} */
@@ -40,8 +40,7 @@ function initialStateBuilder() {
     explorerQuery.growth = {...queryInitialState.growth, ...explorerQuery.growth};
     explorerQuery.rca = {...queryInitialState.rca, ...explorerQuery.rca};
     explorerQuery.topk = {...queryInitialState.topk, ...explorerQuery.topk};
-    explorerQuery.permalink = serializePermalink(explorerQuery);
-    newPermalink += "?" + explorerQuery.permalink;
+    newPermalink += "?" + serializePermalink(explorerQuery);
   }
   history.replaceState(explorerQuery, "", newPermalink);
 

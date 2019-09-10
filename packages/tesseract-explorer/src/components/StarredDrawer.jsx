@@ -1,15 +1,16 @@
 import {Drawer} from "@blueprintjs/core";
-import React from "react";
+import React, {memo} from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
 import {toggleStarredDrawer} from "../actions/ui";
-import StarredItem from "./StarredItem";
-
 import "../style/starredDrawer.scss";
+import {serializePermalink} from "../utils/permalink";
+import {shallowEqualExceptFns} from "../utils/validation";
+import StarredItem from "./StarredItem";
 
 /**
  * @typedef StateProps
- * @property {string} currentPermalink
+ * @property {import("../reducers").QueryState} query
  * @property {boolean} isOpen
  * @property {import("../reducers").StarredItem[]} items
  */
@@ -21,6 +22,7 @@ import "../style/starredDrawer.scss";
 
 /** @type {React.FC<StateProps & DispatchProps>} */
 const StarredDrawer = function(props) {
+  const currentPermalink = serializePermalink(props.query);
   return (
     <Drawer
       className="starred-drawer"
@@ -34,7 +36,7 @@ const StarredDrawer = function(props) {
         <div className="starred-drawer-content">
           {props.items.map(item => (
             <StarredItem
-              active={props.currentPermalink === item.key}
+              active={currentPermalink === item.key}
               item={item}
               key={item.key}
             />
@@ -48,7 +50,7 @@ const StarredDrawer = function(props) {
 /** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   return {
-    currentPermalink: state.explorerQuery.permalink,
+    query: state.explorerQuery,
     isOpen: state.explorerUi.starredDrawer,
     items: state.explorerStarred
   };
@@ -63,4 +65,6 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StarredDrawer);
+export default connect(mapStateToProps, mapDispatchToProps)(
+  memo(StarredDrawer, shallowEqualExceptFns)
+);

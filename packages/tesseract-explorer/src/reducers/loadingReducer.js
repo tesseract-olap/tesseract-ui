@@ -2,15 +2,7 @@ export const STATUS_FETCHING = "FETCHING";
 export const STATUS_SUCCESS = "SUCCESS";
 export const STATUS_FAILURE = "FAILURE";
 
-/**
- * @typedef LoadingState
- * @property {string} error
- * @property {boolean} loading
- * @property {string} status
- * @property {string} trigger
- */
-
-/** @type {LoadingState} */
+/** @type {import(".").LoadingState} */
 const initialState = {
   error: null,
   loading: true,
@@ -18,7 +10,7 @@ const initialState = {
   trigger: null
 };
 
-/** @type {import("redux").Reducer<LoadingState>} */
+/** @type {import("redux").Reducer<import(".").LoadingState>} */
 function loadingReducer(state = initialState, action) {
   const type = `${action.type}`;
   const trigger = (action.action || action).type;

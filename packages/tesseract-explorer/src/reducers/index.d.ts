@@ -1,27 +1,37 @@
-import {AggregationState} from "./aggregationReducer";
-import {CubesState} from "./cubesReducer";
-import {LoadingState} from "./loadingReducer";
-import {QueryState} from "./queryReducer";
-import {StarredState} from "./starredReducer";
-import {UiState} from "./uiReducer";
+import {
+  AdaptedCube,
+  AdaptedDimension,
+  AdaptedHierarchy,
+  AdaptedLevel,
+  AdaptedMeasure,
+  AdaptedMember
+} from "@datawheel/olap-client";
 
-type DrillableItem = DrilldownItem | CutItem;
-type MeasurableItem = MeasureItem | FilterItem;
+type JSONCube = AdaptedCube;
+type JSONDimension = AdaptedDimension;
+type JSONHierarchy = AdaptedHierarchy;
+type JSONLevel = AdaptedLevel;
+type JSONMeasure = AdaptedMeasure;
+type JSONMember = AdaptedMember;
 
 interface QueryItem {
   active: boolean;
   readonly key: string;
 }
 
+interface DrilldownItem extends QueryItem {
+  dimension: string;
+  hierarchy: string;
+  level: string;
+}
+
 interface CutItem extends QueryItem {
-  drillable: string;
+  dimension: string;
+  hierarchy: string;
+  level: string;
   error?: Error;
   members: MemberItem[];
   membersLoaded: boolean;
-}
-
-interface DrilldownItem extends QueryItem {
-  drillable: string;
 }
 
 interface MeasureItem extends QueryItem {
@@ -35,6 +45,13 @@ interface FilterItem extends QueryItem {
   interpretedValue: number;
 }
 
+interface NamedSetItem extends QueryItem {
+  namedset?: string;
+}
+
+type MeasurableItem = MeasureItem | FilterItem;
+type DrillableItem = DrilldownItem;
+
 interface MemberItem extends QueryItem {
   name: string;
 }
@@ -44,15 +61,6 @@ interface StarredItem {
   key: string;
   label: string;
   query: QueryState;
-}
-
-interface ExplorerState {
-  explorerAggregation: AggregationState;
-  explorerCubes: CubesState;
-  explorerLoading: LoadingState;
-  explorerQuery: QueryState;
-  explorerStarred: StarredState;
-  explorerUi: UiState;
 }
 
 interface GrowthQueryState {
@@ -71,4 +79,59 @@ interface TopkQueryState {
   level?: string;
   measure?: string;
   order?: "asc" | "desc";
+}
+
+interface AggregationState {
+  aggregateUrl: string;
+  data: any[];
+  jsCall: string;
+  logicLayerUrl: string;
+  options: any;
+}
+
+interface CubesState {
+  [name: string]: JSONCube;
+}
+
+interface LoadingState {
+  error: string | null;
+  loading: boolean;
+  status: string;
+  trigger: string | null;
+}
+
+interface QueryState {
+  cube: string;
+  cuts: CutItem[];
+  debug: boolean;
+  distinct: boolean;
+  drilldowns: DrilldownItem[];
+  filters: FilterItem[];
+  growth: GrowthQueryState;
+  measures: MeasureItem[];
+  nonempty: boolean;
+  parents: boolean;
+  rca: RcaQueryState;
+  sparse: boolean;
+  topk: TopkQueryState;
+}
+
+interface UiState {
+  darkTheme: boolean;
+  debugDrawer: boolean;
+  serverSoftware: string;
+  serverOnline: boolean | undefined;
+  serverUrl: string;
+  serverVersion: string;
+  starredDrawer: boolean;
+  tab: string;
+}
+
+interface ExplorerState {
+  explorerAggregation: AggregationState;
+  explorerCubes: CubesState;
+  explorerLoading: LoadingState;
+  explorerQuery: QueryState;
+  explorerStarred: StarredItem[];
+  explorerUi: UiState;
 }

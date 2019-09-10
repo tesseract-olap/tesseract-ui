@@ -1,30 +1,31 @@
-import React from "react";
-import {connect} from "react-redux"
-import {Intent, AnchorButton} from "@blueprintjs/core";
+import {AnchorButton, Intent} from "@blueprintjs/core";
+import React, {memo} from "react";
+import {connect} from "react-redux";
 
 /**
  * @typedef StateProps
- * @property {string} status
+ * @property {boolean|undefined} online
+ * @property {string} software
  * @property {string} url
  * @property {string} version
  */
 
 /** @type {React.FC<StateProps>} */
-const ServerStatus = function(props) {
-  if (props.status === "ok") {
+const ServerStatus = function({online, software, url, version}) {
+  if (online === true) {
     return (
       <AnchorButton
-        href={props.url}
+        href={url}
         icon="database"
         intent={Intent.SUCCESS}
         minimal={true}
         tabIndex={null}
         target="_blank"
-        text={props.version}
+        text={`${software} v${version}`}
       />
     );
   }
-  if (props.status === "unavailable") {
+  if (online === false) {
     return (
       <AnchorButton
         intent={Intent.WARNING}
@@ -37,15 +38,16 @@ const ServerStatus = function(props) {
   return (
     <AnchorButton disabled={true} tabIndex={null} text="Retrieving server info..." />
   );
-}
+};
 
 /** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   return {
-    status: state.explorerUi.serverStatus,
+    online: state.explorerUi.serverOnline,
+    software: state.explorerUi.serverSoftware,
     url: state.explorerUi.serverUrl,
     version: state.explorerUi.serverVersion
-  }
+  };
 }
 
-export default connect(mapStateToProps)(ServerStatus);
+export default connect(mapStateToProps)(memo(ServerStatus));

@@ -2,7 +2,7 @@ import {Button, Classes, InputGroup, Menu, MenuItem} from "@blueprintjs/core";
 import classNames from "classnames";
 import memoizeOne from "memoize-one";
 import React, {Component} from "react";
-import {safeRegExp} from "../utils/format";
+import {safeRegExp} from "../utils/transform";
 import {activeItemCounter} from "../utils/validation";
 
 import "../style/MultiSelector.scss";

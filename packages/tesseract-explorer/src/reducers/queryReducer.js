@@ -1,52 +1,41 @@
 import {QUERY_CUBE_UPDATE, QUERY_INYECT} from "../actions/query";
-import {serializePermalink} from "../utils/format";
 import cutsReducer from "./queryCutReducer";
 import drilldownsReducer from "./queryDrilldownReducer";
 import generalReducer, {
   initialGrowthState,
   initialRcaState,
-  initialTopState
+  initialTopkState
 } from "./queryGeneralReducer";
 
-/**
- * @typedef QueryState
- * @property {string} cube
- * @property {import(".").CutItem[]} cuts
- * @property {import(".").DrilldownItem[]} drilldowns
- * @property {import(".").FilterItem[]} filters
- * @property {typeof initialGrowthState} growth
- * @property {import(".").MeasureItem[]} measures
- * @property {boolean} parents
- * @property {string} permalink
- * @property {typeof initialRcaState} rca
- * @property {boolean} sparse
- * @property {typeof initialTopState} top
- */
-
-/** @type {QueryState} */
+/** @type {import(".").QueryState} */
 export const initialState = {
   cube: "",
   cuts: [],
+  debug: false,
+  distinct: true,
   drilldowns: [],
   filters: [],
   growth: initialGrowthState,
   measures: [],
+  nonempty: true,
   parents: false,
-  permalink: "",
   rca: initialRcaState,
   sparse: false,
-  top: initialTopState
+  topk: initialTopkState
 };
 
-/** @type {import("redux").Reducer<QueryState>} */
+/** @type {import("redux").Reducer<import(".").QueryState>} */
 function queryReducer(state = initialState, action) {
   const originalState = state;
 
   if (action.type === QUERY_INYECT) {
-    state = {...initialState, ...action.payload};
-    state.growth = {...initialGrowthState, ...state.growth};
-    state.rca = {...initialRcaState, ...state.rca};
-    state.top = {...initialTopState, ...state.top};
+    state = {
+      ...initialState,
+      ...action.payload,
+      growth: {...initialGrowthState, ...state.growth},
+      rca: {...initialRcaState, ...state.rca},
+      topk: {...initialTopkState, ...state.topk}
+    };
   }
   else if (action.type === QUERY_CUBE_UPDATE) {
     const {cube, measures} = action.payload;
@@ -58,11 +47,7 @@ function queryReducer(state = initialState, action) {
     state = cutsReducer(state, action);
   }
 
-  if (state !== originalState) {
-    state.permalink = serializePermalink(state);
-  }
-
-  return state;
+  return state || initialState;
 }
 
 export default queryReducer;

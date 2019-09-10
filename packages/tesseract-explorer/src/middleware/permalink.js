@@ -1,5 +1,6 @@
 import {AGGREGATION_UPDATE} from "../actions/aggregation";
 import {queryInyect} from "../actions/query";
+import {serializePermalink} from "../utils/permalink";
 
 /** @type {import("redux").Middleware<{}, import("../reducers").ExplorerState>} */
 function permalinkMiddleware({dispatch, getState}) {
@@ -14,8 +15,8 @@ function permalinkMiddleware({dispatch, getState}) {
       if (action.type === AGGREGATION_UPDATE) {
         const {explorerCubes: nextCubes, explorerQuery: nextQuery} = getState();
 
-        if (nextCubes._loaded) {
-          const nextPermalink = nextQuery.permalink;
+        if (nextCubes[nextQuery.cube] != null) {
+          const nextPermalink = serializePermalink(nextQuery);
 
           console.groupCollapsed("Permalink changed");
           console.log(nextQuery);

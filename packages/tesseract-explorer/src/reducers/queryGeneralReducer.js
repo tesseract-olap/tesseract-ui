@@ -1,13 +1,16 @@
 import {
+  QUERY_DEBUG_TOGGLE,
+  QUERY_DISTINCT_TOGGLE,
   QUERY_GROWTH_CLEAR,
   QUERY_GROWTH_UPDATE,
   QUERY_MEASURES_TOGGLE,
+  QUERY_NONEMPTY_TOGGLE,
   QUERY_PARENTS_TOGGLE,
   QUERY_RCA_CLEAR,
   QUERY_RCA_UPDATE,
   QUERY_SPARSE_TOGGLE,
-  QUERY_TOP_CLEAR,
-  QUERY_TOP_UPDATE
+  QUERY_TOPK_CLEAR,
+  QUERY_TOPK_UPDATE
 } from "../actions/query";
 import {findByProperty, replaceFromArray} from "../utils/array";
 
@@ -17,11 +20,11 @@ export const initialGrowthState = {};
 /** @type {import(".").RcaQueryState} */
 export const initialRcaState = {};
 
-/** @type {import(".").TopQueryState} */
-export const initialTopState = {order: "desc"};
+/** @type {import(".").TopkQueryState} */
+export const initialTopkState = {order: "desc"};
 
-/** @type {import("redux").Reducer<import("./queryReducer").QueryState>} */
-export default function(state, action) {
+/** @type {import("redux").Reducer<import(".").QueryState>} */
+export default function(state = {}, action) {
   switch (action.type) {
     case QUERY_MEASURES_TOGGLE: {
       const item = action.payload;
@@ -63,28 +66,37 @@ export default function(state, action) {
       };
     }
 
-    case QUERY_TOP_CLEAR: {
-      return {...state, top: initialTopState};
+    case QUERY_TOPK_CLEAR: {
+      return {...state, topk: initialTopkState};
     }
 
-    case QUERY_TOP_UPDATE: {
-      const top = action.payload;
+    case QUERY_TOPK_UPDATE: {
+      const topk = action.payload;
       return {
         ...state,
-        top: {
-          amount: "amount" in top ? top.amount : state.top.amount,
-          level: top.level || state.top.level,
-          measure: top.measure || state.top.measure,
-          order: top.order || state.top.order || "desc"
+        topk: {
+          amount: "amount" in topk ? topk.amount : state.topk.amount,
+          level: topk.level || state.topk.level,
+          measure: topk.measure || state.topk.measure,
+          order: topk.order || state.topk.order || "desc"
         }
       };
     }
 
-    case QUERY_SPARSE_TOGGLE:
-      return {...state, sparse: !state.sparse};
+    case QUERY_DEBUG_TOGGLE:
+      return {...state, debug: !state.debug};
+
+    case QUERY_DISTINCT_TOGGLE:
+      return {...state, distinct: !state.distinct};
+
+    case QUERY_NONEMPTY_TOGGLE:
+      return {...state, nonempty: !state.nonempty};
 
     case QUERY_PARENTS_TOGGLE:
       return {...state, parents: !state.parents};
+
+    case QUERY_SPARSE_TOGGLE:
+      return {...state, sparse: !state.sparse};
 
     default:
       return state;

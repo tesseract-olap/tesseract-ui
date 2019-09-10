@@ -4,6 +4,8 @@ export const QUERY_CUTS_CREATE       = "explorer/QUERY/CUTS/CREATE";
 export const QUERY_CUTS_REMOVE       = "explorer/QUERY/CUTS/REMOVE";
 export const QUERY_CUTS_REPLACE      = "explorer/QUERY/CUTS/REPLACE";
 export const QUERY_CUTS_UPDATE       = "explorer/QUERY/CUTS/UPDATE";
+export const QUERY_DEBUG_TOGGLE      = "explorer/QUERY/DEBUG/TOGGLE";
+export const QUERY_DISTINCT_TOGGLE   = "explorer/QUERY/DISTINCT/TOGGLE";
 export const QUERY_DRILLDOWNS_CLEAR  = "explorer/QUERY/DRILLDOWNS/CLEAR";
 export const QUERY_DRILLDOWNS_CREATE = "explorer/QUERY/DRILLDOWNS/CREATE";
 export const QUERY_DRILLDOWNS_REMOVE = "explorer/QUERY/DRILLDOWNS/REMOVE";
@@ -15,12 +17,13 @@ export const QUERY_GROWTH_CLEAR      = "explorer/QUERY/GROWTH/CLEAR";
 export const QUERY_GROWTH_UPDATE     = "explorer/QUERY/GROWTH/UPDATE";
 export const QUERY_INYECT            = "explorer/QUERY/INYECT";
 export const QUERY_MEASURES_TOGGLE   = "explorer/QUERY/MEASURES/TOGGLE";
+export const QUERY_NONEMPTY_TOGGLE   = "explorer/QUERY/NONEMPTY/TOGGLE";
 export const QUERY_PARENTS_TOGGLE    = "explorer/QUERY/PARENTS/TOGGLE";
 export const QUERY_RCA_CLEAR         = "explorer/QUERY/RCA/CLEAR";
 export const QUERY_RCA_UPDATE        = "explorer/QUERY/RCA/UPDATE";
 export const QUERY_SPARSE_TOGGLE     = "explorer/QUERY/SPARSE/TOGGLE";
-export const QUERY_TOP_CLEAR         = "explorer/QUERY/TOP/CLEAR";
-export const QUERY_TOP_UPDATE        = "explorer/QUERY/TOP/UPDATE";
+export const QUERY_TOPK_CLEAR        = "explorer/QUERY/TOPK/CLEAR";
+export const QUERY_TOPK_UPDATE       = "explorer/QUERY/TOPK/UPDATE";
 
 export const queryInyect = queryState => ({type: QUERY_INYECT, payload: queryState});
 
@@ -52,8 +55,11 @@ export const queryGrowthUpdate = payload => ({type: QUERY_GROWTH_UPDATE, payload
 export const queryRcaClear = () => ({type: QUERY_RCA_CLEAR});
 export const queryRcaUpdate = payload => ({type: QUERY_RCA_UPDATE, payload});
 
-export const queryTopClear = () => ({type: QUERY_TOP_CLEAR});
-export const queryTopUpdate = payload => ({type: QUERY_TOP_UPDATE, payload});
+export const queryTopkClear = () => ({type: QUERY_TOPK_CLEAR});
+export const queryTopkUpdate = payload => ({type: QUERY_TOPK_UPDATE, payload});
 
-export const querySparseToggle = () => ({type: QUERY_SPARSE_TOGGLE});
+export const queryDebugToggle = () => ({type: QUERY_DEBUG_TOGGLE});
+export const queryDistinctToggle = () => ({type: QUERY_DISTINCT_TOGGLE});
+export const queryNonEmptyToggle = () => ({type: QUERY_NONEMPTY_TOGGLE});
 export const queryParentsToggle = () => ({type: QUERY_PARENTS_TOGGLE});
+export const querySparseToggle = () => ({type: QUERY_SPARSE_TOGGLE});

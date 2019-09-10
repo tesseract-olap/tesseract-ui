@@ -29,7 +29,7 @@ function DebugDrawer(props) {
       <PerfectScrollbar>
         <div className="debug-drawer-content">
           <H3>
-            Javascript call for <Code>tesseract-client</Code>
+            <Code>olap-client</Code>
           </H3>
           <pre className={classNames(Classes.CODE_BLOCK, "jscall")}>{javascriptCall}</pre>
 

@@ -1,16 +1,7 @@
 import {AGGREGATION_UPDATE} from "../actions/aggregation";
 import {QUERY_CUBE_UPDATE} from "../actions/query";
 
-/**
- * @typedef AggregationState
- * @property {string} aggregateUrl
- * @property {any[]} data
- * @property {string} jsCall
- * @property {string} logicLayerUrl
- * @property {any} options
- */
-
-/** @type {AggregationState} */
+/** @type {import(".").AggregationState} */
 const initialState = {
   aggregateUrl: "",
   data: [],
@@ -19,7 +10,7 @@ const initialState = {
   options: {}
 };
 
-/** @type {import("redux").Reducer<AggregationState>} */
+/** @type {import("redux").Reducer<import(".").AggregationState>} */
 function aggregationReducer(state = initialState, action) {
   switch (action.type) {
     case QUERY_CUBE_UPDATE:

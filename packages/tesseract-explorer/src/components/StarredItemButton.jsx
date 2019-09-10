@@ -2,17 +2,14 @@ import {Button, Intent, Tooltip} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import {createStarredItem, removeStarredItem} from "../actions/starred";
+import {serializePermalink} from "../utils/permalink";
 
 /**
  * @typedef OwnProps
  * @property {string} className
  * @property {boolean} disabled
- * @property {import("../reducers/queryReducer").QueryState} query
- */
-
-/**
- * @typedef StateProps
- * @property {boolean} isStarred
+ * @property {import("../reducers").StarredItem[]} starredItems
+ * @property {import("../reducers").QueryState} query
  */
 
 /**
@@ -21,9 +18,11 @@ import {createStarredItem, removeStarredItem} from "../actions/starred";
  * @property {() => any} unstarQuery
  */
 
-/** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
+/** @type {React.FC<OwnProps & DispatchProps>} */
 const StarredItemButton = function(props) {
-  const {isStarred, disabled} = props;
+  const {query, starredItems, disabled} = props;
+  const permalink = serializePermalink(query);
+  const isStarred = starredItems.some(item => item.key == permalink);
 
   const invalidMsg = "This query can't be saved because is invalid";
 
@@ -50,14 +49,6 @@ const StarredItemButton = function(props) {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
-function mapStateToProps(state) {
-  const {permalink} = state.explorerQuery;
-  return {
-    isStarred: state.explorerStarred.some(item => item.key == permalink)
-  };
-}
-
 /** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
 function mapDispatchToProps(dispatch, props) {
   return {
@@ -65,9 +56,10 @@ function mapDispatchToProps(dispatch, props) {
       return dispatch(createStarredItem(props.query));
     },
     unstarQuery() {
-      return dispatch(removeStarredItem(props.query.permalink));
+      const permalink = serializePermalink(props.query);
+      return dispatch(removeStarredItem(permalink));
     }
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StarredItemButton);
+export default connect(null, mapDispatchToProps)(StarredItemButton);

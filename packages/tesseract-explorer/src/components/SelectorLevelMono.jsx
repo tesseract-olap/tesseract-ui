@@ -1,7 +1,9 @@
 import {Alignment, Button, Popover, Position} from "@blueprintjs/core";
-import React from "react";
+import React, {memo} from "react";
+import {ensureArray} from "../utils/array";
 import {abbreviateFullName} from "../utils/format";
-import MenuDimensions from "./MenuDimension";
+import {shallowEqualExceptFns} from "../utils/validation";
+import MenuDimension from "./MenuDimension";
 
 /**
  * @typedef OwnProps
@@ -9,45 +11,52 @@ import MenuDimensions from "./MenuDimension";
  * @property {boolean} fill
  * @property {import("@blueprintjs/core").IconName} icon
  * @property {string} [placeholder]
- * @property {string} selectedItem
+ * @property {string|undefined} [selectedItem]
  * @property {keyof JSX.IntrinsicElements} [targetTagName]
  * @property {keyof JSX.IntrinsicElements} [wrapperTagName]
- * @property {(level: import("../reducers/cubesReducer").JSONLevel) => any} onItemSelect
+ * @property {(level: import("../reducers").JSONLevel) => any} onItemSelect
  */
 
 /** @type {React.FC<OwnProps>} */
-const LevelSelector = function(props) {
-  const {selectedItem} = props;
-
+const SelectorLevelMono = function({
+  className,
+  fill,
+  icon,
+  onItemSelect,
+  placeholder,
+  selectedItem,
+  targetTagName,
+  wrapperTagName
+}) {
   return (
     <Popover
       autoFocus={false}
       boundary="viewport"
-      className={props.className}
+      className={className}
       minimal={true}
       position={Position.BOTTOM_LEFT}
-      targetTagName={props.fill ? "div" : props.targetTagName}
-      wrapperTagName={props.fill ? "div" : props.wrapperTagName}
+      targetTagName={fill ? "div" : targetTagName}
+      wrapperTagName={fill ? "div" : wrapperTagName}
     >
       <Button
         alignText={Alignment.LEFT}
-        fill={props.fill}
-        icon={props.icon}
+        fill={fill}
+        icon={icon}
         rightIcon="double-caret-vertical"
-        text={abbreviateFullName(selectedItem) || props.placeholder}
+        text={selectedItem ? abbreviateFullName(selectedItem) : placeholder}
       />
-      <MenuDimensions
-        isItemSelected={item => item.fullname === selectedItem}
-        onItemSelected={props.onItemSelect}
+      <MenuDimension
+        selectedItems={ensureArray(selectedItem)}
+        onItemSelected={onItemSelect}
       />
     </Popover>
   );
 };
 
-LevelSelector.defaultProps = {
+SelectorLevelMono.defaultProps = {
   placeholder: "Level...",
   targetTagName: "span",
   wrapperTagName: "span"
 };
 
-export default LevelSelector;
+export default memo(SelectorLevelMono, shallowEqualExceptFns);

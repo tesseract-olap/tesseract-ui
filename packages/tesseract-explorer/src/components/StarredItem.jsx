@@ -11,7 +11,7 @@ import {
 import classNames from "classnames";
 import copy from "clipboard-copy";
 import pluralize from "pluralize";
-import React, {Fragment} from "react";
+import React, {Fragment, memo} from "react";
 import {connect} from "react-redux";
 import {queryInyect} from "../actions/query";
 import {removeStarredItem, updateStarredItemLabel} from "../actions/starred";
@@ -21,7 +21,8 @@ import {
   summaryRca,
   summaryTopk
 } from "../utils/format";
-import {isActiveItem} from "../utils/validation";
+import {levelRefToArray} from "../utils/transform";
+import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
 
 /**
  * @typedef OwnProps
@@ -95,6 +96,9 @@ const StarredItem = function(props) {
           {query.cube}
         </Tag>
         <div className="option-tags">
+          <BooleanTag label="DEBUG" value={query.debug} />
+          <BooleanTag label="DISTINCT" value={query.distinct} />
+          <BooleanTag label="NONEMPTY" value={query.nonempty} />
           <BooleanTag label="PARENTS" value={query.parents} />
           <BooleanTag label="SPARSE" value={query.sparse} />
         </div>
@@ -110,7 +114,7 @@ const StarredItem = function(props) {
           <dt>Drilldowns:</dt>
           {query.drilldowns.map(dd => (
             <dd key={dd.key} className={dd.active ? "" : "disabled"}>
-              {abbreviateFullName(dd.drillable)}
+              {abbreviateFullName(levelRefToArray(dd))}
             </dd>
           ))}
         </dl>
@@ -123,8 +127,11 @@ const StarredItem = function(props) {
               return (
                 <Fragment key={dd.key}>
                   <dt className={dd.active ? "" : "disabled"}>
-                    {`Cut on "${abbreviateFullName(dd.drillable)}"`}
+                    {`Cut on "${abbreviateFullName(levelRefToArray(dd))}"`}
                   </dt>
+                  {activeMembers.length === 0 && (
+                    <dd className="disabled">(No members selected)</dd>
+                  )}
                   {shownMembers.map(m => (
                     <dd key={m.key} className={dd.active ? "" : "disabled"}>
                       <Text ellipsize={true}>{m.name}</Text>
@@ -143,7 +150,7 @@ const StarredItem = function(props) {
                 </Fragment>
               );
             })}
-            {query.filters.length > 0 && <dt>Cuts:</dt>}
+            {query.filters.length > 0 && <dt>Filters:</dt>}
             {query.filters.map(dd => (
               <dd key={dd.key} className={dd.active ? "" : "disabled"}>
                 {dd.measure}
@@ -197,4 +204,6 @@ function mapDispatchToProps(dispatch, props) {
     }
   };
 }
-export default connect(null, mapDispatchToProps)(StarredItem);
+export default connect(null, mapDispatchToProps)(
+  memo(StarredItem, shallowEqualExceptFns)
+);

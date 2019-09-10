@@ -8,7 +8,7 @@ import Tabs from "./NavbarTabs";
 /**
  * @typedef OwnProps
  * @property {string} className
- * @property {string} title
+ * @property {string|undefined} title
  */
 
 /** @type {React.FC<OwnProps>} */

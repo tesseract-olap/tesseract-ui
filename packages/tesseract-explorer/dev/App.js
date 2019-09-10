@@ -5,8 +5,8 @@ import {
   Explorer,
   explorerInitialState,
   explorerReducer,
-  permalinkMiddleware,
-  tesseractMiddleware
+  olapMiddleware,
+  permalinkMiddleware
 } from "../dist/explorer.esm";
 
 import "normalize.css/normalize.css";
@@ -21,7 +21,7 @@ const composeEnhancers =
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     : compose;
 const enhancers = composeEnhancers(
-  applyMiddleware(permalinkMiddleware, tesseractMiddleware)
+  applyMiddleware(permalinkMiddleware, olapMiddleware)
 );
 
 const initialState = explorerInitialState();

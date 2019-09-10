@@ -1,39 +1,41 @@
 import {ControlGroup, FormGroup, HTMLSelect, NumericInput} from "@blueprintjs/core";
-import React from "react";
-import LevelSelector from "./SelectorLevelMono";
+import React, {memo} from "react";
+import {stringifyName} from "../utils/transform";
+import {shallowEqualExceptFns} from "../utils/validation";
+import SelectorLevelMono from "./SelectorLevelMono";
 import MeasureSelector from "./SelectorMeasure";
 
 /**
  * @typedef OwnProps
- * @property {(value: import("../reducers").TopkQueryState) => any} onChange
+ * @property {(value: Partial<import("../reducers").TopkQueryState>) => any} onChange
+ * @property {{value: string, label: string}[]} [orderOptions]
  */
 
 /**
  * @type {React.FC<import("../reducers").TopkQueryState & OwnProps>}
  */
-const InputTopK = function(props) {
-  const {amount, order, level, measure} = props;
+const InputTopK = function({amount, level, measure, onChange, order, orderOptions}) {
   return (
     <ControlGroup className="topk-input" vertical={true}>
-      <LevelSelector
+      <SelectorLevelMono
         className="topk-input-level"
         fill={true}
         icon="layer"
-        onItemSelect={level => props.onChange({level: level.fullname})}
+        onItemSelect={level => onChange({level: stringifyName(level)})}
         selectedItem={level}
       />
       <MeasureSelector
         className="topk-input-measure"
         fill={true}
         icon="th-list"
-        onItemSelect={measure => props.onChange({measure})}
+        onItemSelect={measure => onChange({measure})}
         selectedItem={measure}
       />
       <FormGroup inline={true} label="Amount">
         <NumericInput
           className="topk-input-amount"
           fill={true}
-          onValueChange={amount => props.onChange({amount})}
+          onValueChange={amount => onChange({amount})}
           value={amount}
         />
       </FormGroup>
@@ -41,12 +43,8 @@ const InputTopK = function(props) {
         <HTMLSelect
           className="topk-input-order"
           fill={true}
-          onChange={evt =>
-            props.onChange({order: evt.target.value == "asc" ? "asc" : "desc"})}
-          options={[
-            {value: "desc", label: "descending"},
-            {value: "asc", label: "ascending"}
-          ]}
+          onChange={evt => onChange({order: evt.target.value == "asc" ? "asc" : "desc"})}
+          options={orderOptions}
           value={order}
         />
       </FormGroup>
@@ -54,4 +52,8 @@ const InputTopK = function(props) {
   );
 };
 
-export default InputTopK;
+InputTopK.defaultProps = {
+  orderOptions: [{value: "desc", label: "descending"}, {value: "asc", label: "ascending"}]
+};
+
+export default memo(InputTopK, shallowEqualExceptFns);

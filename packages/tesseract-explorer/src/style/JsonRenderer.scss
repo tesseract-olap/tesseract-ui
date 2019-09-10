@@ -38,13 +38,20 @@
 
     .null > &,
     .undefined > & {
+      color: #c0c;
+    }
+    .number > & {
       color: #00c;
     }
     .boolean > & {
-      color: #00c;
+      color: #f90;
     }
     .string > & {
-      color: #0c0;
+      color: #090;
+
+      &::before, &::after {
+        content: '"';
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 import {InputGroup, Tree} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {PureComponent} from "react";
-import {safeRegExp} from "../utils/format";
+import {safeRegExp} from "../utils/transform";
 
 const VISIBLE_AMOUNT = 50;
 

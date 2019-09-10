@@ -1,4 +1,4 @@
-import {Switch} from "@blueprintjs/core";
+import {Checkbox} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import {queryMeasureToggle} from "../actions/query";
@@ -6,7 +6,7 @@ import {queryMeasureToggle} from "../actions/query";
 function TagMeasure(props) {
   const item = props.item;
   return (
-    <Switch
+    <Checkbox
       className="item-measure"
       label={item.measure}
       checked={item.active}

@@ -2,7 +2,11 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "checkJs": true,
-    "jsx": "react"
+    "jsx": "react",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "strictNullChecks": true,
+    "target": "es2015"
   },
   "include": [
     "./src",

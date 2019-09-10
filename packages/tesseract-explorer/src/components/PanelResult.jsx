@@ -16,8 +16,8 @@ function ResultPanel(props) {
         icon="error"
         description={
           <div className="error-description">
-            <p>There was a problem with the last query.</p>
-            <p>{"Server response: " + props.error}</p>
+            <p>There was a problem with the last query:</p>
+            <p className="error-detail">{props.error}</p>
           </div>
         }
       />
