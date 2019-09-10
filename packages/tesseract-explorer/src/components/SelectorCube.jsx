@@ -2,6 +2,7 @@ import {MenuItem} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import {setCube} from "../actions/client";
+import {safeRegExp} from "../utils/transform";
 import GenericSelector from "./SelectorGeneric";
 
 /**
@@ -12,10 +13,11 @@ import GenericSelector from "./SelectorGeneric";
 
 /**
  * @typedef StateProps
- * @property {string} selectedItem
  * @property {import("@blueprintjs/core").IconName} icon
- * @property {(item: string, {handleClick, index, modifiers, query}) => JSX.Element} itemRenderer
+ * @property {import("@blueprintjs/select").ItemListPredicate<string>} itemListPredicate
+ * @property {import("@blueprintjs/select").ItemRenderer<string>} itemRenderer
  * @property {string[]} items
+ * @property {string} selectedItem
  */
 
 /**
@@ -23,18 +25,25 @@ import GenericSelector from "./SelectorGeneric";
  * @property {(cubeName: string) => void} onItemSelect
  */
 
-/** @type {(item: string, {handleClick, index, modifiers, query}) => JSX.Element} */
+/** @type {import("@blueprintjs/select").ItemRenderer<string>} */
 function itemRenderer(item, {handleClick}) {
   return <MenuItem icon="cube" key={item} onClick={handleClick} text={item} />;
+}
+
+/** @type {import("@blueprintjs/select").ItemListPredicate<string>} */
+function itemListPredicate(query, items) {
+  const tester = safeRegExp(query, "i");
+  return items.filter(item => tester.test(item));
 }
 
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   return {
-    selectedItem: state.explorerQuery.cube,
     icon: "cube",
+    itemListPredicate,
     itemRenderer,
-    items: Object.keys(state.explorerCubes)
+    items: Object.keys(state.explorerCubes),
+    selectedItem: state.explorerQuery.cube
   };
 }
 
