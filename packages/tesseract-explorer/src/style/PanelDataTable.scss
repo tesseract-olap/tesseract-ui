@@ -1,3 +1,10 @@
 &.data-table {
   user-select: none;
+
+  .column-number {
+    font-family: Consolas;
+    font-variant-numeric: tabular-nums;
+    font-variant-numeric: tabular-nums lining-nums;
+    text-align: right;
+  }
 }

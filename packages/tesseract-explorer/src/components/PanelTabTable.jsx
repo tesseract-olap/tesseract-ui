@@ -49,12 +49,18 @@ class TableTabPanel extends PureComponent {
       );
     }
 
+    /** @type {any[]} */
     const sortedData = this.dataSorter(data, sortKey, sortDescending);
 
     const columnKeys = Object.keys(sortedData[0]);
+    const columnTypes = columnKeys.map(key => typeof sortedData[0][key]);
     const columns = columnKeys.map((columnKey, columnIndex) => {
       const cellRenderer = rowIndex => (
-        <Cell columnIndex={columnIndex} rowIndex={rowIndex}>
+        <Cell
+          className={`column-${columnTypes[columnIndex]}`}
+          columnIndex={columnIndex}
+          rowIndex={rowIndex}
+        >
           {sortedData[rowIndex][columnKey]}
         </Cell>
       );
