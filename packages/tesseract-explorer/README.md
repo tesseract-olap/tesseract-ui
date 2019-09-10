@@ -43,3 +43,7 @@ function PageComponent(props) {
   return <TesseractExplorer src="https://tesseract.server.url/" />;
 }
 ```
+
+## License
+
+MIT © 2019 [Datawheel](https://datawheel.us/)

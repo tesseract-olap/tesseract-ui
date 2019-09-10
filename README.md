@@ -15,3 +15,7 @@ A `npm init` script to easily create a single working instance of tesseract-ui i
 ### [`tesseract-godfather`](/packages/tesseract-godfather/)
 
 A canon app to monitor and explore multiple tesseract-olap server instances.
+
+## License
+
+MIT © 2019 [Datawheel](https://datawheel.us/)
