@@ -38,7 +38,8 @@ function queryReducer(state = initialState, action) {
   else if (action.type === QUERY_CUBE_UPDATE) {
     const {cube, measures} = action.payload;
     if (cube !== state.cube || measures.length !== state.measures.length) {
-      state = {...initialState, cube, measures};
+      const parentState = cube !== state.cube ? initialState : state;
+      state = {...parentState, cube, measures};
     }
   }
   else {
