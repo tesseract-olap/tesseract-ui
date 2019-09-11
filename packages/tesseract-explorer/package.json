@@ -13,6 +13,7 @@
     "dev": "multiview [npm run dev:watch] [npm run dev:serve] -x 2000",
     "dev:serve": "poi --serve ./dev/index.js",
     "dev:watch": "rollup --config rollup.config.js --environment NODE_ENV:development,BABEL_ENV:development --watch",
+    "prepublishOnly": "npm run build",
     "build": "rollup --config rollup.config.js --environment NODE_ENV:production,BABEL_ENV:production"
   },
   "author": "Francisco Abarzúa",
