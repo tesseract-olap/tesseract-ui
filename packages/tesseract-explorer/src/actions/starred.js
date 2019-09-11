@@ -1,18 +1,14 @@
-import {serializePermalink} from "../utils/permalink";
-
 export const STARRED_CREATE = "explorer/STARRED/CREATE";
 export const STARRED_REMOVE = "explorer/STARRED/REMOVE";
 export const STARRED_UPDATE = "explorer/STARRED/UPDATE";
 
-/** @param {import("../reducers").QueryState} query */
-export const createStarredItem = query => ({
+/**
+ * @param {import("../reducers").QueryState} query
+ * @param {string} permalink
+ */
+export const createStarredItem = (query, permalink) => ({
   type: STARRED_CREATE,
-  payload: {
-    date: new Date().toISOString(),
-    key: serializePermalink(query),
-    label: "",
-    query
-  }
+  payload: {date: new Date().toISOString(), key: permalink, label: "", query}
 });
 
 /** @param {string} key */

@@ -6,13 +6,12 @@ import {isQuery, isValidQuery} from "./validation";
 
 /** @returns {Partial<import("../reducers").ExplorerState>} */
 function initialStateBuilder() {
-  let explorerQuery, explorerStarred, explorerUi;
+  let explorerQuery, explorerStarred, explorerUi, newPermalink;
 
   if (typeof window === "object") {
     const locationState =
       window.location.search && hydratePermalink(window.location.search);
     const historyState = window.history.state;
-    const starredState = window.localStorage.getItem("starred");
 
     if (isQuery(locationState)) {
       console.log("Used location", locationState);
@@ -32,17 +31,22 @@ function initialStateBuilder() {
       explorerUi.darkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
 
+    const starredState = window.localStorage.getItem("starred");
     explorerStarred = starredState ? JSON.parse(starredState) : starredInitialState;
+
+    newPermalink = window.location.pathname;
   }
 
-  let newPermalink = window.location.pathname;
   if (isValidQuery(explorerQuery)) {
     explorerQuery.growth = {...queryInitialState.growth, ...explorerQuery.growth};
     explorerQuery.rca = {...queryInitialState.rca, ...explorerQuery.rca};
     explorerQuery.topk = {...queryInitialState.topk, ...explorerQuery.topk};
+
     newPermalink += "?" + serializePermalink(explorerQuery);
   }
-  history.replaceState(explorerQuery, "", newPermalink);
+
+  typeof window === "object" &&
+    window.history.replaceState(explorerQuery, "", newPermalink);
 
   return {
     explorerQuery,

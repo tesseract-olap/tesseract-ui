@@ -2,7 +2,12 @@ import {Button, Intent, Tooltip} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import {createStarredItem, removeStarredItem} from "../actions/starred";
-import {serializePermalink} from "../utils/permalink";
+import {selectPermalink} from "../selectors/permalink";
+
+/**
+ * @typedef StateProps
+ * @property {string} permalink
+ */
 
 /**
  * @typedef OwnProps
@@ -14,14 +19,20 @@ import {serializePermalink} from "../utils/permalink";
 
 /**
  * @typedef DispatchProps
- * @property {() => any} starQuery
- * @property {() => any} unstarQuery
+ * @property {(permalink: string, query: import("../reducers").QueryState) => any} starQuery
+ * @property {(permalink: string) => any} unstarQuery
  */
 
-/** @type {React.FC<OwnProps & DispatchProps>} */
-const StarredItemButton = function(props) {
-  const {query, starredItems, disabled} = props;
-  const permalink = serializePermalink(query);
+/** @type {React.FC<StateProps & OwnProps & DispatchProps>} */
+const StarredItemButton = function({
+  className,
+  disabled,
+  permalink,
+  query,
+  starQuery,
+  starredItems,
+  unstarQuery
+}) {
   const isStarred = starredItems.some(item => item.key == permalink);
 
   const invalidMsg = "This query can't be saved because is invalid";
@@ -29,37 +40,43 @@ const StarredItemButton = function(props) {
   return isStarred ? (
     <Tooltip content={disabled ? invalidMsg : "Remove query from starred items"}>
       <Button
-        className={props.className}
+        className={className}
         disabled={disabled}
         icon="star"
         intent={Intent.WARNING}
-        onClick={props.unstarQuery}
+        onClick={() => unstarQuery(permalink)}
       />
     </Tooltip>
   ) : (
     <Tooltip content={disabled ? invalidMsg : "Save query to starred items"}>
       <Button
-        className={props.className}
+        className={className}
         disabled={disabled}
         icon="star-empty"
         intent={Intent.NONE}
-        onClick={props.starQuery}
+        onClick={() => starQuery(permalink, query)}
       />
     </Tooltip>
   );
 };
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
-function mapDispatchToProps(dispatch, props) {
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
+function mapStateToProps(state) {
   return {
-    starQuery() {
-      return dispatch(createStarredItem(props.query));
+    permalink: selectPermalink(state)
+  };
+}
+
+/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+function mapDispatchToProps(dispatch) {
+  return {
+    starQuery(permalink, query) {
+      return dispatch(createStarredItem(query, permalink));
     },
-    unstarQuery() {
-      const permalink = serializePermalink(props.query);
+    unstarQuery(permalink) {
       return dispatch(removeStarredItem(permalink));
     }
   };
 }
 
-export default connect(null, mapDispatchToProps)(StarredItemButton);
+export default connect(mapStateToProps, mapDispatchToProps)(StarredItemButton);

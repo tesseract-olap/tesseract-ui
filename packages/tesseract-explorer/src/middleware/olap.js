@@ -8,6 +8,7 @@ import {
   CLIENT_SETUP
 } from "../actions/client";
 import {cubesUpdate} from "../actions/cubes";
+import {updatePermalink} from "../actions/permalink";
 import {queryCubeSet, queryCutReplace, queryCutUpdate} from "../actions/query";
 import {setServerInfo} from "../actions/ui";
 import {ensureArray, sortByKey} from "../utils/array";
@@ -154,6 +155,7 @@ const actionMap = {
 
       const aggregation = await client.execQuery(query);
       dispatch(updateAggregation(aggregation, {jsCall, llUrl}));
+      dispatch(updatePermalink());
 
       fetchSuccess(aggregation);
     } catch (error) {
