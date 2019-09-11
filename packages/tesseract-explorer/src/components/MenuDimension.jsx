@@ -1,6 +1,7 @@
 import {Menu} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
+import {selectDimensionList} from "../selectors/cubes";
 import DimensionMenuItem from "./MenuItemDimension";
 
 /**
@@ -32,9 +33,8 @@ const DimensionMenu = function({dimensions, selectedItems, onItemSelected}) {
 
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
-  const cube = state.explorerCubes[state.explorerQuery.cube];
   return {
-    dimensions: cube ? cube.dimensions : []
+    dimensions: selectDimensionList(state) || []
   };
 }
 

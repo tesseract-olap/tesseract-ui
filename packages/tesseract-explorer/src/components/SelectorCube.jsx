@@ -2,6 +2,7 @@ import {MenuItem} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import {setCube} from "../actions/client";
+import {selectCubeNameList} from "../selectors/cubes";
 import {safeRegExp} from "../utils/transform";
 import GenericSelector from "./SelectorGeneric";
 
@@ -42,7 +43,7 @@ function mapStateToProps(state) {
     icon: "cube",
     itemListPredicate,
     itemRenderer,
-    items: Object.keys(state.explorerCubes),
+    items: selectCubeNameList(state),
     selectedItem: state.explorerQuery.cube
   };
 }

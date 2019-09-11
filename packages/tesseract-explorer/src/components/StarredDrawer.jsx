@@ -3,13 +3,14 @@ import React, {memo} from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
 import {toggleStarredDrawer} from "../actions/ui";
+import {selectPermalink} from "../selectors/permalink";
 import "../style/starredDrawer.scss";
-import {serializePermalink} from "../utils/permalink";
 import {shallowEqualExceptFns} from "../utils/validation";
 import StarredItem from "./StarredItem";
 
 /**
  * @typedef StateProps
+ * @property {string} currentPermalink
  * @property {import("../reducers").QueryState} query
  * @property {boolean} isOpen
  * @property {import("../reducers").StarredItem[]} items
@@ -22,7 +23,6 @@ import StarredItem from "./StarredItem";
 
 /** @type {React.FC<StateProps & DispatchProps>} */
 const StarredDrawer = function(props) {
-  const currentPermalink = serializePermalink(props.query);
   return (
     <Drawer
       className="starred-drawer"
@@ -36,7 +36,7 @@ const StarredDrawer = function(props) {
         <div className="starred-drawer-content">
           {props.items.map(item => (
             <StarredItem
-              active={currentPermalink === item.key}
+              active={props.currentPermalink === item.key}
               item={item}
               key={item.key}
             />
@@ -50,9 +50,10 @@ const StarredDrawer = function(props) {
 /** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   return {
-    query: state.explorerQuery,
+    currentPermalink: selectPermalink(state),
     isOpen: state.explorerUi.starredDrawer,
-    items: state.explorerStarred
+    items: state.explorerStarred,
+    query: state.explorerQuery
   };
 }
 

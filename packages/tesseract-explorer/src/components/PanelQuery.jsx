@@ -12,6 +12,7 @@ import {
   queryTopkClear,
   queryTopkUpdate
 } from "../actions/query";
+import {selectTimeDimension} from "../selectors/cubes";
 import {summaryGrowth, summaryRca, summaryTopk} from "../utils/format";
 import {buildCut, buildDrilldown} from "../utils/query";
 import {
@@ -163,12 +164,10 @@ const PanelQuery = function(props) {
 
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
-  const query = state.explorerQuery;
-  const cube = state.explorerCubes[query.cube];
   return {
-    hasTimeDim: cube && cube.dimensions.some(dim => dim.dimensionType === "time"),
-    query,
-    starredItems: state.explorerStarred,
+    hasTimeDim: Boolean(selectTimeDimension(state)),
+    query: state.explorerQuery,
+    starredItems: state.explorerStarred
   };
 }
 
@@ -194,4 +193,6 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(memo(PanelQuery, shallowEqualExceptFns));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  memo(PanelQuery, shallowEqualExceptFns)
+);

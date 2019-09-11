@@ -12,6 +12,7 @@
           "chrome > 30"
         ]
       },
+      "corejs": 2,
       "useBuiltIns": "usage"
     }],
     "@babel/preset-react"

@@ -1,6 +1,7 @@
 import {Menu} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {connect} from "react-redux";
+import {selectTimeDimension} from "../selectors/cubes";
 import {shallowEqualExceptFns} from "../utils/validation";
 import HierarchyMenuItem from "./MenuItemHierarchy";
 
@@ -33,9 +34,7 @@ const TimeDimensionMenu = function({hierarchies, onClick, selectedItems}) {
 
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
-  const {cube: cubeName} = state.explorerQuery;
-  const cube = state.explorerCubes[cubeName];
-  const timeDimension = cube && cube.dimensions.find(dim => dim.dimensionType === "time");
+  const timeDimension = selectTimeDimension(state);
   return {
     hierarchies: timeDimension ? timeDimension.hierarchies : []
   };
