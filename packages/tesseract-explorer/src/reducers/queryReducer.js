@@ -26,8 +26,6 @@ export const initialState = {
 
 /** @type {import("redux").Reducer<import(".").QueryState>} */
 function queryReducer(state = initialState, action) {
-  const originalState = state;
-
   if (action.type === QUERY_INYECT) {
     state = {
       ...initialState,
@@ -39,7 +37,9 @@ function queryReducer(state = initialState, action) {
   }
   else if (action.type === QUERY_CUBE_UPDATE) {
     const {cube, measures} = action.payload;
-    state = state.cube === cube ? state : {...initialState, cube, measures};
+    if (cube !== state.cube || measures.length !== state.measures.length) {
+      state = {...initialState, cube, measures};
+    }
   }
   else {
     state = generalReducer(state, action);
