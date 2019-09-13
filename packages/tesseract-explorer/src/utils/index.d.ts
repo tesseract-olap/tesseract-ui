@@ -6,6 +6,7 @@ interface SerializedQuery {
   drilldowns: string[];
   filters?: string[];
   growth: any;
+  locale?: string;
   measures: string[];
   nonempty: boolean;
   parents: boolean;

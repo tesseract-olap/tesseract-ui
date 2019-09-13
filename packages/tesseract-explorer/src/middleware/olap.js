@@ -5,16 +5,22 @@ import {
   CLIENT_LOADMEMBERS,
   CLIENT_QUERY,
   CLIENT_SETCUBE,
+  CLIENT_SETLOCALE,
   CLIENT_SETUP
 } from "../actions/client";
 import {cubesUpdate} from "../actions/cubes";
 import {updatePermalink} from "../actions/permalink";
-import {queryCubeSet, queryCutReplace, queryCutUpdate} from "../actions/query";
+import {
+  queryCubeSet,
+  queryCutReplace,
+  queryCutUpdate,
+  queryLocaleUpdate
+} from "../actions/query";
 import {setServerInfo} from "../actions/ui";
 import {ensureArray, sortByKey} from "../utils/array";
 import {buildJavascriptCall} from "../utils/debug";
 import {applyQueryParams, buildCut, buildMeasure, buildMember} from "../utils/query";
-import {isValidQuery} from "../utils/validation";
+import {isActiveItem, isValidQuery} from "../utils/validation";
 
 /**
  * @typedef ActionMapParams
@@ -103,7 +109,9 @@ const actionMap = {
       const cube = await client.getCube(cubeName);
       const cuts = queryState.cuts.map(
         cutItem =>
-          cutItem.membersLoaded ? cutItem : updateCutMembers({client, cube, cutItem})
+          cutItem.membersLoaded
+            ? cutItem
+            : updateCutMembers({client, cube, cutItem, locale: queryState.locale})
       );
       await dispatch({type: CLIENT_SETCUBE, payload: cubeName});
 
@@ -117,16 +125,40 @@ const actionMap = {
   },
 
   /**
+   * Intercepts the order to update locale and dispatches the needed actions.
+   * @param {ActionMapParams} param0
+   * @param {string} param0.action.payload
+   */
+  [CLIENT_SETLOCALE]: async ({action, client, dispatch, getState}) => {
+    const {cube: cubeName, cuts, locale: prevLocale} = getState().explorerQuery;
+    const nextLocale = action.payload;
+    if (prevLocale !== nextLocale) {
+      const unloadedCuts = cuts.map(cutItem => ({...cutItem, membersLoaded: false}));
+      dispatch(queryCutReplace(unloadedCuts));
+
+      const cube = await client.getCube(cubeName);
+      const cutPromises = cuts.map(cutItem =>
+        updateCutMembers({client, cube, cutItem, locale: nextLocale})
+      );
+      const updatedCuts = await Promise.all(cutPromises);
+      dispatch(queryCutReplace(updatedCuts));
+
+      dispatch(queryLocaleUpdate(nextLocale));
+      await dispatch({type: CLIENT_QUERY});
+    }
+  },
+
+  /**
    * Takes a newly generated CutItem and fills its list of associated members.
    * Returns a copy of the CutItem with its members property filled.
    * @param {ActionMapParams} param0
-   * @param {import("../reducers").CutItem} p.action.payload
+   * @param {import("../reducers").CutItem} param0.action.payload
    */
   [CLIENT_LOADMEMBERS]: async ({action, client, dispatch, getState}) => {
-    const {cube: cubeName} = getState().explorerQuery;
+    const {cube: cubeName, locale} = getState().explorerQuery;
     const cutItem = action.payload;
     const cube = await client.getCube(cubeName);
-    const updatedCutItem = await updateCutMembers({client, cube, cutItem});
+    const updatedCutItem = await updateCutMembers({client, cube, cutItem, locale});
     return dispatch(queryCutUpdate(updatedCutItem));
   },
 
@@ -170,9 +202,12 @@ const actionMap = {
  * @param {OLAPClient} p.client
  * @param {import("@datawheel/olap-client").Cube} p.cube
  * @param {import("../reducers").CutItem} p.cutItem
+ * @param {string|undefined} p.locale
  */
-async function updateCutMembers({client, cube, cutItem}) {
-  const partialMembers = ensureArray(cutItem.members).map(member => `${member.key}`);
+async function updateCutMembers({client, cube, cutItem, locale}) {
+  const partialMembers = ensureArray(cutItem.members)
+    .filter(isActiveItem)
+    .map(member => `${member.key}`);
   const {level: levelName, hierarchy, dimension} = cutItem;
 
   try {
@@ -181,15 +216,15 @@ async function updateCutMembers({client, cube, cutItem}) {
         const sameHie = hierarchy ? hierarchy === level.hierarchy.name : true;
         const sameDim = dimension ? dimension === level.dimension.name : true;
         if (sameDim && sameHie) {
-          const rawMembers = await client.getMembers(level);
+          const rawMembers = await client.getMembers(level, {locale});
           const members = rawMembers.map(member => {
             const active = partialMembers.includes(`${member.key}`);
-            return buildMember({name: member.name, key: member.key, active});
+            return buildMember({name: member.caption, key: member.key, active});
           });
           return buildCut({
             ...cutItem,
             active: true,
-            members: sortByKey(members, "key"),
+            members: sortByKey(members, "key", false),
             membersLoaded: true
           });
         }

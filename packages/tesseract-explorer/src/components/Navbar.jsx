@@ -1,9 +1,10 @@
 import {Alignment, Navbar} from "@blueprintjs/core";
 import React from "react";
+import Tabs from "./NavbarTabs";
 import NavButtons from "./NavButtons";
 import CubeSelector from "./SelectorCube";
+import SelectorLocale from "./SelectorLocale";
 import ServerStatus from "./ServerStatus";
-import Tabs from "./NavbarTabs";
 
 /**
  * @typedef OwnProps
@@ -12,7 +13,7 @@ import Tabs from "./NavbarTabs";
  */
 
 /** @type {React.FC<OwnProps>} */
-const NavigationBar = function (props) {
+const NavigationBar = function(props) {
   return (
     <Navbar className={props.className}>
       <Navbar.Group align={Alignment.LEFT}>
@@ -24,6 +25,7 @@ const NavigationBar = function (props) {
           noOptionsText="Loading cubes..."
           noSelectedText="No cube selected"
         />
+        <SelectorLocale />
       </Navbar.Group>
       <Navbar.Group align={Alignment.RIGHT}>
         <NavButtons />
@@ -32,6 +34,6 @@ const NavigationBar = function (props) {
       </Navbar.Group>
     </Navbar>
   );
-}
+};
 
 export default NavigationBar;

@@ -139,7 +139,7 @@ const PanelQuery = function(props) {
         <InputTopK {...query.topk} onChange={props.updateTopkHandler} />
       </QueryGroup>
 
-      <QueryGroupOptions query={query} />
+      <QueryGroupOptions />
 
       <ButtonGroup fill={true}>
         <Button

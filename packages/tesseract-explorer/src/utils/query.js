@@ -31,6 +31,8 @@ export function applyQueryParams(query, params) {
   validTopkState(topk) &&
     query.setTop(topk.amount, parseName(topk.level), topk.measure, Order[topk.order]);
 
+  params.locale && query.setLocale(params.locale);
+
   query.setOption("debug", params.debug);
   query.setOption("distinct", params.distinct);
   query.setOption("nonempty", params.nonempty);

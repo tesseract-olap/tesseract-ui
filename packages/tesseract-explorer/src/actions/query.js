@@ -16,6 +16,7 @@ export const QUERY_FILTERS_REMOVE    = "explorer/QUERY/FILTERS/REMOVE";
 export const QUERY_GROWTH_CLEAR      = "explorer/QUERY/GROWTH/CLEAR";
 export const QUERY_GROWTH_UPDATE     = "explorer/QUERY/GROWTH/UPDATE";
 export const QUERY_INYECT            = "explorer/QUERY/INYECT";
+export const QUERY_LOCALE_UPDATE     = "explorer/QUERY/LOCALE/UPDATE";
 export const QUERY_MEASURES_TOGGLE   = "explorer/QUERY/MEASURES/TOGGLE";
 export const QUERY_NONEMPTY_TOGGLE   = "explorer/QUERY/NONEMPTY/TOGGLE";
 export const QUERY_PARENTS_TOGGLE    = "explorer/QUERY/PARENTS/TOGGLE";
@@ -57,6 +58,8 @@ export const queryRcaUpdate = payload => ({type: QUERY_RCA_UPDATE, payload});
 
 export const queryTopkClear = () => ({type: QUERY_TOPK_CLEAR});
 export const queryTopkUpdate = payload => ({type: QUERY_TOPK_UPDATE, payload});
+
+export const queryLocaleUpdate = payload => ({type: QUERY_LOCALE_UPDATE, payload});
 
 export const queryDebugToggle = () => ({type: QUERY_DEBUG_TOGGLE});
 export const queryDistinctToggle = () => ({type: QUERY_DISTINCT_TOGGLE});

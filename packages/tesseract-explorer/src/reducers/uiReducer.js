@@ -2,6 +2,7 @@ import {STARRED_CREATE} from "../actions/starred";
 import {
   UITAB_TABLE,
   UI_DEBUG_TOGGLE,
+  UI_LOCALELIST_UPDATE,
   UI_SERVER_INFO,
   UI_STARRED_TOGGLE,
   UI_TABS_SELECT,
@@ -12,8 +13,9 @@ import {
 export const initialState = {
   darkTheme: false,
   debugDrawer: false,
-  serverSoftware: "",
+  localeOptions: ["en"],
   serverOnline: undefined,
+  serverSoftware: "",
   serverUrl: "",
   serverVersion: "",
   starredDrawer: false,
@@ -56,6 +58,9 @@ function uiReducer(state = initialState, action) {
       typeof window === "object" &&
         window.localStorage.setItem("darkTheme", `${darkTheme}`);
       return {...state, darkTheme};
+
+    case UI_LOCALELIST_UPDATE:
+      return {...state, localeOptions: action.payload};
 
     case STARRED_CREATE:
       return {...state, starredDrawer: true};

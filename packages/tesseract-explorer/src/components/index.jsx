@@ -4,6 +4,7 @@ import React, {PureComponent} from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
 import {setupClient} from "../actions/client";
+import {updateLocaleList} from "../actions/ui";
 import AnimatedCube from "./AnimatedCube";
 import DebugDrawer from "./DebugDrawer";
 import LoadingScreen from "./LoadingScreen";
@@ -16,6 +17,7 @@ import StarredDrawer from "./StarredDrawer";
  * @typedef OwnProps
  * @property {string} src The URL for the data server.
  * @property {string} [title] A title to show on the navbar.
+ * @property {string[]} locale A list of the available locale options
  */
 
 /**
@@ -28,17 +30,19 @@ import StarredDrawer from "./StarredDrawer";
 /**
  * @typedef DispatchProps
  * @property {(src: string) => any} setupClient
+ * @property {(src: string[]) => any} updateLocaleList
  */
 
 /**
  * The ExplorerUI component unit
  * @class ExplorerComponent
- * @extends {React.PureComponent<OwnProps & StateProps & DispatchProps>}
+ * @augments React.PureComponent<OwnProps&StateProps&DispatchProps>
  */
 class ExplorerComponent extends PureComponent {
   constructor(props) {
     super(props);
     props.setupClient(props.src);
+    props.updateLocaleList(props.locale);
   }
 
   componentDidUpdate(prevProps) {
@@ -63,6 +67,7 @@ class ExplorerComponent extends PureComponent {
 }
 
 ExplorerComponent.defaultProps = {
+  locale: ["en"],
   title: process.env.REACT_APP_TITLE || "tesseract-olap"
 };
 
@@ -113,7 +118,8 @@ function mapStateToProps(state) {
 /** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
 function mapDispatchToProps(dispatch) {
   return {
-    setupClient: src => dispatch(setupClient(src))
+    setupClient: src => dispatch(setupClient(src)),
+    updateLocaleList: locale => dispatch(updateLocaleList(locale))
   };
 }
 

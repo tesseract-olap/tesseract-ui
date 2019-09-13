@@ -3,6 +3,7 @@ import {
   QUERY_DISTINCT_TOGGLE,
   QUERY_GROWTH_CLEAR,
   QUERY_GROWTH_UPDATE,
+  QUERY_LOCALE_UPDATE,
   QUERY_MEASURES_TOGGLE,
   QUERY_NONEMPTY_TOGGLE,
   QUERY_PARENTS_TOGGLE,
@@ -82,6 +83,9 @@ export default function(state = {}, action) {
         }
       };
     }
+
+    case QUERY_LOCALE_UPDATE:
+      return {...state, locale: action.payload};
 
     case QUERY_DEBUG_TOGGLE:
       return {...state, debug: !state.debug};

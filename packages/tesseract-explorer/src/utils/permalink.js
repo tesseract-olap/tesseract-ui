@@ -34,6 +34,7 @@ export function serializeState(query) {
     drilldowns: query.drilldowns.filter(isActiveItem).map(stringifyName),
     filters: filters.length > 0 ? filters : undefined,
     growth: validGrowthState(query.growth) ? query.growth : undefined,
+    locale: query.locale,
     measures: query.measures.filter(isActiveItem).map(i => i.measure),
     nonempty: query.nonempty,
     parents: query.parents,
@@ -88,6 +89,7 @@ export function hydrateState(query) {
       level: accesor("level", query.growth),
       measure: accesor("measure", query.growth)
     },
+    locale: query.locale,
     measures: ensureArray(query.measures).map(measure =>
       buildMeasure({active: true, key: random(), measure})
     ),

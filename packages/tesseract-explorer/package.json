@@ -30,11 +30,12 @@
   ],
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
-    "@datawheel/olap-client": "^1.0.11",
+    "@datawheel/olap-client": "^1.0.15",
     "classnames": "^2.2.6",
     "clipboard-copy": "^3.0.0",
     "form-urldecoded": "^0.0.6",
     "form-urlencoded": "^4.0.0",
+    "iso-639-1": "^2.1.0",
     "memoize-one": "^5.0.5",
     "pluralize": "^8.0.0",
     "react-perfect-scrollbar": "^1.5.3",
@@ -54,7 +55,7 @@
     "poi": "^12.6.10",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-hot-loader": "^4.12.6",
+    "react-hot-loader": "^4.12.13",
     "react-redux": "^7.0.3",
     "redux": "^4.0.4",
     "rollup": "^1.21.2",
@@ -65,7 +66,7 @@
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-replace": "^2.2.0",
-    "sass": "^1.22.10"
+    "sass": "^1.22.12"
   },
   "peerDependencies": {
     "@blueprintjs/core": "^3.15.1",

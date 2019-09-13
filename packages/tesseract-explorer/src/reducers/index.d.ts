@@ -108,6 +108,7 @@ interface QueryState {
   drilldowns: DrilldownItem[];
   filters: FilterItem[];
   growth: GrowthQueryState;
+  locale: string | undefined;
   measures: MeasureItem[];
   nonempty: boolean;
   parents: boolean;
@@ -119,8 +120,9 @@ interface QueryState {
 interface UiState {
   darkTheme: boolean;
   debugDrawer: boolean;
-  serverSoftware: string;
+  localeOptions: string[];
   serverOnline: boolean | undefined;
+  serverSoftware: string;
   serverUrl: string;
   serverVersion: string;
   starredDrawer: boolean;

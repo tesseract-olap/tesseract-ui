@@ -69,7 +69,14 @@ const QueryGroupOptions = function({
   );
 };
 
-/** @type {MapDispatchToPropsFunction} */
+/** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>}*/
+function mapStateToProps(state) {
+  return {
+    query: state.explorerQuery
+  };
+}
+
+/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, {}>} */
 function mapDispatchToProps(dispatch) {
   return {
     toggleDebugHandler: () => dispatch(queryDebugToggle()),
@@ -80,6 +87,6 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   memo(QueryGroupOptions, shallowEqualExceptFns)
 );
