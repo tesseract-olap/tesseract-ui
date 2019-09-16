@@ -71,8 +71,8 @@ export function parseName(name) {
  */
 export function stringifyName(ref) {
   const nameParts = levelRefToArray(ref);
-  if (nameParts[1] === nameParts[2]) {
-    nameParts.splice(1, 1);
+  if (nameParts[0] === nameParts[1]) {
+    nameParts.splice(0, 1);
   }
   if (nameParts[0] === nameParts[1]) {
     nameParts.splice(0, 1);

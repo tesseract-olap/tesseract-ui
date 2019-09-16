@@ -230,7 +230,9 @@ async function updateCutMembers({client, cube, cutItem, locale}) {
         }
       }
     }
-    throw new Error(`Couldn't find level from reference: ${cutItem}`);
+    throw new Error(
+      `Couldn't find level from reference: {"dimension":"${dimension}", "hierarchy":"${hierarchy}", "level":"${levelName}"}`
+    );
   } catch (error) {
     return buildCut({
       ...cutItem,

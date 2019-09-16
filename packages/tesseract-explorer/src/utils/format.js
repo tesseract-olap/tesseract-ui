@@ -3,6 +3,8 @@ import {splitName} from "./transform";
 import {validGrowthState, validRcaState, validTopkState} from "./validation";
 
 /**
+ * Simplifies a fullname for UI display.
+ * The returned value mustn't be used as identifier, as is not reversable.
  * @param {string | string[]} nameParts
  * @param {string} joint
  */
