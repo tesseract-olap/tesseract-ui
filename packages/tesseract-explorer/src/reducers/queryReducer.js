@@ -1,54 +1,45 @@
 import {QUERY_CUBE_UPDATE, QUERY_INYECT} from "../actions/query";
-import cutsReducer from "./queryCutReducer";
-import drilldownsReducer from "./queryDrilldownReducer";
-import generalReducer, {
-  initialGrowthState,
-  initialRcaState,
-  initialTopkState
-} from "./queryGeneralReducer";
+import {
+  queryGrowthInitialState,
+  queryRcaInitialState,
+  queryInitialState,
+  queryTopkInitialState
+} from "./initialState";
+import booleanReducers from "./queryReducers/booleans";
+import cutReducers from "./queryReducers/cut";
+import drilldownReducers from "./queryReducers/drilldown";
+import filterReducers from "./queryReducers/filter";
+import otherReducers from "./queryReducers/other";
 
-/** @type {import(".").QueryState} */
-export const initialState = {
-  cube: "",
-  cuts: [],
-  debug: false,
-  distinct: true,
-  drilldowns: [],
-  filters: [],
-  growth: initialGrowthState,
-  measures: [],
-  nonempty: true,
-  parents: false,
-  rca: initialRcaState,
-  sparse: false,
-  topk: initialTopkState
+const actions = {
+  ...booleanReducers,
+  ...cutReducers,
+  ...drilldownReducers,
+  ...filterReducers,
+  ...otherReducers,
+
+  [QUERY_INYECT]: (state, {payload}) => ({
+    ...queryInitialState,
+    ...payload,
+    growth: {...queryGrowthInitialState, ...state.growth},
+    rca: {...queryRcaInitialState, ...state.rca},
+    topk: {...queryTopkInitialState, ...state.topk}
+  }),
+
+  [QUERY_CUBE_UPDATE]: (state, {payload}) => {
+    const {cube, measures} = payload;
+    if (cube !== state.cube || measures.length !== state.measures.length) {
+      const parentState = cube !== state.cube ? queryInitialState : state;
+      return {...parentState, cube, measures};
+    }
+    return state;
+  }
 };
 
 /** @type {import("redux").Reducer<import(".").QueryState>} */
-function queryReducer(state = initialState, action) {
-  if (action.type === QUERY_INYECT) {
-    state = {
-      ...initialState,
-      ...action.payload,
-      growth: {...initialGrowthState, ...state.growth},
-      rca: {...initialRcaState, ...state.rca},
-      topk: {...initialTopkState, ...state.topk}
-    };
-  }
-  else if (action.type === QUERY_CUBE_UPDATE) {
-    const {cube, measures} = action.payload;
-    if (cube !== state.cube || measures.length !== state.measures.length) {
-      const parentState = cube !== state.cube ? initialState : state;
-      state = {...parentState, cube, measures};
-    }
-  }
-  else {
-    state = generalReducer(state, action);
-    state = drilldownsReducer(state, action);
-    state = cutsReducer(state, action);
-  }
-
-  return state || initialState;
+function queryReducer(state = queryInitialState, action) {
+  const {type} = action;
+  return type in actions ? actions[type](state, action) : state;
 }
 
 export default queryReducer;

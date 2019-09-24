@@ -1,17 +1,8 @@
-export const STATUS_FETCHING = "FETCHING";
-export const STATUS_SUCCESS = "SUCCESS";
-export const STATUS_FAILURE = "FAILURE";
-
-/** @type {import(".").LoadingState} */
-const initialState = {
-  error: null,
-  loading: true,
-  status: STATUS_FETCHING,
-  trigger: null
-};
+import {STATUS_FAILURE, STATUS_FETCHING, STATUS_SUCCESS} from "../actions/ui";
+import {loadingInitialState} from "./initialState";
 
 /** @type {import("redux").Reducer<import(".").LoadingState>} */
-function loadingReducer(state = initialState, action) {
+function loadingReducer(state = loadingInitialState, action) {
   const type = `${action.type}`;
   const trigger = (action.action || action).type;
 

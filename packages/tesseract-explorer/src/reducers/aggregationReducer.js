@@ -1,20 +1,12 @@
 import {AGGREGATION_UPDATE} from "../actions/aggregation";
 import {QUERY_CUBE_UPDATE} from "../actions/query";
-
-/** @type {import(".").AggregationState} */
-const initialState = {
-  aggregateUrl: "",
-  data: [],
-  jsCall: "",
-  logicLayerUrl: "",
-  options: {}
-};
+import {aggregationInitialState} from "./initialState";
 
 /** @type {import("redux").Reducer<import(".").AggregationState>} */
-function aggregationReducer(state = initialState, action) {
+function aggregationReducer(state = aggregationInitialState, action) {
   switch (action.type) {
     case QUERY_CUBE_UPDATE:
-      return initialState;
+      return aggregationInitialState;
 
     case AGGREGATION_UPDATE:
       const {aggregation, urls} = action.payload;

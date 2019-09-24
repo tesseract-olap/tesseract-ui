@@ -1,6 +1,8 @@
-import {initialState as queryInitialState} from "../reducers/queryReducer";
-import {initialState as starredInitialState} from "../reducers/starredReducer";
-import {initialState as uiInitialState} from "../reducers/uiReducer";
+import {
+  queryInitialState,
+  starredInitialState,
+  uiInitialState
+} from "../reducers/initialState";
 import {hydratePermalink, serializePermalink} from "./permalink";
 import {isQuery, isValidQuery} from "./validation";
 
