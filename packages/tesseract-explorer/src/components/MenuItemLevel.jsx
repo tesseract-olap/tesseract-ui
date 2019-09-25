@@ -1,7 +1,7 @@
 import {MenuItem} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {abbreviateFullName} from "../utils/format";
-import {stringifyName} from "../utils/transform";
+import {stringifyName, levelRefToArray} from "../utils/transform";
 
 /**
  * @typedef OwnProps
@@ -13,7 +13,7 @@ import {stringifyName} from "../utils/transform";
 
 /** @type {React.FC<OwnProps>} */
 const LevelMenuItem = function({childItem, level, selectedItems, onItemSelected}) {
-  const name = childItem ? level.name : abbreviateFullName([level.hierarchy, level.name]);
+  const name = childItem ? level.name : abbreviateFullName(levelRefToArray(level));
 
   return (
     <MenuItem
