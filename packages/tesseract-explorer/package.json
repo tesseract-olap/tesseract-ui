@@ -1,6 +1,6 @@
 {
   "name": "@datawheel/tesseract-explorer",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "A react component to explore data from a tesseract-olap server.",
   "main": "dist/explorer.cjs.js",
   "module": "dist/explorer.esm.js",
