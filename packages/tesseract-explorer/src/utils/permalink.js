@@ -34,7 +34,7 @@ export function serializeState(query) {
     drilldowns: query.drilldowns.filter(isActiveItem).map(stringifyName),
     filters: filters.length > 0 ? filters : undefined,
     growth: validGrowthState(query.growth) ? query.growth : undefined,
-    locale: query.locale,
+    locale: query.locale ? query.locale : undefined,
     measures: query.measures.filter(isActiveItem).map(i => i.measure),
     nonempty: query.nonempty,
     parents: query.parents,
