@@ -84,6 +84,7 @@ interface TopkQueryState {
 interface AggregationState {
   aggregateUrl: string;
   data: any[];
+  emptyDataset: boolean;
   jsCall: string;
   logicLayerUrl: string;
   options: any;

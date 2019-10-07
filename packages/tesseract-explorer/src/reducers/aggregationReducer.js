@@ -13,6 +13,7 @@ function aggregationReducer(state = aggregationInitialState, action) {
       return {
         aggregateUrl: aggregation.url,
         data: aggregation.data,
+        emptyDataset: aggregation.data.length === 0,
         jsCall: urls.jsCall,
         logicLayerUrl: urls.llUrl,
         options: aggregation.options

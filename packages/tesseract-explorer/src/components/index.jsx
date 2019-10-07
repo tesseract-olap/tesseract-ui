@@ -22,9 +22,10 @@ import StarredDrawer from "./StarredDrawer";
 
 /**
  * @typedef StateProps
+ * @property {boolean} darkTheme
+ * @property {boolean} emptyDataset
  * @property {boolean | undefined} serverOnline
  * @property {string} serverUrl
- * @property {boolean} darkTheme
  */
 
 /**
@@ -53,12 +54,16 @@ class ExplorerComponent extends PureComponent {
   }
 
   render() {
-    const {darkTheme, serverOnline, serverUrl, title} = this.props;
+    const {darkTheme, serverOnline, serverUrl, title, emptyDataset} = this.props;
     return (
       <div className={classNames("explorer-wrapper", {[Classes.DARK]: darkTheme})}>
         <Navbar className="explorer-navbar" title={title} />
         <LoadingScreen className="explorer-loading" />
-        <ExplorerContent online={serverOnline} url={serverUrl} />
+        <ExplorerContent
+          emptyDataset={emptyDataset}
+          online={serverOnline}
+          url={serverUrl}
+        />
         <StarredDrawer />
         <DebugDrawer />
       </div>
@@ -71,7 +76,7 @@ ExplorerComponent.defaultProps = {
   title: process.env.REACT_APP_TITLE || "tesseract-olap"
 };
 
-const ExplorerContent = function({online, url}) {
+const ExplorerContent = function({online, url, emptyDataset}) {
   if (online === false) {
     return typeof window === "object" && window.navigator.onLine === false ? (
       <NonIdealState
@@ -101,7 +106,15 @@ const ExplorerContent = function({online, url}) {
         <PerfectScrollbar className="explorer-params">
           <QueryPanel className="explorer-params-content" />
         </PerfectScrollbar>
-        <ResultPanel className="explorer-results" />
+        {emptyDataset ? (
+          <NonIdealState
+            className="explorer-error"
+            icon="circle"
+            title="The last query returned an empty dataset."
+          />
+        ) : (
+          <ResultPanel className="explorer-results" />
+        )}
       </div>
     );
   }
@@ -112,7 +125,12 @@ const ExplorerContent = function({online, url}) {
 
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
-  return state.explorerUi;
+  return {
+    darkTheme: state.explorerUi.darkTheme,
+    emptyDataset: state.explorerAggregation.emptyDataset,
+    serverOnline: state.explorerUi.serverOnline,
+    serverUrl: state.explorerUi.serverUrl
+  };
 }
 
 /** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
