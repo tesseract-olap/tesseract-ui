@@ -1,8 +1,15 @@
-import {STATUS_FAILURE, STATUS_FETCHING, STATUS_SUCCESS} from "../actions/ui";
-import {loadingInitialState} from "./initialState";
+import {STATUS_FAILURE, STATUS_FETCHING, STATUS_SUCCESS} from "../../enums";
 
-/** @type {import("redux").Reducer<import(".").LoadingState>} */
-function loadingReducer(state = loadingInitialState, action) {
+/** @type {LoadingState} */
+export const loadingInitialState = {
+  error: null,
+  loading: true,
+  status: STATUS_FETCHING,
+  trigger: null
+};
+
+/** @type {import("redux").Reducer<LoadingState>} */
+export function loadingReducer(state = loadingInitialState, action) {
   const type = `${action.type}`;
   const trigger = (action.action || action).type;
 
@@ -33,5 +40,3 @@ function loadingReducer(state = loadingInitialState, action) {
 
   return state;
 }
-
-export default loadingReducer;

@@ -8,7 +8,7 @@ function itemRenderer(item, {handleClick, index, modifiers, query}) {
   return <MenuItem icon="th-list" key={item} onClick={handleClick} text={item} />;
 }
 
-/** @param {import("../reducers").ExplorerState} state */
+/** @param {ExplorerState} state */
 function mapStateToProps(state) {
   return {
     itemRenderer,

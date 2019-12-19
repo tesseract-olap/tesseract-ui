@@ -30,7 +30,7 @@ export function abbreviateFullName(nameParts, joint = "/") {
 }
 
 /**
- * @param {import("../reducers").GrowthQueryState} growth
+ * @param {GrowthItem} growth
  * @returns {string}
  */
 export function summaryGrowth(growth) {
@@ -41,7 +41,7 @@ export function summaryGrowth(growth) {
 }
 
 /**
- * @param {import("../reducers").RcaQueryState} rca
+ * @param {RcaItem} rca
  * @returns {string}
  */
 export function summaryRca(rca) {
@@ -53,7 +53,7 @@ export function summaryRca(rca) {
 }
 
 /**
- * @param {import("../reducers").TopkQueryState} topk
+ * @param {TopkItem} topk
  * @returns {string}
  */
 export function summaryTopk(topk) {

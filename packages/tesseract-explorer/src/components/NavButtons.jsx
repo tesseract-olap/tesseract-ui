@@ -2,7 +2,7 @@ import {Button, ButtonGroup} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import copy from "clipboard-copy";
-import {toggleDarkTheme, toggleDebugDrawer, toggleStarredDrawer} from "../actions/ui";
+import {toggleDarkTheme, toggleDebugDrawer, toggleStarredDrawer} from "../state/ui/actions";
 import { selectPermalink } from "../selectors/permalink";
 
 /**
@@ -51,7 +51,7 @@ const NavbarButtons = function(props) {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
+/** @type {import("react-redux").MapStateToProps<StateProps, {}, ExplorerState>} */
 function mapStateToProps(state) {
   return {
     darkTheme: state.explorerUi.darkTheme,

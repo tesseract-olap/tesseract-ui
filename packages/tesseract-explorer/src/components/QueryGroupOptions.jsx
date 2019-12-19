@@ -7,13 +7,13 @@ import {
   queryNonEmptyToggle,
   queryParentsToggle,
   querySparseToggle
-} from "../actions/query";
+} from "../state/query/actions";
 import {shallowEqualExceptFns} from "../utils/validation";
 import QueryGroup from "./QueryGroup";
 
 /**
  * @typedef StateProps
- * @property {import("../reducers").QueryState} query
+ * @property {QueryState} query
  */
 
 /**
@@ -69,7 +69,7 @@ const QueryGroupOptions = function({
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>}*/
+/** @type {import("react-redux").MapStateToProps<StateProps, {}, ExplorerState>}*/
 function mapStateToProps(state) {
   return {
     query: state.explorerQuery

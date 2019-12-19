@@ -4,8 +4,8 @@ import HierarchyMenuItem from "./MenuItemHierarchy";
 
 /**
  * @typedef OwnProps
- * @property {import("../reducers").JSONDimension} dimension
- * @property {(item: import("../reducers").JSONLevel) => any} onItemSelected
+ * @property {import("../structs").JSONDimension} dimension
+ * @property {(item: import("../structs").JSONLevel) => any} onItemSelected
  * @property {string[]} selectedItems
  */
 

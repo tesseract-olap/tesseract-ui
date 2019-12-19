@@ -1,7 +1,7 @@
-import {queryInyect} from "../actions/query";
+import {queryInyect} from "../state/query/actions";
 import {selectPermalink} from "../selectors/permalink";
 
-/** @type {import("redux").Middleware<{}, import("../reducers").ExplorerState>} */
+/** @type {import("redux").Middleware<{}, ExplorerState>} */
 function permalinkMiddleware({dispatch, getState}) {
   if (typeof window === "object") {
     window.addEventListener("popstate", function historyIntercepter(evt) {

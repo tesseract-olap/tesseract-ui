@@ -17,7 +17,7 @@ import {sortByKey} from "../utils/array";
  */
 
 /**
- * @type {PureComponent<import("../reducers/aggregationReducer").AggregationState & OwnProps>}
+ * @type {PureComponent<AggregationState & OwnProps>}
  */
 class TableTabPanel extends PureComponent {
   state = {

@@ -2,7 +2,7 @@ import {NonIdealState} from "@blueprintjs/core";
 import classNames from "classnames";
 import React from "react";
 import {connect} from "react-redux";
-import {UITAB_RAW, UITAB_TABLE, UITAB_TREE} from "../actions/ui";
+import {UITAB_RAW, UITAB_TABLE, UITAB_TREE} from "../enums";
 import AnimatedCube from "./AnimatedCube";
 import PanelRawTab from "./PanelTabRaw";
 import PanelDataTable from "./PanelTabTable";
@@ -45,7 +45,7 @@ function ResultPanel(props) {
   }
 }
 
-/** @param {import("../reducers").ExplorerState} state */
+/** @param {ExplorerState} state */
 function mapStateToProps(state) {
   return {
     aggregation: state.explorerAggregation,

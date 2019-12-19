@@ -11,7 +11,7 @@ import classNames from "classnames";
 import React, {Fragment} from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
-import {UI_DEBUG_TOGGLE} from "../actions/ui";
+import {UI_DEBUG_TOGGLE} from "../state/ui/actions";
 import JsonRenderer from "./JsonRenderer";
 
 function DebugDrawer(props) {
@@ -81,7 +81,7 @@ function DebugDrawer(props) {
   );
 }
 
-/** @param {import("../reducers").ExplorerState} state */
+/** @param {ExplorerState} state */
 function mapStateToProps(state) {
   return {
     aggregateUrl: state.explorerAggregation.aggregateUrl,

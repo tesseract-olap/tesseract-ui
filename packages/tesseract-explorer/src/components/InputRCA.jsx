@@ -7,11 +7,11 @@ import SelectorMeasure from "./SelectorMeasure";
 
 /**
  * @typedef OwnProps
- * @property {(value: Partial<import("../reducers").RcaQueryState>) => any} onChange
+ * @property {(value: Partial<RcaItem>) => any} onChange
  */
 
 /**
- * @type {React.FC<import("../reducers").RcaQueryState & OwnProps>}
+ * @type {React.FC<RcaItem & OwnProps>}
  */
 const InputRCA = function({level1, level2, measure, onChange}) {
   return (

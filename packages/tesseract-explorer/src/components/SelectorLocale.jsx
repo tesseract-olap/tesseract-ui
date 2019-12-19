@@ -1,7 +1,7 @@
 import {HTMLSelect} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import {setLocale} from "../actions/client";
+import {setLocale} from "../middleware/actions";
 import {selectLocaleOptions} from "../selectors/query";
 
 /**
@@ -33,7 +33,7 @@ const LocaleSelector = function({fill, locale, localeOptions, updateLocaleHandle
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
 function mapStateToProps(state) {
   return {
     locale: state.explorerQuery.locale || "en",

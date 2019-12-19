@@ -3,7 +3,7 @@ export const STARRED_REMOVE = "explorer/STARRED/REMOVE";
 export const STARRED_UPDATE = "explorer/STARRED/UPDATE";
 
 /**
- * @param {import("../reducers").QueryState} query
+ * @param {QueryState} query
  * @param {string} permalink
  */
 export const createStarredItem = (query, permalink) => ({
@@ -14,5 +14,5 @@ export const createStarredItem = (query, permalink) => ({
 /** @param {string} key */
 export const removeStarredItem = key => ({type: STARRED_REMOVE, payload: key});
 
-/** @param {import("../reducers").StarredItem} item */
+/** @param {StarredItem} item */
 export const updateStarredItemLabel = item => ({type: STARRED_UPDATE, payload: item});

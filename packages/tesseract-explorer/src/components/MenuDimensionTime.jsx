@@ -8,12 +8,12 @@ import HierarchyMenuItem from "./MenuItemHierarchy";
 /**
  * @typedef OwnProps
  * @property {string[]} [selectedItems]
- * @property {(level: import("../reducers").JSONLevel) => any} onClick
+ * @property {(level: import("../structs").JSONLevel) => any} onClick
  */
 
 /**
  * @typedef StateProps
- * @property {import("../reducers").JSONHierarchy[]} hierarchies
+ * @property {import("../structs").JSONHierarchy[]} hierarchies
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */
@@ -32,7 +32,7 @@ const TimeDimensionMenu = function({hierarchies, onClick, selectedItems}) {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
 function mapStateToProps(state) {
   const timeDimension = selectTimeDimension(state);
   return {

@@ -13,22 +13,22 @@ import {
 import classNames from "classnames";
 import React from "react";
 import {connect} from "react-redux";
-import {fetchMembers} from "../actions/client";
-import {queryCutRemove, queryCutUpdate} from "../actions/query";
+import {fetchMembers} from "../middleware/actions";
+import {queryCutRemove, queryCutUpdate} from "../state/query/actions";
 import {abbreviateFullName} from "../utils/format";
+import {levelRefToArray} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
 import MemberSelector from "./MultiSelector";
-import {levelRefToArray} from "../utils/transform";
 
 /**
  * @typedef OwnProps
- * @property {import("../reducers").CutItem} item
+ * @property {CutItem} item
  */
 
 /**
  * @typedef DispatchProps
  * @property {() => any} toggleHandler
- * @property {(members: import("../reducers").MemberItem[]) => any} updateMembersHandler
+ * @property {(members: MemberItem[]) => any} updateMembersHandler
  * @property {() => any} reloadMembersHandler
  * @property {(evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => any} removeHandler
  */

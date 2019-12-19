@@ -1,7 +1,7 @@
 import {MenuItem} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import {setCube} from "../actions/client";
+import {setCube} from "../middleware/actions";
 import {selectCubeNameList} from "../selectors/cubes";
 import {safeRegExp} from "../utils/transform";
 import GenericSelector from "./SelectorGeneric";
@@ -37,7 +37,7 @@ function itemListPredicate(query, items) {
   return items.filter(item => tester.test(item));
 }
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
 function mapStateToProps(state) {
   return {
     icon: "cube",

@@ -7,8 +7,8 @@ import {removeFromArray} from "../utils/array";
 /**
  * @typedef OwnProps
  * @property {boolean} [childItem]
- * @property {import("../reducers").JSONHierarchy} hierarchy
- * @property {(item: import("../reducers").JSONLevel) => any} onItemSelected
+ * @property {import("../structs").JSONHierarchy} hierarchy
+ * @property {(item: import("../structs").JSONLevel) => any} onItemSelected
  * @property {string[]} selectedItems
  */
 

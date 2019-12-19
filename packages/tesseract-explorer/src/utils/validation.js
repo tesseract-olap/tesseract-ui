@@ -10,7 +10,7 @@ export const isNumeric = str => isFinite(str) && !isNaN(str);
 
 /**
  * @param {any} query
- * @returns {query is import("../reducers").QueryState}
+ * @returns {query is QueryState}
  */
 export const isQuery = query =>
   typeof query === "object" &&
@@ -22,14 +22,14 @@ export const isQuery = query =>
 
 /**
  * @param {any} query
- * @returns {query is import("../reducers").QueryState}
+ * @returns {query is QueryState}
  */
 export const isValidQuery = query =>
   isQuery(query) &&
   query.drilldowns.reduce(activeItemCounter, 0) > 0 &&
   query.measures.reduce(activeItemCounter, 0) > 0;
 
-/** @param {import("../reducers").CutItem} item */
+/** @param {CutItem} item */
 export const isActiveCut = item => isActiveItem(item) && item.members.some(isActiveItem);
 
 /** @param {{active: boolean}} item */
@@ -37,26 +37,26 @@ export const isActiveItem = item => item.active;
 
 /**
  * @param {any} growth
- * @returns {growth is Required<import("../reducers").GrowthQueryState>}
+ * @returns {growth is Required<GrowthItem>}
  */
 export const validGrowthState = growth => growth && growth.level && growth.measure;
 
 /**
  * @param {any} rca
- * @returns {rca is Required<import("../reducers").RcaQueryState>}
+ * @returns {rca is Required<RcaItem>}
  */
 export const validRcaState = rca =>
   rca && rca.level1 && rca.level2 && rca.level1 !== rca.level2 && rca.measure;
 
 /**
  * @param {any} topk
- * @returns {topk is Required<import("../reducers").TopkQueryState>}
+ * @returns {topk is Required<TopkItem>}
  */
 export const validTopkState = topk =>
   topk && topk.amount > 0 && topk.level && topk.measure;
 
 /**
- * @type {(sum: number, item: import("../reducers").QueryItem) => number}
+ * @type {(sum: number, item: QueryItem) => number}
  * @returns {number}
  */
 export const activeItemCounter = (sum, item) => sum + (isActiveItem(item) ? 1 : 0);
@@ -65,7 +65,7 @@ export const activeItemCounter = (sum, item) => sum + (isActiveItem(item) ? 1 : 
 export function deepQueryValidation(query) {}
 
 /**
- * @param {import("../reducers").QueryState} query
+ * @param {QueryState} query
  */
 export function checkDrilldowns(query) {
   const drilldowns = query.drilldowns;
@@ -90,7 +90,7 @@ export function checkDrilldowns(query) {
 }
 
 /**
- * @param {import("../reducers").QueryState} query
+ * @param {QueryState} query
  */
 export function checkMeasures(query) {
   const measures = query.measures;
@@ -107,7 +107,7 @@ export function checkMeasures(query) {
 }
 
 /**
- * @param {import("../reducers").QueryState} query
+ * @param {QueryState} query
  */
 export function checkCuts(query) {
   const cuts = query.cuts;

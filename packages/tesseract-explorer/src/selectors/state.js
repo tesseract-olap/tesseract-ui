@@ -1,30 +1,30 @@
 /**
- * @type {(state: import("../reducers").ExplorerState) => import("../reducers").AggregationState}
+ * @type {(state: ExplorerState) => AggregationState}
  */
 export const selectAggregationState = state => state.explorerAggregation;
 
 /**
- * @type {(state: import("../reducers").ExplorerState) => import("../reducers").CubesState}
+ * @type {(state: ExplorerState) => CubesState}
  */
 export const selectCubesState = state => state.explorerCubes;
 
 /**
- * @type {(state: import("../reducers").ExplorerState) => import("../reducers").LoadingState}
+ * @type {(state: ExplorerState) => LoadingState}
  */
 export const selectLoadingState = state => state.explorerLoading;
 
 /**
- * @type {(state: import("../reducers").ExplorerState) => import("../reducers").QueryState}
+ * @type {(state: ExplorerState) => QueryState}
  */
 export const selectQueryState = state => state.explorerQuery;
 
 /**
- * @type {(state: import("../reducers").ExplorerState) => import("../reducers").StarredItem[]}
+ * @type {(state: ExplorerState) => StarredItem[]}
  */
 export const selectStarredState = state => state.explorerStarred;
 
 /**
- * @type {(state: import("../reducers").ExplorerState) => import("../reducers").UiState}
+ * @type {(state: ExplorerState) => UiState}
  */
 export const selectUiState = state => state.explorerUi;
 

@@ -1,33 +1,33 @@
 import {Client as OLAPClient, TesseractDataSource} from "@datawheel/olap-client";
-import {updateAggregation} from "../actions/aggregation";
+import {updateAggregation} from "../state/aggregation/actions";
+import {cubesUpdate} from "../state/cubes/actions";
+import {
+  queryCubeSet,
+  queryCutReplace,
+  queryCutUpdate,
+  queryLocaleUpdate
+} from "../state/query/actions";
+import {setServerInfo} from "../state/ui/actions";
+import {ensureArray, sortByKey} from "../utils/array";
+import {buildJavascriptCall} from "../utils/debug";
+import {applyQueryParams, buildCut, buildMeasure, buildMember} from "../utils/query";
+import {isActiveItem, isValidQuery} from "../utils/validation";
 import {
   CLIENT_HYDRATEQUERY,
   CLIENT_LOADMEMBERS,
   CLIENT_QUERY,
   CLIENT_SETCUBE,
   CLIENT_SETLOCALE,
-  CLIENT_SETUP
-} from "../actions/client";
-import {cubesUpdate} from "../actions/cubes";
-import {updatePermalink} from "../actions/permalink";
-import {
-  queryCubeSet,
-  queryCutReplace,
-  queryCutUpdate,
-  queryLocaleUpdate
-} from "../actions/query";
-import {setServerInfo} from "../actions/ui";
-import {ensureArray, sortByKey} from "../utils/array";
-import {buildJavascriptCall} from "../utils/debug";
-import {applyQueryParams, buildCut, buildMeasure, buildMember} from "../utils/query";
-import {isActiveItem, isValidQuery} from "../utils/validation";
+  CLIENT_SETUP,
+  updatePermalink
+} from "./actions";
 
 /**
  * @typedef ActionMapParams
  * @property {import("redux").AnyAction} action
  * @property {OLAPClient} client
  * @property {import("redux").Dispatch} dispatch
- * @property {() => import("../reducers").ExplorerState} getState
+ * @property {() => ExplorerState} getState
  * @property {import("redux").Dispatch} next
  */
 
@@ -152,7 +152,7 @@ const actionMap = {
    * Takes a newly generated CutItem and fills its list of associated members.
    * Returns a copy of the CutItem with its members property filled.
    * @param {ActionMapParams} param0
-   * @param {import("../reducers").CutItem} param0.action.payload
+   * @param {import("../reducers/query").CutItem} param0.action.payload
    */
   [CLIENT_LOADMEMBERS]: async ({action, client, dispatch, getState}) => {
     const {cube: cubeName, locale} = getState().explorerQuery;
@@ -201,7 +201,7 @@ const actionMap = {
  * @param {object} p
  * @param {OLAPClient} p.client
  * @param {import("@datawheel/olap-client").Cube} p.cube
- * @param {import("../reducers").CutItem} p.cutItem
+ * @param {CutItem} p.cutItem
  * @param {string|undefined} p.locale
  */
 async function updateCutMembers({client, cube, cutItem, locale}) {
@@ -258,7 +258,7 @@ function requestControl(dispatch, {type: trigger, ...action}) {
   };
 }
 
-/** @type {import("redux").Middleware<{}, import("../reducers").ExplorerState>} */
+/** @type {import("redux").Middleware<{}, ExplorerState>} */
 function olapClientMiddleware({dispatch, getState}) {
   const client = new OLAPClient();
 

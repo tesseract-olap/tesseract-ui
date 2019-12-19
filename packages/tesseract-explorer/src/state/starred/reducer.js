@@ -1,9 +1,11 @@
-import {STARRED_CREATE, STARRED_REMOVE, STARRED_UPDATE} from "../actions/starred";
-import {findByProperty, replaceFromArray} from "../utils/array";
-import {starredInitialState} from "./initialState";
+import {STARRED_CREATE, STARRED_REMOVE, STARRED_UPDATE} from "./actions";
+import {findByProperty, replaceFromArray} from "../../utils/array";
 
-/** @type {import("redux").Reducer<import(".").StarredItem[]>} */
-function starredReducer(state = starredInitialState, action) {
+/** @type {StarredItem[]} */
+export const starredInitialState = [];
+
+/** @type {import("redux").Reducer<StarredItem[]>} */
+export function starredReducer(state = starredInitialState, action) {
   switch (action.type) {
     case STARRED_CREATE: {
       const item = action.payload;
@@ -30,5 +32,3 @@ function starredReducer(state = starredInitialState, action) {
       return state;
   }
 }
-
-export default starredReducer;

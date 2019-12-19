@@ -7,9 +7,9 @@ import MenuDimensions from "./MenuDimension";
 /**
  * @typedef OwnProps
  * @property {import("@blueprintjs/core").IconName} [icon]
- * @property {import("../reducers").DrillableItem[]} selectedItems
+ * @property {DrillableItem[]} selectedItems
  * @property {string} text
- * @property {(item: import("../reducers").JSONLevel) => any} onItemSelected
+ * @property {(item: import("../structs").JSONLevel) => any} onItemSelected
  */
 
 /** @type {React.FC<OwnProps>} */

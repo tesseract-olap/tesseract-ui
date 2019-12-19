@@ -7,12 +7,12 @@ import MeasureSelector from "./SelectorMeasure";
 
 /**
  * @typedef OwnProps
- * @property {(value: Partial<import("../reducers").TopkQueryState>) => any} onChange
+ * @property {(value: Partial<TopkItem>) => any} onChange
  * @property {{value: string, label: string}[]} [orderOptions]
  */
 
 /**
- * @type {React.FC<import("../reducers").TopkQueryState & OwnProps>}
+ * @type {React.FC<TopkItem & OwnProps>}
  */
 const InputTopK = function({amount, level, measure, onChange, order, orderOptions}) {
   return (

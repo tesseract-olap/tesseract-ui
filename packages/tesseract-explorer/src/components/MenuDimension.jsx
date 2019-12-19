@@ -7,12 +7,12 @@ import DimensionMenuItem from "./MenuItemDimension";
 /**
  * @typedef OwnProps
  * @property {string[]} selectedItems
- * @property {(item: import("../reducers").JSONLevel) => any} onItemSelected
+ * @property {(item: import("../structs").JSONLevel) => any} onItemSelected
  */
 
 /**
  * @typedef StateProps
- * @property {import("../reducers").JSONDimension[]} dimensions
+ * @property {import("../structs").JSONDimension[]} dimensions
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */
@@ -31,7 +31,7 @@ const DimensionMenu = function({dimensions, selectedItems, onItemSelected}) {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
 function mapStateToProps(state) {
   return {
     dimensions: selectDimensionList(state) || []

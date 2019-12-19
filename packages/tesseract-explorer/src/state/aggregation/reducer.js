@@ -1,9 +1,18 @@
-import {AGGREGATION_UPDATE} from "../actions/aggregation";
-import {QUERY_CUBE_UPDATE} from "../actions/query";
-import {aggregationInitialState} from "./initialState";
+import {AGGREGATION_UPDATE} from "./actions";
+import {QUERY_CUBE_UPDATE} from "../query/actions";
 
-/** @type {import("redux").Reducer<import(".").AggregationState>} */
-function aggregationReducer(state = aggregationInitialState, action) {
+/** @type {AggregationState} */
+export const aggregationInitialState = {
+  aggregateUrl: "",
+  data: [],
+  emptyDataset: false,
+  jsCall: "",
+  logicLayerUrl: "",
+  options: {}
+};
+
+/** @type {import("redux").Reducer<AggregationState>} */
+export function aggregationReducer(state = aggregationInitialState, action) {
   switch (action.type) {
     case QUERY_CUBE_UPDATE:
       return aggregationInitialState;
@@ -23,5 +32,3 @@ function aggregationReducer(state = aggregationInitialState, action) {
       return state;
   }
 }
-
-export default aggregationReducer;

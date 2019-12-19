@@ -14,7 +14,7 @@ import MenuDimension from "./MenuDimension";
  * @property {string|undefined} [selectedItem]
  * @property {keyof JSX.IntrinsicElements} [targetTagName]
  * @property {keyof JSX.IntrinsicElements} [wrapperTagName]
- * @property {(level: import("../reducers").JSONLevel) => any} onItemSelect
+ * @property {(level: import("../structs").JSONLevel) => any} onItemSelect
  */
 
 /** @type {React.FC<OwnProps>} */

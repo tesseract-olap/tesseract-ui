@@ -1,12 +1,10 @@
-import {
-  queryInitialState,
-  starredInitialState,
-  uiInitialState
-} from "../reducers/initialState";
+import {queryInitialState} from "../state/query/reducer";
+import {starredInitialState} from "../state/starred/reducer";
+import {uiInitialState} from "../state/ui/reducer";
 import {hydratePermalink, serializePermalink} from "./permalink";
 import {isQuery, isValidQuery} from "./validation";
 
-/** @returns {Partial<import("../reducers").ExplorerState>} */
+/** @returns {Partial<ExplorerState>} */
 function initialStateBuilder() {
   let explorerQuery, explorerStarred, explorerUi, newPermalink;
 

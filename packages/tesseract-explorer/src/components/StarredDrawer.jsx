@@ -2,18 +2,18 @@ import {Drawer} from "@blueprintjs/core";
 import React, {memo} from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
-import {toggleStarredDrawer} from "../actions/ui";
+import {toggleStarredDrawer} from "../state/ui/actions";
 import {selectPermalink} from "../selectors/permalink";
 import "../style/starredDrawer.scss";
 import {shallowEqualExceptFns} from "../utils/validation";
-import StarredItem from "./StarredItem";
+import StarredElement from "./StarredItem";
 
 /**
  * @typedef StateProps
  * @property {string} currentPermalink
- * @property {import("../reducers").QueryState} query
+ * @property {QueryState} query
  * @property {boolean} isOpen
- * @property {import("../reducers").StarredItem[]} items
+ * @property {StarredItem[]} items
  */
 
 /**
@@ -35,7 +35,7 @@ const StarredDrawer = function(props) {
       <PerfectScrollbar>
         <div className="starred-drawer-content">
           {props.items.map(item => (
-            <StarredItem
+            <StarredElement
               active={props.currentPermalink === item.key}
               item={item}
               key={item.key}
@@ -47,7 +47,7 @@ const StarredDrawer = function(props) {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
+/** @type {import("react-redux").MapStateToProps<StateProps, {}, ExplorerState>} */
 function mapStateToProps(state) {
   return {
     currentPermalink: selectPermalink(state),

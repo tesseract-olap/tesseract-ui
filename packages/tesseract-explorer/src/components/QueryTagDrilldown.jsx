@@ -2,13 +2,13 @@ import {Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React from "react";
 import {connect} from "react-redux";
-import {queryDrilldownRemove, queryDrilldownUpdate} from "../actions/query";
+import {queryDrilldownRemove, queryDrilldownUpdate} from "../state/query/actions";
 import {abbreviateFullName} from "../utils/format";
 import {levelRefToArray} from "../utils/transform";
 
 /**
  * @typedef OwnProps
- * @property {import("../reducers").DrilldownItem} item
+ * @property {DrilldownItem} item
  */
 
 /**

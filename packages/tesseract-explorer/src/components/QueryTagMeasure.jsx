@@ -1,7 +1,7 @@
 import {Checkbox} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import {queryMeasureToggle} from "../actions/query";
+import {queryMeasureToggle} from "../state/query/actions";
 
 function TagMeasure(props) {
   const item = props.item;

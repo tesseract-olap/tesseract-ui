@@ -1,7 +1,8 @@
 import {Button, ButtonGroup, Intent} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {connect} from "react-redux";
-import {fetchMembers, runQuery} from "../actions/client";
+import {fetchMembers, runQuery} from "../middleware/actions";
+import {selectTimeDimension} from "../selectors/cubes";
 import {
   queryCutAdd,
   queryDrilldownAdd,
@@ -11,8 +12,7 @@ import {
   queryRcaUpdate,
   queryTopkClear,
   queryTopkUpdate
-} from "../actions/query";
-import {selectTimeDimension} from "../selectors/cubes";
+} from "../state/query/actions";
 import {summaryGrowth, summaryRca, summaryTopk} from "../utils/format";
 import {buildCut, buildDrilldown} from "../utils/query";
 import {
@@ -40,22 +40,22 @@ import StarredItemButton from "./StarredItemButton";
 
 /**
  * @typedef StateProps
- * @property {import("../reducers").QueryState} query
- * @property {import("../reducers").StarredItem[]} starredItems
+ * @property {QueryState} query
+ * @property {StarredItem[]} starredItems
  * @property {boolean} hasTimeDim
  */
 
 /**
  * @typedef DispatchProps
- * @property {(drillable: import("../reducers").JSONLevel) => any} addCutHandler
- * @property {(drillable: import("../reducers").JSONLevel) => any} addDrilldownHandler
+ * @property {(drillable: import("../structs").JSONLevel) => any} addCutHandler
+ * @property {(drillable: import("../structs").JSONLevel) => any} addDrilldownHandler
  * @property {() => any} clearGrowthHandler
  * @property {() => any} clearRcaHandler
  * @property {() => any} clearTopkHandler
  * @property {() => any} executeQuery
- * @property {(values: import("../reducers").GrowthQueryState) => any} updateGrowthHandler
- * @property {(values: import("../reducers").RcaQueryState) => any} updateRcaHandler
- * @property {(values: import("../reducers").TopkQueryState) => any} updateTopkHandler
+ * @property {(values: GrowthItem) => any} updateGrowthHandler
+ * @property {(values: RcaItem) => any} updateRcaHandler
+ * @property {(values: TopkItem) => any} updateTopkHandler
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
@@ -162,7 +162,7 @@ const PanelQuery = function(props) {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
 function mapStateToProps(state) {
   return {
     hasTimeDim: Boolean(selectTimeDimension(state)),

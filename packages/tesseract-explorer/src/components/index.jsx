@@ -3,8 +3,8 @@ import classNames from "classnames";
 import React, {PureComponent} from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
-import {setupClient} from "../actions/client";
-import {updateLocaleList} from "../actions/ui";
+import {setupClient} from "../middleware/actions";
+import {updateLocaleList} from "../state/ui/actions";
 import AnimatedCube from "./AnimatedCube";
 import DebugDrawer from "./DebugDrawer";
 import LoadingScreen from "./LoadingScreen";
@@ -123,7 +123,7 @@ const ExplorerContent = function({online, url, emptyDataset}) {
   }
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
 function mapStateToProps(state) {
   return {
     darkTheme: state.explorerUi.darkTheme,

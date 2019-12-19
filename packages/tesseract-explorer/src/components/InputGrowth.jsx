@@ -8,11 +8,11 @@ import SelectorMeasure from "./SelectorMeasure";
 
 /**
  * @typedef OwnProps
- * @property {(value: Partial<import("../reducers").GrowthQueryState>) => any} onChange
+ * @property {(value: Partial<GrowthItem>) => any} onChange
  */
 
 /**
- * @type {React.FC<import("../reducers").GrowthQueryState & OwnProps>}
+ * @type {React.FC<GrowthItem & OwnProps>}
  */
 const InputGrowth = function({level, measure, onChange}) {
   return (

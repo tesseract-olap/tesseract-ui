@@ -1,4 +1,5 @@
-import {STARRED_CREATE} from "../actions/starred";
+import {UITAB_TABLE} from "../../enums";
+import {STARRED_CREATE} from "../starred/actions";
 import {
   UI_DEBUG_TOGGLE,
   UI_LOCALELIST_UPDATE,
@@ -6,11 +7,23 @@ import {
   UI_STARRED_TOGGLE,
   UI_TABS_SELECT,
   UI_THEME_TOGGLE
-} from "../actions/ui";
-import {uiInitialState} from "./initialState";
+} from "./actions";
 
-/** @type {import("redux").Reducer<import(".").UiState>} */
-function uiReducer(state = uiInitialState, action) {
+/** @type {UiState} */
+export const uiInitialState = {
+  darkTheme: false,
+  debugDrawer: false,
+  localeOptions: ["en"],
+  serverOnline: undefined,
+  serverSoftware: "",
+  serverUrl: "",
+  serverVersion: "",
+  starredDrawer: false,
+  tab: UITAB_TABLE
+};
+
+/** @type {import("redux").Reducer<UiState>} */
+export function uiReducer(state = uiInitialState, action) {
   const definedOrElse = (value, defaultValue) => (value != null ? value : defaultValue);
 
   switch (action.type) {
@@ -56,5 +69,3 @@ function uiReducer(state = uiInitialState, action) {
       return state;
   }
 }
-
-export default uiReducer;

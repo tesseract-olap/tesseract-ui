@@ -30,7 +30,7 @@ const store = createStore(explorerReducer, initialState, enhancers);
 function App() {
   return (
     <Provider store={store}>
-      <Explorer locale={["en", "es"]} src="https://chilecube.datachile.io/" />
+      <Explorer locale={["en", "es"]} src="https://api.oec.world/tesseract/" />
     </Provider>
   );
 }

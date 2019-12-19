@@ -6,9 +6,9 @@ import {stringifyName, levelRefToArray} from "../utils/transform";
 /**
  * @typedef OwnProps
  * @property {boolean} [childItem]
- * @property {import("../reducers").JSONLevel} level
+ * @property {import("../structs").JSONLevel} level
  * @property {string[]} selectedItems
- * @property {(item: import("../reducers").JSONLevel) => any} onItemSelected
+ * @property {(item: import("../structs").JSONLevel) => any} onItemSelected
  */
 
 /** @type {React.FC<OwnProps>} */

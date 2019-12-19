@@ -12,7 +12,7 @@ import {
 } from "./validation";
 
 /**
- * @param {import("../reducers").QueryState} query
+ * @param {QueryState} query
  * @returns {SerializedQuery}
  */
 export function serializeState(query) {
@@ -46,7 +46,7 @@ export function serializeState(query) {
 
 /**
  * @param {SerializedQuery} query
- * @returns {import("../reducers").QueryState}
+ * @returns {QueryState}
  */
 export function hydrateState(query) {
   const accesor = (key, obj = {}) => obj[key];

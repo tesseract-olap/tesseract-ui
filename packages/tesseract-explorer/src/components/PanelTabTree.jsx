@@ -11,7 +11,7 @@ const VISIBLE_AMOUNT = 50;
  */
 
 /**
- * @augments {PureComponent<import("../reducers/aggregationReducer").AggregationState & {className?: string}, OwnState>}
+ * @augments {PureComponent<AggregationState & {className?: string}, OwnState>}
  */
 class TreeTabPanel extends PureComponent {
   state = {

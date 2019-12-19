@@ -40,7 +40,7 @@ const ServerStatus = function({online, software, url, version}) {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
+/** @type {import("react-redux").MapStateToProps<StateProps, {}, ExplorerState>} */
 function mapStateToProps(state) {
   return {
     online: state.explorerUi.serverOnline,

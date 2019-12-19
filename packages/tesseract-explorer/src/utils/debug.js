@@ -7,7 +7,7 @@ import {
 } from "./validation";
 
 /**
- * @param {import("../reducers").QueryState} query
+ * @param {QueryState} query
  */
 export function buildJavascriptCall(query) {
   const {growth, rca, topk} = query;

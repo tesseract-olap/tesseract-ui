@@ -19,7 +19,7 @@ function LoadingScreen(props) {
   );
 }
 
-/** @param {import("../reducers").ExplorerState} state */
+/** @param {ExplorerState} state */
 function mapStateToProps(state) {
   return {
     isOpen: state.explorerLoading.loading

@@ -1,7 +1,7 @@
 import {Button, Intent, Tooltip} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import {createStarredItem, removeStarredItem} from "../actions/starred";
+import {createStarredItem, removeStarredItem} from "../state/starred/actions";
 import {selectPermalink} from "../selectors/permalink";
 
 /**
@@ -13,13 +13,13 @@ import {selectPermalink} from "../selectors/permalink";
  * @typedef OwnProps
  * @property {string} className
  * @property {boolean} disabled
- * @property {import("../reducers").StarredItem[]} starredItems
- * @property {import("../reducers").QueryState} query
+ * @property {StarredItem[]} starredItems
+ * @property {QueryState} query
  */
 
 /**
  * @typedef DispatchProps
- * @property {(permalink: string, query: import("../reducers").QueryState) => any} starQuery
+ * @property {(permalink: string, query: QueryState) => any} starQuery
  * @property {(permalink: string) => any} unstarQuery
  */
 
@@ -60,7 +60,7 @@ const StarredItemButton = function({
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
 function mapStateToProps(state) {
   return {
     permalink: selectPermalink(state)

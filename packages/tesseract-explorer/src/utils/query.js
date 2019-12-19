@@ -10,7 +10,7 @@ import {
 
 /**
  * @param {import("@datawheel/olap-client").Query} query
- * @param {import("../reducers").QueryState} params
+ * @param {QueryState} params
  */
 export function applyQueryParams(query, params) {
   params.drilldowns.forEach(item => {
@@ -44,7 +44,7 @@ export function applyQueryParams(query, params) {
 
 /**
  * @param {any} props
- * @returns {import("../reducers").CutItem}
+ * @returns {CutItem}
  */
 export function buildCut(props) {
   return {
@@ -61,7 +61,7 @@ export function buildCut(props) {
 
 /**
  * @param {any} props
- * @returns {import("../reducers").DrilldownItem}
+ * @returns {DrilldownItem}
  */
 export function buildDrilldown(props) {
   return {
@@ -75,7 +75,7 @@ export function buildDrilldown(props) {
 
 /**
  * @param {any} props
- * @returns {import("../reducers").FilterItem}
+ * @returns {FilterItem}
  */
 export function buildFilter(props) {
   return {
@@ -93,7 +93,7 @@ export function buildFilter(props) {
 
 /**
  * @param {any} props
- * @returns {import("../reducers").MeasureItem}
+ * @returns {MeasureItem}
  */
 export function buildMeasure(props) {
   return {
@@ -105,7 +105,7 @@ export function buildMeasure(props) {
 
 /**
  * @param {any} props
- * @returns {import("../reducers").MemberItem}
+ * @returns {MemberItem}
  */
 export function buildMember(props) {
   return {

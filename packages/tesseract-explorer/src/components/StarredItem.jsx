@@ -13,8 +13,8 @@ import copy from "clipboard-copy";
 import pluralize from "pluralize";
 import React, {Fragment, memo} from "react";
 import {connect} from "react-redux";
-import {queryInyect} from "../actions/query";
-import {removeStarredItem, updateStarredItemLabel} from "../actions/starred";
+import {queryInyect} from "../state/query/actions";
+import {removeStarredItem, updateStarredItemLabel} from "../state/starred/actions";
 import {
   abbreviateFullName,
   summaryGrowth,
@@ -27,7 +27,7 @@ import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
 /**
  * @typedef OwnProps
  * @property {boolean} active
- * @property {import("../reducers").StarredItem} item
+ * @property {StarredItem} item
  */
 
 /**
