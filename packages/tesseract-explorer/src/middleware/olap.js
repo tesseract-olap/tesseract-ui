@@ -1,22 +1,11 @@
 import {Client as OLAPClient, TesseractDataSource} from "@datawheel/olap-client";
 import {updateAggregation} from "../actions/aggregation";
-import {
-  CLIENT_HYDRATEQUERY,
-  CLIENT_LOADMEMBERS,
-  CLIENT_QUERY,
-  CLIENT_SETCUBE,
-  CLIENT_SETLOCALE,
-  CLIENT_SETUP
-} from "../actions/client";
+import {CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP} from "../actions/client";
 import {cubesUpdate} from "../actions/cubes";
 import {updatePermalink} from "../actions/permalink";
-import {
-  queryCubeSet,
-  queryCutReplace,
-  queryCutUpdate,
-  queryLocaleUpdate
-} from "../actions/query";
+import {queryCubeSet, queryCutReplace, queryCutUpdate, queryLocaleUpdate} from "../actions/query";
 import {setServerInfo} from "../actions/ui";
+import {selectCubesState, selectQueryState, selectUiState} from "../selectors/state";
 import {ensureArray, sortByKey} from "../utils/array";
 import {buildJavascriptCall} from "../utils/debug";
 import {applyQueryParams, buildCut, buildMeasure, buildMember} from "../utils/query";
@@ -83,7 +72,8 @@ const actionMap = {
    * @param {string} param0.action.payload
    */
   [CLIENT_SETCUBE]: async ({action, client, dispatch, getState}) => {
-    const {measures: queryStateMeasures} = getState().explorerQuery;
+    const state = getState();
+    const {measures: queryStateMeasures} = selectQueryState(state);
     const cube = await client.getCube(action.payload);
     const measures = cube.measures.map((measure, index) => {
       const measureName = measure.name;
@@ -102,7 +92,9 @@ const actionMap = {
     const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
     fetchRequest();
 
-    const {explorerQuery: queryState, explorerCubes: cubesList} = getState();
+    const state = getState();
+    const queryState = selectQueryState(state);
+    const cubesList = selectCubesState(state);
     const cubeName = queryState.cube in cubesList ? queryState.cube : action.payload;
 
     try {
@@ -130,7 +122,8 @@ const actionMap = {
    * @param {string} param0.action.payload
    */
   [CLIENT_SETLOCALE]: async ({action, client, dispatch, getState}) => {
-    const {cube: cubeName, cuts, locale: prevLocale} = getState().explorerQuery;
+    const state = getState();
+    const {cube: cubeName, cuts, locale: prevLocale} = selectQueryState(state);
     const nextLocale = action.payload;
     if (prevLocale !== nextLocale) {
       const unloadedCuts = cuts.map(cutItem => ({...cutItem, membersLoaded: false}));
@@ -155,7 +148,8 @@ const actionMap = {
    * @param {import("../reducers").CutItem} param0.action.payload
    */
   [CLIENT_LOADMEMBERS]: async ({action, client, dispatch, getState}) => {
-    const {cube: cubeName, locale} = getState().explorerQuery;
+    const state = getState();
+    const {cube: cubeName, locale} = selectQueryState(state);
     const cutItem = action.payload;
     const cube = await client.getCube(cubeName);
     const updatedCutItem = await updateCutMembers({client, cube, cutItem, locale});
@@ -167,7 +161,9 @@ const actionMap = {
    * @param {ActionMapParams} param0
    */
   [CLIENT_QUERY]: async ({action, client, dispatch, getState}) => {
-    const {explorerQuery: queryState, explorerUi: uiState} = getState();
+    const state = getState();
+    const queryState = selectQueryState(state);
+    const uiState = selectUiState(state);
     if (!isValidQuery(queryState)) {
       return;
     }

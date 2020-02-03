@@ -1,16 +1,20 @@
-import queryReducer from "./queryReducer";
 import aggregationReducer from "./aggregationReducer";
-import uiReducer from "./uiReducer";
-import loadingReducer from "./loadingReducer";
 import cubesReducer from "./cubesReducer";
+import loadingReducer from "./loadingReducer";
+import queryReducer from "./queryReducer";
 import starredReducer from "./starredReducer";
+import uiReducer from "./uiReducer";
+import initialStateBuilder from "../utils/initialState";
 
 // this is the same as redux.combineReducers
-export default (state = {}, action) => ({
-  explorerAggregation: aggregationReducer(state.explorerAggregation, action),
-  explorerCubes: cubesReducer(state.explorerCubes, action),
-  explorerLoading: loadingReducer(state.explorerLoading, action),
-  explorerQuery: queryReducer(state.explorerQuery, action),
-  explorerStarred: starredReducer(state.explorerStarred, action),
-  explorerUi: uiReducer(state.explorerUi, action),
-});
+export default (state, action) => {
+  const explorerState = (state.explorer || state) ?? initialStateBuilder();
+  return {
+    explorerAggregation: aggregationReducer(explorerState.explorerAggregation, action),
+    explorerCubes: cubesReducer(explorerState.explorerCubes, action),
+    explorerLoading: loadingReducer(explorerState.explorerLoading, action),
+    explorerQuery: queryReducer(explorerState.explorerQuery, action),
+    explorerStarred: starredReducer(explorerState.explorerStarred, action),
+    explorerUi: uiReducer(explorerState.explorerUi, action),
+  };
+};
