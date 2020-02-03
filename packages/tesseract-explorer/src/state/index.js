@@ -1,28 +1,66 @@
-import {queryReducer, queryInitialState} from "./query/reducer";
-import {aggregationReducer, aggregationInitialState} from "./aggregation/reducer";
-import {uiReducer, uiInitialState} from "./ui/reducer";
-import {loadingReducer, loadingInitialState} from "./loading/reducer";
-import {cubesReducer, cubesInitialState} from "./cubes/reducer";
-import {starredReducer, starredInitialState} from "./starred/reducer";
+import {hydratePermalink, serializePermalink} from "../utils/permalink";
+import {buildQuery} from "../utils/structs";
+import {isValidQuery} from "../utils/validation";
+import {loadingInitialState, loadingReducer} from "./loading/reducer";
+import {queriesInitialState, queriesReducer} from "./queries/reducer";
+import {serverInitialState, serverReducer} from "./server/reducer";
+import {uiInitialState, uiReducer} from "./ui/reducer";
 
 /** @type {ExplorerState} */
 export const initialState = {
-  explorerAggregation: aggregationInitialState,
-  explorerCubes: cubesInitialState,
+  explorerServer: serverInitialState,
   explorerLoading: loadingInitialState,
-  explorerQuery: queryInitialState,
-  explorerStarred: starredInitialState,
+  explorerQueries: queriesInitialState,
   explorerUi: uiInitialState
 };
+
+/** @returns {ExplorerState} */
+export function explorerInitialState() {
+  const explorerQueries = {...queriesInitialState};
+  const explorerUi = {...uiInitialState};
+
+  if (typeof window === "object") {
+    const locationState =
+      window.location.search && hydratePermalink(window.location.search);
+    const historyState = window.history.state;
+    console.log(locationState);
+
+    const defaultQuery = isValidQuery(locationState)
+      ? buildQuery({params: locationState})
+      : isValidQuery(historyState)
+        ? buildQuery({params: historyState})
+        : undefined;
+
+    if (defaultQuery) {
+      explorerQueries.current = defaultQuery.key;
+      explorerQueries.itemMap = {[defaultQuery.key]: defaultQuery};
+
+      const permalink = `${window.location.pathname}?${serializePermalink(defaultQuery.params)}`;
+      window.history.replaceState(defaultQuery.params, "", permalink);
+    }
+
+    const savedDarkTheme = window.localStorage.getItem("darkTheme");
+    if (typeof savedDarkTheme === "string") {
+      explorerUi.darkTheme = savedDarkTheme === "true";
+    }
+    else if (typeof window.matchMedia === "function") {
+      explorerUi.darkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+  }
+
+  return {
+    ...initialState,
+    explorerQueries,
+    explorerUi
+  };
+}
 
 /** @type {import("redux").Reducer<ExplorerState>} */
 export function explorerReducer(state = initialState, action) {
   return {
-    explorerAggregation: aggregationReducer(state.explorerAggregation, action),
-    explorerCubes: cubesReducer(state.explorerCubes, action),
+    explorerServer: serverReducer(state.explorerServer, action),
     explorerLoading: loadingReducer(state.explorerLoading, action),
-    explorerQuery: queryReducer(state.explorerQuery, action),
-    explorerStarred: starredReducer(state.explorerStarred, action),
+    explorerQueries: queriesReducer(state.explorerQueries, action),
     explorerUi: uiReducer(state.explorerUi, action)
   };
 }

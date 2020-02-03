@@ -12,7 +12,7 @@ const environment = process.env.NODE_ENV;
 const inDevelopment = environment === "development";
 const inProduction = environment === "production";
 
-const sourcemap = inDevelopment ? "inline" : false;
+const sourcemap = inDevelopment ? "hidden" : false;
 
 /** @return {import("rollup").RollupOptions} */
 export default commandLineArgs => {

@@ -1,37 +1,39 @@
-import {queryInyect} from "../state/query/actions";
-import {selectPermalink} from "../selectors/permalink";
+import {doRawInyect} from "../state/params/actions";
+import {selectCurrentQueryItem} from "../state/queries/selectors";
+import {selectOlapCubeMap} from "../state/server/selectors";
+import {selectPermalink} from "./selectors";
 
 /** @type {import("redux").Middleware<{}, ExplorerState>} */
 function permalinkMiddleware({dispatch, getState}) {
   if (typeof window === "object") {
-    window.addEventListener("popstate", function historyIntercepter(evt) {
-      dispatch(queryInyect(evt.state));
+    window.addEventListener("popstate", evt => {
+      dispatch(doRawInyect(evt.state));
     });
   }
 
-  return next => {
-    return action => {
-      if (action.type.startsWith("explorer/PERMALINK") && typeof window === "object") {
-        const state = getState();
-        const {explorerQuery: nextQuery} = state;
+  return next => action => {
+    if (action.type.startsWith("explorer/PERMALINK") && typeof window === "object") {
+      const state = getState();
+      const cubeMap = selectOlapCubeMap(state);
+      const {params} = selectCurrentQueryItem(state);
 
-        if (state.explorerCubes[nextQuery.cube] != null) {
-          const nextPermalink = selectPermalink(state);
+      if (cubeMap[params.cube] != null) {
+        const nextPermalink = selectPermalink(state);
 
-          if (window.location.search.slice(1) !== nextPermalink) {
-            console.groupCollapsed("Permalink changed");
-            console.log(nextQuery);
-            console.groupEnd();
+        if (window.location.search.slice(1) !== nextPermalink) {
+          console.groupCollapsed("Permalink changed");
+          console.log(params);
+          console.groupEnd();
 
-            const nextLocation = `${window.location.pathname}?${nextPermalink}`;
-            window.history.pushState(nextQuery, "", nextLocation);
-          }
+          const nextLocation = `${window.location.pathname}?${nextPermalink}`;
+          window.history.pushState(params, "", nextLocation);
         }
       }
-      else {
-        return next(action);
-      }
-    };
+      return undefined;
+    }
+    else {
+      return next(action);
+    }
   };
 }
 

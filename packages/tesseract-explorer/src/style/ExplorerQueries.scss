@@ -1,0 +1,34 @@
+&-content {
+  padding: 0.25rem;
+}
+
+.query-item {
+  margin: 0.5rem 0;
+  padding: 0.25rem;
+
+  .#{$ns}-button-text {
+    max-width: 100%;
+  }
+
+  .#{$ns}-tag {
+    color: $pt-text-color;
+    background-color: transparent;
+
+    .#{$ns}-icon {
+      fill: $pt-icon-color;
+    }
+  }
+
+  &.#{$ns}-intent-primary,
+  .#{$ns}-dark & {
+
+    .#{$ns}-tag {
+      color: $pt-dark-text-color;
+      background-color: transparent;
+
+      .#{$ns}-icon {
+        fill: $pt-dark-icon-color;
+      }
+    }
+  }
+}

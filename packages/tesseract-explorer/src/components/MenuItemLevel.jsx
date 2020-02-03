@@ -1,18 +1,18 @@
 import {MenuItem} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {abbreviateFullName} from "../utils/format";
-import {stringifyName, levelRefToArray} from "../utils/transform";
+import {levelRefToArray, stringifyName} from "../utils/transform";
 
 /**
  * @typedef OwnProps
  * @property {boolean} [childItem]
- * @property {import("../structs").JSONLevel} level
+ * @property {OlapLevel} level
  * @property {string[]} selectedItems
- * @property {(item: import("../structs").JSONLevel) => any} onItemSelected
+ * @property {(item: OlapLevel) => any} onItemSelect
  */
 
 /** @type {React.FC<OwnProps>} */
-const LevelMenuItem = function({childItem, level, selectedItems, onItemSelected}) {
+const LevelMenuItem = ({childItem, level, selectedItems, onItemSelect}) => {
   const name = childItem ? level.name : abbreviateFullName(levelRefToArray(level));
 
   return (
@@ -20,7 +20,7 @@ const LevelMenuItem = function({childItem, level, selectedItems, onItemSelected}
       disabled={selectedItems.includes(stringifyName(level))}
       icon="layer"
       key={level.uri}
-      onClick={() => onItemSelected(level)}
+      onClick={() => onItemSelect(level)}
       text={name}
     />
   );

@@ -1,26 +1,40 @@
-import {Client as OLAPClient, TesseractDataSource} from "@datawheel/olap-client";
-import {updateAggregation} from "../state/aggregation/actions";
-import {cubesUpdate} from "../state/cubes/actions";
-import {
-  queryCubeSet,
-  queryCutReplace,
-  queryCutUpdate,
-  queryLocaleUpdate
-} from "../state/query/actions";
-import {setServerInfo} from "../state/ui/actions";
-import {ensureArray, sortByKey} from "../utils/array";
-import {buildJavascriptCall} from "../utils/debug";
-import {applyQueryParams, buildCut, buildMeasure, buildMember} from "../utils/query";
-import {isActiveItem, isValidQuery} from "../utils/validation";
-import {
-  CLIENT_HYDRATEQUERY,
-  CLIENT_LOADMEMBERS,
-  CLIENT_QUERY,
-  CLIENT_SETCUBE,
-  CLIENT_SETLOCALE,
-  CLIENT_SETUP,
-  updatePermalink
-} from "./actions";
+import {Client as OLAPClient, DimensionType, Level} from "@datawheel/olap-client";
+import {chartInterfaces} from "../enums";
+import {requestControl} from "../state/loading/actions";
+import {doCubeUpdate, doCutClear, doCutUpdate, doLocaleUpdate} from "../state/params/actions";
+import {selectCubeName, selectCurrentQueryParams, selectCutItems, selectLocaleCode, selectMeasureMap} from "../state/params/selectors";
+import {doQueriesClear, doQueriesUpdate, doQueriesSelect} from "../state/queries/actions";
+import {selectQueryItems} from "../state/queries/selectors";
+import {doCurrentResultUpdate} from "../state/results/actions";
+import {selectChartConfigText, selectChartType} from "../state/results/selectors";
+import {doServerUpdate} from "../state/server/actions";
+import {selectOlapCubeMap} from "../state/server/selectors";
+import {applyQueryParams, extractQueryParams} from "../utils/query";
+import {buildChartConfig} from "../utils/string";
+import {buildMeasure, buildQuery} from "../utils/structs";
+import {keyBy} from "../utils/transform";
+import {isValidQuery} from "../utils/validation";
+import {CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP, doPermalinkUpdate, CLIENT_PARSE} from "./actions";
+import {hydrateCutMembers, hydrateDrilldownProperties} from "./utils";
+
+/**
+ * Procedure:
+ *
+ * CLIENT_SETUP
+ * The instance of client stored in the middleware gets a server url to work with,
+ * and we get the base cube list and some server info to show in the UI.
+ *
+ * CLIENT_HYDRATEQUERY
+ * The default query, already populated with the permalink data or by the browser's
+ * history API, gets the remaining info it needs.
+ * For this we fill the remaining measures not included in the state, and the remaining
+ * info for all the members in each cut.
+ *
+ * After this, the UI is ready to receive orders.
+ *
+ * CLIENT_SETCUBE(cubeName)
+ * Receives the name of the cube, get the info
+ */
 
 /**
  * @typedef ActionMapParams
@@ -32,38 +46,47 @@ import {
  */
 
 const actionMap = {
+
   /**
    * Sets a new DataSource to the client instance, gets the server info, and
    * initializes the general state accordingly.
    * @param {ActionMapParams} param0
    * @param {string} param0.action.payload The URL for the server to use
    */
-  [CLIENT_SETUP]: async ({action, client, dispatch}) => {
-    const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
+  [CLIENT_SETUP]: async({action, client, dispatch}) => {
+    console.log("CLIENT_SETUP");
+    const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(
+      dispatch,
+      action
+    );
     fetchRequest();
-
-    let cube;
 
     try {
       const datasource = await OLAPClient.dataSourceFromURL(action.payload);
       client.setDataSource(datasource);
 
-      const info = await client.checkStatus();
-      dispatch(setServerInfo(info));
-
+      const serverInfo = await client.checkStatus();
       const cubes = await client.getCubes();
-      const cubeMap = {};
-      let n = cubes.length;
-      while (n--) {
-        cube = cubes[n];
-        cubeMap[cube.name] = cube.toJSON();
-      }
-      dispatch(cubesUpdate(cubeMap));
 
+      /** @type {Record<string, OlapCube>} */
+      const cubeMap = {};
+
+      let cube,
+          n = cubes.length;
+      while (n--) {
+        cube = cubes[n].toJSON();
+        cubeMap[cube.name] = cube;
+      }
+
+      dispatch(doServerUpdate({...serverInfo, cubeMap}));
       fetchSuccess();
-    } catch (error) {
+
+      await dispatch({type: CLIENT_HYDRATEQUERY, payload: cube && cube.name});
+      await dispatch({type: CLIENT_QUERY});
+    }
+    catch (error) {
       dispatch(
-        setServerInfo({
+        doServerUpdate({
           online: false,
           software: "",
           url: error.config.url,
@@ -72,56 +95,113 @@ const actionMap = {
       );
       fetchFailure(error);
     }
-
-    await dispatch({type: CLIENT_HYDRATEQUERY, payload: cube && cube.name});
-    await dispatch({type: CLIENT_QUERY});
-  },
-
-  /**
-   * Changes the current cube and updates related state
-   * @param {ActionMapParams} param0
-   * @param {string} param0.action.payload
-   */
-  [CLIENT_SETCUBE]: async ({action, client, dispatch, getState}) => {
-    const {measures: queryStateMeasures} = getState().explorerQuery;
-    const cube = await client.getCube(action.payload);
-    const measures = cube.measures.map((measure, index) => {
-      const measureName = measure.name;
-      const partialItem = queryStateMeasures.find(i => i.measure === measureName);
-      return buildMeasure({...measure.toJSON(), active: !index, ...partialItem});
-    });
-    dispatch(queryCubeSet(cube.name, measures));
   },
 
   /**
    * Reads the current queryState and fills the missing information.
    * @param {ActionMapParams} param0
-   * @param {string} param0.action.payload
+   * @param {string} param0.action.payload suggested default cube name
    */
-  [CLIENT_HYDRATEQUERY]: async ({action, client, dispatch, getState}) => {
+  [CLIENT_HYDRATEQUERY]: ({action, client, dispatch, getState}) => {
+    console.log("CLIENT_HYDRATEQUERY");
     const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
     fetchRequest();
 
-    const {explorerQuery: queryState, explorerCubes: cubesList} = getState();
-    const cubeName = queryState.cube in cubesList ? queryState.cube : action.payload;
+    const state = getState();
+    const cubeMap = selectOlapCubeMap(state);
+    const queries = selectQueryItems(state);
 
-    try {
-      const cube = await client.getCube(cubeName);
-      const cuts = queryState.cuts.map(
-        cutItem =>
+    const queryPromises = queries.map(queryItem => {
+      const {params} = queryItem;
+
+      // if params.cube is "" (default), use the suggested cube
+      // if was set from permalink/state, check if valid, else use suggested
+      const cubeName =
+        params.cube && cubeMap[params.cube] ? params.cube : action.payload;
+
+      return client.getCube(cubeName).then(cube => {
+        const {measures: measureItems} = params;
+        const hasMeasures = Object.keys(measureItems).length > 0;
+        const resolvedMeasures = cube.measures.map((measure, index) => {
+          const measureItem = measureItems[measure.name];
+          return buildMeasure({
+            ...measure.toJSON(),
+            ...measureItem,
+            active: hasMeasures ? measureItem?.active ?? false : !index
+          });
+        });
+        const measures = keyBy(resolvedMeasures, i => i.measure);
+
+        const resolvedDrilldowns = Object.values(params.drilldowns)
+          .map(drilldownItem =>
+            hydrateDrilldownProperties({cube, drilldownItem})
+          )
+          .filter(Boolean);
+        const drilldowns = keyBy(resolvedDrilldowns, i => i.key);
+
+        const cutPromises = Object.values(params.cuts).map(cutItem =>
           cutItem.membersLoaded
             ? cutItem
-            : updateCutMembers({client, cube, cutItem, locale: queryState.locale})
-      );
-      await dispatch({type: CLIENT_SETCUBE, payload: cubeName});
+            : hydrateCutMembers({
+              client,
+              cube,
+              cutItem,
+              locale: params.locale
+            })
+        );
+        return Promise.all(cutPromises).then(resolvedCuts => {
+          const cuts = keyBy(resolvedCuts, i => i.key);
 
-      const updatedCuts = await Promise.all(cuts);
-      dispatch(queryCutReplace(updatedCuts));
+          return {
+            ...queryItem,
+            params: {
+              ...queryItem.params,
+              cube: cubeName,
+              cuts,
+              drilldowns,
+              measures
+            }
+          };
+        });
+      });
+    });
 
-      fetchSuccess();
-    } catch (error) {
-      fetchFailure(error);
-    }
+    return Promise.all(queryPromises)
+      .then(resolvedQueries => {
+        const queryMap = keyBy(resolvedQueries, i => i.key);
+        dispatch(doQueriesClear(queryMap));
+      })
+      .then(fetchSuccess, fetchFailure);
+  },
+
+  /**
+   * Changes the current cube and updates related state
+   * If the new cube contains a measure with the same name as a measure in the
+   * previous cube, keep its state
+   * @param {ActionMapParams} param0
+   * @param {string} param0.action.payload cube name
+   */
+  [CLIENT_SETCUBE]: async({action, client, dispatch, getState}) => {
+    console.log("CLIENT_SETCUBE");
+    const state = getState();
+    const currentMeasureMap = selectMeasureMap(state);
+
+    /** @type {Record<string, MeasureItem>} */
+    const measures = {};
+
+    const cube = await client.getCube(action.payload);
+    cube.measures.forEach((measure, index) => {
+      const plainMeasure = measure.toJSON();
+      const measureName = plainMeasure.name;
+      measures[measureName] = buildMeasure({
+        ...plainMeasure,
+        active: !index,
+        ...currentMeasureMap[measureName],
+        uri: plainMeasure.uri
+      });
+    });
+
+    dispatch(doCubeUpdate(cube.name, measures));
   },
 
   /**
@@ -129,21 +209,31 @@ const actionMap = {
    * @param {ActionMapParams} param0
    * @param {string} param0.action.payload
    */
-  [CLIENT_SETLOCALE]: async ({action, client, dispatch, getState}) => {
-    const {cube: cubeName, cuts, locale: prevLocale} = getState().explorerQuery;
+  [CLIENT_SETLOCALE]: async({action, client, dispatch, getState}) => {
+    console.log("CLIENT_SETLOCALE");
+    const state = getState();
+    const currentLocale = selectLocaleCode(state);
     const nextLocale = action.payload;
-    if (prevLocale !== nextLocale) {
-      const unloadedCuts = cuts.map(cutItem => ({...cutItem, membersLoaded: false}));
-      dispatch(queryCutReplace(unloadedCuts));
 
+    if (currentLocale !== nextLocale) {
+      const currentCuts = selectCutItems(state);
+      const unloadedCuts = currentCuts.map(cutItem => ({
+        ...cutItem,
+        membersLoaded: false
+      }));
+      const recordUnloadedCuts = keyBy(unloadedCuts, i => i.key);
+      dispatch(doCutClear(recordUnloadedCuts));
+
+      const cubeName = selectCubeName(state);
       const cube = await client.getCube(cubeName);
-      const cutPromises = cuts.map(cutItem =>
-        updateCutMembers({client, cube, cutItem, locale: nextLocale})
+      const cutPromises = currentCuts.map(cutItem =>
+        hydrateCutMembers({client, cube, cutItem, locale: nextLocale})
       );
-      const updatedCuts = await Promise.all(cutPromises);
-      dispatch(queryCutReplace(updatedCuts));
+      const loadedCuts = await Promise.all(cutPromises);
+      const recordLoadedCuts = keyBy(loadedCuts, i => i.key);
+      dispatch(doCutClear(recordLoadedCuts));
 
-      dispatch(queryLocaleUpdate(nextLocale));
+      dispatch(doLocaleUpdate(nextLocale));
       await dispatch({type: CLIENT_QUERY});
     }
   },
@@ -152,119 +242,123 @@ const actionMap = {
    * Takes a newly generated CutItem and fills its list of associated members.
    * Returns a copy of the CutItem with its members property filled.
    * @param {ActionMapParams} param0
-   * @param {import("../reducers/query").CutItem} param0.action.payload
+   * @param {CutItem} param0.action.payload
    */
-  [CLIENT_LOADMEMBERS]: async ({action, client, dispatch, getState}) => {
-    const {cube: cubeName, locale} = getState().explorerQuery;
+  [CLIENT_LOADMEMBERS]: async({action, client, dispatch, getState}) => {
+    console.log("CLIENT_LOADMEMBERS");
+    const state = getState();
+    const cubeName = selectCubeName(state);
+    const locale = selectLocaleCode(state);
+
     const cutItem = action.payload;
+
     const cube = await client.getCube(cubeName);
-    const updatedCutItem = await updateCutMembers({client, cube, cutItem, locale});
-    return dispatch(queryCutUpdate(updatedCutItem));
+    const updatedCutItem = await hydrateCutMembers({
+      client,
+      cube,
+      cutItem,
+      locale
+    });
+    return dispatch(doCutUpdate(updatedCutItem));
+  },
+
+  /**
+   * Parses a query URL into a olap-client Query object, then into a QueryParam object
+   * and inyects it into a new QueryItem in the UI.
+   * @param {ActionMapParams} param0
+   */
+  [CLIENT_PARSE]: ({action, client, dispatch}) => {
+    const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
+    fetchRequest();
+
+    return client.parseQueryURL(action.payload)
+      .then(query => {
+        const queryItem = buildQuery({
+          params: extractQueryParams(query)
+        });
+
+        fetchSuccess();
+
+        dispatch(doQueriesUpdate(queryItem));
+        dispatch(doQueriesSelect(queryItem.key));
+      })
+      .then(null, fetchFailure)
+      .then(() => dispatch({type: CLIENT_HYDRATEQUERY}))
+      .then(() => dispatch({type: CLIENT_QUERY}));
   },
 
   /**
    * Executes the current queryState, and store the result in the State
    * @param {ActionMapParams} param0
    */
-  [CLIENT_QUERY]: async ({action, client, dispatch, getState}) => {
-    const {explorerQuery: queryState, explorerUi: uiState} = getState();
-    if (!isValidQuery(queryState)) {
-      return;
-    }
+  [CLIENT_QUERY]: async({action, client, dispatch, getState}) => {
+    console.log("CLIENT_QUERY");
+    const state = getState();
+    const params = selectCurrentQueryParams(state);
+
+    if (!isValidQuery(params)) return;
 
     const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
     fetchRequest();
 
     try {
-      const cube = await client.getCube(queryState.cube);
-      const query = applyQueryParams(cube.query, queryState);
+      const cube = await client.getCube(params.cube);
+      const query = applyQueryParams(cube.query, params);
 
-      const llUrl =
-        uiState.serverSoftware === TesseractDataSource.softwareName
-          ? TesseractDataSource.urlLogicLayer(query)
-          : "";
-      const jsCall = buildJavascriptCall(queryState);
+      const querydd = query.getParam("drilldowns").filter(Level.isLevel);
+      const rowLevel =
+        querydd.find(
+          lvl => lvl.dimension.dimensionType === DimensionType.Time
+        ) || querydd[0];
+      const colLevel = querydd.find(lvl => lvl !== rowLevel);
+      const queryms = query.getParam("measures");
 
-      const aggregation = await client.execQuery(query);
-      dispatch(updateAggregation(aggregation, {jsCall, llUrl}));
-      dispatch(updatePermalink());
+      const rowLevelName = rowLevel.uniqueName || rowLevel.name;
+      const colLevelName = colLevel?.uniqueName || colLevel?.name;
+      const valMeasureName = queryms[0].name;
+      const chartType = selectChartType(state);
+
+      const aggregation = await client.execQuery(query, "logiclayer");
+      dispatch(
+        doCurrentResultUpdate({
+          data: aggregation.data,
+          chartConfig: buildChartConfig({
+            levelNames: querydd.map(lvl => lvl.uniqueName || lvl.name),
+            chartConfig: selectChartConfigText(state),
+            configInterface: chartInterfaces[chartType],
+            rowLevelName,
+            valMeasureName
+          }),
+          pivotColumns: colLevelName,
+          pivotRows: rowLevelName,
+          pivotValues: valMeasureName,
+          sourceCall: " " || query.toSource(),
+          status: aggregation.status,
+          urlAggregate: query.toString("aggregate"),
+          urlLogicLayer: query.toString("logiclayer")
+        })
+      );
+      dispatch(doPermalinkUpdate());
 
       fetchSuccess(aggregation);
-    } catch (error) {
+    }
+    catch (error) {
+      dispatch(
+        doCurrentResultUpdate({error: error.message})
+      );
       fetchFailure(error);
     }
   }
 };
-
-/**
- * Updates the list of members of a CutItem
- * @param {object} p
- * @param {OLAPClient} p.client
- * @param {import("@datawheel/olap-client").Cube} p.cube
- * @param {CutItem} p.cutItem
- * @param {string|undefined} p.locale
- */
-async function updateCutMembers({client, cube, cutItem, locale}) {
-  const partialMembers = ensureArray(cutItem.members)
-    .filter(isActiveItem)
-    .map(member => `${member.key}`);
-  const {level: levelName, hierarchy, dimension} = cutItem;
-
-  try {
-    for (let level of cube.levelIterator) {
-      if (level.name === levelName) {
-        const sameHie = hierarchy ? hierarchy === level.hierarchy.name : true;
-        const sameDim = dimension ? dimension === level.dimension.name : true;
-        if (sameDim && sameHie) {
-          const rawMembers = await client.getMembers(level, {locale});
-          const members = rawMembers.map(member => {
-            const active = partialMembers.includes(`${member.key}`);
-            return buildMember({name: member.caption, key: member.key, active});
-          });
-          return buildCut({
-            ...cutItem,
-            active: true,
-            members: sortByKey(members, "key", false),
-            membersLoaded: true
-          });
-        }
-      }
-    }
-    throw new Error(
-      `Couldn't find level from reference: {"dimension":"${dimension}", "hierarchy":"${hierarchy}", "level":"${levelName}"}`
-    );
-  } catch (error) {
-    return buildCut({
-      ...cutItem,
-      error: error.message,
-      membersLoaded: false
-    });
-  }
-}
-
-/**
- * Provides a quick API to dispatch actions that control the loading state of the UI.
- * @param {import("redux").Dispatch} dispatch
- * @param {import("redux").AnyAction} param1
- */
-function requestControl(dispatch, {type: trigger, ...action}) {
-  return {
-    fetchRequest: payload =>
-      dispatch({type: `${trigger}/FETCH:REQUEST`, action, payload}),
-    fetchSuccess: payload =>
-      dispatch({type: `${trigger}/FETCH:SUCCESS`, action, payload}),
-    fetchFailure: error =>
-      dispatch({type: `${trigger}/FETCH:FAILURE`, action, payload: error.message})
-  };
-}
 
 /** @type {import("redux").Middleware<{}, ExplorerState>} */
 function olapClientMiddleware({dispatch, getState}) {
   const client = new OLAPClient();
 
   return next => action => {
-    return action.type in actionMap
-      ? actionMap[action.type]({action, client, dispatch, getState, next})
+    const effector = actionMap[action.type];
+    return typeof effector === "function"
+      ? effector({action, client, dispatch, getState, next})
       : next(action);
   };
 }

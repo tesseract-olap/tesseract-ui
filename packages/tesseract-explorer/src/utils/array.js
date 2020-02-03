@@ -47,17 +47,15 @@ export function removeFromArray(haystack, needle, finder = defaultIndexOf) {
 /**
  * @template T
  * @param {T[]} array
- * @param {string} key
+ * @param {keyof T} key
  * @param {boolean} descendent
  */
 export function sortByKey(array, key, descendent = true) {
-  if (!Array.isArray(array) || array.length < 2) {
-    return array;
-  }
+  if (!Array.isArray(array) || array.length < 2) return array;
 
   let sorterFunction;
   const firstItem = array[0];
-  if (isFinite(firstItem[key]) && !isNaN(firstItem[key])) {
+  if (Number.isFinite(firstItem[key]) && !Number.isNaN(firstItem[key])) {
     sorterFunction = descendent ? (a, b) => b[key] - a[key] : (a, b) => a[key] - b[key];
   }
   else {
@@ -65,5 +63,21 @@ export function sortByKey(array, key, descendent = true) {
       ? (a, b) => `${b[key]}`.localeCompare(`${a[key]}`)
       : (a, b) => `${a[key]}`.localeCompare(`${b[key]}`);
   }
+  return array.slice().sort(sorterFunction);
+}
+
+/**
+ * @template T
+ * @param {T[]} array
+ * @param {keyof T} key
+ * @param {boolean} descendent
+ */
+export function sortByDate(array, key, descendent = true) {
+  if (!Array.isArray(array) || array.length < 2) return array;
+
+  /** @type {(a: T, b: T) => number} */
+  const sorterFunction = descendent
+    ? (a, b) => Date.parse(b[key]) - Date.parse(a[key])
+    : (a, b) => Date.parse(a[key]) - Date.parse(b[key]);
   return array.slice().sort(sorterFunction);
 }

@@ -7,14 +7,14 @@ import {
   explorerReducer,
   olapMiddleware,
   permalinkMiddleware
-} from "../dist/explorer.esm";
+} from "../src";
 
 import "normalize.css/normalize.css";
-import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-import "@blueprintjs/core/lib/css/blueprint.css";
-import "@blueprintjs/select/lib/css/blueprint-select.css";
-import "@blueprintjs/table/lib/css/table.css";
-import "../dist/explorer.css";
+// import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+// import "@blueprintjs/core/lib/css/blueprint.css";
+// import "@blueprintjs/select/lib/css/blueprint-select.css";
+// import "@blueprintjs/table/lib/css/table.css";
+// import "../dist/explorer.css";
 
 const composeEnhancers =
   typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -27,12 +27,14 @@ const enhancers = composeEnhancers(
 const initialState = explorerInitialState();
 const store = createStore(explorerReducer, initialState, enhancers);
 
-function App() {
-  return (
-    <Provider store={store}>
-      <Explorer locale={["en", "es"]} src="https://api.oec.world/tesseract/" />
-    </Provider>
-  );
-}
+const App = () =>
+  <Provider store={store}>
+    <Explorer
+      locale={["en", "es"]}
+      // src="https://api.datamexico.org/tesseract/"
+      src="https://api.oec.world/tesseract/"
+    />
+  </Provider>
+;
 
 export default App;

@@ -1,74 +1,96 @@
 import {stringifyName} from "./transform";
 
-export const shallowEqualExceptFns = (
+export function shallowEqualExceptFns(
   prev,
   next,
   keys = Object.keys({...prev, ...next})
-) => keys.every(key => typeof prev[key] === "function" || prev[key] == next[key]);
+) {
+  return keys.every(key => typeof prev[key] === "function" || prev[key] == next[key]);
+}
 
-export const isNumeric = str => isFinite(str) && !isNaN(str);
-
-/**
- * @param {any} query
- * @returns {query is QueryState}
- */
-export const isQuery = query =>
-  typeof query === "object" &&
-  query !== null &&
-  typeof query.cube === "string" &&
-  query.cube.length > 0 &&
-  Array.isArray(query.drilldowns) &&
-  Array.isArray(query.measures);
+export function isNumeric(str) {
+  return isFinite(str) && !isNaN(str);
+}
 
 /**
  * @param {any} query
- * @returns {query is QueryState}
+ * @returns {query is QueryParams}
  */
-export const isValidQuery = query =>
-  isQuery(query) &&
-  query.drilldowns.reduce(activeItemCounter, 0) > 0 &&
-  query.measures.reduce(activeItemCounter, 0) > 0;
+export function isQuery(query) {
+  return (
+    typeof query === "object" &&
+    query !== null &&
+    typeof query.cube === "string" &&
+    query.cube.length > 0 &&
+    typeof query.drilldowns === "object" &&
+    query.drilldowns !== null &&
+    typeof query.measures === "object" &&
+    query.measures !== null
+  );
+}
+
+/**
+ * @param {any} query
+ * @returns {query is QueryParams}
+ */
+export function isValidQuery(query) {
+  return (
+    isQuery(query) &&
+    Object.values(query.drilldowns).reduce(activeItemCounter, 0) > 0 &&
+    Object.values(query.measures).reduce(activeItemCounter, 0) > 0
+  );
+}
 
 /** @param {CutItem} item */
-export const isActiveCut = item => isActiveItem(item) && item.members.some(isActiveItem);
+export function isActiveCut(item) {
+  return isActiveItem(item) && item.members.some(isActiveItem);
+}
 
 /** @param {{active: boolean}} item */
-export const isActiveItem = item => item.active;
+export function isActiveItem(item) {
+  return item.active;
+}
 
 /**
- * @param {any} growth
- * @returns {growth is Required<GrowthItem>}
+ * @param {any} obj
+ * @returns {obj is GrowthItem}
  */
-export const validGrowthState = growth => growth && growth.level && growth.measure;
+export function isGrowthItem(obj) {
+  return obj && obj.level && obj.measure;
+}
 
 /**
- * @param {any} rca
- * @returns {rca is Required<RcaItem>}
+ * @param {any} obj
+ * @returns {obj is RcaItem}
  */
-export const validRcaState = rca =>
-  rca && rca.level1 && rca.level2 && rca.level1 !== rca.level2 && rca.measure;
+export function isRcaItem(obj) {
+  return obj && obj.level1 && obj.level2 && obj.level1 !== obj.level2 && obj.measure;
+}
 
 /**
- * @param {any} topk
- * @returns {topk is Required<TopkItem>}
+ * @param {any} obj
+ * @returns {obj is TopkItem}
  */
-export const validTopkState = topk =>
-  topk && topk.amount > 0 && topk.level && topk.measure;
+export function isTopkItem(obj) {
+  return obj && obj.amount > 0 && obj.level && obj.measure;
+}
 
 /**
- * @type {(sum: number, item: QueryItem) => number}
+ * @type {(sum: number, item: IQueryItem) => number}
  * @returns {number}
  */
-export const activeItemCounter = (sum, item) => sum + (isActiveItem(item) ? 1 : 0);
+export function activeItemCounter(sum, item) {
+  return sum + (isActiveItem(item) ? 1 : 0);
+}
 
 // TODO
 export function deepQueryValidation(query) {}
 
 /**
- * @param {QueryState} query
+ * @param {QueryParams} query
  */
 export function checkDrilldowns(query) {
-  const drilldowns = query.drilldowns;
+  const drilldowns = Object.values(query.drilldowns);
   const issues = new Set();
 
   const dimensions = new Set();
@@ -90,10 +112,10 @@ export function checkDrilldowns(query) {
 }
 
 /**
- * @param {QueryState} query
+ * @param {QueryParams} query
  */
 export function checkMeasures(query) {
-  const measures = query.measures;
+  const measures = Object.values(query.measures);
   const issues = [];
 
   if (measures.length === 0) return issues;
@@ -107,10 +129,10 @@ export function checkMeasures(query) {
 }
 
 /**
- * @param {QueryState} query
+ * @param {QueryParams} query
  */
 export function checkCuts(query) {
-  const cuts = query.cuts;
+  const cuts = Object.values(query.cuts);
   const issues = [];
 
   const levels = new Set();

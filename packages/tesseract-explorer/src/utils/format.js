@@ -1,6 +1,6 @@
 import pluralize from "pluralize";
 import {splitName} from "./transform";
-import {validGrowthState, validRcaState, validTopkState} from "./validation";
+import {isGrowthItem, isRcaItem, isTopkItem} from "./validation";
 
 /**
  * Simplifies a fullname for UI display.
@@ -34,10 +34,10 @@ export function abbreviateFullName(nameParts, joint = "/") {
  * @returns {string}
  */
 export function summaryGrowth(growth) {
-  if (!validGrowthState(growth)) return "";
+  if (!isGrowthItem(growth)) return "";
   const measureName = growth.measure;
   const levelName = abbreviateFullName(growth.level);
-  return `Growth of ${measureName} by ${levelName}`;
+  return `${measureName} by ${levelName}`;
 }
 
 /**
@@ -45,11 +45,11 @@ export function summaryGrowth(growth) {
  * @returns {string}
  */
 export function summaryRca(rca) {
-  if (!validRcaState(rca)) return "";
+  if (!isRcaItem(rca)) return "";
   const measureName = rca.measure;
   const level1Name = abbreviateFullName(rca.level1);
   const level2Name = abbreviateFullName(rca.level2);
-  return `RCA for ${level1Name} on ${measureName} by ${level2Name}`;
+  return `${level1Name} on ${measureName} by ${level2Name}`;
 }
 
 /**
@@ -57,7 +57,7 @@ export function summaryRca(rca) {
  * @returns {string}
  */
 export function summaryTopk(topk) {
-  if (!validTopkState(topk)) return "";
+  if (!isTopkItem(topk)) return "";
   const measureName = pluralize(topk.measure, topk.amount);
   const levelName = abbreviateFullName(topk.level);
   return `Top ${topk.amount} ${measureName} by ${levelName} (${topk.order})`;

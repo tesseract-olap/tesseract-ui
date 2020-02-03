@@ -1,41 +1,36 @@
 import {Menu} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import {selectDimensionList} from "../selectors/cubes";
+import {selectOlapDimensionItems} from "../state/selectors";
 import DimensionMenuItem from "./MenuItemDimension";
 
 /**
  * @typedef OwnProps
  * @property {string[]} selectedItems
- * @property {(item: import("../structs").JSONLevel) => any} onItemSelected
+ * @property {(item: OlapLevel) => any} onItemSelect
  */
 
 /**
  * @typedef StateProps
- * @property {import("../structs").JSONDimension[]} dimensions
+ * @property {OlapDimension[]} dimensions
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */
-const DimensionMenu = function({dimensions, selectedItems, onItemSelected}) {
-  return (
-    <Menu>
-      {dimensions.map(dim => (
-        <DimensionMenuItem
-          dimension={dim}
-          key={dim.uri}
-          onItemSelected={onItemSelected}
-          selectedItems={selectedItems}
-        />
-      ))}
-    </Menu>
-  );
-};
+const DimensionMenu = ({dimensions, selectedItems, onItemSelect}) =>
+  <Menu>
+    {dimensions.map(dim =>
+      <DimensionMenuItem
+        dimension={dim}
+        key={dim.uri}
+        onItemSelect={onItemSelect}
+        selectedItems={selectedItems}
+      />
+    )}
+  </Menu>;
 
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
-function mapStateToProps(state) {
-  return {
-    dimensions: selectDimensionList(state) || []
-  };
-}
+const mapState = state => ({
+  dimensions: selectOlapDimensionItems(state) || []
+});
 
-export default connect(mapStateToProps)(DimensionMenu);
+export default connect(mapState)(DimensionMenu);

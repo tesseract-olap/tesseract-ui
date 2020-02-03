@@ -1,5 +1,4 @@
 import "./style.scss";
-export {default as Explorer} from "./components";
+export {default as Explorer} from "./containers/Explorer";
 export {olapMiddleware, permalinkMiddleware} from "./middleware";
-export {default as explorerInitialState} from "./utils/initialState";
-export {explorerReducer} from "./state"
+export {explorerInitialState, explorerReducer} from "./state";

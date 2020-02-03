@@ -1,0 +1,120 @@
+&-content {
+  padding: 1px;
+  overflow: auto;
+}
+
+.data-raw {
+  overflow: auto;
+  max-height: 100%;
+
+  .code-block {
+    margin: 0;
+    overflow: auto;
+  }
+}
+
+.data-tree {
+  display: flex;
+  flex-direction: column;
+
+  .#{$ns}-tree-node {
+    &:hover {
+      background-color: rgba($gray5, 0.4);
+    }
+    .#{$ns}-dark &:hover {
+      background-color: rgba($gray1, 0.3);
+    }
+  }
+
+  .tree {
+    &-filter {
+      flex: 0 0 auto;
+      margin: 1rem;
+    }
+
+    &-content {
+      flex: 1 1 auto;
+      height: 0;
+      overflow: auto;
+    }
+
+    &-struct span {
+      display: inline-block;
+      min-width: 160px;
+      user-select: all;
+    }
+
+    &-key {
+      margin-right: 10px;
+    }
+  }
+}
+
+.data-matrix {
+  display: flex;
+  flex-flow: row nowrap;
+  height: 100%;
+
+  .toolbar {
+    flex: 0 0 260px;
+    padding: 0.75rem;
+  }
+
+  .preview {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+}
+
+.data-chart {
+  display: flex;
+  flex-flow: row nowrap;
+  height: 100%;
+
+  .editor {
+    flex: 0 0 540px;
+    display: flex;
+    padding: 0.5rem;
+    flex-flow: column nowrap;
+
+    .params {
+      flex: 0 0 0;
+      display: flex;
+      flex-flow: row nowrap;
+      margin-bottom: 1rem;
+
+      .inline-group {
+        flex: 1 0 100px;
+        margin: 0 1rem 0 0;
+      }
+    }
+
+    .params + section {
+      flex: 1 0 50%;
+    }
+  }
+
+  .preview {
+    align-items: center;
+    display: flex;
+    flex: 1 0 0;
+    justify-content: center;
+    max-height: 100%;
+    min-width: 0;
+    padding: 0.5rem;
+
+    .animated-cube {
+      font-size: 4rem;
+    }
+
+    .viz {
+      height: 90%;
+      transform: rotateZ(360deg);
+
+      & > svg {
+        display: block;
+        max-width: 100%;
+      }
+    }
+  }
+}

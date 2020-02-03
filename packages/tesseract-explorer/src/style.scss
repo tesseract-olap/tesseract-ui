@@ -1,37 +1,31 @@
+@import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
+@import "~@blueprintjs/core/lib/css/blueprint.css";
+@import "~@blueprintjs/select/lib/css/blueprint-select.css";
+@import "~@blueprintjs/table/lib/css/table.css";
 @import "~react-perfect-scrollbar/dist/css/styles.css";
 
 @import "./style/variables";
+@import "./style/mixins";
 
 @import "./style/CubeAnimation";
+@import "./style/normalization";
+@import "./style/monaco";
 
 .explorer {
   &-wrapper {
     background: $pt-app-background-color;
-    display: flex;
-    flex-flow: column nowrap;
-    min-width: 320px;
     height: 100vh;
-    justify-content: stretch;
+    width: 100vw;
+    min-width: 320px;
+
+    display: grid;
+    grid-template-columns: fit-content(30px) fit-content(30px) minmax(0, 1fr);
+    grid-template-rows: 50px 1fr;
+    grid-column-gap: 0;
+    grid-row-gap: 0;
 
     &.#{$ns}-dark {
       background-color: $pt-dark-app-background-color;
-    }
-  }
-
-  &-navbar {
-    flex: 0 0;
-    width: 100%;
-
-    .module-tabs {
-      margin-left: 1rem;
-    }
-
-    .#{$ns}-tab {
-      line-height: 50px;
-    }
-
-    .select-locale {
-      margin-left: 4px;
     }
   }
 
@@ -42,45 +36,82 @@
       }
       .#{$ns}-heading {
         color: #fff;
-        // text-shadow: #fff 0 0 20px, #fff 0 0 20px;
       }
     }
   }
 
-  &-content {
-    flex: 1 0;
+  &-navbar {
+    grid-column: span 3;
+    flex: 0 0 50px;
     width: 100%;
-    overflow: auto;
-    display: grid;
-    grid-template-columns: 300px 1fr;
+  }
+
+  &-content {
+    flex-flow: row nowrap;
+    display: flex;
+    flex: 1 0 0;
+    width: 0;
+  }
+
+  &-column {
+    display: flex;
+    flex-flow: column nowrap;
+    height: 100%;
+
+    & > .titlebar {
+      flex: 0 0 30px;
+      font-size: 1rem;
+      line-height: 30px;
+      padding: 0 0.5rem;
+      text-transform: uppercase;
+
+      .token {
+        display: inline-block;
+        font-size: inherit;
+        margin: 0 1rem 0 0;
+        text-decoration: none;
+      }
+    }
+
+    &.closed {
+      width: 30px;
+
+      & .titlebar {
+        grid-row: span 2;
+        transform: rotate(90deg);
+        transform-origin: 15px 15px;
+      }
+    }
+
+    & > .wrapper {
+      flex: 1 0 30px;
+      min-height: 0;
+    }
+  }
+
+  &-queries {
+    width: 200px;
+    @include box-area;
+
+    @import "./style/ExplorerQueries";
+  }
+
+  &-animation {
+    grid-column: span 2;
+    font-size: 60px;
+    margin: auto;
   }
 
   &-params {
-    $card-background-color: $white !default;
-    $dark-card-background-color: $dark-gray4 !default;
+    width: 320px;
+    @include box-area;
 
-    box-shadow: $pt-elevation-shadow-0;
-    background-color: $card-background-color;
-
-    .#{$ns}-dark & {
-      box-shadow: $pt-dark-elevation-shadow-0;
-      background-color: $dark-card-background-color;
-    }
-
-    &-content {
-      margin: 1rem;
-    }
-
-    @import "./style/PanelQuery";
+    @import "./style/ExplorerParams";
   }
 
   &-results {
-    margin: 0;
-    outline: 0 none;
-
-    @import "./style/PanelDataRaw";
-    @import "./style/PanelDataTable";
-    @import "./style/PanelDataTree";
+    min-width: 520px;
+    @import "./style/ExplorerResults";
 
     &.initial-view {
       .animated-cube {
@@ -94,4 +125,31 @@
   }
 }
 
-@import "./style/DebugDrawer";
+.panel-title {
+  position: sticky;
+  top: 0;
+  text-transform: uppercase;
+  font-size: small;
+  margin: 0;
+  padding: 2px 5px;
+  @include box-area;
+}
+
+.param-popover .#{$ns}-popover-content {
+  padding: 0.75rem;
+}
+
+.#{$ns}-table-container {
+  margin: 0;
+  outline: 0 none;
+  user-select: none;
+
+  .column-number {
+    font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console",
+      "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",
+      "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+    font-variant-numeric: tabular-nums;
+    font-variant-numeric: tabular-nums lining-nums;
+    text-align: right;
+  }
+}

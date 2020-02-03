@@ -2,23 +2,22 @@ import {MenuItem} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {abbreviateFullName} from "../utils/format";
 import LevelMenuItem from "./MenuItemLevel";
-import {removeFromArray} from "../utils/array";
 
 /**
  * @typedef OwnProps
  * @property {boolean} [childItem]
- * @property {import("../structs").JSONHierarchy} hierarchy
- * @property {(item: import("../structs").JSONLevel) => any} onItemSelected
+ * @property {OlapHierarchy} hierarchy
+ * @property {(item: OlapLevel) => any} onItemSelect
  * @property {string[]} selectedItems
  */
 
 /** @type {React.FC<OwnProps>} */
-const HierarchyMenuItem = function({
+const HierarchyMenuItem = ({
   childItem,
   hierarchy,
-  onItemSelected,
+  onItemSelect,
   selectedItems
-}) {
+}) => {
   const {levels} = hierarchy;
   const name = childItem
     ? hierarchy.name
@@ -29,7 +28,7 @@ const HierarchyMenuItem = function({
       <LevelMenuItem
         key={levels[0].uri}
         level={levels[0]}
-        onItemSelected={onItemSelected}
+        onItemSelect={onItemSelect}
         selectedItems={selectedItems}
       />
     );
@@ -37,15 +36,15 @@ const HierarchyMenuItem = function({
   else {
     return (
       <MenuItem key={hierarchy.uri} icon="layers" text={name}>
-        {levels.map(lvl => (
+        {levels.map(lvl =>
           <LevelMenuItem
             childItem
             key={lvl.uri}
             level={lvl}
-            onItemSelected={onItemSelected}
+            onItemSelect={onItemSelect}
             selectedItems={selectedItems}
           />
-        ))}
+        )}
       </MenuItem>
     );
   }

@@ -3,12 +3,12 @@
     "allowSyntheticDefaultImports": true,
     "checkJs": true,
     "jsx": "react",
-    "module": "es2015",
+    "module": "commonJS",
     "moduleResolution": "node",
     "strictNullChecks": true,
     "target": "es2015"
   },
   "include": [
-    "./src",
+    "./src", "./public",
   ]
 }

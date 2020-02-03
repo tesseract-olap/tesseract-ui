@@ -4,20 +4,20 @@ import HierarchyMenuItem from "./MenuItemHierarchy";
 
 /**
  * @typedef OwnProps
- * @property {import("../structs").JSONDimension} dimension
- * @property {(item: import("../structs").JSONLevel) => any} onItemSelected
+ * @property {OlapDimension} dimension
+ * @property {(item: OlapLevel) => any} onItemSelect
  * @property {string[]} selectedItems
  */
 
 /** @type {React.FC<OwnProps>} */
-const DimensionMenuItem = function({dimension, selectedItems, onItemSelected}) {
+const DimensionMenuItem = ({dimension, selectedItems, onItemSelect}) => {
   const {hierarchies} = dimension;
   if (hierarchies.length === 1) {
     return (
       <HierarchyMenuItem
         hierarchy={hierarchies[0]}
         key={hierarchies[0].uri}
-        onItemSelected={onItemSelected}
+        onItemSelect={onItemSelect}
         selectedItems={selectedItems}
       />
     );
@@ -25,15 +25,15 @@ const DimensionMenuItem = function({dimension, selectedItems, onItemSelected}) {
   else {
     return (
       <MenuItem key={dimension.uri} icon="layers" text={dimension.name}>
-        {hierarchies.map(hie => (
+        {hierarchies.map(hie =>
           <HierarchyMenuItem
             childItem
             hierarchy={hie}
             key={hie.uri}
-            onItemSelected={onItemSelected}
+            onItemSelect={onItemSelect}
             selectedItems={selectedItems}
           />
-        ))}
+        )}
       </MenuItem>
     );
   }
