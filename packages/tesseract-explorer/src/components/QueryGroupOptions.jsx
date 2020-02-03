@@ -10,6 +10,7 @@ import {
 } from "../actions/query";
 import {shallowEqualExceptFns} from "../utils/validation";
 import QueryGroup from "./QueryGroup";
+import { selectQueryState } from "../selectors/state";
 
 /**
  * @typedef StateProps
@@ -72,7 +73,7 @@ const QueryGroupOptions = function({
 /** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>}*/
 function mapStateToProps(state) {
   return {
-    query: state.explorerQuery
+    query: selectQueryState(state)
   };
 }
 

@@ -32,6 +32,7 @@ import TagDrilldown from "./QueryTagDrilldown";
 import TagMeasure from "./QueryTagMeasure";
 import SelectorLevelMulti from "./SelectorLevelMulti";
 import StarredItemButton from "./StarredItemButton";
+import { selectStarredState, selectQueryState } from "../selectors/state";
 
 /**
  * @typedef OwnProps
@@ -166,8 +167,8 @@ const PanelQuery = function(props) {
 function mapStateToProps(state) {
   return {
     hasTimeDim: Boolean(selectTimeDimension(state)),
-    query: state.explorerQuery,
-    starredItems: state.explorerStarred
+    query: selectQueryState(state),
+    starredItems: selectStarredState(state)
   };
 }
 

@@ -7,6 +7,7 @@ import {selectPermalink} from "../selectors/permalink";
 import "../style/starredDrawer.scss";
 import {shallowEqualExceptFns} from "../utils/validation";
 import StarredItem from "./StarredItem";
+import { selectQueryState, selectStarredState, selectUiState } from "../selectors/state";
 
 /**
  * @typedef StateProps
@@ -51,9 +52,9 @@ const StarredDrawer = function(props) {
 function mapStateToProps(state) {
   return {
     currentPermalink: selectPermalink(state),
-    isOpen: state.explorerUi.starredDrawer,
-    items: state.explorerStarred,
-    query: state.explorerQuery
+    isOpen: selectUiState(state).starredDrawer,
+    items: selectStarredState(state),
+    query: selectQueryState(state)
   };
 }
 

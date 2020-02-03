@@ -3,6 +3,7 @@ import React from "react";
 import {connect} from "react-redux";
 import {setLocale} from "../actions/client";
 import {selectLocaleOptions} from "../selectors/query";
+import { selectQueryState } from "../selectors/state";
 
 /**
  * @typedef OwnProps
@@ -36,7 +37,7 @@ const LocaleSelector = function({fill, locale, localeOptions, updateLocaleHandle
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   return {
-    locale: state.explorerQuery.locale || "en",
+    locale: selectQueryState(state).locale || "en",
     localeOptions: selectLocaleOptions(state)
   };
 }

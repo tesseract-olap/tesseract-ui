@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import copy from "clipboard-copy";
 import {toggleDarkTheme, toggleDebugDrawer, toggleStarredDrawer} from "../actions/ui";
 import { selectPermalink } from "../selectors/permalink";
+import { selectUiState } from "../selectors/state";
 
 /**
  * @typedef StateProps
@@ -54,7 +55,7 @@ const NavbarButtons = function(props) {
 /** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   return {
-    darkTheme: state.explorerUi.darkTheme,
+    darkTheme: selectUiState(state).darkTheme,
     permalink: selectPermalink(state)
   };
 }

@@ -1,6 +1,7 @@
 import {AnchorButton, Intent} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {connect} from "react-redux";
+import { selectUiState } from "../selectors/state";
 
 /**
  * @typedef StateProps
@@ -42,11 +43,12 @@ const ServerStatus = function({online, software, url, version}) {
 
 /** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
+  const ui = selectUiState(state);
   return {
-    online: state.explorerUi.serverOnline,
-    software: state.explorerUi.serverSoftware,
-    url: state.explorerUi.serverUrl,
-    version: state.explorerUi.serverVersion
+    online: ui.serverOnline,
+    software: ui.serverSoftware,
+    url: ui.serverUrl,
+    version: ui.serverVersion
   };
 }
 

@@ -1,6 +1,7 @@
 import {NonIdealState, Overlay, Spinner} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
+import { selectLoadingState } from "../selectors/state";
 
 function LoadingScreen(props) {
   return (
@@ -22,7 +23,7 @@ function LoadingScreen(props) {
 /** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
   return {
-    isOpen: state.explorerLoading.loading
+    isOpen: selectLoadingState(state).loading
   };
 }
 

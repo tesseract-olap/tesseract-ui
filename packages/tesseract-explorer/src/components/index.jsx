@@ -12,6 +12,7 @@ import Navbar from "./Navbar";
 import QueryPanel from "./PanelQuery";
 import ResultPanel from "./PanelResult";
 import StarredDrawer from "./StarredDrawer";
+import { selectUiState, selectAggregationState } from "../selectors/state";
 
 /**
  * @typedef OwnProps
@@ -125,11 +126,12 @@ const ExplorerContent = function({online, url, emptyDataset}) {
 
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
+  const ui = selectUiState(state);
   return {
-    darkTheme: state.explorerUi.darkTheme,
-    emptyDataset: state.explorerAggregation.emptyDataset,
-    serverOnline: state.explorerUi.serverOnline,
-    serverUrl: state.explorerUi.serverUrl
+    darkTheme: ui.darkTheme,
+    emptyDataset: selectAggregationState(state).emptyDataset,
+    serverOnline: ui.serverOnline,
+    serverUrl: ui.serverUrl
   };
 }
 

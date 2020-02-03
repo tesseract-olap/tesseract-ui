@@ -13,6 +13,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
 import {UI_DEBUG_TOGGLE} from "../actions/ui";
 import JsonRenderer from "./JsonRenderer";
+import { selectQueryState, selectAggregationState, selectUiState } from "../selectors/state";
 
 function DebugDrawer(props) {
   const {query, javascriptCall, aggregateUrl, logicLayerUrl} = props;
@@ -83,12 +84,13 @@ function DebugDrawer(props) {
 
 /** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
+  const aggregationState = selectAggregationState(state);
   return {
-    aggregateUrl: state.explorerAggregation.aggregateUrl,
-    isOpen: state.explorerUi.debugDrawer,
-    javascriptCall: state.explorerAggregation.jsCall,
-    logicLayerUrl: state.explorerAggregation.logicLayerUrl,
-    query: state.explorerQuery
+    aggregateUrl: aggregationState.aggregateUrl,
+    isOpen: selectUiState(state).debugDrawer,
+    javascriptCall: aggregationState.jsCall,
+    logicLayerUrl: aggregationState.logicLayerUrl,
+    query: selectQueryState(state)
   };
 }
 

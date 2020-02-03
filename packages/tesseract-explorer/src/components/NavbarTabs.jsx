@@ -2,6 +2,7 @@ import {Tab, Tabs as Bp3Tabs} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import {setTabPanel, UITAB_RAW, UITAB_TABLE, UITAB_TREE} from "../actions/ui";
+import { selectUiState } from "../selectors/state";
 
 /**
  * @typedef OwnProps
@@ -38,7 +39,7 @@ const Tabs = function(props) {
 /** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {
   return {
-    currentTab: state.explorerUi.tab
+    currentTab: selectUiState(state).tab
   };
 }
 

@@ -5,6 +5,7 @@ import {setCube} from "../actions/client";
 import {selectCubeNameList} from "../selectors/cubes";
 import {safeRegExp} from "../utils/transform";
 import GenericSelector from "./SelectorGeneric";
+import { selectQueryState } from "../selectors/state";
 
 /**
  * @typedef OwnProps
@@ -44,7 +45,7 @@ function mapStateToProps(state) {
     itemListPredicate,
     itemRenderer,
     items: selectCubeNameList(state),
-    selectedItem: state.explorerQuery.cube
+    selectedItem: selectQueryState(state).cube
   };
 }
 

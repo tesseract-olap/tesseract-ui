@@ -1,5 +1,6 @@
 import {queryInyect} from "../actions/query";
 import {selectPermalink} from "../selectors/permalink";
+import { selectQueryState, selectCubesState } from "../selectors/state";
 
 /** @type {import("redux").Middleware<{}, import("../reducers").ExplorerState>} */
 function permalinkMiddleware({dispatch, getState}) {
@@ -13,9 +14,10 @@ function permalinkMiddleware({dispatch, getState}) {
     return action => {
       if (action.type.startsWith("explorer/PERMALINK") && typeof window === "object") {
         const state = getState();
-        const {explorerQuery: nextQuery} = state;
+        const nextQuery = selectQueryState(state);
+        const nextCubes = selectCubesState(state);
 
-        if (state.explorerCubes[nextQuery.cube] != null) {
+        if (nextCubes[nextQuery.cube] != null) {
           const nextPermalink = selectPermalink(state);
 
           if (window.location.search.slice(1) !== nextPermalink) {

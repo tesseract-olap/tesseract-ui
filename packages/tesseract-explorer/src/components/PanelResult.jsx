@@ -7,6 +7,7 @@ import AnimatedCube from "./AnimatedCube";
 import PanelRawTab from "./PanelTabRaw";
 import PanelDataTable from "./PanelTabTable";
 import PanelDataTree from "./PanelTabTree";
+import { selectAggregationState, selectUiState, selectLoadingState } from "../selectors/state";
 
 function ResultPanel(props) {
   if (props.error) {
@@ -47,11 +48,12 @@ function ResultPanel(props) {
 
 /** @param {import("../reducers").ExplorerState} state */
 function mapStateToProps(state) {
+  const loadingState = selectLoadingState(state);
   return {
-    aggregation: state.explorerAggregation,
-    currentTab: state.explorerUi.tab,
-    error: state.explorerLoading.error,
-    loading: state.explorerLoading.loading
+    aggregation: selectAggregationState(state),
+    currentTab: selectUiState(state).tab,
+    error: loadingState.error,
+    loading: loadingState.loading
   };
 }
 

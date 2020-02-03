@@ -1,30 +1,35 @@
 /**
  * @type {(state: import("../reducers").ExplorerState) => import("../reducers").AggregationState}
  */
-export const selectAggregationState = state => state.explorerAggregation;
+export const selectAggregationState = state =>
+  state.explorer ? state.explorer.explorerAggregation : state.explorerAggregation;
 
 /**
  * @type {(state: import("../reducers").ExplorerState) => import("../reducers").CubesState}
  */
-export const selectCubesState = state => state.explorerCubes;
+export const selectCubesState = state =>
+  state.explorer ? state.explorer.explorerCubes : state.explorerCubes;
 
 /**
  * @type {(state: import("../reducers").ExplorerState) => import("../reducers").LoadingState}
  */
-export const selectLoadingState = state => state.explorerLoading;
+export const selectLoadingState = state =>
+  state.explorer ? state.explorer.explorerLoading : state.explorerLoading;
 
 /**
  * @type {(state: import("../reducers").ExplorerState) => import("../reducers").QueryState}
  */
-export const selectQueryState = state => state.explorerQuery;
+export const selectQueryState = state =>
+  state.explorer ? state.explorer.explorerQuery : state.explorerQuery;
 
 /**
  * @type {(state: import("../reducers").ExplorerState) => import("../reducers").StarredItem[]}
  */
-export const selectStarredState = state => state.explorerStarred;
+export const selectStarredState = state =>
+  state.explorer ? state.explorer.explorerStarred : state.explorerStarred;
 
 /**
  * @type {(state: import("../reducers").ExplorerState) => import("../reducers").UiState}
  */
-export const selectUiState = state => state.explorerUi;
-
+export const selectUiState = state =>
+  state.explorer ? state.explorer.explorerUi : state.explorerUi;
