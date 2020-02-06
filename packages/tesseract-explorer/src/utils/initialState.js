@@ -3,12 +3,12 @@ import {
   starredInitialState,
   uiInitialState
 } from "../reducers/initialState";
-import {hydratePermalink, serializePermalink} from "./permalink";
+import {hydratePermalink} from "./permalink";
 import {isQuery, isValidQuery} from "./validation";
 
 /** @returns {Partial<import("../reducers").ExplorerState>} */
 function initialStateBuilder() {
-  let explorerQuery, explorerStarred, explorerUi, newPermalink;
+  let explorerQuery, explorerStarred, explorerUi;
 
   if (typeof window === "object") {
     const locationState =
@@ -35,20 +35,13 @@ function initialStateBuilder() {
 
     const starredState = window.localStorage.getItem("starred");
     explorerStarred = starredState ? JSON.parse(starredState) : starredInitialState;
-
-    newPermalink = window.location.pathname;
   }
 
   if (isValidQuery(explorerQuery)) {
     explorerQuery.growth = {...queryInitialState.growth, ...explorerQuery.growth};
     explorerQuery.rca = {...queryInitialState.rca, ...explorerQuery.rca};
     explorerQuery.topk = {...queryInitialState.topk, ...explorerQuery.topk};
-
-    newPermalink += "?" + serializePermalink(explorerQuery);
   }
-
-  typeof window === "object" &&
-    window.history.replaceState(explorerQuery, "", newPermalink);
 
   return {
     explorerQuery,

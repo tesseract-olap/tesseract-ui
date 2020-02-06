@@ -2,7 +2,7 @@ import {Client as OLAPClient, TesseractDataSource} from "@datawheel/olap-client"
 import {updateAggregation} from "../actions/aggregation";
 import {CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP} from "../actions/client";
 import {cubesUpdate} from "../actions/cubes";
-import {updatePermalink} from "../actions/permalink";
+import {updatePermalink, refreshPermalink} from "../actions/permalink";
 import {queryCubeSet, queryCutReplace, queryCutUpdate, queryLocaleUpdate} from "../actions/query";
 import {setServerInfo} from "../actions/ui";
 import {selectCubesState, selectQueryState, selectUiState} from "../selectors/state";
@@ -21,13 +21,14 @@ import {isActiveItem, isValidQuery} from "../utils/validation";
  */
 
 const actionMap = {
+
   /**
    * Sets a new DataSource to the client instance, gets the server info, and
    * initializes the general state accordingly.
    * @param {ActionMapParams} param0
    * @param {string} param0.action.payload The URL for the server to use
    */
-  [CLIENT_SETUP]: async ({action, client, dispatch}) => {
+  [CLIENT_SETUP]: async({action, client, dispatch}) => {
     const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
     fetchRequest();
 
@@ -50,7 +51,8 @@ const actionMap = {
       dispatch(cubesUpdate(cubeMap));
 
       fetchSuccess();
-    } catch (error) {
+    }
+    catch (error) {
       dispatch(
         setServerInfo({
           online: false,
@@ -71,7 +73,7 @@ const actionMap = {
    * @param {ActionMapParams} param0
    * @param {string} param0.action.payload
    */
-  [CLIENT_SETCUBE]: async ({action, client, dispatch, getState}) => {
+  [CLIENT_SETCUBE]: async({action, client, dispatch, getState}) => {
     const state = getState();
     const {measures: queryStateMeasures} = selectQueryState(state);
     const cube = await client.getCube(action.payload);
@@ -88,7 +90,7 @@ const actionMap = {
    * @param {ActionMapParams} param0
    * @param {string} param0.action.payload
    */
-  [CLIENT_HYDRATEQUERY]: async ({action, client, dispatch, getState}) => {
+  [CLIENT_HYDRATEQUERY]: async({action, client, dispatch, getState}) => {
     const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
     fetchRequest();
 
@@ -109,9 +111,11 @@ const actionMap = {
 
       const updatedCuts = await Promise.all(cuts);
       dispatch(queryCutReplace(updatedCuts));
+      dispatch(refreshPermalink());
 
       fetchSuccess();
-    } catch (error) {
+    }
+    catch (error) {
       fetchFailure(error);
     }
   },
@@ -121,7 +125,7 @@ const actionMap = {
    * @param {ActionMapParams} param0
    * @param {string} param0.action.payload
    */
-  [CLIENT_SETLOCALE]: async ({action, client, dispatch, getState}) => {
+  [CLIENT_SETLOCALE]: async({action, client, dispatch, getState}) => {
     const state = getState();
     const {cube: cubeName, cuts, locale: prevLocale} = selectQueryState(state);
     const nextLocale = action.payload;
@@ -147,7 +151,7 @@ const actionMap = {
    * @param {ActionMapParams} param0
    * @param {import("../reducers").CutItem} param0.action.payload
    */
-  [CLIENT_LOADMEMBERS]: async ({action, client, dispatch, getState}) => {
+  [CLIENT_LOADMEMBERS]: async({action, client, dispatch, getState}) => {
     const state = getState();
     const {cube: cubeName, locale} = selectQueryState(state);
     const cutItem = action.payload;
@@ -160,7 +164,7 @@ const actionMap = {
    * Executes the current queryState, and store the result in the State
    * @param {ActionMapParams} param0
    */
-  [CLIENT_QUERY]: async ({action, client, dispatch, getState}) => {
+  [CLIENT_QUERY]: async({action, client, dispatch, getState}) => {
     const state = getState();
     const queryState = selectQueryState(state);
     const uiState = selectUiState(state);
@@ -186,7 +190,8 @@ const actionMap = {
       dispatch(updatePermalink());
 
       fetchSuccess(aggregation);
-    } catch (error) {
+    }
+    catch (error) {
       fetchFailure(error);
     }
   }
@@ -207,7 +212,7 @@ async function updateCutMembers({client, cube, cutItem, locale}) {
   const {level: levelName, hierarchy, dimension} = cutItem;
 
   try {
-    for (let level of cube.levelIterator) {
+    for (const level of cube.levelIterator) {
       if (level.name === levelName) {
         const sameHie = hierarchy ? hierarchy === level.hierarchy.name : true;
         const sameDim = dimension ? dimension === level.dimension.name : true;
@@ -229,7 +234,8 @@ async function updateCutMembers({client, cube, cutItem, locale}) {
     throw new Error(
       `Couldn't find level from reference: {"dimension":"${dimension}", "hierarchy":"${hierarchy}", "level":"${levelName}"}`
     );
-  } catch (error) {
+  }
+  catch (error) {
     return buildCut({
       ...cutItem,
       error: error.message,
@@ -258,11 +264,9 @@ function requestControl(dispatch, {type: trigger, ...action}) {
 function olapClientMiddleware({dispatch, getState}) {
   const client = new OLAPClient();
 
-  return next => action => {
-    return action.type in actionMap
-      ? actionMap[action.type]({action, client, dispatch, getState, next})
-      : next(action);
-  };
+  return next => action => action.type in actionMap
+    ? actionMap[action.type]({action, client, dispatch, getState, next})
+    : next(action);
 }
 
 export default olapClientMiddleware;
