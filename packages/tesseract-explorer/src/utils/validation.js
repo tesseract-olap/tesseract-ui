@@ -1,13 +1,23 @@
 import {stringifyName} from "./transform";
 
+/**
+ * @param {any} prev
+ * @param {any} next
+ * @param {string[]} [keys]
+ */
 export function shallowEqualExceptFns(
   prev,
   next,
   keys = Object.keys({...prev, ...next})
 ) {
+  // eslint-disable-next-line eqeqeq
   return keys.every(key => typeof prev[key] === "function" || prev[key] == next[key]);
 }
 
+/**
+ * @param {any} str
+ * @returns {str is number}
+ */
 export function isNumeric(str) {
   return isFinite(str) && !isNaN(str);
 }
@@ -53,6 +63,14 @@ export function isActiveItem(item) {
 
 /**
  * @param {any} obj
+ * @returns {obj is FilterItem}
+ */
+export function isFilterItem(obj) {
+  return obj.measure && obj.comparison && isNumeric(obj.interprettedValue);
+}
+
+/**
+ * @param {any} obj
  * @returns {obj is GrowthItem}
  */
 export function isGrowthItem(obj) {
@@ -82,9 +100,6 @@ export function isTopkItem(obj) {
 export function activeItemCounter(sum, item) {
   return sum + (isActiveItem(item) ? 1 : 0);
 }
-
-// TODO
-export function deepQueryValidation(query) {}
 
 /**
  * @param {QueryParams} query

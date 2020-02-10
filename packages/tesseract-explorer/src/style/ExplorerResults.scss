@@ -3,6 +3,11 @@
   overflow: auto;
 }
 
+.result-panel {
+  height: 100%;
+  width: 100%;
+}
+
 .data-raw {
   overflow: auto;
   max-height: 100%;
@@ -53,7 +58,6 @@
 .data-matrix {
   display: flex;
   flex-flow: row nowrap;
-  height: 100%;
 
   .toolbar {
     flex: 0 0 260px;
@@ -69,7 +73,6 @@
 .data-chart {
   display: flex;
   flex-flow: row nowrap;
-  height: 100%;
 
   .editor {
     flex: 0 0 540px;

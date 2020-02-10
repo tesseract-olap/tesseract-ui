@@ -11,7 +11,7 @@ export function buildQuery(props) {
     created: props.created || new Date().toISOString(),
     key: props.key || randomKey(),
     label: props.label || "",
-    isDirty: false,
+    isDirty: true,
     params: {
       booleans: params.booleans || {},
       cube: params.cube || "",
@@ -49,13 +49,21 @@ export function buildQuery(props) {
  * @returns {CutItem}
  */
 export function buildCut(props) {
+  if (typeof props.toJSON === "function") {
+    props = props.toJSON();
+  }
+  const dimension = `${props.dimension}`;
+  const hierarchy = `${props.hierarchy}`;
+  const level = `${props.level || props.name}`;
   return {
     active: typeof props.active === "boolean" ? props.active : false,
-    dimension: `${props.dimension}`,
+    dimension,
     error: props.error || undefined,
-    hierarchy: `${props.hierarchy}`,
+    hierarchy,
     key: props.key || randomKey(),
-    level: `${props.level || props.uniqueName || props.name}`,
+    level,
+    fullName: props.fullName || [dimension, hierarchy, level].join("."),
+    uniqueName: props.uniqueName || level,
     members: Array.isArray(props.members) ? props.members : [],
     membersLoaded: typeof props.membersLoaded === "boolean" ? props.membersLoaded : false
   };
@@ -66,14 +74,22 @@ export function buildCut(props) {
  * @returns {DrilldownItem}
  */
 export function buildDrilldown(props) {
+  if (typeof props.toJSON === "function") {
+    props = props.toJSON();
+  }
+  const dimension = `${props.dimension}`;
+  const hierarchy = `${props.hierarchy}`;
+  const level = `${props.level || props.name}`;
   return {
     active: typeof props.active === "boolean" ? props.active : true,
-    caption: `${props.caption || ""}`,
-    dimension: `${props.dimension}`,
-    hierarchy: `${props.hierarchy}`,
+    captionProperty: `${props.captionProperty || ""}`,
+    dimension,
+    fullName: props.fullName || [dimension, hierarchy, level].join("."),
+    hierarchy,
     key: props.key || randomKey(),
+    level,
     properties: ensureArray(props.properties).map(buildProperty),
-    level: `${props.level || props.uniqueName || props.name}`
+    uniqueName: props.uniqueName || level
   };
 }
 
@@ -82,6 +98,9 @@ export function buildDrilldown(props) {
  * @returns {FilterItem}
  */
 export function buildFilter(props) {
+  if (typeof props.toJSON === "function") {
+    props = props.toJSON();
+  }
   return {
     active: typeof props.active === "boolean" ? props.active : true,
     comparison: props.comparison || "=",
@@ -113,6 +132,9 @@ export function buildGrowth(props) {
  * @returns {MeasureItem}
  */
 export function buildMeasure(props) {
+  if (typeof props.toJSON === "function") {
+    props = props.toJSON();
+  }
   return {
     active: typeof props.active === "boolean" ? props.active : true,
     key: props.key || props.name || props.measure,
@@ -141,7 +163,7 @@ export function buildProperty(props) {
     active: typeof props.active === "boolean" ? props.active : false,
     key: props.uri || props.fullName || props.key || randomKey(),
     level: props.level,
-    property: props.property || props.name
+    name: props.name || props.property
   };
 }
 

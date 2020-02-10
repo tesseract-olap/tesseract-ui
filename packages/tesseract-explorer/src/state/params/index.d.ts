@@ -5,19 +5,23 @@ interface IQueryItem {
 
 interface CutItem extends IQueryItem {
   dimension: string;
+  error?: Error;
+  fullName: string;
   hierarchy: string;
   level: string;
-  error?: Error;
   members: MemberItem[];
   membersLoaded: boolean;
+  uniqueName: string;
 }
 
 interface DrilldownItem extends IQueryItem {
+  captionProperty: string;
   dimension: string;
+  fullName: string;
   hierarchy: string;
   level: string;
-  caption: string;
   properties: PropertyItem[];
+  uniqueName: string;
 }
 
 interface FilterItem extends IQueryItem {
@@ -46,7 +50,7 @@ interface NamedSetItem extends IQueryItem {
 
 interface PropertyItem extends IQueryItem {
   level: string;
-  property: string;
+  name: string;
 }
 
 interface RcaItem extends IQueryItem {

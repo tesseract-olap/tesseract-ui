@@ -1,4 +1,7 @@
-/** @type {(state: ExplorerState) => LoadingState} */
+/**
+ * @param {ExplorerState | {explorer: ExplorerState}} state
+ * @returns {LoadingState}
+ */
 export function selectLoadingState(state) {
-  return state.explorerLoading;
+  return "explorer" in state ? state.explorer.explorerLoading : state.explorerLoading;
 }

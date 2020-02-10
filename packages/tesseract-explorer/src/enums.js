@@ -10,6 +10,15 @@ export const SERIAL_BOOLEAN = {
   SPARSE: 16
 };
 
+export const Comparison = {
+  EQ: "=",
+  GT: ">",
+  GTE: ">=",
+  LT: "<",
+  LTE: "<=",
+  NEQ: "!="
+};
+
 export const orderOptions = [
   {value: "desc", label: "descending"},
   {value: "asc", label: "ascending"}

@@ -1,5 +1,4 @@
 import {Order} from "@datawheel/olap-client";
-import {selectBooleans, selectCutItems, selectDrilldownItems, selectFilterItems, selectGrowthItems, selectMeasureItems, selectRcaItems, selectTopkItems} from "../state/params/selectors";
 import {buildCut, buildDrilldown, buildFilter, buildGrowth, buildMeasure, buildMember, buildRca, buildTopk} from "./structs";
 import {keyBy} from "./transform";
 import {isActiveCut, isActiveItem, isGrowthItem, isRcaItem, isTopkItem} from "./validation";
@@ -22,8 +21,9 @@ export function applyQueryParams(query, params) {
   Object.values(params.drilldowns).forEach(item => {
     if (!isActiveItem(item)) return;
     query.addDrilldown(item);
+    item.captionProperty && query.addCaption(item, item.captionProperty);
     item.properties.forEach(prop => {
-      isActiveItem(prop) && query.addProperty(item, prop.property);
+      isActiveItem(prop) && query.addProperty(item, prop.name);
     });
   });
 
@@ -48,8 +48,6 @@ export function applyQueryParams(query, params) {
 
   params.locale && query.setLocale(params.locale);
 
-  console.log(query);
-
   return query;
 }
 
@@ -61,9 +59,9 @@ export function extractQueryParams(query) {
   const cube = query.cube;
 
   const booleans = query.getParam("options");
-  const drilldowns = query.getParam("drilldowns").map(dd => buildDrilldown(dd.toJSON()));
-  const measures = query.getParam("measures").map(ms => buildMeasure(ms.toJSON()));
-  const filters = query.getParam("filters").map(filter => buildFilter(filter));
+  const drilldowns = query.getParam("drilldowns").map(buildDrilldown);
+  const measures = query.getParam("measures").map(buildMeasure);
+  const filters = query.getParam("filters").map(buildFilter);
 
   const growth = query.getParam("growth");
   const growthItem = buildGrowth({
@@ -93,10 +91,8 @@ export function extractQueryParams(query) {
   const cuts = Object.keys(cutRecord).map(cutLevel => {
     const level = cube.getLevel(cutLevel);
     return buildCut({
+      ...level.toJSON(),
       active: true,
-      dimension: level.dimension.name,
-      hierarchy: level.hierarchy.name,
-      level: level.uniqueName || level.name,
       members: cutRecord[cutLevel].map(key => buildMember({active: true, key})),
       membersLoaded: false
     });

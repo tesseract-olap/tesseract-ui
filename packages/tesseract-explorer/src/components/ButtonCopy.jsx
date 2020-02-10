@@ -9,7 +9,8 @@ import copy from "clipboard-copy";
 /** @type {React.FC<ButtonProps & {copyText: string}>} */
 const ButtonCopy = ({copyText, ...props}) =>
   <Button {...props} onClick={evt => {
-    evt.stopPropagation(); copy(copyText);
+    evt.stopPropagation();
+    copy(copyText);
   }} />;
 
 export default ButtonCopy;

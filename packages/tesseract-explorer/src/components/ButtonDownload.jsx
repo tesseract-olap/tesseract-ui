@@ -18,11 +18,14 @@ const ButtonDownload = ({fileText, fileName, ...props}) =>
     {...props}
     onClick={evt => {
       evt.stopPropagation();
+      evt.preventDefault();
+
       const extension = fileName.split(".").pop();
       const content = typeof fileText === "function" ? fileText() : fileText;
       const blob = new Blob([content], {
         type: mimeTypes[extension] || "application/octet-stream"
       });
+
       const anchor = document.createElement("a");
       anchor.href = URL.createObjectURL(blob);
       anchor.download = fileName;

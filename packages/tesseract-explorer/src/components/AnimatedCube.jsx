@@ -1,11 +1,13 @@
 import React from "react";
 import classNames from "classnames";
 
-interface OwnProps {
-  className?: string;
-}
+/**
+ * @typedef OwnProps
+ * @property {string} [className]
+ */
 
-const AnimatedCube: React.FC<OwnProps> = (props) => (
+/** @type {React.FC<OwnProps>} */
+const AnimatedCube = props =>
   <div className={classNames("animated-cube", props.className)}>
     <div className="cube">
       <span />
@@ -17,7 +19,6 @@ const AnimatedCube: React.FC<OwnProps> = (props) => (
       <span />
       <span />
     </div>
-  </div>
-)
+  </div>;
 
 export default AnimatedCube;

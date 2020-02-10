@@ -1,6 +1,6 @@
 import pluralize from "pluralize";
 import {splitName} from "./transform";
-import {isGrowthItem, isRcaItem, isTopkItem} from "./validation";
+import {isGrowthItem, isRcaItem, isTopkItem, isFilterItem} from "./validation";
 
 /**
  * Simplifies a fullname for UI display.
@@ -27,6 +27,15 @@ export function abbreviateFullName(nameParts, joint = "/") {
   }
 
   return target.join(joint);
+}
+
+/**
+ * @param {FilterItem} filter
+ * @returns {string}
+ */
+export function summaryFilter(filter) {
+  if (!isFilterItem(filter)) return "";
+  return `${filter.measure} ${filter.comparison} ${filter.interpretedValue}`;
 }
 
 /**

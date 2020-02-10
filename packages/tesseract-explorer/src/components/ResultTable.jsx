@@ -1,5 +1,5 @@
-import {NonIdealState, Menu, MenuItem} from "@blueprintjs/core";
-import {Cell, Column, Table, ColumnHeaderCell} from "@blueprintjs/table";
+import {Menu, MenuItem} from "@blueprintjs/core";
+import {Cell, Column, ColumnHeaderCell, Table} from "@blueprintjs/table";
 import classNames from "classnames";
 import memoizeOne from "memoize-one";
 import React, {PureComponent} from "react";
@@ -7,7 +7,8 @@ import {sortByKey} from "../utils/array";
 
 /**
  * @typedef OwnProps
- * @property {string} className
+ * @property {string} [className]
+ * @property {any[]} data
  */
 
 /**
@@ -17,7 +18,7 @@ import {sortByKey} from "../utils/array";
  */
 
 /**
- * @type {PureComponent<AggregationState & OwnProps>}
+ * @type {PureComponent<OwnProps, OwnState>}
  */
 class TableTabPanel extends PureComponent {
   state = {
@@ -39,35 +40,23 @@ class TableTabPanel extends PureComponent {
     const {data} = this.props;
     const {sortDescending, sortKey} = this.state;
 
-    if (data.length === 0) {
-      return (
-        <NonIdealState
-          icon="issue"
-          title="Empty dataset"
-          description="The query didn't return elements. Try again with different parameters."
-        />
-      );
-    }
-
     /** @type {any[]} */
     const sortedData = this.dataSorter(data, sortKey, sortDescending);
 
     const columnKeys = Object.keys(sortedData[0]);
     const columnTypes = columnKeys.map(key => typeof sortedData[0][key]);
     const columns = columnKeys.map((columnKey, columnIndex) => {
-      const cellRenderer = rowIndex => (
+      const cellRenderer = rowIndex =>
         <Cell
           className={`column-${columnTypes[columnIndex]}`}
           columnIndex={columnIndex}
           rowIndex={rowIndex}
         >
           {sortedData[rowIndex][columnKey]}
-        </Cell>
-      );
+        </Cell>;
       const menuRenderer = this.renderColumnMenu.bind(this, columnKey);
-      const columnHeaderCellRenderer = () => (
-        <ColumnHeaderCell name={columnKey} menuRenderer={menuRenderer} />
-      );
+      const columnHeaderCellRenderer = () =>
+        <ColumnHeaderCell name={columnKey} menuRenderer={menuRenderer} />;
       return (
         <Column
           cellRenderer={cellRenderer}

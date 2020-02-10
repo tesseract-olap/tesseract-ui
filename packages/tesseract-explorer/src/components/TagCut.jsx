@@ -1,4 +1,4 @@
-import {Button, ButtonGroup, Callout, Intent, Popover, PopoverInteractionKind, Position, Spinner, Tag} from "@blueprintjs/core";
+import {Button, ButtonGroup, Callout, FormGroup, Intent, Popover, PopoverInteractionKind, Position, Spinner, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React from "react";
 import {abbreviateFullName} from "../utils/format";
@@ -99,10 +99,12 @@ const TagCut = props => {
     ;
     content =
       <div className="cut-submenu">
-        <TransferInput
-          items={members}
-          onChange={members => props.onMembersUpdate(item, members)}
-        />
+        <FormGroup label="Members" helperText="Members restrict the data returned by the server to the datums whose cut level match these properties.">
+          <TransferInput
+            items={members}
+            onChange={members => props.onMembersUpdate(item, members)}
+          />
+        </FormGroup>
       </div>
     ;
   }
@@ -112,11 +114,12 @@ const TagCut = props => {
       autoFocus={true}
       boundary="viewport"
       content={content}
+      fill={true}
       hoverCloseDelay={500}
       interactionKind={PopoverInteractionKind.HOVER}
+      popoverClassName="param-popover"
       position={Position.RIGHT_TOP}
       target={target}
-      targetTagName="div"
     />
   );
 };

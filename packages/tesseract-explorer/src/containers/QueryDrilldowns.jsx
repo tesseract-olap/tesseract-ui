@@ -1,33 +1,37 @@
-import { Button, Intent } from "@blueprintjs/core";
+import {Button, Intent} from "@blueprintjs/core";
 import React from "react";
-import { connect, MapStateToProps, MapDispatchToPropsFunction } from "react-redux";
-import QueryArea from "../components/QueryArea";
+import {connect} from "react-redux";
 import ButtonSelectLevel from "../components/ButtonSelectLevel";
+import QueryArea from "../components/QueryArea";
 import TagDrilldown from "../components/TagDrilldown";
-import { doDrilldownClear, doDrilldownRemove, doDrilldownUpdate } from "../state/params/actions";
-import { selectDrilldownItems } from "../state/params/selectors";
-import { buildDrilldown } from "../utils/structs";
-import { activeItemCounter } from "../utils/validation";
+import {doDrilldownClear, doDrilldownRemove, doDrilldownUpdate} from "../state/params/actions";
+import {selectDrilldownItems} from "../state/params/selectors";
+import {buildDrilldown} from "../utils/structs";
+import {activeItemCounter} from "../utils/validation";
 
-interface OwnProps {
-  className?: string;
-};
+/**
+ * @typedef OwnProps
+ * @property {string} [className]
+ */
 
-interface StateProps {
-  items: DrilldownItem[];
-};
+/**
+ * @typedef StateProps
+ * @property {DrilldownItem[]} items
+ */
 
-interface DispatchProps {
-  clearHandler(): void;
-  createHandler(level: OlapLevel): void;
-  removeHandler(item: DrilldownItem): void;
-  toggleHandler(item: DrilldownItem): void;
-  updateCaptionHandler(item: DrilldownItem, caption: string): void;
-  updatePropertiesHandler(item: DrilldownItem, props: PropertyItem[]): void;
-};
+/**
+ * @typedef DispatchProps
+ * @property {() => void} clearHandler
+ * @property {(level: OlapLevel) => void} createHandler
+ * @property {(item: DrilldownItem) => void} removeHandler
+ * @property {(item: DrilldownItem) => void} toggleHandler
+ * @property {(item: DrilldownItem, caption: string) => void} updateCaptionHandler
+ * @property {(item: DrilldownItem, props: PropertyItem[]) => void} updatePropertiesHandler
+ */
 
-const QueryDrilldowns: React.FC<OwnProps & StateProps & DispatchProps> = props => {
-  const { items } = props;
+/** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
+const QueryDrilldowns = props => {
+  const {items} = props;
   const totalCount = items.length;
   const activeCount = items.reduce(activeItemCounter, 0);
 
@@ -60,11 +64,13 @@ const QueryDrilldowns: React.FC<OwnProps & StateProps & DispatchProps> = props =
   );
 };
 
-const mapState: MapStateToProps<StateProps, OwnProps, ExplorerState> = state => ({
+/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+const mapState = state => ({
   items: selectDrilldownItems(state)
 });
 
-const mapDispatch: MapDispatchToPropsFunction<DispatchProps, OwnProps> = dispatch => ({
+/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+const mapDispatch = dispatch => ({
   clearHandler() {
     dispatch(doDrilldownClear());
   },
@@ -76,10 +82,10 @@ const mapDispatch: MapDispatchToPropsFunction<DispatchProps, OwnProps> = dispatc
     dispatch(doDrilldownRemove(item.key));
   },
   toggleHandler(item) {
-    dispatch(doDrilldownUpdate({ ...item, active: !item.active }));
+    dispatch(doDrilldownUpdate({...item, active: !item.active}));
   },
-  updateCaptionHandler(item, caption) {
-    dispatch(doDrilldownUpdate({...item, caption}));
+  updateCaptionHandler(item, captionProperty) {
+    dispatch(doDrilldownUpdate({...item, captionProperty}));
   },
   updatePropertiesHandler(item, properties) {
     dispatch(doDrilldownUpdate({...item, properties}));

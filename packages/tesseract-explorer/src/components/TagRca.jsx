@@ -43,9 +43,12 @@ const TagRca = ({item, onRemove, onToggle, onUpdate}) => {
       interactive={true}
       large={true}
       onClick={() => onToggle(item)}
-      onRemove={() => onRemove(item)}
+      onRemove={evt => {
+        evt.stopPropagation();
+        onRemove(item);
+      }}
     >
-      {summaryRca(item)}
+      {summaryRca(item) || "[Incomplete parameters]"}
     </Tag>;
 
   return (

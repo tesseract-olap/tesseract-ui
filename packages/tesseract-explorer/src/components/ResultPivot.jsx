@@ -2,7 +2,6 @@ import {ButtonGroup, Callout, FormGroup, HTMLSelect, Intent} from "@blueprintjs/
 import classNames from "classnames";
 import React from "react";
 import {pivotData} from "../utils/transform";
-import {isActiveItem} from "../utils/validation";
 import ButtonDownload from "./ButtonDownload";
 import MatrixPreview from "./MatrixPreview";
 
@@ -10,8 +9,8 @@ import MatrixPreview from "./MatrixPreview";
  * @typedef OwnProps
  * @property {string} [className]
  * @property {string} cube
- * @property {DrilldownItem[]} drilldowns
- * @property {MeasureItem[]} measures
+ * @property {OlapLevel[]} drilldowns
+ * @property {OlapMeasure[]} measures
  * @property {QueryResult} result
  * @property {OlapMeasure | undefined} valueMeasure
  * @property {(level: string) => void} updateColumnsHandler
@@ -33,8 +32,8 @@ const ResultPivot = ({
 }) => {
   const {data, pivotColumns, pivotRows, pivotValues} = result;
 
-  const levelNames = drilldowns.map(item => item.level);
-  const measureNames = measures.filter(isActiveItem).map(item => item.measure);
+  const levelNames = drilldowns.map(item => ({value: item.name, label: item.uniqueName || item.name}));
+  const measureNames = measures.map(item => item.name);
 
   const filename = [cube, pivotColumns, pivotRows, pivotValues].join("-");
 

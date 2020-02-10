@@ -1,4 +1,4 @@
-import {Icon, NonIdealState, Tab, Tabs} from "@blueprintjs/core";
+import {NonIdealState, Tab, Tabs} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {Suspense, useState} from "react";
 import {connect} from "react-redux";
@@ -6,10 +6,10 @@ import AnimatedCube from "../components/AnimatedCube";
 import ResultRaw from "../components/ResultRaw";
 import ResultTable from "../components/ResultTable";
 import {selectLoadingState} from "../state/loading/selectors";
-import {selectCurrentQueryResults} from "../state/results/selectors";
+import {selectCurrentQueryItem} from "../state/queries/selectors";
+import {selectCurrentQueryResult} from "../state/results/selectors";
 import ConnectedResultChart from "./ConnectedResultChart";
 import ConnectedResultPivot from "./ConnectedResultPivot";
-import { selectCurrentQueryItem } from "../state/queries/selectors";
 
 /**
  * @typedef OwnProps
@@ -18,28 +18,27 @@ import { selectCurrentQueryItem } from "../state/queries/selectors";
 
 /**
  * @typedef StateProps
- * @property {QueryResult} results
+ * @property {QueryResult} result
  * @property {boolean} isLoading
  * @property {boolean} isDirtyQuery
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */
 const ExplorerResults = props => {
-  const {data, error} = props.results;
-
+  const {data, error} = props.result;
   const [currentTab, setCurrentTab] = useState(UITAB_TABLE);
 
   if (error) {
     return (
       <NonIdealState
         className={classNames("initial-view error", props.className)}
-        icon="error"
         description={
           <div className="error-description">
             <p>There was a problem with the last query:</p>
             <p className="error-detail">{error}</p>
           </div>
         }
+        icon="error"
       />
     );
   }
@@ -47,8 +46,19 @@ const ExplorerResults = props => {
   if (props.isLoading || props.isDirtyQuery) {
     return (
       <NonIdealState
-        className={classNames("initial-view", props.className)}
+        className={classNames("initial-view loading", props.className)}
         icon={<AnimatedCube />}
+      />
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <NonIdealState
+        className={classNames("initial-view empty", props.className)}
+        icon="square"
+        title="Empty dataset"
+        description="The query didn't return elements. Try again with different parameters."
       />
     );
   }
@@ -67,7 +77,7 @@ const ExplorerResults = props => {
       </Tabs>
       <div className={`wrapper ${props.className}-content`}>
         <Suspense fallback={<AnimatedCube />}>
-          <CurrentComponent {...props.results} />
+          <CurrentComponent className="result-panel" {...props.result} />
         </Suspense>
       </div>
     </div>
@@ -88,7 +98,7 @@ const ResultPanels = {
 
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
 const mapState = state => ({
-  results: selectCurrentQueryResults(state),
+  result: selectCurrentQueryResult(state),
   isLoading: selectLoadingState(state).loading,
   isDirtyQuery: selectCurrentQueryItem(state).isDirty
 });

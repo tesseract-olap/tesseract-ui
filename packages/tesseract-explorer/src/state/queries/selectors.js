@@ -1,9 +1,12 @@
 import {createSelector} from "reselect";
 import {sortByDate} from "../../utils/array";
 
-/** @type {(state: ExplorerState) => QueriesState} */
+/**
+ * @param {ExplorerState | {explorer: ExplorerState}} state
+ * @returns {QueriesState}
+ */
 export function selectQueriesState(state) {
-  return state.explorerQueries;
+  return "explorer" in state ? state.explorer.explorerQueries : state.explorerQueries;
 }
 
 export const selectQueryMap = createSelector(

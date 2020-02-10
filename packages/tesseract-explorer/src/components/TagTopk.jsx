@@ -58,9 +58,12 @@ const TagTopk = ({item, onRemove, onToggle, onUpdate}) => {
       interactive={true}
       large={true}
       onClick={() => onToggle(item)}
-      onRemove={() => onRemove(item)}
+      onRemove={evt => {
+        evt.stopPropagation();
+        onRemove(item);
+      }}
     >
-      {summaryTopk(item)}
+      {summaryTopk(item) || "[Incomplete parameters]"}
     </Tag>;
 
   return (

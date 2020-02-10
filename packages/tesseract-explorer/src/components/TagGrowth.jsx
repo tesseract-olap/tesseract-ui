@@ -1,8 +1,7 @@
-import {Alignment, Button, ControlGroup, Popover, PopoverInteractionKind, Position, Tag} from "@blueprintjs/core";
+import {ControlGroup, Popover, PopoverInteractionKind, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React from "react";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
-import {ensureArray} from "../utils/array";
 import {summaryGrowth} from "../utils/format";
 import {stringifyName} from "../utils/transform";
 import SelectTimeLevel from "./SelectTimeLevel";
@@ -41,9 +40,12 @@ const TagGrowth = ({item, onRemove, onToggle, onUpdate}) => {
       interactive={true}
       large={true}
       onClick={() => onToggle(item)}
-      onRemove={() => onRemove(item)}
+      onRemove={evt => {
+        evt.stopPropagation();
+        onRemove(item);
+      }}
     >
-      {summaryGrowth(item)}
+      {summaryGrowth(item) || "[Incomplete parameters]"}
     </Tag>;
 
   return <Popover

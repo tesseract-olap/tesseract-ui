@@ -25,9 +25,9 @@ export function buildChartConfig(params) {
   return `// region chart-config
 /** @type {Partial<${params.configInterface}<Datum>>} */
 let config;
-const levelNames = ${JSON.stringify(params.levelNames, null, 2)};
-const levelName = "${params.rowLevelName}";
 const measureName = "${params.valMeasureName}";
+const levelNames = ${JSON.stringify(params.levelNames, null, 2)};
+const levelName = levelNames[0];
 // endregion
 
 ${params.chartConfig.replace(

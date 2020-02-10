@@ -313,8 +313,8 @@ const actionMap = {
       const colLevel = querydd.find(lvl => lvl !== rowLevel);
       const queryms = query.getParam("measures");
 
-      const rowLevelName = rowLevel.uniqueName || rowLevel.name;
-      const colLevelName = colLevel?.uniqueName || colLevel?.name;
+      const rowLevelName = rowLevel.name;
+      const colLevelName = colLevel?.name;
       const valMeasureName = queryms[0].name;
       const chartType = selectChartType(state);
 
@@ -322,8 +322,9 @@ const actionMap = {
       dispatch(
         doCurrentResultUpdate({
           data: aggregation.data,
+          error: null,
           chartConfig: buildChartConfig({
-            levelNames: querydd.map(lvl => lvl.uniqueName || lvl.name),
+            levelNames: querydd.map(lvl => lvl.name),
             chartConfig: selectChartConfigText(state),
             configInterface: chartInterfaces[chartType],
             rowLevelName,

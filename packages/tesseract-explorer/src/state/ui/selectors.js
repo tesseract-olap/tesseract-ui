@@ -1,10 +1,14 @@
-
 import {createSelector} from "reselect";
 
-/** @type {(state: ExplorerState) => UiState} */
+/**
+ * @param {ExplorerState | {explorer: ExplorerState}} state
+ * @returns {UiState}
+ */
 export function selectUiState(state) {
-  return state.explorerUi;
+  return "explorer" in state ? state.explorer.explorerUi : state.explorerUi;
 }
 
-
+/**
+ * @returns {boolean}
+ */
 export const selectIsDarkTheme = createSelector(selectUiState, ui => ui.darkTheme);

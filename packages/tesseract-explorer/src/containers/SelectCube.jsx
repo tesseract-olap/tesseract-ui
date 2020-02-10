@@ -30,7 +30,7 @@ import {safeRegExp} from "../utils/transform";
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
-const SelectCube = function(props) {
+const SelectCube = props => {
   if (props.items.length === 0) {
     return (
       <Button

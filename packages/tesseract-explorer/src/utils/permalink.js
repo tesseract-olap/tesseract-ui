@@ -4,11 +4,11 @@ import {hydrateState} from "./hydrate";
 import {serializeState} from "./serialize";
 
 /**
- * @param {QueryParams} query
+ * @param {QueryParams} params
  * @returns {string}
  */
-export function serializePermalink(query) {
-  return formUrlEncode(serializeState(query), {
+export function serializePermalink(params) {
+  return formUrlEncode(serializeState(params), {
     ignorenull: true,
     skipIndex: false,
     sorted: true

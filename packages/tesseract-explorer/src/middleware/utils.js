@@ -59,7 +59,7 @@ export async function hydrateCutMembers({client, cube, cutItem, locale}) {
 export function hydrateDrilldownProperties({cube, drilldownItem}) {
   const activeProperties = ensureArray(drilldownItem.properties)
     .filter(isActiveItem)
-    .map(prop => prop.property);
+    .map(prop => prop.name);
   const {level: levelName, hierarchy, dimension} = drilldownItem;
 
   for (const level of cube.levelIterator) {

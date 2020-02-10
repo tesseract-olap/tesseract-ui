@@ -1,36 +1,36 @@
 import {createSelector} from "reselect";
 import {selectCurrentQueryItem} from "../queries/selectors";
-import {selectOlapMeasureItems, selectOlapLevelMap} from "../selectors";
+import {selectOlapLevelMap, selectOlapMeasureItems} from "../selectors";
 
 /**
  * @returns {QueryResult}
  */
-export const selectCurrentQueryResults = createSelector(
+export const selectCurrentQueryResult = createSelector(
   selectCurrentQueryItem,
   query => query.result
 );
 
 export const selectChartConfigText = createSelector(
-  selectCurrentQueryResults,
+  selectCurrentQueryResult,
   result => result.chartConfig
 );
 
 export const selectChartType = createSelector(
-  selectCurrentQueryResults,
+  selectCurrentQueryResult,
   result => result.chartType
 );
 
 export const selectPivotColumnLevel = createSelector(
-  [selectCurrentQueryResults, selectOlapLevelMap],
-  ({pivotColumns}, levelMap) => (pivotColumns ? levelMap[pivotColumns] : undefined)
+  [selectCurrentQueryResult, selectOlapLevelMap],
+  ({pivotColumns}, levelMap) => pivotColumns ? levelMap[pivotColumns] : undefined
 );
 
 export const selectPivotRowLevel = createSelector(
-  [selectCurrentQueryResults, selectOlapLevelMap],
-  ({pivotRows}, levelMap) => (pivotRows ? levelMap[pivotRows] : undefined)
+  [selectCurrentQueryResult, selectOlapLevelMap],
+  ({pivotRows}, levelMap) => pivotRows ? levelMap[pivotRows] : undefined
 );
 
 export const selectPivotValueMeasure = createSelector(
-  [selectCurrentQueryResults, selectOlapMeasureItems],
+  [selectCurrentQueryResult, selectOlapMeasureItems],
   ({pivotValues}, measures) => measures.find(measure => measure.name === pivotValues)
 );

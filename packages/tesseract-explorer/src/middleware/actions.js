@@ -16,9 +16,6 @@ export const buildQueryUrls = () => ({type: CLIENT_BUILDURLS});
 export const doFetchMembers = cut => ({type: CLIENT_LOADMEMBERS, payload: cut});
 
 /**  */
-export const doPermalinkRefresh = () => ({type: PERMALINK_REFRESH});
-
-/**  */
 export const doExecuteQuery = () => ({type: CLIENT_QUERY});
 
 /** @param {string} url */
@@ -32,6 +29,9 @@ export const doLocaleSet = locale => ({type: CLIENT_SETLOCALE, payload: locale})
 
 /** @param {string} serverUrl */
 export const doClientSetup = serverUrl => ({type: CLIENT_SETUP, payload: serverUrl});
+
+/**  */
+export const doPermalinkRefresh = () => ({type: PERMALINK_REFRESH});
 
 /**  */
 export const doPermalinkUpdate = () => ({type: PERMALINK_UPDATE});

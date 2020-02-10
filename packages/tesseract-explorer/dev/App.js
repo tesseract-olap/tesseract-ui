@@ -1,6 +1,6 @@
 import React from "react";
 import {Provider} from "react-redux";
-import {applyMiddleware, compose, createStore} from "redux";
+import {applyMiddleware, compose, createStore, combineReducers} from "redux";
 import {
   Explorer,
   explorerInitialState,
@@ -10,10 +10,11 @@ import {
 } from "../src";
 
 import "normalize.css/normalize.css";
-// import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-// import "@blueprintjs/core/lib/css/blueprint.css";
-// import "@blueprintjs/select/lib/css/blueprint-select.css";
-// import "@blueprintjs/table/lib/css/table.css";
+import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/select/lib/css/blueprint-select.css";
+import "@blueprintjs/table/lib/css/table.css";
+import "react-perfect-scrollbar/dist/css/styles.css";
 // import "../dist/explorer.css";
 
 const composeEnhancers =
@@ -24,15 +25,16 @@ const enhancers = composeEnhancers(
   applyMiddleware(permalinkMiddleware, olapMiddleware)
 );
 
-const initialState = explorerInitialState();
-const store = createStore(explorerReducer, initialState, enhancers);
+const initialState = {explorer: explorerInitialState()};
+const rootReducer = combineReducers({explorer: explorerReducer});
+const store = createStore(rootReducer, initialState, enhancers);
 
 const App = () =>
   <Provider store={store}>
     <Explorer
       locale={["en", "es"]}
-      // src="https://api.datamexico.org/tesseract/"
-      src="https://api.oec.world/tesseract/"
+      src={process.env.APP_TESSERACT_URL}
+      title={process.env.APP_TITLE}
     />
   </Provider>
 ;

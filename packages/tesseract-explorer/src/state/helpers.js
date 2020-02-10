@@ -17,6 +17,7 @@ export function omitRecord(records, key) {
  * @param {T} item
  */
 export function oneRecordActive(records, item) {
+
   /** @type {typeof records} */
   const clone = {};
   Object.values(records).forEach(item => {
@@ -33,6 +34,7 @@ export function oneRecordActive(records, item) {
 export function getKeys(map) {
   return Object.keys(map);
 }
+
 /**
  * @template T
  * @type {(map: Record<string, T>) => T[]}

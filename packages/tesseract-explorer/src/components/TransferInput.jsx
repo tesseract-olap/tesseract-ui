@@ -25,8 +25,11 @@ class TransferInput extends Component {
     filter: ""
   };
 
-  clearFilter = _ => this.setState({filter: ""});
-  updateFilter = evt => this.setState({filter: evt.target.value});
+  clearFilter = () => this.setState({filter: ""});
+  updateFilter = evt => {
+    console.log(evt.target.value);
+    this.setState({filter: evt.target.value});
+  }
 
   getSelected = memoizeOne((items, filter) => {
     const tester = safeRegExp(filter, "i");
@@ -66,7 +69,7 @@ class TransferInput extends Component {
         : undefined;
 
     return (
-      <div className="multiselector">
+      <div className="input-transfer">
         <InputGroup
           className="item-filter"
           leftIcon="search"
@@ -78,12 +81,14 @@ class TransferInput extends Component {
         />
         <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
           <PerfectScrollbar>
-            {unselectedHidden > 0 &&
+            <React.Fragment>
+              {unselectedHidden > 0 &&
               <Menu.Divider title={`${unselectedHidden} items hidden`} />
-            }
-            <ViewPortList listLength={unselected.length} itemMinHeight={30}>
-              {params => this.renderItem.call(this, unselected[params.index], params)}
-            </ViewPortList>
+              }
+              <ViewPortList listLength={unselected.length} itemMinHeight={30}>
+                {params => this.renderItem.call(this, unselected[params.index], params)}
+              </ViewPortList>
+            </React.Fragment>
           </PerfectScrollbar>
         </Menu>
         <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
@@ -92,7 +97,9 @@ class TransferInput extends Component {
               {selectedHidden > 0 &&
                 <Menu.Divider title={`${selectedHidden} items hidden`} />
               }
-              {selected.map(this.renderItem, this)}
+              <ViewPortList listLength={selected.length} itemMinHeight={30}>
+                {params => this.renderItem.call(this, selected[params.index], params)}
+              </ViewPortList>
             </React.Fragment>
           </PerfectScrollbar>
         </Menu>

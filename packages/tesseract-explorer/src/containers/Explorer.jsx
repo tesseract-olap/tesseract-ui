@@ -2,7 +2,6 @@ import {Classes} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {PureComponent} from "react";
 import {connect} from "react-redux";
-import AnimatedCube from "../components/AnimatedCube";
 import ExplorerNavbar from "../components/ExplorerNavbar";
 import LoadingScreen from "../components/LoadingScreen";
 import {doClientSetup} from "../middleware/actions";
@@ -55,12 +54,9 @@ class ExplorerComponent extends PureComponent {
       <div className={classNames("explorer-wrapper", {[Classes.DARK]: darkTheme})}>
         <LoadingScreen className="explorer-loading" />
         <ExplorerNavbar className="explorer-navbar" title={title} />
-        {/* <div className="explorer-content"> */}
         <ExplorerQueries className="explorer-queries" />
-        {!isLoaded && <AnimatedCube className="explorer-animation" />}
-        {isLoaded && <ExplorerParams className="explorer-params" />}
-        {isLoaded && <ExplorerResults className="explorer-results" />}
-        {/* </div> */}
+        {isLoaded ? <ExplorerParams className="explorer-params" /> : <div/>}
+        <ExplorerResults className="explorer-results" />
       </div>
     );
   }

@@ -5,51 +5,45 @@ import AnimatedCube from "./AnimatedCube";
 import ExplorerQuery from "../containers/ExplorerParams";
 import ExplorerResults from "../containers/ExplorerResults";
 
-const ExplorerContent = function({online, url, emptyDataset}) {
+const ExplorerContent = ({online, url, emptyDataset}) => {
   if (online === false) {
-    return typeof window === "object" && window.navigator.onLine === false ? (
-      <NonIdealState
+    return typeof window === "object" && window.navigator.onLine === false
+      ? <NonIdealState
         className="explorer-error"
         icon="globe-network"
         title="You are not connected to the internet."
       />
-    ) : (
-      <NonIdealState
+      : <NonIdealState
         className="explorer-error"
         icon="error"
         title="There's a problem contacting with the server"
         description={
           <span>
             {"Check the availability of the URL "}
-            <a href={url} target="_blank" rel="noopener">
-              {url}
-            </a>.
+            <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>.
           </span>
         }
-      />
-    );
+      />;
   }
-  else if (online === true) {
+  if (online === true) {
     return (
       <div className="explorer-content">
         <PerfectScrollbar className="explorer-params">
           <ExplorerQuery className="explorer-params-content" />
         </PerfectScrollbar>
-        {emptyDataset ? (
-          <NonIdealState
+        {emptyDataset
+          ? <NonIdealState
             className="explorer-error"
             icon="circle"
             title="The last query returned an empty dataset."
           />
-        ) : (
-          <ExplorerResults className="explorer-results" />
-        )}
+          : <ExplorerResults className="explorer-results" />
+        }
       </div>
     );
   }
-  else {
-    return <NonIdealState className="explorer-loading" icon={<AnimatedCube />} />;
-  }
+
+  return <NonIdealState className="explorer-loading" icon={<AnimatedCube />} />;
 };
 
 export default ExplorerContent;

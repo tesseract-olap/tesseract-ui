@@ -5,27 +5,22 @@ import NavButtons from "./NavButtons";
 
 /**
  * @typedef OwnProps
- * @property {string} className
- * @property {string|undefined} title
+ * @property {string} [className]
+ * @property {string} [title]
  */
 
 /** @type {React.FC<OwnProps>} */
-const NavigationBar = function(props) {
-  return (
-    <Navbar className={props.className}>
-      <Navbar.Group align={Alignment.LEFT}>
-        <Navbar.Heading>{props.title}</Navbar.Heading>
+const ExplorerNavbar = props =>
+  <Navbar className={props.className}>
+    <Navbar.Group align={Alignment.LEFT}>
+      <Navbar.Heading>{props.title}</Navbar.Heading>
+      <Navbar.Divider />
+      <ServerStatus />
+    </Navbar.Group>
 
-        <Navbar.Divider />
+    <Navbar.Group align={Alignment.RIGHT}>
+      <NavButtons />
+    </Navbar.Group>
+  </Navbar>;
 
-        <ServerStatus />
-      </Navbar.Group>
-
-      <Navbar.Group align={Alignment.RIGHT}>
-        <NavButtons />
-      </Navbar.Group>
-    </Navbar>
-  );
-};
-
-export default NavigationBar;
+export default ExplorerNavbar;

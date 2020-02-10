@@ -34,9 +34,6 @@ export function explorerInitialState() {
     if (defaultQuery) {
       explorerQueries.current = defaultQuery.key;
       explorerQueries.itemMap = {[defaultQuery.key]: defaultQuery};
-
-      const permalink = `${window.location.pathname}?${serializePermalink(defaultQuery.params)}`;
-      window.history.replaceState(defaultQuery.params, "", permalink);
     }
 
     const savedDarkTheme = window.localStorage.getItem("darkTheme");
