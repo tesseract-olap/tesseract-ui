@@ -18,12 +18,12 @@ const actions = {
   ...filterReducers,
   ...otherReducers,
 
-  [QUERY_INYECT]: (state, {payload}) => ({
+  [QUERY_INYECT]: (state, {payload = {}}) => ({
     ...queryInitialState,
     ...payload,
-    growth: {...queryGrowthInitialState, ...state.growth},
-    rca: {...queryRcaInitialState, ...state.rca},
-    topk: {...queryTopkInitialState, ...state.topk}
+    growth: {...queryGrowthInitialState, ...state.growth, ...payload.growth},
+    rca: {...queryRcaInitialState, ...state.rca, ...payload.rca},
+    topk: {...queryTopkInitialState, ...state.topk, ...payload.topk}
   }),
 
   [QUERY_CUBE_UPDATE]: (state, {payload}) => {

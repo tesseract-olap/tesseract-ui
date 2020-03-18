@@ -2,12 +2,14 @@ import {Client as OLAPClient, TesseractDataSource} from "@datawheel/olap-client"
 import {updateAggregation} from "../actions/aggregation";
 import {CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP} from "../actions/client";
 import {cubesUpdate} from "../actions/cubes";
-import {updatePermalink, refreshPermalink} from "../actions/permalink";
-import {queryCubeSet, queryCutReplace, queryCutUpdate, queryLocaleUpdate} from "../actions/query";
-import {setServerInfo} from "../actions/ui";
+import {refreshPermalink, updatePermalink} from "../actions/permalink";
+import {queryCubeSet, queryCutReplace, queryCutUpdate, queryInyect, queryLocaleUpdate} from "../actions/query";
+import {starredInyect} from "../actions/starred";
+import {setServerInfo, uiInyect} from "../actions/ui";
 import {selectCubesState, selectQueryState, selectUiState} from "../selectors/state";
 import {ensureArray, sortByKey} from "../utils/array";
 import {buildJavascriptCall} from "../utils/debug";
+import initialStateBuilder from "../utils/initialState";
 import {applyQueryParams, buildCut, buildMeasure, buildMember} from "../utils/query";
 import {isActiveItem, isValidQuery} from "../utils/validation";
 
@@ -31,6 +33,11 @@ const actionMap = {
   [CLIENT_SETUP]: async({action, client, dispatch}) => {
     const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
     fetchRequest();
+
+    const initialState = initialStateBuilder();
+    dispatch(queryInyect(initialState.explorerQuery));
+    dispatch(uiInyect(initialState.explorerUi));
+    dispatch(starredInyect(initialState.explorerStarred));
 
     let cube;
 

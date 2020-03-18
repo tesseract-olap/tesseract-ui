@@ -4,6 +4,7 @@ import {STATUS_FETCHING, UITAB_TABLE} from "../actions/ui";
 export const aggregationInitialState = {
   aggregateUrl: "",
   data: [],
+  emptyDataset: false,
   jsCall: "",
   logicLayerUrl: "",
   options: {}

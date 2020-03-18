@@ -5,56 +5,50 @@ import {
   UI_SERVER_INFO,
   UI_STARRED_TOGGLE,
   UI_TABS_SELECT,
-  UI_THEME_TOGGLE
+  UI_THEME_TOGGLE,
+  UI_INYECT
 } from "../actions/ui";
 import {uiInitialState} from "./initialState";
 
-/** @type {import("redux").Reducer<import(".").UiState>} */
-function uiReducer(state = uiInitialState, action) {
-  const definedOrElse = (value, defaultValue) => (value != null ? value : defaultValue);
+const definedOrElse = (value, defaultValue) => value != null ? value : defaultValue;
 
-  switch (action.type) {
-    case UI_DEBUG_TOGGLE: {
-      return {
-        ...state,
-        debugDrawer: definedOrElse(action.payload, !state.debugDrawer)
-      };
-    }
+const actions = {
+  [UI_INYECT]: (state, action) => ({...state, ...action.payload}),
 
-    case UI_SERVER_INFO:
-      const {payload: server} = action;
-      return {
-        ...state,
-        serverSoftware: server.software,
-        serverOnline: server.online,
-        serverUrl: server.url,
-        serverVersion: server.version
-      };
+  [UI_DEBUG_TOGGLE]: (state, action) => ({
+    ...state,
+    debugDrawer: definedOrElse(action.payload, !state.debugDrawer)
+  }),
 
-    case UI_STARRED_TOGGLE:
-      return {
-        ...state,
-        starredDrawer: definedOrElse(action.payload, !state.starredDrawer)
-      };
+  [UI_SERVER_INFO]: (state, {payload}) => ({
+    ...state,
+    serverSoftware: payload.software,
+    serverOnline: payload.online,
+    serverUrl: payload.url,
+    serverVersion: payload.version
+  }),
 
-    case UI_TABS_SELECT:
-      return {...state, tab: action.payload};
+  [UI_STARRED_TOGGLE]: (state, action) => ({
+    ...state,
+    starredDrawer: definedOrElse(action.payload, !state.starredDrawer)
+  }),
 
-    case UI_THEME_TOGGLE:
-      const darkTheme = definedOrElse(action.payload, !state.darkTheme);
-      typeof window === "object" &&
+  [UI_TABS_SELECT]: (state, action) => ({...state, tab: action.payload}),
+
+  [UI_THEME_TOGGLE]: (state, action) => {
+    const darkTheme = definedOrElse(action.payload, !state.darkTheme);
+    typeof window === "object" &&
         window.localStorage.setItem("darkTheme", `${darkTheme}`);
-      return {...state, darkTheme};
+    return {...state, darkTheme};
+  },
 
-    case UI_LOCALELIST_UPDATE:
-      return {...state, localeOptions: action.payload};
+  [UI_LOCALELIST_UPDATE]: (state, action) => ({...state, localeOptions: action.payload}),
 
-    case STARRED_CREATE:
-      return {...state, starredDrawer: true};
+  [STARRED_CREATE]: state => ({...state, starredDrawer: true})
+};
 
-    default:
-      return state;
-  }
+/** @type {import("redux").Reducer<import(".").UiState>} */
+export default function(state = uiInitialState, action) {
+  const effector = actions[action.type];
+  return typeof effector === "function" ? effector(state, action) : state;
 }
-
-export default uiReducer;

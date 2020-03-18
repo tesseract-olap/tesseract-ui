@@ -4,10 +4,10 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
 import {toggleStarredDrawer} from "../actions/ui";
 import {selectPermalink} from "../selectors/permalink";
-import "../style/starredDrawer.scss";
+import {selectQueryState, selectStarredState, selectUiState} from "../selectors/state";
+import "../style/StarredDrawer.scss";
 import {shallowEqualExceptFns} from "../utils/validation";
 import StarredItem from "./StarredItem";
-import { selectQueryState, selectStarredState, selectUiState } from "../selectors/state";
 
 /**
  * @typedef StateProps
@@ -23,30 +23,27 @@ import { selectQueryState, selectStarredState, selectUiState } from "../selector
  */
 
 /** @type {React.FC<StateProps & DispatchProps>} */
-const StarredDrawer = function(props) {
-  return (
-    <Drawer
-      className="starred-drawer"
-      icon="star"
-      isOpen={props.isOpen}
-      onClose={props.closeDrawerHandler}
-      size={Drawer.SIZE_STANDARD}
-      title="Starred queries"
-    >
-      <PerfectScrollbar>
-        <div className="starred-drawer-content">
-          {props.items.map(item => (
-            <StarredItem
-              active={props.currentPermalink === item.key}
-              item={item}
-              key={item.key}
-            />
-          ))}
-        </div>
-      </PerfectScrollbar>
-    </Drawer>
-  );
-};
+const StarredDrawer = props =>
+  <Drawer
+    className="starred-drawer"
+    icon="star"
+    isOpen={props.isOpen}
+    onClose={props.closeDrawerHandler}
+    size={Drawer.SIZE_STANDARD}
+    title="Starred queries"
+  >
+    <PerfectScrollbar>
+      <div className="starred-drawer-content">
+        {props.items.map(item =>
+          <StarredItem
+            active={props.currentPermalink === item.key}
+            item={item}
+            key={item.key}
+          />
+        )}
+      </div>
+    </PerfectScrollbar>
+  </Drawer>;
 
 /** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
 function mapStateToProps(state) {

@@ -1,10 +1,6 @@
-import {
-  queryInitialState,
-  starredInitialState,
-  uiInitialState
-} from "../reducers/initialState";
+import {queryInitialState, starredInitialState, uiInitialState} from "../reducers/initialState";
 import {hydratePermalink} from "./permalink";
-import {isQuery, isValidQuery} from "./validation";
+import {isQuery, isValidQuery, validGrowthState, validRcaState, validTopkState} from "./validation";
 
 /** @returns {Partial<import("../reducers").ExplorerState>} */
 function initialStateBuilder() {
@@ -38,9 +34,15 @@ function initialStateBuilder() {
   }
 
   if (isValidQuery(explorerQuery)) {
-    explorerQuery.growth = {...queryInitialState.growth, ...explorerQuery.growth};
-    explorerQuery.rca = {...queryInitialState.rca, ...explorerQuery.rca};
-    explorerQuery.topk = {...queryInitialState.topk, ...explorerQuery.topk};
+    if (!validGrowthState(explorerQuery.growth)) {
+      explorerQuery.growth = queryInitialState.growth;
+    }
+    if (!validRcaState(explorerQuery.rca)) {
+      explorerQuery.rca = queryInitialState.rca;
+    }
+    if (!validTopkState(explorerQuery.topk)) {
+      explorerQuery.topk = queryInitialState.topk;
+    }
   }
 
   return {

@@ -49,10 +49,10 @@ In any case, the explorer state keys are prefixed with `explorer` so they won't 
 This package exports two middlewares: `olapMiddleware` and `permalinkMiddleware`.
 
 ```js
-import {explorerInitialState, olapMiddleware, permalinkMiddleware} from "@datawheel/tesseract-explorer";
+import {olapMiddleware, permalinkMiddleware} from "@datawheel/tesseract-explorer";
 import {applyMiddleware, compose, createStore} from "redux";
 
-const initialState = explorerInitialState();
+const initialState = null; // or an object defined by you
 const enhancers = compose(applyMiddleware(permalinkMiddleware, olapMiddleware));
 
 const store = createStore(explorerReducer, initialState, enhancers);
@@ -78,17 +78,23 @@ function PageComponent(props) {
 
 The Explorer component has the following properties:
 
-> `src: string | string[]`
+```ts
+src: string | string[]
+```
 
 The URL of the OLAP server you want to interact with.  
 You can pass an array of URLs and interact with multiple servers at once.
 
-> `locale: string[]`
+```ts
+locale: string[]
+```
 
 A list of the available locales for the data in your servers.  
 Through `olap-client`, `tesseract-explorer` will try to handle the language of the labels in the data you receive.
 
-> `title?: string`
+```ts
+title?: string
+```
 
 Optionally, you can change the title label in the top-left corner of the interface.
 

@@ -4,6 +4,7 @@ export const UI_SERVER_INFO       = "explorer/UI/SERVER_INFO";
 export const UI_STARRED_TOGGLE    = "explorer/UI/STARRED/TOGGLE";
 export const UI_TABS_SELECT       = "explorer/UI/TABS/SELECT";
 export const UI_THEME_TOGGLE      = "explorer/UI/THEME/TOGGLE";
+export const UI_INYECT            = "explorer/UI/INYECT";
 
 export const UITAB_TABLE = "tab-table";
 export const UITAB_RAW = "tab-raw";
@@ -13,12 +14,42 @@ export const STATUS_FETCHING = "FETCHING";
 export const STATUS_SUCCESS = "SUCCESS";
 export const STATUS_FAILURE = "FAILURE";
 
-const actionWrapper = (type, payload) => ({type, payload});
+/** @param {boolean} [payload] */
+export function setDebugDrawer(payload) {
+  return {type: UI_DEBUG_TOGGLE, payload};
+}
 
-export const setDebugDrawer = actionWrapper.bind(null, UI_DEBUG_TOGGLE);
-export const setServerInfo = actionWrapper.bind(null, UI_SERVER_INFO);
-export const setTabPanel = actionWrapper.bind(null, UI_TABS_SELECT);
-export const toggleDarkTheme = () => ({type: UI_THEME_TOGGLE});
-export const toggleDebugDrawer = () => ({type: UI_DEBUG_TOGGLE});
-export const toggleStarredDrawer = actionWrapper.bind(null, UI_STARRED_TOGGLE);
-export const updateLocaleList = actionWrapper.bind(null, UI_LOCALELIST_UPDATE);
+/** @param {{software: string, online: boolean, url: string, version: string}} payload */
+export function setServerInfo(payload) {
+  return {type: UI_SERVER_INFO, payload};
+}
+
+/** @param {string} payload */
+export function setTabPanel(payload) {
+  return {type: UI_TABS_SELECT, payload};
+}
+
+/**  */
+export function toggleDarkTheme() {
+  return {type: UI_THEME_TOGGLE};
+}
+
+/**  */
+export function toggleDebugDrawer() {
+  return {type: UI_DEBUG_TOGGLE};
+}
+
+/** @param {boolean} [payload] */
+export function toggleStarredDrawer(payload) {
+  return {type: UI_STARRED_TOGGLE, payload};
+}
+
+/** @param {string[]} payload */
+export function updateLocaleList(payload) {
+  return {type: UI_LOCALELIST_UPDATE, payload};
+}
+
+/** @param {Partial<import("../reducers").UiState>} [payload] */
+export function uiInyect(payload) {
+  return {type: UI_INYECT, payload};
+}

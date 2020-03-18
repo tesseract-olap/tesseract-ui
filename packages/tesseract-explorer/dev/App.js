@@ -3,7 +3,6 @@ import {Provider} from "react-redux";
 import {applyMiddleware, compose, createStore} from "redux";
 import {
   Explorer,
-  explorerInitialState,
   explorerReducer,
   olapMiddleware,
   permalinkMiddleware
@@ -24,8 +23,7 @@ const enhancers = composeEnhancers(
   applyMiddleware(permalinkMiddleware, olapMiddleware)
 );
 
-const initialState = explorerInitialState();
-const store = createStore(explorerReducer, initialState, enhancers);
+const store = createStore(explorerReducer, null, enhancers);
 
 function App() {
   return (
