@@ -20,6 +20,13 @@ function makeDirectory(targetPath) {
   }
 }
 
+function applyTemplate(string, values) {
+  return string
+    .replace(/\$TEMPLATE_NAME/g, values.name)
+    .replace(/\$TEMPLATE_SERVER/g, values.serverUrl)
+    .replace(/\$TEMPLATE_TITLE/g, values.title);
+}
+
 function copyTemplateFile(fileName, targetPath) {
   return fs.copyFileSync(
     require.resolve(`../template/${fileName}`),
@@ -36,6 +43,7 @@ function writeFile(fileName, targetPath, contents) {
 }
 
 module.exports = {
+  applyTemplate,
   copyTemplateFile,
   makeDirectory,
   printError,

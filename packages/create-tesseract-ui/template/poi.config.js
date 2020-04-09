@@ -2,7 +2,6 @@ const inProduction = process.env.NODE_ENV == "production";
 
 var title = `$TEMPLATE_TITLE`;
 var serverUrl = `$TEMPLATE_SERVER`;
-var publicUrl = `$TEMPLATE_PUBLIC`;
 
 // Reference to this config available at https://poi.js.org/config.html
 /** @type {import("poi").Config} */
@@ -11,7 +10,7 @@ module.exports = {
   output: {
     html: {title},
     minimize: false,
-    publicUrl,
+    publicUrl: ".",
     sourceMap: true
   },
   envs: {

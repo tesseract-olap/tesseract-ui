@@ -2,7 +2,7 @@
 
 const cli = require("cac")("create-tesseract-ui");
 const spawn = require("cross-spawn");
-const {green, grey} = require("kleur");
+const {green, grey, yellow} = require("kleur");
 const path = require("path");
 const prompts = require("prompts");
 
@@ -18,7 +18,6 @@ cli
   .option("-n, --name <name>", "Sets the project name")
   .option("-t, --title <title>", "Sets the site's title")
   .option("-s, --server <url>", "Sets the URL for the tesseract server")
-  .option("-p, --public <url>", "Sets the public URL for this app")
   .action(async (targetFolder, options) => {
     console.log(LINE);
     console.log(`Creating a new tesseract-ui instance`);
@@ -57,23 +56,9 @@ cli
         name: "server",
         message: "Enter the full URL for the tesseract-server",
         validate: validate.absoluteUrl
-      },
-      {
-        type: environment.type === "production" && !options.public ? "text" : null,
-        name: "public",
-        message: "Enter the URL where this app will be available",
-        initial: (_, values) => {
-          const value = `${values.server || options.server}`;
-          return value.replace(/\/tesseract\/$/, "/ui/");
-        },
-        validate: validate.url
       }
     ];
     const responses = await prompts(questions, promptOptions);
-
-    if (environment.type === "local") {
-      options.public = "/";
-    }
 
     Object.assign(options, responses);
 
@@ -81,7 +66,6 @@ cli
     console.log("Creating files and applying configuration...");
     create({
       name: targetFolder,
-      publicUrl: options.public,
       serverUrl: options.server,
       targetPath,
       title: options.title
@@ -93,16 +77,24 @@ cli
     console.log("Installing required dependencies...");
     spawn.sync("npm", ["install"], spawnSyncOptions);
 
-    console.log(LINE);
-    console.log("Building app...");
-    spawn.sync("npx", ["poi", "--prod", "--no-clear-console"], spawnSyncOptions);
+    if (environment.type === "production") {
+      console.log(LINE);
+      console.log("Building app...");
+      spawn.sync("npx", ["poi", "--prod", "--no-clear-console"], spawnSyncOptions);
 
-    console.log(LINE);
-    console.log(
-      `The tesseract-ui boilerplate was successfully built on `,
-      green(path.join(targetPath, "dist"))
-    );
-    console.log(`We suggest you to point the virtual server root folder to this path.`);
+      console.log(LINE);
+      console.log(`The tesseract-ui boilerplate was successfully built on`);
+      console.log(green(path.join(targetPath, "dist")));
+      console.log(`We suggest you to point the virtual server root folder to this path.`);
+    }
+    else {
+      console.log(LINE);
+      console.log(`The tesseract-ui boilerplate is ready to run in development mode.`);
+      console.log(`Use the command`, yellow(`npm run dev`), `to start the server.`);
+      console.log(`The app will then run on http://localhost:4000`);
+      console.log(`To build a production bundle, run`, yellow(`npm run build`));
+      console.log(`The bundle will be generated in`, path.join(targetPath, "dist/"));
+    }
   });
 
 cli.help();
