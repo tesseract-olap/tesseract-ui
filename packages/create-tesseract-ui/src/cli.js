@@ -56,6 +56,11 @@ cli
         name: "server",
         message: "Enter the full URL for the tesseract-server",
         validate: validate.absoluteUrl
+      },
+      {
+        type: environment.type === "production" ? "confirm" : null,
+        name: "nginx",
+        message: "Do you intend to use nginx to serve this app?"
       }
     ];
     const responses = await prompts(questions, promptOptions);
@@ -85,7 +90,32 @@ cli
       console.log(LINE);
       console.log(`The tesseract-ui boilerplate was successfully built on`);
       console.log(green(path.join(targetPath, "dist")));
-      console.log(`We suggest you to point the virtual server root folder to this path.`);
+
+      if (options.nginx) {
+        console.log(LINE);
+        console.log(`Configuration example for nginx:`);
+        console.log(`If the app will be hosted on a root domain, set:`);
+        console.log(grey(`server {
+    ...
+    root ${targetPath};
+    try_files $uri $uri/ =404;
+    ...
+}`));
+        console.log(`If the app will be hosted in a /pathname/ use:`);
+        console.log(grey(`server {
+    ...
+    # Unless you know what you're doing, leave
+    # /pathname without the trailing slash.
+    location ^~ /pathname {
+        alias ${path.join(targetPath, "dist/")};
+        try_files $uri $uri/ =404;
+    }
+    ...
+}`));
+      }
+      else {
+        console.log(`We suggest you to point the virtual server root folder to this path.`);
+      }
     }
     else {
       console.log(LINE);
