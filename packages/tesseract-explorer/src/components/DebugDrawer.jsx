@@ -1,22 +1,31 @@
-import {
-  AnchorButton,
-  Classes,
-  Code,
-  Drawer,
-  H3,
-  InputGroup,
-  Intent
-} from "@blueprintjs/core";
+import {AnchorButton, Classes, Code, Drawer, H3, InputGroup, Intent, ButtonGroup} from "@blueprintjs/core";
 import classNames from "classnames";
-import React, {Fragment} from "react";
+import React, { Fragment} from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {connect} from "react-redux";
 import {UI_DEBUG_TOGGLE} from "../actions/ui";
+import {selectAggregationState, selectQueryState, selectUiState} from "../selectors/state";
 import JsonRenderer from "./JsonRenderer";
-import { selectQueryState, selectAggregationState, selectUiState } from "../selectors/state";
+import ButtonDownload from "./ButtonDownload";
 
-function DebugDrawer(props) {
+/**
+ * @typedef StateProps
+ * @property {string} aggregateUrl
+ * @property {boolean} isOpen
+ * @property {string} javascriptCall
+ * @property {string} logicLayerUrl
+ * @property {import("../reducers").QueryState} query
+ */
+
+/**
+ * @typedef DispatchProps
+ * @property {(event?: React.SyntheticEvent<HTMLElement, Event> | undefined) => void} closeDrawerHandler
+ */
+
+/** @type {React.FC<StateProps & DispatchProps>} */
+const DebugDrawer = props => {
   const {query, javascriptCall, aggregateUrl, logicLayerUrl} = props;
+  const baseFileName = query.drilldowns.map(item => item.level).join("-");
 
   return (
     <Drawer
@@ -29,10 +38,34 @@ function DebugDrawer(props) {
     >
       <PerfectScrollbar>
         <div className="debug-drawer-content">
-          <H3>
-            <Code>olap-client</Code>
-          </H3>
-          <pre className={classNames(Classes.CODE_BLOCK, "jscall")}>{javascriptCall}</pre>
+          {(logicLayerUrl || aggregateUrl) &&
+            <Fragment>
+              <H3>Download dataset</H3>
+
+              <ButtonGroup>
+                {aggregateUrl && <ButtonDownload
+                  content={aggregateUrl.replace("aggregate.jsonrecords", "aggregate.csv")}
+                  fileName={`${baseFileName}.csv`}
+                  text="CSV file"
+                />}
+                {aggregateUrl && !logicLayerUrl && <ButtonDownload
+                  content={aggregateUrl.replace("aggregate.jsonrecords", "aggregate.xls")}
+                  fileName={`${baseFileName}.xls`}
+                  text="XLS file"
+                />}
+                {aggregateUrl && <ButtonDownload
+                  content={aggregateUrl}
+                  fileName={`${baseFileName}-records.json`}
+                  text="JSON Tidy file"
+                />}
+                {logicLayerUrl && <ButtonDownload
+                  content={logicLayerUrl.replace("data.jsonrecords", "data.jsonarrays")}
+                  fileName={`${baseFileName}-arrays.json`}
+                  text="JSON Arrays file"
+                />}
+              </ButtonGroup>
+            </Fragment>
+          }
 
           {aggregateUrl && (
             <Fragment>
@@ -74,16 +107,21 @@ function DebugDrawer(props) {
             </Fragment>
           )}
 
+          <H3>
+            <Code>olap-client</Code>
+          </H3>
+          <pre className={classNames(Classes.CODE_BLOCK, "jscall")}>{javascriptCall}</pre>
+
           <H3>Query state</H3>
           <JsonRenderer name="query" value={query} defaultExpanded={true} />
         </div>
       </PerfectScrollbar>
     </Drawer>
   );
-}
+};
 
-/** @param {import("../reducers").ExplorerState} state */
-function mapStateToProps(state) {
+/** @type {import("react-redux").MapStateToProps<StateProps, {}, import("../reducers").ExplorerState>} */
+const mapState = state => {
   const aggregationState = selectAggregationState(state);
   return {
     aggregateUrl: aggregationState.aggregateUrl,
@@ -92,14 +130,13 @@ function mapStateToProps(state) {
     logicLayerUrl: aggregationState.logicLayerUrl,
     query: selectQueryState(state)
   };
-}
+};
 
-function mapDispatchToProps(dispatch) {
-  return {
-    closeDrawerHandler() {
-      return dispatch({type: UI_DEBUG_TOGGLE, payload: false});
-    }
-  };
-}
+/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, {}>} */
+const mapDispatch = dispatch => ({
+  closeDrawerHandler() {
+    dispatch({type: UI_DEBUG_TOGGLE, payload: false});
+  }
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(DebugDrawer);
+export default connect(mapState, mapDispatch)(DebugDrawer);
