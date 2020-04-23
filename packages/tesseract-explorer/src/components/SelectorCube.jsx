@@ -3,9 +3,9 @@ import React from "react";
 import {connect} from "react-redux";
 import {setCube} from "../actions/client";
 import {selectCubeNameList} from "../selectors/cubes";
+import {selectQueryState} from "../selectors/state";
 import {safeRegExp} from "../utils/transform";
 import GenericSelector from "./SelectorGeneric";
-import { selectQueryState } from "../selectors/state";
 
 /**
  * @typedef OwnProps

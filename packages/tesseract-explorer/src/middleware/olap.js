@@ -49,6 +49,7 @@ const actionMap = {
       dispatch(setServerInfo(info));
 
       const cubes = await client.getCubes();
+      cubes.sort((a, b) => `${b.name}`.localeCompare(a.name));
       const cubeMap = {};
       let n = cubes.length;
       while (n--) {

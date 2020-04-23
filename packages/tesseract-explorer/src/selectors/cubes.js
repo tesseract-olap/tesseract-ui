@@ -11,13 +11,13 @@ export const selectCubeList = createSelector(selectCubesState, cubes =>
 
 export const selectCurrentCube = createSelector(
   [selectCubesState, selectQueryState],
-  (cubes, {cube}) => (cube in cubes ? cubes[cube] : undefined)
+  (cubes, {cube}) => cube in cubes ? cubes[cube] : undefined
 );
 
 export const selectMeasureNameList = createSelector(
   selectCurrentCube,
   cube => cube && cube.measures.map(m => m.name)
-)
+);
 
 export const selectDimensionList = createSelector(
   selectCurrentCube,
