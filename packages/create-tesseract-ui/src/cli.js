@@ -58,11 +58,11 @@ cli
         name: "server",
         message: "Enter the full URL for the tesseract-server",
         validate: validate.absoluteUrl
-      },
-      {
-        type: options.env === "production" ? "confirm" : null,
-        name: "nginx",
-        message: "Do you intend to use nginx to serve this app?"
+      // },
+      // {
+      //   type: options.env === "production" ? "confirm" : null,
+      //   name: "nginx",
+      //   message: "Do you intend to use nginx to serve this app?"
       }
     ];
     const responses = await prompts(questions, promptOptions);
