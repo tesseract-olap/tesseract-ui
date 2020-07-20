@@ -15,9 +15,10 @@ const LINE = `-----------------------------------------------------------`;
 
 cli
   .command("<directory>", "Create a tesseract-ui boilerplate in the defined directory")
+  .option("-e, --env <machine>", "Sets the type of machine where this instance will run")
   .option("-n, --name <name>", "Sets the project name")
-  .option("-t, --title <title>", "Sets the site's title")
   .option("-s, --server <url>", "Sets the URL for the tesseract server")
+  .option("-t, --title <title>", "Sets the site's title")
   .action(async (targetFolder, options) => {
     console.log(LINE);
     console.log(`Creating a new tesseract-ui instance`);
@@ -32,8 +33,8 @@ cli
 
     const environment = await prompts(
       {
-        name: "type",
-        type: "select",
+        type: options.env ? false : "select",
+        name: "env",
         message: "Where will this instance run?",
         choices: [
           {title: "A local computer", value: "local"},
@@ -42,6 +43,7 @@ cli
       },
       promptOptions
     );
+    Object.assign(options, environment);
 
     /** @type {prompts.PromptObject[]} */
     const questions = [
@@ -58,7 +60,7 @@ cli
         validate: validate.absoluteUrl
       },
       {
-        type: environment.type === "production" ? "confirm" : null,
+        type: options.env === "production" ? "confirm" : null,
         name: "nginx",
         message: "Do you intend to use nginx to serve this app?"
       }
@@ -82,7 +84,7 @@ cli
     console.log("Installing required dependencies...");
     spawn.sync("npm", ["install"], spawnSyncOptions);
 
-    if (environment.type === "production") {
+    if (options.env === "production") {
       console.log(LINE);
       console.log("Building app...");
       spawn.sync("npx", ["poi", "--prod", "--no-clear-console"], spawnSyncOptions);
