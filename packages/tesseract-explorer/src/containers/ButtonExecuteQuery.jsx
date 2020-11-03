@@ -1,6 +1,10 @@
-import {Button, Intent} from "@blueprintjs/core";
+import {Button, ButtonGroup, Classes, Intent} from "@blueprintjs/core";
+import React from "react";
 import {connect} from "react-redux";
 import {doExecuteQuery} from "../middleware/actions";
+import {doUpdateEndpoint} from "../state/server/actions";
+import {selectServerEndpoint} from "../state/server/selectors";
+import ButtonTooltip from "../components/ButtonTooltip";
 
 /**
  * @typedef {import("@blueprintjs/core").IButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>} ButtonProps
@@ -8,30 +12,53 @@ import {doExecuteQuery} from "../middleware/actions";
 
 /**
  * @typedef StateProps
- * @property {boolean} fill
- * @property {import("@blueprintjs/core").IconName} icon
- * @property {import("@blueprintjs/core").Intent} intent
- * @property {string} text
+ * @property {string | null} endpoint
  */
 
 /**
  * @typedef DispatchProps
- * @property {() => void} onClick
+ * @property {() => void} executeQueryHandler
+ * @property {() => void} updateEndpointHandler
  */
 
-/** @type {import("react-redux").MapStateToProps<StateProps, ButtonProps, ExplorerState>} */
-const mapState = () => ({
-  fill: true,
-  icon: "database",
-  intent: Intent.PRIMARY,
-  text: "Execute query"
+/** @type {React.FC<StateProps & DispatchProps>} */
+const ButtonExecuteQuery = props => {
+  const execButton = <Button
+    fill={true}
+    icon="database"
+    intent={Intent.PRIMARY}
+    text="Execute query"
+    onClick={props.executeQueryHandler}
+  />;
+
+  if (!props.endpoint) return execButton;
+
+  return (
+    <ButtonGroup fill={true}>
+      {execButton}
+      <ButtonTooltip
+        className={Classes.FIXED}
+        icon="exchange"
+        tooltip={`Current endpoint: ${props.endpoint}`}
+        onClick={props.updateEndpointHandler}
+      />
+    </ButtonGroup>
+  );
+};
+
+/** @type {import("react-redux").MapStateToProps<StateProps, {}, ExplorerState>} */
+const mapState = state => ({
+  endpoint: selectServerEndpoint(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, ButtonProps>} */
+/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, {}>} */
 const mapDispatch = dispatch => ({
-  onClick() {
+  executeQueryHandler() {
     dispatch(doExecuteQuery());
+  },
+  updateEndpointHandler() {
+    dispatch(doUpdateEndpoint());
   }
 });
 
-export default connect(mapState, mapDispatch)(Button);
+export default connect(mapState, mapDispatch)(ButtonExecuteQuery);

@@ -19,6 +19,7 @@ interface QueriesState {
 
 interface ServerState {
   cubeMap: Record<string, OlapCube>;
+  endpoint: string;
   localeOptions: string[];
   online: boolean | undefined;
   software: string;

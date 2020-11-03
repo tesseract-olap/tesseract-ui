@@ -1,8 +1,9 @@
-import {SERVER_UPDATE} from "./actions";
+import {ENDPOINT_UPDATE, SERVER_UPDATE} from "./actions";
 
 /** @type {ServerState} */
 export const serverInitialState = {
   cubeMap: {},
+  endpoint: "aggregate",
   localeOptions: ["en"],
   online: undefined,
   software: "",
@@ -18,5 +19,10 @@ export function serverReducer(state = serverInitialState, action) {
 
 /** @type {Record<string, (state: ServerState, payload: any) => ServerState>} */
 const effects = {
-  [SERVER_UPDATE]: (state, payload) => ({...state, ...payload})
+  [SERVER_UPDATE]: (state, payload) => ({...state, ...payload}),
+
+  [ENDPOINT_UPDATE]: (state, payload) => ({
+    ...state,
+    endpoint: payload || (state.endpoint === "aggregate" ? "logiclayer" : "aggregate")
+  })
 };

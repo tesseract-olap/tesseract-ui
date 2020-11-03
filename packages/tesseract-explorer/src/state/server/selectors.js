@@ -10,6 +10,18 @@ export function selectServerState(state) {
   return "explorer" in state ? state.explorer.explorerServer : state.explorerServer;
 }
 
+export const selectServerEndpoint = createSelector(
+  selectServerState,
+  server => server.software === "tesseract-olap" ? server.endpoint : null
+);
+
+export const selectServerBooleansEnabled = createSelector(
+  selectServerState,
+  server => server.software === "tesseract-olap"
+    ? ["debug", "exclude_default_members", "parents", "sparse"]
+    : ["debug", "distinct", "nonempty", "parents", "sparse"]
+);
+
 export const selectOlapCubeMap = createSelector(
   selectServerState,
   server => server.cubeMap

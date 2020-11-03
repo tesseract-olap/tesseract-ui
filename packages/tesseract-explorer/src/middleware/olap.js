@@ -3,18 +3,18 @@ import {chartInterfaces} from "../enums";
 import {requestControl} from "../state/loading/actions";
 import {doCubeUpdate, doCutClear, doCutUpdate, doLocaleUpdate} from "../state/params/actions";
 import {selectCubeName, selectCurrentQueryParams, selectCutItems, selectLocaleCode, selectMeasureMap} from "../state/params/selectors";
-import {doQueriesClear, doQueriesUpdate, doQueriesSelect} from "../state/queries/actions";
+import {doQueriesClear, doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectQueryItems} from "../state/queries/selectors";
 import {doCurrentResultUpdate} from "../state/results/actions";
 import {selectChartConfigText, selectChartType} from "../state/results/selectors";
 import {doServerUpdate} from "../state/server/actions";
-import {selectOlapCubeMap} from "../state/server/selectors";
+import {selectOlapCubeMap, selectServerEndpoint} from "../state/server/selectors";
 import {applyQueryParams, extractQueryParams} from "../utils/query";
 import {buildChartConfig} from "../utils/string";
 import {buildMeasure, buildQuery} from "../utils/structs";
 import {keyBy} from "../utils/transform";
 import {isValidQuery} from "../utils/validation";
-import {CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP, doPermalinkUpdate, CLIENT_PARSE} from "./actions";
+import {CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_PARSE, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP, doPermalinkUpdate} from "./actions";
 import {hydrateCutMembers, hydrateDrilldownProperties} from "./utils";
 
 /**
@@ -318,7 +318,8 @@ const actionMap = {
       const valMeasureName = queryms[0].name;
       const chartType = selectChartType(state);
 
-      const aggregation = await client.execQuery(query, "logiclayer");
+      const endpoint = selectServerEndpoint(state) || "logiclayer";
+      const aggregation = await client.execQuery(query, endpoint);
       dispatch(
         doCurrentResultUpdate({
           data: aggregation.data,
