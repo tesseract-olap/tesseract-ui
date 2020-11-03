@@ -1,4 +1,4 @@
-import {hydratePermalink, serializePermalink} from "../utils/permalink";
+import {hydratePermalink} from "../utils/permalink";
 import {buildQuery} from "../utils/structs";
 import {isValidQuery} from "../utils/validation";
 import {loadingInitialState, loadingReducer} from "./loading/reducer";
@@ -53,7 +53,8 @@ export function explorerInitialState() {
 }
 
 /** @type {import("redux").Reducer<ExplorerState>} */
-export function explorerReducer(state = initialState, action) {
+export function explorerReducer(state, action) {
+  state = state || explorerInitialState();
   return {
     explorerServer: serverReducer(state.explorerServer, action),
     explorerLoading: loadingReducer(state.explorerLoading, action),

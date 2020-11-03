@@ -1,11 +1,11 @@
-import {Button, Card} from "@blueprintjs/core";
+import {Button} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import ExplorerColumn from "../components/ExplorerColumn";
+import {ExplorerColumn} from "../components/ExplorerColumn";
+import {MemoStoredQuery as StoredQuery} from "../components/StoredQuery";
 import {doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
-import {selectQueryItems, selectCurrentQueryItem} from "../state/queries/selectors";
+import {selectCurrentQueryItem, selectQueryItems} from "../state/queries/selectors";
 import {buildQuery} from "../utils/structs";
-import StoredQuery from "../components/StoredQuery";
 
 /**
  * @typedef OwnProps

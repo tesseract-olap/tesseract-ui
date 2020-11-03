@@ -12,7 +12,7 @@ import {selectServerState} from "../state/server/selectors";
  */
 
 /** @type {React.FC<StateProps>} */
-const ServerStatus = function({online, software, url, version}) {
+const ServerStatus = ({online, software, url, version}) => {
   if (online === true) {
     return (
       <AnchorButton

@@ -30,7 +30,7 @@ import {safeRegExp} from "../utils/transform";
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
-const SelectCube = props => {
+export const SelectCube = props => {
   if (props.items.length === 0) {
     return (
       <Button
@@ -99,4 +99,4 @@ const mapDispatch = dispatch => ({
   onItemSelect: cube => dispatch(doCubeSet(cube.name))
 });
 
-export default connect(mapState, mapDispatch)(SelectCube);
+export const ConnectedSelectCube = connect(mapState, mapDispatch)(SelectCube);

@@ -27,7 +27,7 @@ export const doCubeSet = cubeName => ({type: CLIENT_SETCUBE, payload: cubeName})
 /** @param {string} locale */
 export const doLocaleSet = locale => ({type: CLIENT_SETLOCALE, payload: locale});
 
-/** @param {string} serverUrl */
+/** @param {string | import("axios").AxiosRequestConfig} serverUrl */
 export const doClientSetup = serverUrl => ({type: CLIENT_SETUP, payload: serverUrl});
 
 /**  */

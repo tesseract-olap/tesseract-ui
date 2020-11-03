@@ -1,7 +1,7 @@
 import {ButtonGroup} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import ExplorerColumn from "../components/ExplorerColumn";
+import {ExplorerColumn} from "../components/ExplorerColumn";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
 import ButtonExecuteQuery from "./ButtonExecuteQuery";
 import QueryBooleans from "./QueryBooleans";
@@ -11,8 +11,8 @@ import QueryGrowth from "./QueryGrowth";
 import QueryMeasures from "./QueryMeasures";
 import QueryRca from "./QueryRca";
 import QueryTopk from "./QueryTopk";
-import SelectCube from "./SelectCube";
-import SelectLocale from "./SelectLocale";
+import {ConnectedSelectCube as SelectCube} from "./SelectCube";
+import {ConnectedSelectLocale as SelectLocale} from "./SelectLocale";
 
 /**
  * @typedef OwnProps

@@ -1,4 +1,4 @@
-import {HTMLSelect, InputGroup} from "@blueprintjs/core";
+import {HTMLSelect} from "@blueprintjs/core";
 import classNames from "classnames";
 import React from "react";
 import {connect} from "react-redux";
@@ -24,20 +24,19 @@ import {selectLocaleOptions} from "../state/server/selectors";
  */
 
 /** @type {React.FC<OwnProps&StateProps&DispatchProps>} */
-const SelectLocale = ({
+export const SelectLocale = ({
   className,
   fill,
   locale,
   localeOptions,
   updateLocaleHandler
-}) =>
-  <HTMLSelect
-    className={classNames("select-locale", className)}
-    fill={fill}
-    onChange={updateLocaleHandler}
-    options={localeOptions}
-    value={locale}
-  />;
+}) => <HTMLSelect
+  className={classNames("select-locale", className)}
+  fill={fill}
+  onChange={updateLocaleHandler}
+  options={localeOptions}
+  value={locale}
+/>;
 
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
 const mapState = state => ({
@@ -50,4 +49,4 @@ const mapDispatch = dispatch => ({
   updateLocaleHandler: evt => dispatch(doLocaleSet(evt.target.value))
 });
 
-export default connect(mapState, mapDispatch)(SelectLocale);
+export const ConnectedSelectLocale = connect(mapState, mapDispatch)(SelectLocale);

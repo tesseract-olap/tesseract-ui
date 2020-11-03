@@ -2,7 +2,7 @@ import {createSelector} from "reselect";
 import {keyBy} from "../utils/transform";
 import {selectCubeName, selectMeasureMap, selectDrilldownItems} from "./params/selectors";
 import {selectOlapCubeMap} from "./server/selectors";
-import { getKeys, getValues } from "./helpers";
+import {getKeys, getValues} from "./helpers";
 
 /**
  * @returns {OlapCube}

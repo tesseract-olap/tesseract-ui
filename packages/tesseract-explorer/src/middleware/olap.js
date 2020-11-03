@@ -322,8 +322,6 @@ const actionMap = {
       const aggregation = await client.execQuery(query, endpoint);
       dispatch(
         doCurrentResultUpdate({
-          data: aggregation.data,
-          error: null,
           chartConfig: buildChartConfig({
             levelNames: querydd.map(lvl => lvl.name),
             chartConfig: selectChartConfigText(state),
@@ -331,10 +329,13 @@ const actionMap = {
             rowLevelName,
             valMeasureName
           }),
+          data: aggregation.data,
+          error: null,
+          headers: aggregation.headers || {},
           pivotColumns: colLevelName,
           pivotRows: rowLevelName,
           pivotValues: valMeasureName,
-          sourceCall: " " || query.toSource(),
+          sourceCall: query.toSource(),
           status: aggregation.status,
           urlAggregate: query.toString("aggregate"),
           urlLogicLayer: query.toString("logiclayer")

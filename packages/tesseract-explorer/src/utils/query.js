@@ -9,7 +9,6 @@ import {isActiveCut, isActiveItem, isGrowthItem, isRcaItem, isTopkItem} from "./
  */
 export function applyQueryParams(query, params) {
   Object.entries(params.booleans).forEach(item => {
-    // @ts-ignore
     query.setOption(item[0], item[1]);
   });
 
@@ -64,14 +63,14 @@ export function extractQueryParams(query) {
   const filters = query.getParam("filters").map(buildFilter);
 
   const growth = query.getParam("growth");
-  const growthItem = buildGrowth({
+  const growthItem = growth && buildGrowth({
     active: true,
     measure: growth.measure?.name,
     level: growth.level?.uniqueName
   });
 
   const rca = query.getParam("rca");
-  const rcaItem = buildRca({
+  const rcaItem = rca && buildRca({
     active: true,
     level1: rca.level1?.uniqueName,
     level2: rca.level2?.uniqueName,
@@ -79,7 +78,7 @@ export function extractQueryParams(query) {
   });
 
   const topk = query.getParam("topk");
-  const topkItem = buildTopk({
+  const topkItem = topk && buildTopk({
     active: true,
     amount: topk.amount,
     level: topk.level?.uniqueName,
@@ -103,6 +102,7 @@ export function extractQueryParams(query) {
     booleans: {
       debug: Boolean(booleans.debug),
       distinct: Boolean(booleans.distinct),
+      exclude_default_members: Boolean(booleans.exclude_default_members),
       nonempty: Boolean(booleans.nonempty),
       parents: Boolean(booleans.parents),
       sparse: Boolean(booleans.sparse)
@@ -111,10 +111,10 @@ export function extractQueryParams(query) {
     cuts: keyBy(cuts, getKey),
     drilldowns: keyBy(drilldowns, getKey),
     filters: keyBy(filters, getKey),
-    growth: {[growthItem.key]: growthItem},
+    growth: growthItem ? {[growthItem.key]: growthItem} : {},
     locale: query.getParam("locale"),
     measures: keyBy(measures, getKey),
-    rca: {[rcaItem.key]: rcaItem},
-    topk: {[topkItem.key]: topkItem}
+    rca: rcaItem ? {[rcaItem.key]: rcaItem} : {},
+    topk: topkItem ? {[topkItem.key]: topkItem} : {}
   };
 }

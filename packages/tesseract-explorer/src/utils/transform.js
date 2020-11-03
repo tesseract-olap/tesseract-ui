@@ -8,7 +8,7 @@ import {rollups} from "d3-array";
  */
 export function groupBy(array, accesor, target = {}) {
   const accesorFn = typeof accesor === "function" ? accesor : i => i[accesor];
-  for (let value of array) {
+  for (const value of array) {
     const key = accesorFn(value);
     if (target.hasOwnProperty(key)) {
       target[key].push(value);
@@ -38,7 +38,7 @@ export function joinName(nameParts) {
  */
 export function keyBy(array, accesor, target = {}) {
   const accesorFn = typeof accesor === "function" ? accesor : i => i[accesor];
-  for (let value of array) {
+  for (const value of array) {
     const key = accesorFn(value);
     target[key] = value;
   }
@@ -114,7 +114,8 @@ export function safeRegExp(pattern, flags) {
   let regex;
   try {
     regex = new RegExp(pattern, flags);
-  } catch (e) {
+  }
+  catch (e) {
     pattern = pattern.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
     regex = new RegExp(pattern, flags);
   }

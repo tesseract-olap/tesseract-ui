@@ -23,8 +23,9 @@ interface QueryParams {
 interface QueryResult {
   chartConfig: string;
   chartType: string;
-  data: any[];
+  data: Record<string, string | number>[];
   error: string | null;
+  headers: Record<string, string>;
   pivotColumns: string | undefined;
   pivotRows: string | undefined;
   pivotValues: string | undefined;

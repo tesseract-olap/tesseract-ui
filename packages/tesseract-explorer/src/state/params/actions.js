@@ -67,10 +67,14 @@ export const doCutUpdate = payload => ({type: QUERY_CUTS_UPDATE, payload});
  */
 export const doDrilldownClear = payload => ({type: QUERY_DRILLDOWNS_CLEAR, payload});
 
-/** @param {string} payload */
+/**
+ * @param {string} payload The key that identifies the drilldown to remove.
+ */
 export const doDrilldownRemove = payload => ({type: QUERY_DRILLDOWNS_REMOVE, payload});
 
-/** @param {DrilldownItem} payload */
+/**
+ * @param {DrilldownItem} payload The entire drilldown object, already in its next state. Must contain a "key" property, which will be used to replace the previous state.
+ */
 export const doDrilldownUpdate = payload => ({type: QUERY_DRILLDOWNS_UPDATE, payload});
 
 /**

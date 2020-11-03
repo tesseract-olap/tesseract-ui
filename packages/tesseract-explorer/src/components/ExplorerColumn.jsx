@@ -10,7 +10,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
  */
 
 /** @type {React.FC<OwnProps>} */
-const ExplorerColumn = function(props) {
+export const ExplorerColumn = props => {
   const {defaultOpen: initialOpenState = true} = props;
   const [isOpen, setOpen] = useState(initialOpenState);
 
@@ -41,5 +41,3 @@ const ExplorerColumn = function(props) {
     </div>
   );
 };
-
-export default ExplorerColumn;

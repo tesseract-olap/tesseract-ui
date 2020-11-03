@@ -1,4 +1,4 @@
-import {Classes, Intent, Tag, Button, Alignment, Text, Icon} from "@blueprintjs/core";
+import {Alignment, Button, Intent, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {memo} from "react";
 import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
@@ -12,7 +12,7 @@ import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
  */
 
 /** @type {React.FC<OwnProps>} */
-const StoredQuery = ({active, className, item, onClick}) => {
+export const StoredQuery = ({active, className, item, onClick}) => {
   const {params} = item;
 
   const levelList = Object.values(params.drilldowns)
@@ -39,4 +39,4 @@ const StoredQuery = ({active, className, item, onClick}) => {
   );
 };
 
-export default memo(StoredQuery, shallowEqualExceptFns);
+export const MemoStoredQuery = memo(StoredQuery, shallowEqualExceptFns);

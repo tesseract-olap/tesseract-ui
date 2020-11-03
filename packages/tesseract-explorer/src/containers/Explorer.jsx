@@ -14,7 +14,7 @@ import ExplorerResults from "./ExplorerResults";
 
 /**
  * @typedef OwnProps
- * @property {string} src The URL for the data server.
+ * @property {string | import("axios").AxiosRequestConfig} src The URL for the data server.
  * @property {string} [title] A title to show on the navbar.
  * @property {string[]} locale A list of the available locale options
  */
