@@ -9,6 +9,8 @@
     "target": "es2015"
   },
   "include": [
-    "./src", "./public",
+    "./public",
+    "./src",
+    "./types"
   ]
 }

@@ -7,6 +7,8 @@ coverage/
 # production
 build/
 dist/
+examples/
+packages/chartbuilder
 
 # misc
 .DS_Store

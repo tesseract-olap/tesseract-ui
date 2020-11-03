@@ -1,11 +1,11 @@
 import autoprefixer from "autoprefixer";
-import babel from "rollup-plugin-babel";
+import babel from "@rollup/plugin-babel";
 import cleanup from "rollup-plugin-cleanup";
-import commonjs from "rollup-plugin-commonjs";
-import json from "rollup-plugin-json";
-import resolve from "rollup-plugin-node-resolve";
-import postcss from "rollup-plugin-postcss";
-import replace from "rollup-plugin-replace";
+import commonjs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
+import resolve from "@rollup/plugin-node-resolve";
+import styles from "rollup-plugin-styles";
+import replace from "@rollup/plugin-replace";
 import {string} from "rollup-plugin-string";
 import pkg from "./package.json";
 
@@ -13,6 +13,7 @@ const environment = process.env.NODE_ENV;
 const inDevelopment = environment === "development";
 const inProduction = environment === "production";
 
+const extPackages = Object.keys({...pkg.dependencies, ...pkg.peerDependencies});
 const sourcemap = inDevelopment ? "hidden" : false;
 
 /** @return {import("rollup").RollupOptions} */
@@ -20,15 +21,17 @@ export default commandLineArgs => ({
   input: "src/index.js",
   output: [
     {
-      exports: "named",
       file: pkg.main,
       format: "cjs",
+      assetFileNames: "[name][extname]",
+      exports: "named",
       sourcemap
     },
     {
-      exports: "named",
       file: pkg.module,
       format: "esm",
+      assetFileNames: "[name][extname]",
+      exports: "named",
       sourcemap
     }
   ],
@@ -44,13 +47,13 @@ export default commandLineArgs => ({
     string({
       include: ["**/*.d.ts"]
     }),
-    postcss({
-      extract: "./dist/explorer.css",
-      minimize: inProduction,
+    styles({
+      mode: ["extract", "explorer.css"],
       plugins: [autoprefixer()],
       sourcemap: inDevelopment
     }),
     babel({
+      babelHelpers: "runtime",
       exclude: "node_modules/**"
     }),
     commonjs({
@@ -58,7 +61,7 @@ export default commandLineArgs => ({
     }),
     cleanup()
   ],
-  external: Object.keys({...pkg.dependencies, ...pkg.peerDependencies}),
+  external: id => extPackages.some(pkg => id.startsWith(pkg)),
   watch: {
     include: ["src/**"],
     exclude: "node_modules/**",
