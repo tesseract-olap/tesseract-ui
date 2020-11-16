@@ -9,10 +9,10 @@ import {TransferInput} from "./TransferInput";
 /**
  * @typedef OwnProps
  * @property {DrilldownItem} item
- * @property {(item: DrilldownItem) => void} [onRemove]
- * @property {(item: DrilldownItem) => void} [onToggle]
- * @property {(item: DrilldownItem, caption: string) => void} [onCaptionUpdate]
- * @property {(item: DrilldownItem, props: PropertyItem[]) => void} [onPropertiesUpdate]
+ * @property {(item: DrilldownItem) => void} onRemove
+ * @property {(item: DrilldownItem) => void} onToggle
+ * @property {(item: DrilldownItem, caption: string) => void} onCaptionUpdate
+ * @property {(item: DrilldownItem, props: PropertyItem[]) => void} onPropertiesUpdate
  */
 
 /** @type {React.FC<OwnProps>} */
@@ -38,20 +38,23 @@ const TagDrilldown = ({item, onRemove, onToggle, onCaptionUpdate, onPropertiesUp
   }
 
   /** @type {import("@blueprintjs/core").IOptionProps[]} */
-  const captionItems = [{label: "[None selected]", value: ""}];
+  const captionItems = [{label: "[None]", value: ""}];
 
   const content =
     <div className="drilldown-submenu">
-      <FormGroup label="Caption" helperText="Captions replace the default label returned by the server with another property.">
+      <FormGroup className="submenu-form-group" label="Caption">
         <SelectString
           fill={true}
           items={captionItems.concat(item.properties.map(item => ({value: item.name})))}
-          // @ts-ignore
-          onItemSelect={caption => onCaptionUpdate(item, caption.label || caption.value || caption)}
+          onItemSelect={caption => typeof caption === "object" && !caption.value
+            ? onCaptionUpdate(item, "")
+            : onCaptionUpdate(item, `${typeof caption === "object" ? caption.label || caption.value : caption}`)
+          }
+          placeholder="[None]"
           selectedItem={item.captionProperty}
         />
       </FormGroup>
-      <FormGroup label="Properties" helperText="Properties return additional information for each subdivision of the data.">
+      <FormGroup className="submenu-form-group" label="Properties">
         <TransferInput
           getLabel={item => item.name}
           items={item.properties}
