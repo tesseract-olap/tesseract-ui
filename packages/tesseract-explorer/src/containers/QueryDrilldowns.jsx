@@ -22,7 +22,7 @@ import {activeItemCounter} from "../utils/validation";
 /**
  * @typedef DispatchProps
  * @property {() => void} clearHandler
- * @property {(level: OlapLevel) => void} createHandler
+ * @property {(level: OlapLevel, hierarchy: OlapHierarchy, dimension: OlapDimension) => any} createHandler
  * @property {(item: DrilldownItem) => void} removeHandler
  * @property {(item: DrilldownItem) => void} toggleHandler
  * @property {(item: DrilldownItem, caption: string) => void} updateCaptionHandler
@@ -74,8 +74,8 @@ const mapDispatch = dispatch => ({
   clearHandler() {
     dispatch(doDrilldownClear());
   },
-  createHandler(level) {
-    const drilldownItem = buildDrilldown(level);
+  createHandler(level, hierarchy, dimension) {
+    const drilldownItem = buildDrilldown({...level, dimType: dimension.dimensionType});
     dispatch(doDrilldownUpdate(drilldownItem));
   },
   removeHandler(item) {

@@ -7,7 +7,7 @@ import DimensionMenuItem from "./MenuItemDimension";
 /**
  * @typedef OwnProps
  * @property {string[]} selectedItems
- * @property {(item: OlapLevel) => any} onItemSelect
+ * @property {(level: OlapLevel, hierarchy: OlapHierarchy, dimension: OlapDimension) => any} onItemSelect
  */
 
 /**

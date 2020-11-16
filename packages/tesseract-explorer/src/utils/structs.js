@@ -33,9 +33,6 @@ export function buildQuery(props) {
       chartType: "BarChart",
       data: [],
       error: null,
-      pivotColumns: undefined,
-      pivotRows: undefined,
-      pivotValues: undefined,
       sourceCall: "",
       status: 0,
       urlAggregate: "",
@@ -74,6 +71,9 @@ export function buildCut(props) {
  * @returns {DrilldownItem}
  */
 export function buildDrilldown(props) {
+  const dimType = typeof props.dimension === "object"
+    ? props.dimension.dimensionType
+    : props.dimType;
   if (typeof props.toJSON === "function") {
     props = props.toJSON();
   }
@@ -84,6 +84,7 @@ export function buildDrilldown(props) {
     active: typeof props.active === "boolean" ? props.active : true,
     captionProperty: `${props.captionProperty || ""}`,
     dimension,
+    dimType,
     fullName: props.fullName || [dimension, hierarchy, level].join("."),
     hierarchy,
     key: props.key || randomKey(),
@@ -137,6 +138,7 @@ export function buildMeasure(props) {
   }
   return {
     active: typeof props.active === "boolean" ? props.active : true,
+    aggType: props.aggType || props.aggregatorType,
     key: props.key || props.name || props.measure,
     measure: props.measure || props.name
   };

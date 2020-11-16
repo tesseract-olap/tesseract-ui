@@ -17,6 +17,7 @@ interface CutItem extends IQueryItem {
 interface DrilldownItem extends IQueryItem {
   captionProperty: string;
   dimension: string;
+  dimType: string;
   fullName: string;
   hierarchy: string;
   level: string;
@@ -37,6 +38,7 @@ interface GrowthItem extends IQueryItem {
 }
 
 interface MeasureItem extends IQueryItem {
+  aggType: string;
   measure: string;
 }
 

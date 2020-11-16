@@ -71,7 +71,8 @@ export function hydrateDrilldownProperties({cube, drilldownItem}) {
           const active = activeProperties.includes(property.name);
           return buildProperty({...property, active});
         });
-        return buildDrilldown({...drilldownItem, properties});
+        const dimType = level.dimension.dimensionType;
+        return buildDrilldown({...drilldownItem, dimType, properties});
       }
     }
   }

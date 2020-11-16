@@ -310,11 +310,9 @@ const actionMap = {
         querydd.find(
           lvl => lvl.dimension.dimensionType === DimensionType.Time
         ) || querydd[0];
-      const colLevel = querydd.find(lvl => lvl !== rowLevel);
       const queryms = query.getParam("measures");
 
       const rowLevelName = rowLevel.name;
-      const colLevelName = colLevel?.name;
       const valMeasureName = queryms[0].name;
       const chartType = selectChartType(state);
 
@@ -332,9 +330,6 @@ const actionMap = {
           data: aggregation.data,
           error: null,
           headers: aggregation.headers || {},
-          pivotColumns: colLevelName,
-          pivotRows: rowLevelName,
-          pivotValues: valMeasureName,
           sourceCall: query.toSource(),
           status: aggregation.status,
           urlAggregate: query.toString("aggregate"),

@@ -11,7 +11,7 @@ import MenuDimensions from "./MenuDimension";
 /**
  * @typedef OwnProps
  * @property {LevelRef[]} selectedItems
- * @property {(item: OlapLevel) => any} [onItemSelect]
+ * @property {(level: OlapLevel, hierarchy: OlapHierarchy, dimension: OlapDimension) => any} onItemSelect
  * @property {boolean} [usePortal]
  */
 
