@@ -21,7 +21,11 @@ export function buildQuery(props) {
       growth: params.growth || {},
       locale: params.locale || "",
       measures: params.measures || {},
+      pagiLimit: params.pagiLimit || params.limitAmount || params.limit || 0,
+      pagiOffset: params.pagiOffset || params.limitOffset || params.offset || 0,
       rca: params.rca || {},
+      sortDir: params.sortDir || params.sortDirection || params.sortOrder || params.order || "desc",
+      sortKey: params.sortKey || params.sortProperty || "",
       topk: params.topk || {}
     },
     result: {

@@ -1,6 +1,6 @@
 import {buildQuery} from "../../utils/structs";
 import {omitRecord, oneRecordActive} from "../helpers";
-import {QUERY_BOOLEANS_TOGGLE, QUERY_CUBE_UPDATE, QUERY_CUTS_CLEAR, QUERY_CUTS_REMOVE, QUERY_CUTS_UPDATE, QUERY_DRILLDOWNS_CLEAR, QUERY_DRILLDOWNS_REMOVE, QUERY_DRILLDOWNS_UPDATE, QUERY_FILTERS_CLEAR, QUERY_FILTERS_REMOVE, QUERY_FILTERS_UPDATE, QUERY_GROWTH_CLEAR, QUERY_GROWTH_REMOVE, QUERY_GROWTH_SELECT, QUERY_GROWTH_UPDATE, QUERY_INYECT, QUERY_LOCALE_UPDATE, QUERY_MEASURES_CLEAR, QUERY_MEASURES_UPDATE, QUERY_RCA_CLEAR, QUERY_RCA_REMOVE, QUERY_RCA_UPDATE, QUERY_TOPK_CLEAR, QUERY_TOPK_REMOVE, QUERY_TOPK_UPDATE, QUERY_RCA_SELECT, QUERY_TOPK_SELECT} from "./actions";
+import {QUERY_BOOLEANS_TOGGLE, QUERY_CUBE_UPDATE, QUERY_CUTS_CLEAR, QUERY_CUTS_REMOVE, QUERY_CUTS_UPDATE, QUERY_DRILLDOWNS_CLEAR, QUERY_DRILLDOWNS_REMOVE, QUERY_DRILLDOWNS_UPDATE, QUERY_FILTERS_CLEAR, QUERY_FILTERS_REMOVE, QUERY_FILTERS_UPDATE, QUERY_GROWTH_CLEAR, QUERY_GROWTH_REMOVE, QUERY_GROWTH_SELECT, QUERY_GROWTH_UPDATE, QUERY_INYECT, QUERY_LOCALE_UPDATE, QUERY_MEASURES_CLEAR, QUERY_MEASURES_UPDATE, QUERY_RCA_CLEAR, QUERY_RCA_REMOVE, QUERY_RCA_UPDATE, QUERY_TOPK_CLEAR, QUERY_TOPK_REMOVE, QUERY_TOPK_UPDATE, QUERY_RCA_SELECT, QUERY_TOPK_SELECT, QUERY_SORTING_UPDATE, QUERY_PAGINATION_UPDATE} from "./actions";
 
 const effects = {
 
@@ -188,6 +188,17 @@ const effects = {
 
   /**
    * @param {QueryParams} params
+   * @param {{pagiLimit: number, pagiOffset: number}} payload
+   * @returns {QueryParams}
+   */
+  [QUERY_PAGINATION_UPDATE]: (params, payload) => ({
+    ...params,
+    pagiLimit: payload.pagiLimit,
+    pagiOffset: payload.pagiOffset
+  }),
+
+  /**
+   * @param {QueryParams} params
    * @param {Record<string, RcaItem>} [payload]
    * @returns {QueryParams}
    */
@@ -218,6 +229,17 @@ const effects = {
   [QUERY_RCA_UPDATE]: (params, payload) => ({
     ...params,
     rca: {...params.rca, [payload.key]: payload}
+  }),
+
+  /**
+   * @param {QueryParams} params
+   * @param {{sortKey: string, sortDir: string}} payload
+   * @returns {QueryParams}
+   */
+  [QUERY_SORTING_UPDATE]: (params, payload) => ({
+    ...params,
+    sortDir: payload.sortDir,
+    sortKey: payload.sortKey
   }),
 
   /**

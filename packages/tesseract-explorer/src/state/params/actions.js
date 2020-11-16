@@ -17,10 +17,12 @@ export const QUERY_INYECT = "explorer/QUERY/INYECT";
 export const QUERY_LOCALE_UPDATE = "explorer/QUERY/LOCALE/UPDATE";
 export const QUERY_MEASURES_CLEAR = "explorer/QUERY/MEASURES/CLEAR";
 export const QUERY_MEASURES_UPDATE = "explorer/QUERY/MEASURES/UPDATE";
+export const QUERY_PAGINATION_UPDATE = "explorer/QUERY/PAGINATION/UPDATE";
 export const QUERY_RCA_CLEAR = "explorer/QUERY/RCA/CLEAR";
 export const QUERY_RCA_REMOVE = "explorer/QUERY/RCA/REMOVE";
 export const QUERY_RCA_SELECT = "explorer/QUERY/RCA/SELECT";
 export const QUERY_RCA_UPDATE = "explorer/QUERY/RCA/UPDATE";
+export const QUERY_SORTING_UPDATE = "explorer/QUERY/SORTING/UPDATE";
 export const QUERY_TOPK_CLEAR = "explorer/QUERY/TOPK/CLEAR";
 export const QUERY_TOPK_REMOVE = "explorer/QUERY/TOPK/REMOVE";
 export const QUERY_TOPK_SELECT = "explorer/QUERY/TOPK/SELECT";
@@ -103,6 +105,15 @@ export const doMeasureClear = payload => ({type: QUERY_MEASURES_CLEAR, payload})
 export const doMeasureToggle = payload => ({type: QUERY_MEASURES_UPDATE, payload});
 
 /**
+ * @param {number} pagiLimit
+ * @param {number} pagiOffset
+ */
+export const doPaginationUpdate = (pagiLimit, pagiOffset) => ({
+  type: QUERY_PAGINATION_UPDATE,
+  payload: {pagiLimit, pagiOffset}
+});
+
+/**
  * If no parameter is passed, this function clears the list.
  * If a parameter is passed, that parameter replaces the list.
  * @param {Record<string, RcaItem>} [payload]
@@ -117,6 +128,15 @@ export const doRcaSelect = payload => ({type: QUERY_RCA_SELECT, payload});
 
 /** @param {RcaItem} payload */
 export const doRcaUpdate = payload => ({type: QUERY_RCA_UPDATE, payload});
+
+/**
+ * @param {string} sortKey
+ * @param {string} sortDir
+ */
+export const doSortingUpdate = (sortKey, sortDir) => ({
+  type: QUERY_SORTING_UPDATE,
+  payload: {sortKey, sortDir}
+});
 
 /**
  * If no parameter is passed, this function clears the list.

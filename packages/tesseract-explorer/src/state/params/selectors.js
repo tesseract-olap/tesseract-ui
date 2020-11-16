@@ -67,8 +67,13 @@ export const selectBooleans = createSelector(
   selectCurrentQueryParams,
   params => params.booleans
 );
-export const selectBooleanDebug = createSelector(selectBooleans, b => b.debug);
-export const selectBooleanDistinct = createSelector(selectBooleans, b => b.distinct);
-export const selectBooleanNonempty = createSelector(selectBooleans, b => b.nonempty);
-export const selectBooleanParents = createSelector(selectBooleans, b => b.parents);
-export const selectBooleanSparse = createSelector(selectBooleans, b => b.sparse);
+
+export const selectPaginationParams = createSelector(
+  selectCurrentQueryParams,
+  params => ({limit: params.pagiLimit, offset: params.pagiOffset})
+);
+
+export const selectSortingParams = createSelector(
+  selectCurrentQueryParams,
+  params => ({sortKey: params.sortKey, sortDir: params.sortDir})
+);

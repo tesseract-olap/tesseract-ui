@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {ExplorerColumn} from "../components/ExplorerColumn";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
 import ButtonExecuteQuery from "./ButtonExecuteQuery";
-import QueryBooleans from "./QueryBooleans";
+import {ConnectedQueryBooleans as QueryBooleans} from "./QueryBooleans";
 import QueryCuts from "./QueryCuts";
 import QueryDrilldowns from "./QueryDrilldowns";
 import QueryGrowth from "./QueryGrowth";

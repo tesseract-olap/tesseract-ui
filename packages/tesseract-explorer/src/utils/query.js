@@ -1,4 +1,4 @@
-import {Order} from "@datawheel/olap-client";
+import {Order, Measure} from "@datawheel/olap-client";
 import {buildCut, buildDrilldown, buildFilter, buildGrowth, buildMeasure, buildMember, buildRca, buildTopk} from "./structs";
 import {keyBy} from "./transform";
 import {isActiveCut, isActiveItem, isGrowthItem, isRcaItem, isTopkItem} from "./validation";
@@ -46,6 +46,12 @@ export function applyQueryParams(query, params) {
   });
 
   params.locale && query.setLocale(params.locale);
+
+  if (params.sortKey && params.sortDir) {
+    query.setSorting(params.sortKey, params.sortDir === "desc");
+  }
+
+  query.setPagination(params.pagiLimit, params.pagiOffset);
 
   return query;
 }
@@ -97,6 +103,9 @@ export function extractQueryParams(query) {
     });
   });
 
+  const pagination = query.getParam("pagination");
+  const sorting = query.getParam("sorting");
+
   const getKey = i => i.key;
   return {
     booleans: {
@@ -114,7 +123,13 @@ export function extractQueryParams(query) {
     growth: growthItem ? {[growthItem.key]: growthItem} : {},
     locale: query.getParam("locale"),
     measures: keyBy(measures, getKey),
+    pagiLimit: pagination.amount,
+    pagiOffset: pagination.offset,
     rca: rcaItem ? {[rcaItem.key]: rcaItem} : {},
+    sortDir: sorting.direction,
+    sortKey: Measure.isMeasure(sorting.property)
+      ? sorting.property.name
+      : `${sorting.property || ""}`,
     topk: topkItem ? {[topkItem.key]: topkItem} : {}
   };
 }
