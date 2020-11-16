@@ -17,7 +17,7 @@
     "start": "poi --serve ./dev/index.js",
     "watch": "rollup --config rollup.config.js --environment NODE_ENV:development,BABEL_ENV:development --watch"
   },
-  "author": "Francisco Abarzúa",
+  "author": "Francisco Abarzúa <francisco@datawheel.us>",
   "license": "MIT",
   "repository": {
     "type": "git",

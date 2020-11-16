@@ -23,7 +23,7 @@ const effectors = {
 
       if (window.location.search.slice(1) !== nextPermalink) {
         console.groupCollapsed("Permalink changed");
-        console.log(params);
+        console.debug(params);
         console.groupEnd();
 
         const nextLocation = `${window.location.pathname}?${nextPermalink}`;

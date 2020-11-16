@@ -23,7 +23,7 @@ export function explorerInitialState() {
     const locationState =
       window.location.search && hydratePermalink(window.location.search);
     const historyState = window.history.state;
-    console.log(locationState);
+    console.debug({locationState, historyState});
 
     const defaultQuery = isValidQuery(locationState)
       ? buildQuery({params: locationState})
