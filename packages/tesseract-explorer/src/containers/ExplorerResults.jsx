@@ -3,30 +3,33 @@ import classNames from "classnames";
 import React, {Suspense, useState} from "react";
 import {connect} from "react-redux";
 import AnimatedCube from "../components/AnimatedCube";
-import ResultRaw from "../components/ResultRaw";
-import ResultTable from "../components/ResultTable";
 import {selectLoadingState} from "../state/loading/selectors";
+import {selectCurrentQueryParams} from "../state/params/selectors";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectCurrentQueryResult} from "../state/results/selectors";
-import ConnectedResultChart from "./ConnectedResultChart";
-import ConnectedResultPivot from "./ConnectedResultPivot";
+import {selectServerState} from "../state/server/selectors";
 
 /**
  * @typedef OwnProps
  * @property {string} [className]
+ * @property {Record<string, React.FunctionComponent | React.ComponentClass>} panels
  */
 
 /**
  * @typedef StateProps
- * @property {QueryResult} result
- * @property {boolean} isLoading
  * @property {boolean} isDirtyQuery
+ * @property {boolean} isLoading
+ * @property {boolean | undefined} isServerOnline
+ * @property {string} serverUrl
+ * @property {import("../../types/explorer").QueryParams} params
+ * @property {import("../../types/explorer").QueryResult} result
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */
 const ExplorerResults = props => {
+  const {panels} = props;
   const {data, error} = props.result;
-  const [currentTab, setCurrentTab] = useState(UITAB_TABLE);
+  const [currentTab, setCurrentTab] = useState(Object.keys(panels)[0]);
 
   if (error) {
     return (
@@ -41,6 +44,28 @@ const ExplorerResults = props => {
         icon="error"
       />
     );
+  }
+
+  if (props.isServerOnline === false) {
+    if (typeof window === "object" && window.navigator.onLine === false) {
+      return <NonIdealState
+        className="explorer-error"
+        icon="globe-network"
+        title="You are not connected to the internet."
+      />;
+    }
+
+    return <NonIdealState
+      className="explorer-error"
+      icon="error"
+      title="There's a problem contacting with the server"
+      description={
+        <span>
+          {"Check the availability of the URL "}
+          <a href={props.serverUrl} target="_blank" rel="noopener noreferrer">{props.serverUrl}</a>.
+        </span>
+      }
+    />;
   }
 
   if (props.isLoading || props.isDirtyQuery) {
@@ -63,44 +88,36 @@ const ExplorerResults = props => {
     );
   }
 
-  const CurrentComponent = ResultPanels[currentTab];
+  const CurrentComponent = panels[currentTab];
 
   return (
     <div className={classNames("explorer-column", props.className)}>
-      <Tabs className="titlebar" onChange={setCurrentTab} selectedTabId={currentTab}>
-        <Tab id={UITAB_TABLE} title="Spreadsheet" />
-        <Tab id={UITAB_PIVOT} title="Pivot Table" />
-        <Tab id={UITAB_CHART} title="Chart Builder" />
-        <Tab id={UITAB_RAW} title="Raw response" />
+      <Tabs
+        className="titlebar"
+        onChange={newTab => setCurrentTab(`${newTab}`)}
+        selectedTabId={currentTab}
+      >
+        {Object.keys(panels).map(key => <Tab id={key} key={key} title={key} />)}
         <Tabs.Expander />
-        <h2 className="token">Results</h2>
+        <h2 className="token">{`${data.length} rows`}</h2>
       </Tabs>
       <div className={`wrapper ${props.className}-content`}>
         <Suspense fallback={<AnimatedCube />}>
-          <CurrentComponent className="result-panel" {...props.result} />
+          <CurrentComponent className="result-panel" params={props.params} result={props.result} />
         </Suspense>
       </div>
     </div>
   );
 };
 
-const UITAB_CHART = "tab-chart";
-const UITAB_PIVOT = "tab-pivot";
-const UITAB_RAW = "tab-raw";
-const UITAB_TABLE = "tab-table";
-
-const ResultPanels = {
-  [UITAB_CHART]: ConnectedResultChart,
-  [UITAB_PIVOT]: ConnectedResultPivot,
-  [UITAB_RAW]: ResultRaw,
-  [UITAB_TABLE]: ResultTable
-};
-
 /** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
 const mapState = state => ({
-  result: selectCurrentQueryResult(state),
+  isDirtyQuery: selectCurrentQueryItem(state).isDirty,
   isLoading: selectLoadingState(state).loading,
-  isDirtyQuery: selectCurrentQueryItem(state).isDirty
+  isServerOnline: selectServerState(state).online,
+  serverUrl: selectServerState(state).url,
+  params: selectCurrentQueryParams(state),
+  result: selectCurrentQueryResult(state)
 });
 
 export default connect(mapState)(ExplorerResults);

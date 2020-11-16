@@ -1,111 +1,80 @@
 import {Menu, MenuItem} from "@blueprintjs/core";
 import {Cell, Column, ColumnHeaderCell, Table} from "@blueprintjs/table";
 import classNames from "classnames";
-import memoizeOne from "memoize-one";
-import React, {PureComponent} from "react";
+import React, {useMemo, useState} from "react";
 import {sortByKey} from "../utils/array";
 
 /**
  * @typedef OwnProps
  * @property {string} [className]
- * @property {any[]} data
+ * @property {QueryResult} result
  */
 
-/**
- * @typedef OwnState
- * @property {string} sortKey
- * @property {boolean} sortDescending
- */
+/** @type {React.FC<OwnProps>} */
+const ResultTable = props => {
+  const {data = []} = props.result;
 
-/**
- * @type {PureComponent<OwnProps, OwnState>}
- */
-class TableTabPanel extends PureComponent {
-  state = {
-    sortKey: "",
-    sortDescending: true
-  };
+  const [sortKey, setSortKey] = useState("");
+  const [sortDescending, setSortDescending] = useState(true);
 
-  cellClipboardData(data, keys, rowIndex, columnIndex) {
-    return data[rowIndex][keys[columnIndex]];
-  }
+  const sortedData = useMemo(
+    () => sortByKey(data, sortKey, sortDescending),
+    [data, sortKey, sortDescending]
+  );
 
-  dataSorter = memoizeOne(sortByKey);
-
-  setSortingHandler(sortKey, sortDescending) {
-    this.setState({sortKey, sortDescending});
-  }
-
-  render() {
-    const {data} = this.props;
-    const {sortDescending, sortKey} = this.state;
-
-    /** @type {any[]} */
-    const sortedData = this.dataSorter(data, sortKey, sortDescending);
-
-    const columnKeys = Object.keys(sortedData[0]);
-    const columnTypes = columnKeys.map(key => typeof sortedData[0][key]);
-    const columns = columnKeys.map((columnKey, columnIndex) => {
-      const cellRenderer = rowIndex =>
-        <Cell
-          className={`column-${columnTypes[columnIndex]}`}
-          columnIndex={columnIndex}
-          rowIndex={rowIndex}
-        >
-          {sortedData[rowIndex][columnKey]}
-        </Cell>;
-      const menuRenderer = this.renderColumnMenu.bind(this, columnKey);
-      const columnHeaderCellRenderer = () =>
-        <ColumnHeaderCell name={columnKey} menuRenderer={menuRenderer} />;
-      return (
-        <Column
-          cellRenderer={cellRenderer}
-          columnHeaderCellRenderer={columnHeaderCellRenderer}
-          key={columnKey}
-          id={columnKey}
-          name={columnKey}
-        />
-      );
-    });
-
-    const cellClipboardData = this.cellClipboardData.bind(null, sortedData, columnKeys);
-
-    return (
-      <Table
-        className={classNames("data-table", this.props.className)}
-        enableColumnResizing={true}
-        // enableGhostCells={true}
-        // enableMultipleSelection={false}
-        enableRowResizing={false}
-        getCellClipboardData={cellClipboardData}
-        numRows={sortedData.length}
-        rowHeights={sortedData.map(() => 22)}
+  const columnKeys = Object.keys(sortedData[0]);
+  const columnTypes = columnKeys.map(key => typeof sortedData[0][key]);
+  const columns = columnKeys.map((columnKey, columnIndex) => {
+    const cellRenderer = rowIndex =>
+      <Cell
+        className={`column-${columnTypes[columnIndex]}`}
+        columnIndex={columnIndex}
+        rowIndex={rowIndex}
       >
-        {columns}
-      </Table>
-    );
-  }
-
-  renderColumnMenu(columnKey) {
-    return (
+        {sortedData[rowIndex][columnKey]}
+      </Cell>;
+    const menuRenderer = () =>
       <Menu>
         <MenuItem
           icon="sort-asc"
-          onClick={this.setSortingHandler.bind(this, columnKey, false)}
+          onClick={() => [setSortKey(columnKey), setSortDescending(false)]}
           text="Sort Asc"
         />
         <MenuItem
           icon="sort-desc"
-          onClick={this.setSortingHandler.bind(this, columnKey, true)}
+          onClick={() => [setSortKey(columnKey), setSortDescending(true)]}
           text="Sort Desc"
         />
-      </Menu>
+      </Menu>;
+    const columnHeaderCellRenderer = () =>
+      <ColumnHeaderCell name={columnKey} menuRenderer={menuRenderer} />;
+    return (
+      <Column
+        cellRenderer={cellRenderer}
+        columnHeaderCellRenderer={columnHeaderCellRenderer}
+        key={columnKey}
+        id={columnKey}
+        name={columnKey}
+      />
     );
-  }
-}
+  });
 
-TableTabPanel.defaultProps = {
-  data: []
+  return (
+    <Table
+      className={classNames("data-table", props.className)}
+      enableColumnResizing={true}
+      // enableGhostCells={true}
+      // enableMultipleSelection={false}
+      enableRowResizing={false}
+      getCellClipboardData={(rowIndex, colIndex) =>
+        sortedData[rowIndex][columnKeys[colIndex]]
+      }
+      numRows={sortedData.length}
+      rowHeights={sortedData.map(() => 22)}
+    >
+      {columns}
+    </Table>
+  );
 };
 
-export default TableTabPanel;
+export default ResultTable;
