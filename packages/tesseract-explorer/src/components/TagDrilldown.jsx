@@ -4,7 +4,7 @@ import React from "react";
 import {abbreviateFullName} from "../utils/format";
 import {levelRefToArray} from "../utils/transform";
 import SelectString from "./SelectString";
-import TransferInput from "./TransferInput";
+import {TransferInput} from "./TransferInput";
 
 /**
  * @typedef OwnProps
@@ -53,6 +53,7 @@ const TagDrilldown = ({item, onRemove, onToggle, onCaptionUpdate, onPropertiesUp
       </FormGroup>
       <FormGroup label="Properties" helperText="Properties return additional information for each subdivision of the data.">
         <TransferInput
+          getLabel={item => item.name}
           items={item.properties}
           onChange={properties => onPropertiesUpdate(item, properties)}
         />

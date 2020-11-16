@@ -5,7 +5,7 @@ import {abbreviateFullName} from "../utils/format";
 import {levelRefToArray} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
 import ButtonTagExtra from "./ButtonTagExtra";
-import TransferInput from "./TransferInput";
+import {TransferInput} from "./TransferInput";
 
 /**
  * @typedef OwnProps
@@ -102,6 +102,7 @@ const TagCut = props => {
         <FormGroup label="Members" helperText="Members restrict the data returned by the server to the datums whose cut level match these properties.">
           <TransferInput
             items={members}
+            getLabel={item => item.name}
             onChange={members => props.onMembersUpdate(item, members)}
           />
         </FormGroup>
