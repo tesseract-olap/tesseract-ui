@@ -16,7 +16,6 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime-corejs3": "^7.12.5",
-    "@datawheel/tesseract-explorer": "workspace:^1.0.0-alpha.0",
     "@datawheel/vizbuilder": "^0.1.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
@@ -29,6 +28,7 @@
     "@babel/preset-env": "^7.12.0",
     "@babel/preset-react": "^7.12.0",
     "@datawheel/eslint-config": "^1.0.0",
+    "@datawheel/tesseract-explorer": "workspace:^1.0.0-alpha.0",
     "@rollup/plugin-babel": "^5.2.0",
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
@@ -40,6 +40,9 @@
     "rollup": "^2.33.0",
     "rollup-plugin-cleanup": "^3.2.0",
     "rollup-plugin-terser": "^7.0.0"
+  },
+  "peerDependencies": {
+    "@datawheel/tesseract-explorer": "^1.0.0-alpha.0"
   },
   "eslintConfig": {
     "extends": "@datawheel",
