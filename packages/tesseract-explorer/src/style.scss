@@ -1,9 +1,17 @@
 @import "./style/variables";
-@import "./style/mixins";
 
 @import "./style/CubeAnimation";
 @import "./style/normalization";
-@import "./style/monaco";
+
+@mixin box-area {
+  box-shadow: $pt-elevation-shadow-0;
+  background-color: $card-background-color;
+
+  .#{$ns}-dark & {
+    box-shadow: $pt-dark-elevation-shadow-0;
+    background-color: $dark-card-background-color;
+  }
+}
 
 .explorer {
   &-wrapper {
