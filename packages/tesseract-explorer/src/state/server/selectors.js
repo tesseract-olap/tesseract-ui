@@ -3,8 +3,8 @@ import {createSelector} from "reselect";
 import {getKeys, getValues} from "../helpers";
 
 /**
- * @param {ExplorerState | {explorer: ExplorerState}} state
- * @returns {ServerState}
+ * @param {TessExpl.State.ExplorerState | {explorer: TessExpl.State.ExplorerState}} state
+ * @returns {TessExpl.State.ServerState}
  */
 export function selectServerState(state) {
   return "explorer" in state ? state.explorer.explorerServer : state.explorerServer;

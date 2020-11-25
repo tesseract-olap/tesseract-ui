@@ -2,7 +2,7 @@ export const SERVER_UPDATE = "explorer/SERVER/UPDATE";
 export const ENDPOINT_UPDATE = "explorer/SERVER/ENDPOINT/UPDATE";
 
 /**
- * @param {Partial<ServerState>} payload
+ * @param {Partial<TessExpl.State.ServerState>} payload
  */
 export const doServerUpdate = payload => ({type: SERVER_UPDATE, payload});
 

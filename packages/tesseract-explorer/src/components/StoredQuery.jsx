@@ -7,7 +7,7 @@ import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
  * @typedef OwnProps
  * @property {boolean} active
  * @property {string} [className]
- * @property {QueryItem} item
+ * @property {TessExpl.Struct.QueryItem} item
  * @property {(event: React.MouseEvent<HTMLElement>) => void} [onClick]
  */
 

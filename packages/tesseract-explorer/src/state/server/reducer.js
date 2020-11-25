@@ -1,6 +1,6 @@
 import {ENDPOINT_UPDATE, SERVER_UPDATE} from "./actions";
 
-/** @type {ServerState} */
+/** @type {TessExpl.State.ServerState} */
 export const serverInitialState = {
   cubeMap: {},
   endpoint: "aggregate",
@@ -11,13 +11,13 @@ export const serverInitialState = {
   version: ""
 };
 
-/** @type {import("redux").Reducer<ServerState>} */
+/** @type {import("redux").Reducer<TessExpl.State.ServerState>} */
 export function serverReducer(state = serverInitialState, action) {
   const effector = effects[action.type];
   return effector ? effector(state, action.payload) : state;
 }
 
-/** @type {Record<string, (state: ServerState, payload: any) => ServerState>} */
+/** @type {Record<string, (state: TessExpl.State.ServerState, payload: any) => TessExpl.State.ServerState>} */
 const effects = {
   [SERVER_UPDATE]: (state, payload) => ({...state, ...payload}),
 

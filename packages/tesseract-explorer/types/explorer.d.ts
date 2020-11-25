@@ -1,49 +1,228 @@
+import * as OlapClnt from "@datawheel/olap-client";
 import {AxiosRequestConfig} from "axios";
 import {default as React} from "react";
-import {Middleware, Reducer} from "redux";
+import {MapDispatchToProps, MapStateToProps} from "react-redux";
+import {default as Redux} from "redux";
 
-export const Explorer: React.FunctionComponent<IPropsExplorer>;
+// tslint:disable-next-line:export-just-namespace
+export = TessExpl;
+export as namespace TessExpl;
 
-export const DebugView: React.FunctionComponent<IPropsView>;
-export const PivotView: React.FunctionComponent<IPropsView>;
-export const TableView: React.FunctionComponent<IPropsView>;
+declare namespace TessExpl {
+  const Explorer: React.FC<ExplorerProps>;
 
-export const explorerInitialState: () => ExplorerState;
-export const explorerReducer: Reducer<ExplorerState>;
+  const DebugView: React.FC<ViewProps>;
+  const PivotView: React.FC<ViewProps>;
+  const TableView: React.FC<ViewProps>;
 
-export const olapMiddleware: Middleware<{}, ExplorerState>;
-export const permalinkMiddleware: Middleware<{}, ExplorerState>;
+  const explorerInitialState: () => State.ExplorerState;
+  const explorerReducer: Redux.Reducer<State.ExplorerState>;
 
-interface IPropsExplorer {
-  /**
-   * The URL for the data server.
-   * Can be setup as a string, or a [AxiosRequestConfig](https://github.com/axios/axios#request-config)
-   * for more complex handling of authorization/authentication.
-   */
-  src: string | AxiosRequestConfig;
+  const olapMiddleware: Redux.Middleware<{}, State.ExplorerState>;
+  const permalinkMiddleware: Redux.Middleware<{}, State.ExplorerState>;
 
-  /** A title to show on the navbar. */
-  title?: React.ReactNode;
+  interface ExplorerProps {
+    /**
+     * The URL for the data server.
+     * Can be setup as a string, or a [AxiosRequestConfig](https://github.com/axios/axios#request-config)
+     * for more complex handling of authorization/authentication.
+     */
+    src: string | AxiosRequestConfig;
 
-  /** A list of the available locale options */
-  locale: string[];
+    /** A title to show on the navbar. */
+    title?: React.ReactNode;
 
-  /**
-   * The list of tabs to offer to the user to render the results.
-   * Must be an object whose keys are the label of the tab to show in the UI,
-   * and whose values are non-hydrated React Components.
-   */
-  panels: Record<string, React.FunctionComponent | React.ComponentClass>;
-}
+    /** A list of the available locale options */
+    locale: string[];
 
-interface IPropsView {
-  result: QueryResult;
-  params: QueryParams;
-}
+    /**
+     * The list of tabs to offer to the user to render the results.
+     * Must be an object whose keys are the label of the tab to show in the UI,
+     * and whose values are non-hydrated React Components.
+     */
+    panels: Record<string, React.FunctionComponent | React.ComponentClass>;
+  }
 
-export interface ExplorerState {
-  explorerLoading: LoadingState;
-  explorerQueries: QueriesState;
-  explorerServer: ServerState;
-  explorerUi: UiState;
+  interface ViewProps {
+    cube: OlapClnt.AdaptedCube;
+    result: Struct.QueryResult;
+    params: Struct.QueryParams;
+  }
+
+  namespace State {
+    interface ExplorerState {
+      explorerLoading: LoadingState;
+      explorerQueries: QueriesState;
+      explorerServer: ServerState;
+      explorerUi: UiState;
+    }
+
+    interface LoadingState {
+      error: string | null;
+      loading: boolean;
+      status: string;
+      trigger: string | null;
+    }
+
+    interface QueriesState {
+      current: string;
+      itemMap: Record<string, Struct.QueryItem>;
+    }
+
+    interface ServerState {
+      cubeMap: Record<string, OlapClnt.AdaptedCube>;
+      endpoint: string;
+      localeOptions: string[];
+      online: boolean | undefined;
+      software: string;
+      url: string;
+      version: string;
+    }
+
+    interface UiState {
+      darkTheme: boolean;
+      debugDrawer: boolean;
+      starredDrawer: boolean;
+    }
+
+    type MapStateFn<T, U> = MapStateToProps<T, U, ExplorerState>;
+    type MapDispatchFn<T, U> = MapDispatchToProps<T, U>;
+  }
+
+  namespace Struct {
+    interface QueryItem {
+      created: string;
+      isDirty: boolean;
+      key: string;
+      label: string;
+      params: QueryParams;
+      result: QueryResult;
+    }
+
+    interface QueryParams {
+      booleans: Record<string, boolean>;
+      cube: string;
+      cuts: Record<string, CutItem>;
+      drilldowns: Record<string, DrilldownItem>;
+      filters: Record<string, FilterItem>;
+      growth: Record<string, GrowthItem>;
+      locale: string | undefined;
+      measures: Record<string, MeasureItem>;
+      pagiLimit: number | undefined;
+      pagiOffset: number | undefined;
+      rca: Record<string, RcaItem>;
+      sortDir: "asc" | "desc";
+      sortKey: string | undefined;
+      topk: Record<string, TopkItem>;
+    }
+
+    interface QueryResult {
+      data: Record<string, string | number>[];
+      error: string | null;
+      headers: Record<string, string>;
+      sourceCall: string | undefined;
+      status: number;
+      urlAggregate: string | undefined;
+      urlLogicLayer: string | undefined;
+    }
+
+    interface IQueryItem {
+      active: boolean;
+      readonly key: string;
+    }
+
+    interface CutItem extends IQueryItem {
+      dimension: string;
+      error?: Error;
+      fullName: string;
+      hierarchy: string;
+      level: string;
+      members: MemberItem[];
+      membersLoaded: boolean;
+      uniqueName: string;
+    }
+
+    interface DrilldownItem extends IQueryItem {
+      captionProperty: string;
+      dimension: string;
+      dimType: string;
+      fullName: string;
+      hierarchy: string;
+      level: string;
+      properties: PropertyItem[];
+      uniqueName: string;
+    }
+
+    interface FilterItem extends IQueryItem {
+      measure: string;
+      comparison: OlapClnt.Comparison;
+      inputtedValue: string;
+      interpretedValue: number;
+    }
+
+    interface GrowthItem extends IQueryItem {
+      level: string;
+      measure: string;
+    }
+
+    interface MeasureItem extends IQueryItem {
+      aggType: string;
+      measure: string;
+    }
+
+    interface MemberItem extends IQueryItem {
+      name: string;
+    }
+
+    interface NamedSetItem extends IQueryItem {
+      namedset?: string;
+    }
+
+    interface PropertyItem extends IQueryItem {
+      level: string;
+      name: string;
+    }
+
+    interface RcaItem extends IQueryItem {
+      level1: string;
+      level2: string;
+      measure: string;
+    }
+
+    interface TopkItem extends IQueryItem {
+      amount: number;
+      level: string;
+      measure: string;
+      order: "asc" | "desc";
+    }
+
+    type MeasurableItem = MeasureItem | FilterItem;
+
+    interface SerializedQuery {
+      booleans?: number;
+      cube: string;
+      cuts?: string[];
+      drilldowns?: string[];
+      filters?: string[];
+      growth?: string[];
+      locale?: string;
+      measures?: string[];
+      rca?: string[];
+      topk?: string[];
+    }
+
+    interface LevelLike {
+      dimension: string;
+      hierarchy: string;
+      name: string;
+    }
+
+    interface LevelRef {
+      dimension: string;
+      hierarchy: string;
+      level: string;
+    }
+
+    type LevelDescriptor = LevelLike | LevelRef;
+  }
 }

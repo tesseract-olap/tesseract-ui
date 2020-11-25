@@ -5,7 +5,7 @@ import {selectOlapCubeMap} from "./server/selectors";
 import {getKeys, getValues} from "./helpers";
 
 /**
- * @returns {OlapCube}
+ * @returns {import("@datawheel/olap-client").AdaptedCube}
  */
 export const selectOlapCube = createSelector(
   [selectOlapCubeMap, selectCubeName],
@@ -13,7 +13,7 @@ export const selectOlapCube = createSelector(
 );
 
 /**
- * @returns {OlapMeasure[]}
+ * @returns {import("@datawheel/olap-client").AdaptedMeasure[]}
  */
 export const selectOlapMeasureItems = createSelector(
   selectOlapCube,
@@ -21,7 +21,7 @@ export const selectOlapMeasureItems = createSelector(
 );
 
 /**
- * @returns {OlapMeasure[]}
+ * @returns {import("@datawheel/olap-client").AdaptedMeasure[]}
  */
 export const selectOlapMeasureItemsFromParams = createSelector(
   [selectMeasureMap, selectOlapMeasureItems],
@@ -29,7 +29,7 @@ export const selectOlapMeasureItemsFromParams = createSelector(
 );
 
 /**
- * @returns {OlapDimension[]}
+ * @returns {import("@datawheel/olap-client").AdaptedDimension[]}
  */
 export const selectOlapDimensionItems = createSelector(
   selectOlapCube,
@@ -37,7 +37,7 @@ export const selectOlapDimensionItems = createSelector(
 );
 
 /**
- * @returns {OlapDimension | undefined}
+ * @returns {import("@datawheel/olap-client").AdaptedDimension | undefined}
  */
 export const selectOlapTimeDimension = createSelector(
   selectOlapDimensionItems,
@@ -49,7 +49,7 @@ export const selectOlapTimeDimension = createSelector(
 
 export const selectOlapLevelMap = createSelector(selectOlapDimensionItems, dimensions => {
 
-  /** @type {Record<string, OlapLevel>} */
+  /** @type {Record<string, import("@datawheel/olap-client").AdaptedLevel>} */
   const levelMap = {};
   dimensions.forEach(dimension =>
     dimension.hierarchies.forEach(hierarchy =>

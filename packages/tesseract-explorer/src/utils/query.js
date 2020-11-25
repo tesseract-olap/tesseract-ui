@@ -5,7 +5,7 @@ import {isActiveCut, isActiveItem, isGrowthItem, isRcaItem, isTopkItem} from "./
 
 /**
  * @param {import("@datawheel/olap-client").Query} query
- * @param {QueryParams} params
+ * @param {TessExpl.Struct.QueryParams} params
  */
 export function applyQueryParams(query, params) {
   Object.entries(params.booleans).forEach(item => {
@@ -58,7 +58,7 @@ export function applyQueryParams(query, params) {
 
 /**
  * @param {import("@datawheel/olap-client").Query} query
- * @returns {QueryParams}
+ * @returns {TessExpl.Struct.QueryParams}
  */
 export function extractQueryParams(query) {
   const cube = query.cube;

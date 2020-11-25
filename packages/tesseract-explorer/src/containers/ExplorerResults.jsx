@@ -7,6 +7,7 @@ import {selectLoadingState} from "../state/loading/selectors";
 import {selectCurrentQueryParams} from "../state/params/selectors";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectCurrentQueryResult} from "../state/results/selectors";
+import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server/selectors";
 
 /**
@@ -17,12 +18,13 @@ import {selectServerState} from "../state/server/selectors";
 
 /**
  * @typedef StateProps
+ * @property {import("@datawheel/olap-client").AdaptedCube} cube
  * @property {boolean} isDirtyQuery
  * @property {boolean} isLoading
  * @property {boolean | undefined} isServerOnline
  * @property {string} serverUrl
- * @property {import("../../types/explorer").QueryParams} params
- * @property {import("../../types/explorer").QueryResult} result
+ * @property {TessExpl.Struct.QueryParams} params
+ * @property {TessExpl.Struct.QueryResult} result
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */
@@ -103,19 +105,20 @@ const ExplorerResults = props => {
       </Tabs>
       <div className={`wrapper ${props.className}-content`}>
         <Suspense fallback={<AnimatedCube />}>
-          <CurrentComponent className="result-panel" params={props.params} result={props.result} />
+          <CurrentComponent className="result-panel" cube={props.cube} params={props.params} result={props.result} />
         </Suspense>
       </div>
     </div>
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   isDirtyQuery: selectCurrentQueryItem(state).isDirty,
   isLoading: selectLoadingState(state).loading,
   isServerOnline: selectServerState(state).online,
   serverUrl: selectServerState(state).url,
+  cube: selectOlapCube(state),
   params: selectCurrentQueryParams(state),
   result: selectCurrentQueryResult(state)
 });

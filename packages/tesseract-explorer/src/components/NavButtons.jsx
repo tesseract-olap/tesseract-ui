@@ -43,13 +43,13 @@ const NavbarButtons = props =>
     />
   </ButtonGroup>;
 
-/** @type {import("react-redux").MapStateToProps<StateProps, {}, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, {}>} */
 const mapState = state => ({
   darkTheme: selectIsDarkTheme(state),
   permalink: selectPermalink(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, {}>} */
+/** @type {TessExpl.State.MapDispatchFn<DispatchProps, {}>} */
 const mapDispatch = dispatch => ({
   copyPermalink(permalink, evt) {
     evt.stopPropagation();

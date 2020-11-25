@@ -6,11 +6,11 @@ import {levelRefToArray, stringifyName} from "../utils/transform";
 /**
  * @typedef OwnProps
  * @property {boolean} [childItem]
- * @property {OlapDimension} dimension
- * @property {OlapHierarchy} hierarchy
- * @property {OlapLevel} level
+ * @property {import("@datawheel/olap-client").AdaptedDimension} dimension
+ * @property {import("@datawheel/olap-client").AdaptedHierarchy} hierarchy
+ * @property {import("@datawheel/olap-client").AdaptedLevel} level
  * @property {string[]} selectedItems
- * @property {(level: OlapLevel, hierarchy: OlapHierarchy, dimension: OlapDimension) => any} onItemSelect
+ * @property {(level: import("@datawheel/olap-client").AdaptedLevel, hierarchy: import("@datawheel/olap-client").AdaptedHierarchy, dimension: import("@datawheel/olap-client").AdaptedDimension) => any} onItemSelect
  */
 
 /** @type {React.FC<OwnProps>} */

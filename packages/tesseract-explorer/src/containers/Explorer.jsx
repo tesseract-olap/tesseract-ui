@@ -67,13 +67,13 @@ ExplorerComponent.defaultProps = {
   }
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   darkTheme: selectIsDarkTheme(state),
   isLoaded: Boolean(selectServerState(state).online)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+/** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({
   setupClient(src) {
     dispatch(doClientSetup(src));

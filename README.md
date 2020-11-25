@@ -20,13 +20,13 @@ A `npm init` script to easily create a single working instance of tesseract-ui i
 
 The core of the project. This React component renders the whole main UI, but can be imported into any React framework.
 
-### [ChartBuilder plugin](./packages/view-chartbuilder/)
+### [Vizbuilder plugin](./packages/view-vizbuilder/)
 
-<a href="https://www.npmjs.com/package/@datawheel/tesseract-chartbuilder">
-  <img src="https://img.shields.io/npm/v/@datawheel/tesseract-chartbuilder.svg" alt="npm package" align="right">
+<a href="https://www.npmjs.com/package/@datawheel/tesseract-vizbuilder">
+  <img src="https://img.shields.io/npm/v/@datawheel/tesseract-vizbuilder.svg" alt="npm package" align="right">
 </a>
 
-A view plugin for DataExplorer. Allows to use the result query to build a d3plus chart config object, with previews.
+A view plugin for DataExplorer. Integrates the [`@datawheel/vizbuilder`](https://www.npmjs.com/package/@datawheel/vizbuilder) React component to use the query result to generate charts.
 
 ## License
 

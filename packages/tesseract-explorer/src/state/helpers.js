@@ -12,7 +12,7 @@ export function omitRecord(records, key) {
 
 /**
  * Creates a shallow copy of the `target` object, and removes its `key` property.
- * @template {IQueryItem} T
+ * @template {TessExpl.Struct.IQueryItem} T
  * @param {Record<string, T>} records
  * @param {T} item
  */

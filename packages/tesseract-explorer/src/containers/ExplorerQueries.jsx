@@ -14,8 +14,8 @@ import {buildQuery} from "../utils/structs";
 
 /**
  * @typedef StateProps
- * @property {QueryItem} currentItem
- * @property {QueryItem[]} items
+ * @property {TessExpl.Struct.QueryItem} currentItem
+ * @property {TessExpl.Struct.QueryItem[]} items
  */
 
 /**
@@ -48,13 +48,13 @@ const ExplorerQueries = props => {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   currentItem: selectCurrentQueryItem(state),
   items: selectQueryItems(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+/** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({
   onItemCreate() {
     const query = buildQuery({});

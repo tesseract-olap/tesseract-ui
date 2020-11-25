@@ -13,8 +13,8 @@ import {
 import {keyBy, parseName} from "./transform";
 
 /**
- * @param {SerializedQuery} query
- * @returns {QueryParams}
+ * @param {TessExpl.Struct.SerializedQuery} query
+ * @returns {TessExpl.Struct.QueryParams}
  */
 export function hydrateState(query) {
   const getKey = i => i.key;
@@ -41,7 +41,7 @@ export function hydrateState(query) {
 
 /**
  * @param {string} item
- * @returns {CutItem}
+ * @returns {TessExpl.Struct.CutItem}
  */
 export function hydrateCut(item) {
   const [fullName, ...members] = item.split(",");
@@ -54,7 +54,7 @@ export function hydrateCut(item) {
 
 /**
  * @param {string} item
- * @returns {DrilldownItem}
+ * @returns {TessExpl.Struct.DrilldownItem}
  */
 export function hydrateDrilldown(item) {
   const {dimension, hierarchy, level} = parseName(item);
@@ -63,7 +63,7 @@ export function hydrateDrilldown(item) {
 
 /**
  * @param {string} item
- * @returns {FilterItem}
+ * @returns {TessExpl.Struct.FilterItem}
  */
 export function hydrateFilter(item) {
   const [measure, comparison, inputtedValue] = item.split(",");
@@ -78,7 +78,7 @@ export function hydrateFilter(item) {
 
 /**
  * @param {string} item
- * @returns {GrowthItem}
+ * @returns {TessExpl.Struct.GrowthItem}
  */
 export function hydrateGrowth(item) {
   const [level, measure] = item.split(",");
@@ -87,7 +87,7 @@ export function hydrateGrowth(item) {
 
 /**
  * @param {string} item
- * @returns {MeasureItem}
+ * @returns {TessExpl.Struct.MeasureItem}
  */
 export function hydrateMeasure(item) {
   return buildMeasure({active: true, measure: item});
@@ -95,7 +95,7 @@ export function hydrateMeasure(item) {
 
 /**
  * @param {string} item
- * @returns {RcaItem}
+ * @returns {TessExpl.Struct.RcaItem}
  */
 export function hydrateRca(item) {
   const [level1, level2, measure] = item.split(",");
@@ -104,7 +104,7 @@ export function hydrateRca(item) {
 
 /**
  * @param {string} item
- * @returns {TopkItem}
+ * @returns {TessExpl.Struct.TopkItem}
  */
 export function hydrateTopk(item) {
   const [amount, level, measure, order] = item.split(",");
