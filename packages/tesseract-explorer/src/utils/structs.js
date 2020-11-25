@@ -3,7 +3,7 @@ import {ensureArray} from "./array";
 
 /**
  * @param {any} props
- * @returns {QueryItem}
+ * @returns {TessExpl.Struct.QueryItem}
  */
 export function buildQuery(props) {
   const params = props.params || {};
@@ -46,8 +46,8 @@ export function buildQuery(props) {
 }
 
 /**
- * @param {CutItem | any} props
- * @returns {CutItem}
+ * @param {any} props
+ * @returns {TessExpl.Struct.CutItem}
  */
 export function buildCut(props) {
   if (typeof props.toJSON === "function") {
@@ -72,7 +72,7 @@ export function buildCut(props) {
 
 /**
  * @param {any} props
- * @returns {DrilldownItem}
+ * @returns {TessExpl.Struct.DrilldownItem}
  */
 export function buildDrilldown(props) {
   const dimType = typeof props.dimension === "object"
@@ -100,7 +100,7 @@ export function buildDrilldown(props) {
 
 /**
  * @param {any} props
- * @returns {FilterItem}
+ * @returns {TessExpl.Struct.FilterItem}
  */
 export function buildFilter(props) {
   if (typeof props.toJSON === "function") {
@@ -121,7 +121,7 @@ export function buildFilter(props) {
 
 /**
  * @param {any} props
- * @returns {GrowthItem}
+ * @returns {TessExpl.Struct.GrowthItem}
  */
 export function buildGrowth(props) {
   return {
@@ -134,7 +134,7 @@ export function buildGrowth(props) {
 
 /**
  * @param {any} props
- * @returns {MeasureItem}
+ * @returns {TessExpl.Struct.MeasureItem}
  */
 export function buildMeasure(props) {
   if (typeof props.toJSON === "function") {
@@ -150,7 +150,7 @@ export function buildMeasure(props) {
 
 /**
  * @param {any} props
- * @returns {MemberItem}
+ * @returns {TessExpl.Struct.MemberItem}
  */
 export function buildMember(props) {
   return {
@@ -162,7 +162,7 @@ export function buildMember(props) {
 
 /**
  * @param {any} props
- * @returns {PropertyItem}
+ * @returns {TessExpl.Struct.PropertyItem}
  */
 export function buildProperty(props) {
   return {
@@ -175,7 +175,7 @@ export function buildProperty(props) {
 
 /**
  * @param {any} props
- * @returns {RcaItem}
+ * @returns {TessExpl.Struct.RcaItem}
  */
 export function buildRca(props) {
   return {
@@ -189,7 +189,7 @@ export function buildRca(props) {
 
 /**
  * @param {any} props
- * @returns {TopkItem}
+ * @returns {TessExpl.Struct.TopkItem}
  */
 export function buildTopk(props) {
   return {

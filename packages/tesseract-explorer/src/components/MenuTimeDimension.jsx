@@ -8,12 +8,12 @@ import HierarchyMenuItem from "./MenuItemHierarchy";
 /**
  * @typedef OwnProps
  * @property {string[]} [selectedItems]
- * @property {(level: OlapLevel) => any} onItemSelect
+ * @property {(level: import("@datawheel/olap-client").AdaptedLevel) => any} onItemSelect
  */
 
 /**
  * @typedef StateProps
- * @property {OlapHierarchy[]} hierarchies
+ * @property {import("@datawheel/olap-client").AdaptedHierarchy[]} hierarchies
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */
@@ -29,7 +29,7 @@ const TimeDimensionMenu = ({hierarchies, onItemSelect, selectedItems}) =>
     )}
   </Menu>;
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => {
   const timeDimension = selectOlapTimeDimension(state);
   return {

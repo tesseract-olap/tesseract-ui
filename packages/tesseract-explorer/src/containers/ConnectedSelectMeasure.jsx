@@ -8,10 +8,10 @@ import {selectOlapMeasureItems} from "../state/selectors";
 
 /**
  * @typedef StateProps
- * @property {OlapMeasure[]} items
+ * @property {import("@datawheel/olap-client").AdaptedMeasure[]} items
  */
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   items: selectOlapMeasureItems(state)
 });

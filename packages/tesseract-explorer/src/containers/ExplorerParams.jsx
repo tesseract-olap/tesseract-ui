@@ -24,7 +24,7 @@ import {ConnectedSelectLocale as SelectLocale} from "./SelectLocale";
  * @typedef StateProps
  * @property {boolean} isLocaleSelectEnabled
  * @property {boolean} isCubeSelectEnabled
- * @property {QueryItem} query
+ * @property {TessExpl.Struct.QueryItem} query
  */
 
 /**
@@ -57,7 +57,7 @@ const ExplorerParams = props =>
     </ButtonGroup>
   </ExplorerColumn>;
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   isLocaleSelectEnabled: selectLocaleOptions(state).length > 1,
   isCubeSelectEnabled: selectOlapCubeKeys(state).length > 1,

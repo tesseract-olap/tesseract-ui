@@ -7,12 +7,12 @@ import DimensionMenuItem from "./MenuItemDimension";
 /**
  * @typedef OwnProps
  * @property {string[]} selectedItems
- * @property {(level: OlapLevel, hierarchy: OlapHierarchy, dimension: OlapDimension) => any} onItemSelect
+ * @property {(level: import("@datawheel/olap-client").AdaptedLevel, hierarchy: import("@datawheel/olap-client").AdaptedHierarchy, dimension: import("@datawheel/olap-client").AdaptedDimension) => any} onItemSelect
  */
 
 /**
  * @typedef StateProps
- * @property {OlapDimension[]} dimensions
+ * @property {import("@datawheel/olap-client").AdaptedDimension[]} dimensions
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */
@@ -28,7 +28,7 @@ const DimensionMenu = ({dimensions, selectedItems, onItemSelect}) =>
     )}
   </Menu>;
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   dimensions: selectOlapDimensionItems(state) || []
 });

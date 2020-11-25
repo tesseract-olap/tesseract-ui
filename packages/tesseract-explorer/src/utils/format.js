@@ -30,7 +30,7 @@ export function abbreviateFullName(nameParts, joint = "/") {
 }
 
 /**
- * @param {FilterItem} filter
+ * @param {TessExpl.Struct.FilterItem} filter
  * @returns {string}
  */
 export function summaryFilter(filter) {
@@ -39,7 +39,7 @@ export function summaryFilter(filter) {
 }
 
 /**
- * @param {GrowthItem} growth
+ * @param {TessExpl.Struct.GrowthItem} growth
  * @returns {string}
  */
 export function summaryGrowth(growth) {
@@ -50,7 +50,7 @@ export function summaryGrowth(growth) {
 }
 
 /**
- * @param {RcaItem} rca
+ * @param {TessExpl.Struct.RcaItem} rca
  * @returns {string}
  */
 export function summaryRca(rca) {
@@ -62,7 +62,7 @@ export function summaryRca(rca) {
 }
 
 /**
- * @param {TopkItem} topk
+ * @param {TessExpl.Struct.TopkItem} topk
  * @returns {string}
  */
 export function summaryTopk(topk) {

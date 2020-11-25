@@ -22,7 +22,7 @@ import {activeItemCounter} from "../utils/validation";
 /**
  * @typedef DispatchProps
  * @property {() => void} clearHandler
- * @property {(level: OlapLevel, hierarchy: OlapHierarchy, dimension: OlapDimension) => any} createHandler
+ * @property {(level: import("@datawheel/olap-client").AdaptedLevel, hierarchy: import("@datawheel/olap-client").AdaptedHierarchy, dimension: import("@datawheel/olap-client").AdaptedDimension) => any} createHandler
  * @property {(item: DrilldownItem) => void} removeHandler
  * @property {(item: DrilldownItem) => void} toggleHandler
  * @property {(item: DrilldownItem, caption: string) => void} updateCaptionHandler
@@ -64,12 +64,12 @@ const QueryDrilldowns = props => {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   items: selectDrilldownItems(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+/** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({
   clearHandler() {
     dispatch(doDrilldownClear());

@@ -128,7 +128,7 @@ export const QueryBooleans = props =>
 
 export const MemoQueryBooleans = memo(QueryBooleans, shallowEqualExceptFns);
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   ...selectBooleans(state),
   ...selectPaginationParams(state),
@@ -136,7 +136,7 @@ const mapState = state => ({
   _enabledBooleans: selectServerBooleansEnabled(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+/** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({
   toggleDebugHandler() {
     dispatch(doBooleanToggle("debug"));

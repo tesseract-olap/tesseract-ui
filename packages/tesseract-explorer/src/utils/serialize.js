@@ -9,8 +9,8 @@ import {
 import {SERIAL_BOOLEAN} from "../enums";
 
 /**
- * @param {QueryParams} query
- * @returns {SerializedQuery}
+ * @param {TessExpl.Struct.QueryParams} query
+ * @returns {TessExpl.Struct.SerializedQuery}
  */
 export function serializeState(query) {
   const cuts = Object.values(query.cuts).filter(isActiveCut).map(serializeCut);
@@ -51,7 +51,7 @@ export function serializeState(query) {
 }
 
 /**
- * @param {CutItem} item
+ * @param {TessExpl.Struct.CutItem} item
  * @returns {string}
  */
 export function serializeCut(item) {
@@ -61,7 +61,7 @@ export function serializeCut(item) {
 }
 
 /**
- * @param {FilterItem} item
+ * @param {TessExpl.Struct.FilterItem} item
  * @returns {string}
  */
 export function serializeFilter(item) {
@@ -69,7 +69,7 @@ export function serializeFilter(item) {
 }
 
 /**
- * @param {GrowthItem} item
+ * @param {TessExpl.Struct.GrowthItem} item
  * @returns {string}
  */
 export function serializeGrowth(item) {
@@ -77,7 +77,7 @@ export function serializeGrowth(item) {
 }
 
 /**
- * @param {RcaItem} item
+ * @param {TessExpl.Struct.RcaItem} item
  * @returns {string}
  */
 export function serializeRca(item) {
@@ -85,7 +85,7 @@ export function serializeRca(item) {
 }
 
 /**
- * @param {TopkItem} item
+ * @param {TessExpl.Struct.TopkItem} item
  * @returns {string}
  */
 export function serializeTopk(item) {

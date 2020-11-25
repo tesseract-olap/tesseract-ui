@@ -2,8 +2,8 @@ import {createSelector} from "reselect";
 import {sortByDate} from "../../utils/array";
 
 /**
- * @param {ExplorerState | {explorer: ExplorerState}} state
- * @returns {QueriesState}
+ * @param {TessExpl.State.ExplorerState | {explorer: TessExpl.State.ExplorerState}} state
+ * @returns {TessExpl.State.QueriesState}
  */
 export function selectQueriesState(state) {
   return "explorer" in state ? state.explorer.explorerQueries : state.explorerQueries;

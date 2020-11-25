@@ -46,12 +46,12 @@ const ButtonExecuteQuery = props => {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, {}, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, {}>} */
 const mapState = state => ({
   endpoint: selectServerEndpoint(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, {}>} */
+/** @type {TessExpl.State.MapDispatchFn<DispatchProps, {}>} */
 const mapDispatch = dispatch => ({
   executeQueryHandler() {
     dispatch(doExecuteQuery());

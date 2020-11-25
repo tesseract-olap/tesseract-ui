@@ -48,7 +48,7 @@ export function keyBy(array, accesor, target = {}) {
 /**
  * Transforms a level array descriptor into a level object descriptor
  * @param {string[]} arr
- * @returns {LevelRef}
+ * @returns {TessExpl.Struct.LevelRef}
  */
 export function levelArrayToRef(arr) {
   return {dimension: arr[0], hierarchy: arr[1], level: arr[2]};
@@ -56,7 +56,7 @@ export function levelArrayToRef(arr) {
 
 /**
  * Transforms a level object descriptor into a level array descriptor
- * @param {LevelDescriptor} ref
+ * @param {TessExpl.Struct.LevelDescriptor} ref
  * @returns {string[]}
  */
 export function levelRefToArray(ref) {
@@ -142,7 +142,7 @@ export function splitName(name) {
 
 /**
  * Converts a descriptor into a fullName string
- * @param {LevelDescriptor} ref
+ * @param {TessExpl.Struct.LevelDescriptor} ref
  */
 export function stringifyName(ref) {
   const nameParts = levelRefToArray(ref);
