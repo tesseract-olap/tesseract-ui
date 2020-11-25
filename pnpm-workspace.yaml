@@ -4,3 +4,4 @@ packages:
   - 'examples/oec'
   - 'packages/create-tesseract-ui'
   - 'packages/tesseract-explorer'
+  - 'packages/view-vizbuilder'

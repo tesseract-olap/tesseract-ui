@@ -1,0 +1,12 @@
+.vscode/
+node_modules/
+src/
+tests/
+
+.babelrc
+.editorconfig
+.gitignore
+*.tgz
+*.map
+jsconfig.json
+rollup.config.js

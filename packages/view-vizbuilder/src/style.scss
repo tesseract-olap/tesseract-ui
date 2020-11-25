@@ -1,0 +1,44 @@
+.vb-wrapper {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  overflow: auto;
+
+  & > .vb-toolbar-wrapper {
+    display: none;
+  }
+
+  & > .vb-charts-wrapper {
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 2rem;
+    justify-content: space-between;
+    align-content: space-between;
+
+    &.unique {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      justify-items: stretch;
+      align-items: stretch;
+    }
+  }
+
+  & .vb-chart-card {
+    min-height: 400px;
+    display: grid;
+    grid-template-rows: 30px 1fr;
+    gap: 0.5rem;
+    justify-items: stretch;
+    align-items: stretch;
+
+    & > .vb-chart-toolbar {}
+
+    & > .vb-chart-viz {}
+
+    svg.d3plus-viz {
+      display: block !important;
+    }
+  }
+}
