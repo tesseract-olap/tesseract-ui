@@ -38,7 +38,6 @@ const VizbuilderView = props => (
     params={props.params}
     // Add the needed additional parameters to make the @datawheel/vizbuilder component work
     allowedChartTypes={["barchart", "barchartyear", "geomap", "lineplot", "stacked", "treemap"]}
-    className="vizbuilder-view"
     formatters={FORMATTERS}
     getTopojson={TOPOJSON}
     showConfidenceInt={false}
@@ -72,8 +71,8 @@ const PANELS = {
   );
 ```
 
-You can control completely how these parameters are obtained; you can set them through React Context or other mean.  
-You can also use React.lazy to lazily load this new view and split the dependencies added by the Vizbuilder component.
+You can control completely how these parameters are obtained; you can set them through [React Context](https://reactjs.org/docs/context.html) or other mean.  
+You can also use [`React.lazy`](https://reactjs.org/docs/code-splitting.html#reactlazy) (`React.Suspense` is already set inside the Explorer component) to lazily load this new view, and also split the dependencies added by the Vizbuilder component.
 
 ## License
 
