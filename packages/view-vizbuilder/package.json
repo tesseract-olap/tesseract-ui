@@ -1,6 +1,6 @@
 {
   "name": "@datawheel/tesseract-vizbuilder",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generates a vizbuilder view for results query in Tesseract Explorer.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -14,6 +14,11 @@
   "keywords": [],
   "author": "Francisco Abarzúa <francisco@datawheel.us>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Datawheel/tesseract-ui.git",
+    "directory": "packages/view-vizbuilder"
+  },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.12.5",
     "@datawheel/vizbuilder": "^0.1.0",
