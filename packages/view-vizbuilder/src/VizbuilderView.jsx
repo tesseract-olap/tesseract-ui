@@ -59,10 +59,12 @@ export const VizbuilderView = props => {
     className: "vizbuilder-view",
     datacap: props.datacap,
     defaultLocale: props.defaultLocale,
-    getTopojson: props.getTopojson,
+    measureConfig: props.measureConfig,
     onPeriodChange: props.onPeriodChange,
     queries,
     showConfidenceInt: props.showConfidenceInt,
-    translations: props.translations
+    topojsonConfig: props.topojsonConfig,
+    translations: props.translations,
+    userConfig: props.userConfig
   });
 };
