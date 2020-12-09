@@ -20,7 +20,7 @@ import {buildQuery} from "../utils/structs";
 
 /**
  * @typedef DispatchProps
- * @property {() => void} onItemCreate
+ * @property {(currentQuery?: TessExpl.Struct.QueryItem) => void} onItemCreate
  * @property {(item: string) => void} onItemSelect
  */
 
@@ -42,7 +42,7 @@ const ExplorerQueries = props => {
         className="query-item create"
         icon="insert"
         large
-        onClick={props.onItemCreate}
+        onClick={() => props.onItemCreate(currentItem)}
       />
     </ExplorerColumn>
   );
@@ -56,8 +56,8 @@ const mapState = state => ({
 
 /** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({
-  onItemCreate() {
-    const query = buildQuery({});
+  onItemCreate(currentQuery) {
+    const query = buildQuery({params: currentQuery?.params});
     dispatch(doQueriesUpdate(query));
     dispatch(doQueriesSelect(query.key));
   },
