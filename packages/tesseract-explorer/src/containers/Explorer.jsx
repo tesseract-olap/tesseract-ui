@@ -1,6 +1,6 @@
 import {Classes} from "@blueprintjs/core";
 import classNames from "classnames";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import ExplorerNavbar from "../components/ExplorerNavbar";
 import LoadingScreen from "../components/LoadingScreen";
@@ -37,14 +37,12 @@ import ExplorerResults from "./ExplorerResults";
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const ExplorerComponent = ({locale, src, darkTheme, title, isLoaded, updateLocaleList, setupClient, panels}) => {
-  const [sourceConfig] = useState(src);
-
-  const availableLocale = useMemo(() => locale, locale);
+  const [availableLocale] = useState(locale);
 
   useEffect(() => {
     updateLocaleList(locale);
-    setupClient(sourceConfig);
-  }, [availableLocale, sourceConfig]);
+    setupClient(src);
+  }, [availableLocale, src]);
 
   return (
     <div className={classNames("explorer-wrapper", {[Classes.DARK]: darkTheme})}>
