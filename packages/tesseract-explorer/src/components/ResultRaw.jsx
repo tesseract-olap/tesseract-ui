@@ -3,17 +3,17 @@ import React, {Fragment} from "react";
 import {FormGroup, Classes} from "@blueprintjs/core";
 import {DebugURL} from "./DebugURL";
 import {RawObject} from "react-raw-object";
-import PerfectScrollbar from "react-perfect-scrollbar";
+import ScrollArea from "react-shadow-scroll";
 
 /**
  * @typedef OwnProps
  * @property {string} [className]
- * @property {QueryResult} result
+ * @property {TessExpl.Struct.QueryResult} result
  */
 
 const ResultRaw = ({className, result: {data, headers, sourceCall, urlAggregate, urlLogicLayer}}) =>
   <div className={classNames("data-raw", className)}>
-    <PerfectScrollbar>
+    <ScrollArea isShadow={false}>
       <div className="response-explorer">
         <FormGroup label="Response headers">
           <RawObject object={headers} depthExpanded={1} />
@@ -23,7 +23,7 @@ const ResultRaw = ({className, result: {data, headers, sourceCall, urlAggregate,
           <RawObject object={data} depthExpanded={data.length > 1200 ? 0 : 1} />
         </FormGroup>
       </div>
-    </PerfectScrollbar>
+    </ScrollArea>
 
     <div className="debug-explorer">
       {urlLogicLayer && <FormGroup label="LogicLayer API URL">

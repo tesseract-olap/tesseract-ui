@@ -1,6 +1,6 @@
 import {Button, ButtonGroup, Divider, Icon, Intent} from "@blueprintjs/core";
 import React from "react";
-import PerfectScrollbar from "react-perfect-scrollbar";
+import ScrollArea from "react-shadow-scroll";
 import classNames from "classnames";
 
 /**
@@ -25,7 +25,7 @@ const QueryArea = ({children, className, open = true, stopBubbling, title, toolb
         {warning && <Button disabled intent={Intent.WARNING} icon="warning-sign" />}
       </ButtonGroup>
     </summary>
-    <PerfectScrollbar className="details-content">{children}</PerfectScrollbar>
+    <ScrollArea isShadow={false}>{children}</ScrollArea>
   </details>;
 
 QueryArea.defaultProps = {

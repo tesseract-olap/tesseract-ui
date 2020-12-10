@@ -50,10 +50,9 @@
     line-height: 1.1em;
   }
 
-  .details-content {
+  & > .container {
     padding: 0.5rem;
     max-height: 10rem;
-    overflow: auto;
   }
 }
 

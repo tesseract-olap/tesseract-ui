@@ -1,7 +1,6 @@
 import {Button, Classes, InputGroup, Menu, MenuItem} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {useMemo, useState} from "react";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import ViewPortList from "react-viewport-list";
 import {safeRegExp} from "../utils/transform";
 import {activeItemCounter} from "../utils/validation";
@@ -18,7 +17,7 @@ import "../style/TransferInput.scss";
  */
 
 /**
- * @template {IQueryItem} T
+ * @template {TessExpl.Struct.IQueryItem} T
  * @type {React.FC<OwnProps<T>>}
  */
 export const TransferInput = ({
@@ -59,10 +58,8 @@ export const TransferInput = ({
     ? <Button icon="cross" minimal={true} onClick={() => setFilter("")} />
     : undefined;
 
-  /** @type {(item: T, p1: {innerRef: any, index: number, style: any}) => JSX.Element} */
-  const renderItem = (item, {innerRef, style}) => <MenuItem
-    itemRef={innerRef}
-    style={style}
+  /** @type {(item: T, index: number) => JSX.Element} */
+  const renderItem = item => <MenuItem
     icon={item.active ? "tick-circle" : undefined}
     key={item.key}
     onClick={() => toggleHandler(item)}
@@ -82,28 +79,24 @@ export const TransferInput = ({
         value={filter}
       />
       <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-        <PerfectScrollbar>
-          <React.Fragment>
-            {unselectedHidden > 0 &&
-            <Menu.Divider title={`${unselectedHidden} items hidden`} />
-            }
-            <ViewPortList listLength={unselected.length} itemMinHeight={30}>
-              {params => renderItem(unselected[params.index], params)}
-            </ViewPortList>
-          </React.Fragment>
-        </PerfectScrollbar>
+        <React.Fragment>
+          {unselectedHidden > 0 &&
+          <Menu.Divider title={`${unselectedHidden} items hidden`} />
+          }
+          <ViewPortList items={unselected} itemMinSize={30}>
+            {renderItem}
+          </ViewPortList>
+        </React.Fragment>
       </Menu>
       <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-        <PerfectScrollbar>
-          <React.Fragment>
-            {selectedHidden > 0 &&
-              <Menu.Divider title={`${selectedHidden} items hidden`} />
-            }
-            <ViewPortList listLength={selected.length} itemMinHeight={30}>
-              {params => renderItem(selected[params.index], params)}
-            </ViewPortList>
-          </React.Fragment>
-        </PerfectScrollbar>
+        <React.Fragment>
+          {selectedHidden > 0 &&
+            <Menu.Divider title={`${selectedHidden} items hidden`} />
+          }
+          <ViewPortList items={selected} itemMinSize={30}>
+            {renderItem}
+          </ViewPortList>
+        </React.Fragment>
       </Menu>
     </div>
   );
