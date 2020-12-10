@@ -1,8 +1,9 @@
-import {Button} from "@blueprintjs/core";
+import {Button, ButtonGroup} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import {ExplorerColumn} from "../components/ExplorerColumn";
 import {MemoStoredQuery as StoredQuery} from "../components/StoredQuery";
+import {doParseQueryUrl} from "../middleware/actions";
 import {doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectCurrentQueryItem, selectQueryItems} from "../state/queries/selectors";
 import {buildQuery} from "../utils/structs";
@@ -22,6 +23,7 @@ import {buildQuery} from "../utils/structs";
  * @typedef DispatchProps
  * @property {(currentQuery?: TessExpl.Struct.QueryItem) => void} onItemCreate
  * @property {(item: string) => void} onItemSelect
+ * @property {() => any} parseQueryUrlHandler
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
@@ -29,6 +31,21 @@ const ExplorerQueries = props => {
   const {onItemSelect, currentItem} = props;
   return (
     <ExplorerColumn className={props.className} title="Queries" defaultOpen={props.items.length > 1}>
+      <ButtonGroup vertical minimal>
+        <Button
+          className="action-create"
+          icon="insert"
+          onClick={() => props.onItemCreate(currentItem)}
+          text="Duplicate query"
+        />
+        <Button
+          className="action-parseurl"
+          icon="bring-data"
+          onClick={props.parseQueryUrlHandler}
+          text="Query from URL"
+        />
+      </ButtonGroup>
+
       {props.items.map(item =>
         <StoredQuery
           active={item === currentItem}
@@ -38,12 +55,6 @@ const ExplorerQueries = props => {
           onClick={() => onItemSelect(item.key)}
         />
       )}
-      <Button
-        className="query-item create"
-        icon="insert"
-        large
-        onClick={() => props.onItemCreate(currentItem)}
-      />
     </ExplorerColumn>
   );
 };
@@ -63,6 +74,13 @@ const mapDispatch = dispatch => ({
   },
   onItemSelect(item) {
     dispatch(doQueriesSelect(item));
+  },
+  parseQueryUrlHandler() {
+    const string = window.prompt("Enter the URL of the query you want to parse:");
+    if (string) {
+      const url = new URL(string);
+      dispatch(doParseQueryUrl(url.toString()));
+    }
   }
 });
 

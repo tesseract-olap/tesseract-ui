@@ -2,7 +2,6 @@ import {Classes} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
-import ExplorerNavbar from "../components/ExplorerNavbar";
 import LoadingScreen from "../components/LoadingScreen";
 import ResultPivot from "../components/ResultPivot";
 import ResultRaw from "../components/ResultRaw";
@@ -18,7 +17,6 @@ import ExplorerResults from "./ExplorerResults";
 /**
  * @typedef OwnProps
  * @property {string | import("axios").AxiosRequestConfig} src The URL for the data server.
- * @property {string} [title] A title to show on the navbar.
  * @property {string[]} locale A list of the available locale options
  * @property {Record<string, React.FunctionComponent | React.ComponentClass>} panels
  */
@@ -36,7 +34,7 @@ import ExplorerResults from "./ExplorerResults";
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
-const ExplorerComponent = ({locale, src, darkTheme, title, isLoaded, updateLocaleList, setupClient, panels}) => {
+const ExplorerComponent = ({locale, src, darkTheme, isLoaded, updateLocaleList, setupClient, panels}) => {
   const [availableLocale] = useState(locale);
 
   useEffect(() => {
@@ -47,7 +45,6 @@ const ExplorerComponent = ({locale, src, darkTheme, title, isLoaded, updateLocal
   return (
     <div className={classNames("explorer-wrapper", {[Classes.DARK]: darkTheme})}>
       <LoadingScreen className="explorer-loading" />
-      <ExplorerNavbar className="explorer-navbar" title={title} />
       <ExplorerQueries className="explorer-queries" />
       {isLoaded ? <ExplorerParams className="explorer-params" /> : <div/>}
       <ExplorerResults className="explorer-results" panels={panels} />
@@ -57,7 +54,6 @@ const ExplorerComponent = ({locale, src, darkTheme, title, isLoaded, updateLocal
 
 ExplorerComponent.defaultProps = {
   locale: ["en"],
-  title: "tesseract-olap",
   panels: {
     "Data table": ResultTable,
     "Pivot table": ResultPivot,
