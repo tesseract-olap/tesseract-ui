@@ -34,7 +34,6 @@
     "@datawheel/olap-client": "^2.0.0-alpha.3",
     "classnames": "^2.2.6",
     "clipboard-copy": "^3.0.0",
-    "d3-array": "^2.8.0",
     "form-urldecoded": "^0.1.0",
     "form-urlencoded": "^4.2.1",
     "iso-639-1": "^2.1.4",

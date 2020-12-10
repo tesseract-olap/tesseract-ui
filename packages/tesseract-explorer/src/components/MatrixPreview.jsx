@@ -1,7 +1,7 @@
 import {NonIdealState} from "@blueprintjs/core";
 import {Cell, Column, RowHeaderCell, Table} from "@blueprintjs/table";
-import {rollup} from "d3-array";
-import React from "react";
+import React, {memo} from "react";
+import {regroup, sumBy} from "../utils/transform";
 
 /**
  * @template T
@@ -14,22 +14,23 @@ import React from "react";
  */
 
 /**
- * @template T
+ * @template {Record<string, number>} T
  * @type {React.FC<OwnProps<T>>}
  */
-const MatrixPreview = ({columns, className, data, values, rows}) => {
+export const MatrixPreview = ({columns, className, data, values, rows}) => {
   if (!columns || !rows || columns === rows || !values || data.length === 0) {
     return <NonIdealState />;
   }
 
-  const columnKeys = Array.from(new Set(data.map(d => d[columns])));
-  const rowKeys = Array.from(new Set(data.map(d => d[rows])));
+  const columnKeys = [...new Set(data.map(d => d[columns]))];
+  const rowKeys = [...new Set(data.map(d => d[rows]))];
 
-  const rolledData = rollup(
+  /** @type {Map<string, Map<string, number>>} */
+  const rolledData = regroup(
     data,
-    i => i.reduce((sum, d) => sum + d[values], 0),
-    i => i[columns],
-    i => i[rows]
+    group => sumBy(group, values),
+    i => `${i[columns]}`,
+    i => `${i[rows]}`
   );
 
   return (
@@ -37,7 +38,9 @@ const MatrixPreview = ({columns, className, data, values, rows}) => {
       className={className}
       enableColumnResizing={true}
       enableRowResizing={false}
-      getCellClipboardData={(rowIndex, columnIndex) => rolledData.get(columnKeys[columnIndex]).get(rowKeys[rowIndex])}
+      getCellClipboardData={(rowIndex, columnIndex) =>
+        rolledData.get(`${columnKeys[columnIndex]}`).get(`${rowKeys[rowIndex]}`)
+      }
       key={`${columns}-${rows}-${values}`}
       numRows={rowKeys.length}
       rowHeaderCellRenderer={rowIndex => <RowHeaderCell name={rowKeys[rowIndex]} />}
@@ -46,8 +49,12 @@ const MatrixPreview = ({columns, className, data, values, rows}) => {
       {columnKeys.map((columnKey, columnIndex) =>
         <Column
           cellRenderer={rowIndex =>
-            <Cell className="column-number" columnIndex={columnIndex} rowIndex={rowIndex}>
-              {rolledData.get(columnKey).get(rowKeys[rowIndex])}
+            <Cell
+              className="column-number"
+              columnIndex={columnIndex}
+              rowIndex={rowIndex}
+            >
+              {rolledData.get(`${columnKey}`).get(`${rowKeys[rowIndex]}`)}
             </Cell>
           }
           key={`${columnKey}-${values}`}
@@ -59,4 +66,4 @@ const MatrixPreview = ({columns, className, data, values, rows}) => {
   );
 };
 
-export default MatrixPreview;
+export const MemoMatrixPreview = memo(MatrixPreview);

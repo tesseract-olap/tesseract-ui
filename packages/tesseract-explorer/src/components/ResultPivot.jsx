@@ -1,24 +1,26 @@
-import {ButtonGroup, Callout, FormGroup, HTMLSelect, Intent} from "@blueprintjs/core";
+import {
+  ButtonGroup,
+  Callout,
+  FormGroup,
+  HTMLSelect,
+  Intent
+} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {useState, useMemo} from "react";
-import {pivotData} from "../utils/transform";
+import {csvSerialize} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
 import ButtonDownload from "./ButtonDownload";
-import MatrixPreview from "./MatrixPreview";
+import {MemoMatrixPreview as MatrixPreview} from "./MatrixPreview";
 
 /**
  * @typedef OwnProps
  * @property {string} [className]
- * @property {import("../../types/explorer").QueryParams} params
- * @property {import("../../types/explorer").QueryResult} result
+ * @property {TessExpl.Struct.QueryParams} params
+ * @property {TessExpl.Struct.QueryResult} result
  */
 
 /** @type {React.FC<OwnProps>} */
-const ResultPivot = ({
-  className,
-  params,
-  result
-}) => {
+const ResultPivot = ({className, params, result}) => {
   const {data} = result;
 
   const initial = useMemo(() => {
@@ -30,7 +32,10 @@ const ResultPivot = ({
       pivotColumns: suggestedCol?.level || "",
       pivotRows: suggestedRow?.level || "",
       pivotValues: ms[0].measure,
-      levelNames: dd.map(item => ({value: item.level, label: item.uniqueName || item.level})),
+      levelNames: dd.map(item => ({
+        value: item.level,
+        label: item.uniqueName || item.level
+      })),
       measureNames: ms.map(item => item.measure)
     };
   }, [result]);
@@ -43,7 +48,9 @@ const ResultPivot = ({
   const fileName = [params.cube, pivotColumns, pivotRows, pivotValues].join("-");
 
   const measureAggType = useMemo(() => {
-    const measure = Object.values(params.measures).find(item => item.measure === pivotValues);
+    const measure = Object.values(params.measures).find(
+      item => item.measure === pivotValues
+    );
     return measure ? measure.aggType : "UNKNOWN";
   }, [pivotValues]);
 
@@ -98,26 +105,16 @@ const ResultPivot = ({
           <ButtonDownload
             text="CSV"
             fileName={`${fileName}.csv`}
-            fileText={pivotData.bind(
-              null,
-              data,
-              pivotColumns,
-              pivotRows,
-              pivotValues,
-              ","
-            )}
+            fileText={() =>
+              csvSerialize(data, pivotColumns, pivotRows, pivotValues, ",")
+            }
           />
           <ButtonDownload
             text="TSV"
             fileName={`${fileName}.tsv`}
-            fileText={pivotData.bind(
-              null,
-              data,
-              pivotColumns,
-              pivotRows,
-              pivotValues,
-              "\t"
-            )}
+            fileText={() =>
+              csvSerialize(data, pivotColumns, pivotRows, pivotValues, "\t")
+            }
           />
         </ButtonGroup>
       </div>

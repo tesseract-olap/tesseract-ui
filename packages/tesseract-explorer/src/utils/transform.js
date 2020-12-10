@@ -1,4 +1,52 @@
-import {rollups} from "d3-array";
+/**
+ * Converts an array of tidy data into a pivotted table.
+ * Outputs a CSV-like string.
+ * @param {any[]} data
+ * @param {string} cName Property on the columns side
+ * @param {string} rName Property on the rows side
+ * @param {string} vName Property with the value
+ * @param {string} [colJoint=","] Joint character for the columns
+ * @param {string} [rowJoint="\n"] Joint character for the columns
+ */
+export function csvSerialize(
+  data,
+  cName,
+  rName,
+  vName,
+  colJoint = ",",
+  rowJoint = "\n"
+) {
+  const quoteSafe = value => {
+    const str = `${value}`.trim();
+    return str.indexOf(colJoint) > -1 ? JSON.stringify(str) : str;
+  };
+
+  /** @type {Map<string, Map<string, number>>} */
+  const groupedData = regroup(
+    data,
+    group => sumBy(group, vName),
+    d => d[cName],
+    d => d[rName]
+  );
+
+  // Array of the members in the column axis
+  const headers = Array.from(groupedData.keys(), quoteSafe);
+
+  // Array of numeric arrays. Outer array represents columns, inners represent rows. [||||]
+  // TODO: Currently just converted to string, should use value formatter.
+  const values = Array.from(groupedData.values(), col =>
+    Array.from(col.values(), quoteSafe)
+  );
+
+  // Array of rows; first item is member in row axis, followed by each value for that row.
+  const rows = Array.from([...groupedData.values()][0], (row, rowIndex) =>
+    [row[0], ...values.map(col => col[rowIndex])]
+      .map(quoteSafe)
+      .join(colJoint)
+  );
+
+  return [[rName, ...headers].join(colJoint), ...rows].join(rowJoint);
+}
 
 /**
  * @template T
@@ -81,27 +129,31 @@ export function parseName(name) {
 }
 
 /**
- *
- * @param {any[]} data
- * @param {string} cName Property on the columns side
- * @param {string} rName Property on the rows side
- * @param {string} vName Property with the value
- * @param {string} [colJoint=","] Joint character for the columns
- * @param {string} [rowJoint="\n"] Joint character for the columns
+ * @template T
+ * @template U
+ * @param {T[]} values
+ * @param {(group: T[]) => U} reduce
+ * @param {(data: T) => string} keyGetter
+ * @param  {...(data: T) => string} keys
+ * @returns {Map<string, U> | Map<string, Map<string, U>>}
  */
-export function pivotData(data, cName, rName, vName, colJoint = ",", rowJoint = "\n") {
-  const quoteSafe = value => {
-    const str = `${value}`.trim();
-    return str.indexOf(colJoint) > -1 ? JSON.stringify(str) : str;
-  };
-
-  const groupedData = rollups(data, d => d[0][vName], d => d[cName], d => d[rName]);
-  const headers = [rName].concat(groupedData.map(col => quoteSafe(col[0])));
-  const values = groupedData.map(col => col[1].map(row => quoteSafe(row[1])));
-  const rows = groupedData[0][1].map((row, rowIndex) =>
-    [quoteSafe(row[0])].concat(values.map(col => col[rowIndex])).join(colJoint)
-  );
-  return [headers.join(colJoint)].concat(rows).join(rowJoint);
+export function regroup(values, reduce, keyGetter, ...keys) {
+  const groups = new Map();
+  for (let i = 0; i < values.length; i++) {
+    const value = values[i];
+    const key = keyGetter(value);
+    const group = groups.get(key);
+    group ? group.push(value) : groups.set(key, [value]);
+  }
+  const iter = groups.entries();
+  for (let item = iter.next(); !item.done; item = iter.next()) {
+    const group = item.value;
+    const value = keys.length === 0
+      ? reduce(group[1])
+      : regroup(group[1], reduce, ...keys);
+    groups.set(group[0], value);
+  }
+  return groups;
 }
 
 /**
@@ -153,4 +205,15 @@ export function stringifyName(ref) {
     nameParts.splice(0, 1);
   }
   return joinName(nameParts);
+}
+
+/**
+ * @template T
+ * @param {T[]} data
+ * @param {keyof T | ((item: T) => number)} accesor
+ * @returns {number}
+ */
+export function sumBy(data, accesor) {
+  const accesorFn = typeof accesor === "function" ? accesor : i => i[accesor];
+  return data.reduce((sum, i) => sum + accesorFn(i), 0);
 }
