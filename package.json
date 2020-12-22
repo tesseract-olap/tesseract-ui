@@ -1,8 +1,10 @@
 {
   "name": "@datawheel/tesseract-ui-repo",
   "private": true,
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
   "dependencies": {
-    "cross-spawn": "^6.0.5",
-    "lerna": "^3.22.1"
+    "pnpm": "^5.0.0"
   }
 }

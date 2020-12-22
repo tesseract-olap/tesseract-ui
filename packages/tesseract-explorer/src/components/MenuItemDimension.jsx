@@ -4,8 +4,8 @@ import HierarchyMenuItem from "./MenuItemHierarchy";
 
 /**
  * @typedef OwnProps
- * @property {OlapDimension} dimension
- * @property {(item: OlapLevel) => any} onItemSelect
+ * @property {import("@datawheel/olap-client").AdaptedDimension} dimension
+ * @property {(level: import("@datawheel/olap-client").AdaptedLevel, hierarchy: import("@datawheel/olap-client").AdaptedHierarchy, dimension: import("@datawheel/olap-client").AdaptedDimension) => any} onItemSelect
  * @property {string[]} selectedItems
  */
 
@@ -15,6 +15,7 @@ const DimensionMenuItem = ({dimension, selectedItems, onItemSelect}) => {
   if (hierarchies.length === 1) {
     return (
       <HierarchyMenuItem
+        dimension={dimension}
         hierarchy={hierarchies[0]}
         key={hierarchies[0].uri}
         onItemSelect={onItemSelect}
@@ -28,6 +29,7 @@ const DimensionMenuItem = ({dimension, selectedItems, onItemSelect}) => {
         {hierarchies.map(hie =>
           <HierarchyMenuItem
             childItem
+            dimension={dimension}
             hierarchy={hie}
             key={hie.uri}
             onItemSelect={onItemSelect}

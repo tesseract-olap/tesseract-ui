@@ -14,7 +14,7 @@ import MenuDimension from "./MenuDimension";
  * @property {string|undefined} [selectedItem]
  * @property {keyof JSX.IntrinsicElements} [targetTagName]
  * @property {keyof JSX.IntrinsicElements} [wrapperTagName]
- * @property {(level: OlapLevel) => void} onItemSelect
+ * @property {(level: import("@datawheel/olap-client").AdaptedLevel) => void} onItemSelect
  * @property {boolean} [usePortal]
  */
 

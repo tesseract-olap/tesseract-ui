@@ -1,8 +1,6 @@
 import {Button, Classes, InputGroup, Menu, MenuItem} from "@blueprintjs/core";
 import classNames from "classnames";
-import memoizeOne from "memoize-one";
-import React, {Component} from "react";
-import PerfectScrollbar from "react-perfect-scrollbar";
+import React, {useMemo, useState} from "react";
 import ViewPortList from "react-viewport-list";
 import {safeRegExp} from "../utils/transform";
 import {activeItemCounter} from "../utils/validation";
@@ -14,111 +12,92 @@ import "../style/TransferInput.scss";
  * @typedef OwnProps
  * @property {T[]} items
  * @property {(items: T[]) => void} onChange
+ * @property {(item: T) => string} [getLabel]
+ * @property {string} [searchPlaceholder]
  */
 
 /**
- * @template {IQueryItem} T
- * @extends {Component<OwnProps<T>>}
+ * @template {TessExpl.Struct.IQueryItem} T
+ * @type {React.FC<OwnProps<T>>}
  */
-class TransferInput extends Component {
-  state = {
-    filter: ""
+export const TransferInput = ({
+  items,
+  onChange,
+  getLabel = item => `${item}`,
+  searchPlaceholder = "Filter items (regex enabled)"
+}) => {
+  const [filter, setFilter] = useState("");
+
+  const toggleHandler = (item, idx = items.indexOf(item), key = item.key) => {
+    const index = idx > -1 ? idx : items.findIndex(itm => itm.key === key);
+    const nextItems = items.slice();
+    nextItems[index] = {...item, active: !item.active};
+    onChange(nextItems);
   };
 
-  clearFilter = () => this.setState({filter: ""});
-  updateFilter = evt => {
-    console.log(evt.target.value);
-    this.setState({filter: evt.target.value});
-  }
-
-  getSelected = memoizeOne((items, filter) => {
+  const {selected, unselected} = useMemo(() => {
+    const selected = items.slice(0, 0);
+    const unselected = items.slice(0, 0);
     const tester = safeRegExp(filter, "i");
-    return items.filter(item => item.active && tester.test(item.name));
-  });
-  getUnselected = memoizeOne((items, filter) => {
-    const tester = safeRegExp(filter, "i");
-    return items.filter(item => !item.active && tester.test(item.name));
-  });
+    let i = items.length;
+    while (i--) {
+      const item = items[i];
+      tester.test(getLabel(item)) &&
+        (item.active ? selected : unselected).unshift(item);
+    }
+    return {selected, unselected};
+  }, [items, filter]);
 
-  toggleHandler(item) {
-    const key = item.key;
-    const newItem = {...item, active: !item.active};
-    const nextItems = this.props.items.map(item => item.key === key ? newItem : item);
-    this.props.onChange(nextItems);
-  }
+  const selectedCount = items.reduce(activeItemCounter, 0);
+  const selectedHidden = selectedCount - selected.length;
 
-  shouldComponentUpdate(nextProps) {
-    return nextProps.items !== this.props.items;
-  }
+  const unselectedCount = items.length - selectedCount;
+  const unselectedHidden = unselectedCount - unselected.length;
 
-  render() {
-    const {items} = this.props;
-    const {filter} = this.state;
+  const rightElement = filter.length > 0
+    ? <Button icon="cross" minimal={true} onClick={() => setFilter("")} />
+    : undefined;
 
-    const selected = this.getSelected(items, filter);
-    const selectedCount = items.reduce(activeItemCounter, 0);
-    const selectedHidden = selectedCount - selected.length;
+  /** @type {(item: T, index: number) => JSX.Element} */
+  const renderItem = item => <MenuItem
+    icon={item.active ? "tick-circle" : undefined}
+    key={item.key}
+    onClick={() => toggleHandler(item)}
+    shouldDismissPopover={false}
+    text={getLabel(item)}
+  />;
 
-    const unselected = this.getUnselected(items, filter);
-    const unselectedCount = items.length - selectedCount;
-    const unselectedHidden = unselectedCount - unselected.length;
-
-    const rightElement =
-      filter.length > 0
-        ? <Button icon="cross" minimal={true} onClick={this.clearFilter} />
-        : undefined;
-
-    return (
-      <div className="input-transfer">
-        <InputGroup
-          className="item-filter"
-          leftIcon="search"
-          onChange={this.updateFilter}
-          placeholder="Search items..."
-          rightElement={rightElement}
-          type="search"
-          value={filter}
-        />
-        <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-          <PerfectScrollbar>
-            <React.Fragment>
-              {unselectedHidden > 0 &&
-              <Menu.Divider title={`${unselectedHidden} items hidden`} />
-              }
-              <ViewPortList listLength={unselected.length} itemMinHeight={30}>
-                {params => this.renderItem.call(this, unselected[params.index], params)}
-              </ViewPortList>
-            </React.Fragment>
-          </PerfectScrollbar>
-        </Menu>
-        <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-          <PerfectScrollbar>
-            <React.Fragment>
-              {selectedHidden > 0 &&
-                <Menu.Divider title={`${selectedHidden} items hidden`} />
-              }
-              <ViewPortList listLength={selected.length} itemMinHeight={30}>
-                {params => this.renderItem.call(this, selected[params.index], params)}
-              </ViewPortList>
-            </React.Fragment>
-          </PerfectScrollbar>
-        </Menu>
-      </div>
-    );
-  }
-
-  /** @type {(item: T, p1: {innerRef: any, index: number, style: any}) => JSX.Element} */
-  renderItem(item, {innerRef, index, style}) {
-    return <MenuItem
-      itemRef={innerRef}
-      style={style}
-      icon={item.active ? "tick-circle" : undefined}
-      key={item.key}
-      onClick={this.toggleHandler.bind(this, item)}
-      shouldDismissPopover={false}
-      text={item.name || item.property}
-    />;
-  }
-}
-
-export default TransferInput;
+  return (
+    <div className="input-transfer">
+      <InputGroup
+        className="item-filter"
+        leftIcon="search"
+        onChange={evt => setFilter(evt.target.value)}
+        placeholder={searchPlaceholder}
+        rightElement={rightElement}
+        type="search"
+        value={filter}
+      />
+      <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
+        <React.Fragment>
+          {unselectedHidden > 0 &&
+          <Menu.Divider title={`${unselectedHidden} items hidden`} />
+          }
+          <ViewPortList items={unselected} itemMinSize={30}>
+            {renderItem}
+          </ViewPortList>
+        </React.Fragment>
+      </Menu>
+      <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
+        <React.Fragment>
+          {selectedHidden > 0 &&
+            <Menu.Divider title={`${selectedHidden} items hidden`} />
+          }
+          <ViewPortList items={selected} itemMinSize={30}>
+            {renderItem}
+          </ViewPortList>
+        </React.Fragment>
+      </Menu>
+    </div>
+  );
+};

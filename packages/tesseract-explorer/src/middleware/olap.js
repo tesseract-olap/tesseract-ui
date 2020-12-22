@@ -41,7 +41,7 @@ import {hydrateCutMembers, hydrateDrilldownProperties} from "./utils";
  * @property {import("redux").AnyAction} action
  * @property {OLAPClient} client
  * @property {import("redux").Dispatch} dispatch
- * @property {() => ExplorerState} getState
+ * @property {() => TessExpl.State.ExplorerState} getState
  * @property {import("redux").Dispatch} next
  */
 
@@ -67,20 +67,12 @@ const actionMap = {
 
       const serverInfo = await client.checkStatus();
       const cubes = await client.getCubes();
-
-      /** @type {Record<string, OlapCube>} */
-      const cubeMap = {};
-
-      let cube,
-          n = cubes.length;
-      while (n--) {
-        cube = cubes[n].toJSON();
-        cubeMap[cube.name] = cube;
-      }
+      const cubeMap = keyBy(cubes.map(cube => cube.toJSON()), i => i.name);
 
       dispatch(doServerUpdate({...serverInfo, cubeMap}));
       fetchSuccess();
 
+      const cube = cubes.length > 0 ? cubes[0].toJSON() : undefined;
       await dispatch({type: CLIENT_HYDRATEQUERY, payload: cube && cube.name});
       await dispatch({type: CLIENT_QUERY});
     }
@@ -186,7 +178,7 @@ const actionMap = {
     const state = getState();
     const currentMeasureMap = selectMeasureMap(state);
 
-    /** @type {Record<string, MeasureItem>} */
+    /** @type {Record<string, TessExpl.Struct.MeasureItem>} */
     const measures = {};
 
     const cube = await client.getCube(action.payload);
@@ -310,11 +302,9 @@ const actionMap = {
         querydd.find(
           lvl => lvl.dimension.dimensionType === DimensionType.Time
         ) || querydd[0];
-      const colLevel = querydd.find(lvl => lvl !== rowLevel);
       const queryms = query.getParam("measures");
 
       const rowLevelName = rowLevel.name;
-      const colLevelName = colLevel?.name;
       const valMeasureName = queryms[0].name;
       const chartType = selectChartType(state);
 
@@ -332,9 +322,6 @@ const actionMap = {
           data: aggregation.data,
           error: null,
           headers: aggregation.headers || {},
-          pivotColumns: colLevelName,
-          pivotRows: rowLevelName,
-          pivotValues: valMeasureName,
           sourceCall: query.toSource(),
           status: aggregation.status,
           urlAggregate: query.toString("aggregate"),
@@ -354,7 +341,7 @@ const actionMap = {
   }
 };
 
-/** @type {import("redux").Middleware<{}, ExplorerState>} */
+/** @type {import("redux").Middleware<{}, TessExpl.State.ExplorerState>} */
 function olapClientMiddleware({dispatch, getState}) {
   const client = new OLAPClient();
 

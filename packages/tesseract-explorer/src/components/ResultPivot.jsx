@@ -1,47 +1,64 @@
-import {ButtonGroup, Callout, FormGroup, HTMLSelect, Intent} from "@blueprintjs/core";
+import {
+  ButtonGroup,
+  Callout,
+  FormGroup,
+  HTMLSelect,
+  Intent
+} from "@blueprintjs/core";
 import classNames from "classnames";
-import React from "react";
-import {pivotData} from "../utils/transform";
+import React, {useState, useMemo} from "react";
+import {csvSerialize} from "../utils/transform";
+import {isActiveItem} from "../utils/validation";
 import ButtonDownload from "./ButtonDownload";
-import MatrixPreview from "./MatrixPreview";
+import {MemoMatrixPreview as MatrixPreview} from "./MatrixPreview";
 
 /**
  * @typedef OwnProps
  * @property {string} [className]
- * @property {string} cube
- * @property {OlapLevel[]} drilldowns
- * @property {OlapMeasure[]} measures
- * @property {QueryResult} result
- * @property {OlapMeasure | undefined} valueMeasure
- * @property {(level: string) => void} updateColumnsHandler
- * @property {(level: string) => void} updateRowsHandler
- * @property {(measure: string) => void} updateValuesHandler
+ * @property {TessExpl.Struct.QueryParams} params
+ * @property {TessExpl.Struct.QueryResult} result
  */
 
 /** @type {React.FC<OwnProps>} */
-const ResultPivot = ({
-  className,
-  cube,
-  drilldowns,
-  measures,
-  result,
-  valueMeasure,
-  updateColumnsHandler,
-  updateValuesHandler,
-  updateRowsHandler
-}) => {
-  const {data, pivotColumns, pivotRows, pivotValues} = result;
+const ResultPivot = ({className, params, result}) => {
+  const {data} = result;
 
-  const levelNames = drilldowns.map(item => ({value: item.name, label: item.uniqueName || item.name}));
-  const measureNames = measures.map(item => item.name);
+  const initial = useMemo(() => {
+    const dd = Object.values(params.drilldowns).filter(isActiveItem);
+    const ms = Object.values(params.measures).filter(isActiveItem);
+    const suggestedCol = dd.find(item => item.dimType === "time") || dd[0];
+    const suggestedRow = dd.find(item => item !== suggestedCol);
+    return {
+      pivotColumns: suggestedCol?.level || "",
+      pivotRows: suggestedRow?.level || "",
+      pivotValues: ms[0].measure,
+      levelNames: dd.map(item => ({
+        value: item.level,
+        label: item.uniqueName || item.level
+      })),
+      measureNames: ms.map(item => item.measure)
+    };
+  }, [result]);
+  const {levelNames, measureNames} = initial;
 
-  const filename = [cube, pivotColumns, pivotRows, pivotValues].join("-");
+  const [pivotColumns, setPivotColumns] = useState(initial.pivotColumns);
+  const [pivotRows, setPivotRows] = useState(initial.pivotRows);
+  const [pivotValues, setPivotValues] = useState(initial.pivotValues);
+
+  const fileName = [params.cube, pivotColumns, pivotRows, pivotValues].join("-");
+
+  const measureAggType = useMemo(() => {
+    const measure = Object.values(params.measures).find(
+      item => item.measure === pivotValues
+    );
+    return measure ? measure.aggType : "UNKNOWN";
+  }, [pivotValues]);
 
   const warnings =
-    drilldowns.length < 2
+    levelNames.length < 2
       ? <Callout intent={Intent.DANGER}>A pivot table needs 2 different drilldowns and a measure to work.</Callout>
-      : drilldowns.length > 2
-        ? valueMeasure?.aggregatorType !== "SUM"
+      : levelNames.length > 2
+        ? measureAggType !== "SUM"
           ? <Callout intent={Intent.WARNING}>The current query contains more than 2 drilldowns, and the aggregation type of the measure is not &quot;SUM&quot;. The values you&apos;re getting might not be meaningful.</Callout>
           : <Callout>There&apos;s more than 2 drilldowns in this query. Remaining values will be summed.</Callout>
         : undefined;
@@ -57,7 +74,7 @@ const ResultPivot = ({
           <HTMLSelect
             fill={true}
             id="matrix-columns"
-            onChange={evt => updateColumnsHandler(evt.target.value)}
+            onChange={evt => setPivotColumns(evt.target.value)}
             options={levelNames}
             value={pivotColumns}
           />
@@ -67,7 +84,7 @@ const ResultPivot = ({
           <HTMLSelect
             fill={true}
             id="matrix-rows"
-            onChange={evt => updateRowsHandler(evt.target.value)}
+            onChange={evt => setPivotRows(evt.target.value)}
             options={levelNames}
             value={pivotRows}
           />
@@ -77,7 +94,7 @@ const ResultPivot = ({
           <HTMLSelect
             fill={true}
             id="matrix-values"
-            onChange={evt => updateValuesHandler(evt.target.value)}
+            onChange={evt => setPivotValues(evt.target.value)}
             options={measureNames}
             value={pivotValues}
           />
@@ -87,29 +104,18 @@ const ResultPivot = ({
         <ButtonGroup fill>
           <ButtonDownload
             text="CSV"
-            fileName={`${filename}.csv`}
-            fileText={pivotData.bind(
-              null,
-              data,
-              pivotColumns,
-              pivotRows,
-              pivotValues,
-              ","
-            )}
+            fileName={`${fileName}.csv`}
+            fileText={() =>
+              csvSerialize(data, pivotColumns, pivotRows, pivotValues, ",")
+            }
           />
           <ButtonDownload
             text="TSV"
-            fileName={`${filename}.tsv`}
-            fileText={pivotData.bind(
-              null,
-              data,
-              pivotColumns,
-              pivotRows,
-              pivotValues,
-              "\t"
-            )}
+            fileName={`${fileName}.tsv`}
+            fileText={() =>
+              csvSerialize(data, pivotColumns, pivotRows, pivotValues, "\t")
+            }
           />
-          {/* <ButtonDownload text="JSON" fileName={`${filename}.json`} fileText={} /> */}
         </ButtonGroup>
       </div>
 

@@ -6,7 +6,7 @@ import {queriesInitialState, queriesReducer} from "./queries/reducer";
 import {serverInitialState, serverReducer} from "./server/reducer";
 import {uiInitialState, uiReducer} from "./ui/reducer";
 
-/** @type {ExplorerState} */
+/** @type {TessExpl.State.ExplorerState} */
 export const initialState = {
   explorerServer: serverInitialState,
   explorerLoading: loadingInitialState,
@@ -14,7 +14,7 @@ export const initialState = {
   explorerUi: uiInitialState
 };
 
-/** @returns {ExplorerState} */
+/** @returns {TessExpl.State.ExplorerState} */
 export function explorerInitialState() {
   const explorerQueries = {...queriesInitialState};
   const explorerUi = {...uiInitialState};
@@ -23,7 +23,7 @@ export function explorerInitialState() {
     const locationState =
       window.location.search && hydratePermalink(window.location.search);
     const historyState = window.history.state;
-    console.log(locationState);
+    console.debug({locationState, historyState});
 
     const defaultQuery = isValidQuery(locationState)
       ? buildQuery({params: locationState})
@@ -52,7 +52,7 @@ export function explorerInitialState() {
   };
 }
 
-/** @type {import("redux").Reducer<ExplorerState>} */
+/** @type {import("redux").Reducer<TessExpl.State.ExplorerState>} */
 export function explorerReducer(state, action) {
   state = state || explorerInitialState();
   return {

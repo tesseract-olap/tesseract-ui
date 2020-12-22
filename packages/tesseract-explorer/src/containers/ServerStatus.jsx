@@ -41,7 +41,7 @@ const ServerStatus = ({online, software, url, version}) => {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, {}, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, {}>} */
 const mapState = selectServerState;
 
 export default connect(mapState)(memo(ServerStatus));

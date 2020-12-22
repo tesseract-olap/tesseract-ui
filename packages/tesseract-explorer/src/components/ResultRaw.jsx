@@ -1,28 +1,44 @@
 import classNames from "classnames";
-import React from "react";
+import React, {Fragment} from "react";
+import {FormGroup, Classes} from "@blueprintjs/core";
+import {DebugURL} from "./DebugURL";
+import {RawObject} from "react-raw-object";
+import ScrollArea from "react-shadow-scroll";
 
-function RawTabPanel(props) {
-  let output = "[]";
+/**
+ * @typedef OwnProps
+ * @property {string} [className]
+ * @property {TessExpl.Struct.QueryResult} result
+ */
 
-  if (props.data) {
-    if (props.data.length > 30) {
-      const slicedData = props.data.slice(0, 20);
-      const remainingLength = props.data.length - 20;
-      output = JSON.stringify(slicedData, null, 4).replace(
-        "}\n]",
-        `},\n    {...and other ${remainingLength} items}\n]`
-      );
-    }
-    else {
-      output = JSON.stringify(props.data, null, 4);
-    }
-  }
+const ResultRaw = ({className, result: {data, headers, sourceCall, urlAggregate, urlLogicLayer}}) =>
+  <div className={classNames("data-raw", className)}>
+    <ScrollArea isShadow={false}>
+      <div className="response-explorer">
+        <FormGroup label="Response headers">
+          <RawObject object={headers} depthExpanded={1} />
+        </FormGroup>
 
-  return (
-    <div className={classNames("data-raw", props.className)}>
-      <pre className="bp3-code-block code-block">{output}</pre>
+        <FormGroup label="Response data">
+          <RawObject object={data} depthExpanded={data.length > 1200 ? 0 : 1} />
+        </FormGroup>
+      </div>
+    </ScrollArea>
+
+    <div className="debug-explorer">
+      {urlLogicLayer && <FormGroup label="LogicLayer API URL">
+        <DebugURL url={urlLogicLayer} />
+      </FormGroup>}
+
+      {urlAggregate && <FormGroup label="Aggregate API URL">
+        <DebugURL url={urlAggregate} />
+      </FormGroup>}
+
+      {sourceCall && <FormGroup label={<Fragment>{"Javascript source for "}<a href="https://www.npmjs.com/package/@datawheel/olap-client">olap-client</a></Fragment>}>
+        <pre className={classNames(Classes.CODE_BLOCK, "jscall")}>{sourceCall}</pre>
+      </FormGroup>}
     </div>
-  );
-}
+  </div>;
 
-export default RawTabPanel;
+
+export default ResultRaw;

@@ -1,5 +1,5 @@
 import {Button} from "@blueprintjs/core";
-import React from "react";
+import {createElement} from "react";
 
 const mimeTypes = {
   csv: "text/csv",
@@ -14,9 +14,9 @@ const mimeTypes = {
 
 /** @type {React.FC<ButtonProps & {fileText: (() => string) | string, fileName: string}>} */
 const ButtonDownload = ({fileText, fileName, ...props}) =>
-  <Button
-    {...props}
-    onClick={evt => {
+  createElement(Button, {
+    ...props,
+    onClick: evt => {
       evt.stopPropagation();
       evt.preventDefault();
 
@@ -30,7 +30,7 @@ const ButtonDownload = ({fileText, fileName, ...props}) =>
       anchor.href = URL.createObjectURL(blob);
       anchor.download = fileName;
       anchor.click();
-    }}
-  />;
+    }
+  });
 
 export default ButtonDownload;

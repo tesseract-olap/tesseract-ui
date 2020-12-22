@@ -18,15 +18,15 @@ import {safeRegExp} from "../utils/transform";
 
 /**
  * @typedef StateProps
- * @property {import("@blueprintjs/select").ItemListPredicate<OlapCube>} itemListPredicate
- * @property {import("@blueprintjs/select").ItemRenderer<OlapCube>} itemRenderer
- * @property {OlapCube[]} items
- * @property {OlapCube | undefined} selectedItem
+ * @property {import("@blueprintjs/select").ItemListPredicate<import("@datawheel/olap-client").AdaptedCube>} itemListPredicate
+ * @property {import("@blueprintjs/select").ItemRenderer<import("@datawheel/olap-client").AdaptedCube>} itemRenderer
+ * @property {import("@datawheel/olap-client").AdaptedCube[]} items
+ * @property {import("@datawheel/olap-client").AdaptedCube} [selectedItem]
  */
 
 /**
  * @typedef DispatchProps
- * @property {(cube: OlapCube) => void} onItemSelect
+ * @property {(cube: import("@datawheel/olap-client").AdaptedCube) => void} onItemSelect
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
@@ -66,13 +66,13 @@ export const SelectCube = props => {
   );
 };
 
-/** @type {import("@blueprintjs/select").ItemListPredicate<OlapCube>} */
+/** @type {import("@blueprintjs/select").ItemListPredicate<import("@datawheel/olap-client").AdaptedCube>} */
 function itemListPredicate(query, items) {
   const tester = safeRegExp(query, "i");
   return items.filter(item => tester.test(item.caption || item.name));
 }
 
-/** @type {import("@blueprintjs/select").ItemRenderer<OlapCube>} */
+/** @type {import("@blueprintjs/select").ItemRenderer<import("@datawheel/olap-client").AdaptedCube>} */
 function itemRenderer(item, {modifiers, handleClick}) {
   return (
     <MenuItem
@@ -86,7 +86,7 @@ function itemRenderer(item, {modifiers, handleClick}) {
   );
 }
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   itemListPredicate,
   itemRenderer,
@@ -94,7 +94,7 @@ const mapState = state => ({
   selectedItem: selectOlapCube(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+/** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({
   onItemSelect: cube => dispatch(doCubeSet(cube.name))
 });

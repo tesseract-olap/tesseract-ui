@@ -29,7 +29,7 @@ const LoadingScreen = props =>
   </Overlay>;
 
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   isOpen: selectLoadingState(state).loading
 });

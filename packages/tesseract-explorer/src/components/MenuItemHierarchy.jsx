@@ -6,14 +6,16 @@ import LevelMenuItem from "./MenuItemLevel";
 /**
  * @typedef OwnProps
  * @property {boolean} [childItem]
- * @property {OlapHierarchy} hierarchy
- * @property {(item: OlapLevel) => any} onItemSelect
+ * @property {import("@datawheel/olap-client").AdaptedDimension} dimension
+ * @property {import("@datawheel/olap-client").AdaptedHierarchy} hierarchy
+ * @property {(level: import("@datawheel/olap-client").AdaptedLevel, hierarchy: import("@datawheel/olap-client").AdaptedHierarchy, dimension: import("@datawheel/olap-client").AdaptedDimension) => any} onItemSelect
  * @property {string[]} selectedItems
  */
 
 /** @type {React.FC<OwnProps>} */
 const HierarchyMenuItem = ({
   childItem,
+  dimension,
   hierarchy,
   onItemSelect,
   selectedItems
@@ -26,6 +28,8 @@ const HierarchyMenuItem = ({
   if (levels.length === 1) {
     return (
       <LevelMenuItem
+        dimension={dimension}
+        hierarchy={hierarchy}
         key={levels[0].uri}
         level={levels[0]}
         onItemSelect={onItemSelect}
@@ -39,6 +43,8 @@ const HierarchyMenuItem = ({
         {levels.map(lvl =>
           <LevelMenuItem
             childItem
+            dimension={dimension}
+            hierarchy={hierarchy}
             key={lvl.uri}
             level={lvl}
             onItemSelect={onItemSelect}

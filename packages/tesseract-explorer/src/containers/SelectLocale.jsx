@@ -38,13 +38,13 @@ export const SelectLocale = ({
   value={locale}
 />;
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   locale: selectLocaleCode(state) || "en",
   localeOptions: selectLocaleOptions(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+/** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({
   updateLocaleHandler: evt => dispatch(doLocaleSet(evt.target.value))
 });

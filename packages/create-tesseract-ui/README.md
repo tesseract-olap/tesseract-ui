@@ -14,4 +14,5 @@ In case on problems using this script, or if it doesn't cover your use case, ple
 
 ## License
 
-MIT © 2019 [Datawheel](https://datawheel.us/)
+© 2019 [Datawheel, LLC](https://datawheel.us/)  
+This project is made available under the [MIT License](./LICENSE).

@@ -5,7 +5,7 @@ import {abbreviateFullName} from "../utils/format";
 import {levelRefToArray} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
 import ButtonTagExtra from "./ButtonTagExtra";
-import TransferInput from "./TransferInput";
+import {TransferInput} from "./TransferInput";
 
 /**
  * @typedef OwnProps
@@ -47,23 +47,19 @@ const TagCut = props => {
         onRemove={removeHandler}
       >
         {label}
-      </Tag>
-    ;
+      </Tag>;
     content =
-      <div className="cut-submenu error">
-        <Callout
-          icon="warning-sign"
-          intent={Intent.WARNING}
-          title="Error while loading member list"
-        >
-          <p>An error ocurred while loading the member list.</p>
-          <p>{error}</p>
-          <p>
-            <Button text="Reload" onClick={reloadHandler} />
-          </p>
-        </Callout>
-      </div>
-    ;
+      <Callout
+        icon="warning-sign"
+        intent={Intent.WARNING}
+        title="Error while loading member list"
+      >
+        <p>An error ocurred while loading the member list.</p>
+        <p>{error}</p>
+        <p>
+          <Button text="Reload" onClick={reloadHandler} />
+        </p>
+      </Callout>;
   }
   else if (!membersLoaded) {
     return (
@@ -95,18 +91,15 @@ const TagCut = props => {
         {`${label} (${activeCount === 1
           ? activeMembers[0].name
           : `${activeCount  } categories`})`}
-      </Tag>
-    ;
+      </Tag>;
     content =
-      <div className="cut-submenu">
-        <FormGroup label="Members" helperText="Members restrict the data returned by the server to the datums whose cut level match these properties.">
-          <TransferInput
-            items={members}
-            onChange={members => props.onMembersUpdate(item, members)}
-          />
-        </FormGroup>
-      </div>
-    ;
+      <FormGroup className="submenu-form-group" label="Members">
+        <TransferInput
+          items={members}
+          getLabel={item => item.name}
+          onChange={members => props.onMembersUpdate(item, members)}
+        />
+      </FormGroup>;
   }
 
   return (

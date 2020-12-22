@@ -3,7 +3,7 @@ import {ensureArray} from "./array";
 
 /**
  * @param {any} props
- * @returns {QueryItem}
+ * @returns {TessExpl.Struct.QueryItem}
  */
 export function buildQuery(props) {
   const params = props.params || {};
@@ -21,7 +21,11 @@ export function buildQuery(props) {
       growth: params.growth || {},
       locale: params.locale || "",
       measures: params.measures || {},
+      pagiLimit: params.pagiLimit || params.limitAmount || params.limit || 0,
+      pagiOffset: params.pagiOffset || params.limitOffset || params.offset || 0,
       rca: params.rca || {},
+      sortDir: params.sortDir || params.sortDirection || params.sortOrder || params.order || "desc",
+      sortKey: params.sortKey || params.sortProperty || "",
       topk: params.topk || {}
     },
     result: {
@@ -33,9 +37,6 @@ export function buildQuery(props) {
       chartType: "BarChart",
       data: [],
       error: null,
-      pivotColumns: undefined,
-      pivotRows: undefined,
-      pivotValues: undefined,
       sourceCall: "",
       status: 0,
       urlAggregate: "",
@@ -45,8 +46,8 @@ export function buildQuery(props) {
 }
 
 /**
- * @param {CutItem | any} props
- * @returns {CutItem}
+ * @param {any} props
+ * @returns {TessExpl.Struct.CutItem}
  */
 export function buildCut(props) {
   if (typeof props.toJSON === "function") {
@@ -71,9 +72,12 @@ export function buildCut(props) {
 
 /**
  * @param {any} props
- * @returns {DrilldownItem}
+ * @returns {TessExpl.Struct.DrilldownItem}
  */
 export function buildDrilldown(props) {
+  const dimType = typeof props.dimension === "object"
+    ? props.dimension.dimensionType
+    : props.dimType;
   if (typeof props.toJSON === "function") {
     props = props.toJSON();
   }
@@ -84,6 +88,7 @@ export function buildDrilldown(props) {
     active: typeof props.active === "boolean" ? props.active : true,
     captionProperty: `${props.captionProperty || ""}`,
     dimension,
+    dimType,
     fullName: props.fullName || [dimension, hierarchy, level].join("."),
     hierarchy,
     key: props.key || randomKey(),
@@ -95,7 +100,7 @@ export function buildDrilldown(props) {
 
 /**
  * @param {any} props
- * @returns {FilterItem}
+ * @returns {TessExpl.Struct.FilterItem}
  */
 export function buildFilter(props) {
   if (typeof props.toJSON === "function") {
@@ -116,7 +121,7 @@ export function buildFilter(props) {
 
 /**
  * @param {any} props
- * @returns {GrowthItem}
+ * @returns {TessExpl.Struct.GrowthItem}
  */
 export function buildGrowth(props) {
   return {
@@ -129,7 +134,7 @@ export function buildGrowth(props) {
 
 /**
  * @param {any} props
- * @returns {MeasureItem}
+ * @returns {TessExpl.Struct.MeasureItem}
  */
 export function buildMeasure(props) {
   if (typeof props.toJSON === "function") {
@@ -137,6 +142,7 @@ export function buildMeasure(props) {
   }
   return {
     active: typeof props.active === "boolean" ? props.active : true,
+    aggType: props.aggType || props.aggregatorType,
     key: props.key || props.name || props.measure,
     measure: props.measure || props.name
   };
@@ -144,7 +150,7 @@ export function buildMeasure(props) {
 
 /**
  * @param {any} props
- * @returns {MemberItem}
+ * @returns {TessExpl.Struct.MemberItem}
  */
 export function buildMember(props) {
   return {
@@ -156,7 +162,7 @@ export function buildMember(props) {
 
 /**
  * @param {any} props
- * @returns {PropertyItem}
+ * @returns {TessExpl.Struct.PropertyItem}
  */
 export function buildProperty(props) {
   return {
@@ -169,7 +175,7 @@ export function buildProperty(props) {
 
 /**
  * @param {any} props
- * @returns {RcaItem}
+ * @returns {TessExpl.Struct.RcaItem}
  */
 export function buildRca(props) {
   return {
@@ -183,7 +189,7 @@ export function buildRca(props) {
 
 /**
  * @param {any} props
- * @returns {TopkItem}
+ * @returns {TessExpl.Struct.TopkItem}
  */
 export function buildTopk(props) {
   return {

@@ -3,8 +3,9 @@ import React from "react";
 import {connect} from "react-redux";
 import {ExplorerColumn} from "../components/ExplorerColumn";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
+import {selectLocaleOptions, selectOlapCubeKeys} from "../state/server/selectors";
 import ButtonExecuteQuery from "./ButtonExecuteQuery";
-import QueryBooleans from "./QueryBooleans";
+import {ConnectedQueryBooleans as QueryBooleans} from "./QueryBooleans";
 import QueryCuts from "./QueryCuts";
 import QueryDrilldowns from "./QueryDrilldowns";
 import QueryGrowth from "./QueryGrowth";
@@ -21,7 +22,9 @@ import {ConnectedSelectLocale as SelectLocale} from "./SelectLocale";
 
 /**
  * @typedef StateProps
- * @property {QueryItem} query
+ * @property {boolean} isLocaleSelectEnabled
+ * @property {boolean} isCubeSelectEnabled
+ * @property {TessExpl.Struct.QueryItem} query
  */
 
 /**
@@ -33,12 +36,12 @@ import {ConnectedSelectLocale as SelectLocale} from "./SelectLocale";
 const ExplorerParams = props =>
   <ExplorerColumn className={props.className} title="Parameters">
     <ButtonGroup className="cube-locale" fill vertical>
-      <SelectCube
+      {props.isLocaleSelectEnabled && <SelectLocale />}
+      {props.isCubeSelectEnabled && <SelectCube
         fill
         placeholderEmpty="Select cube..."
         placeholderLoading="Loading..."
-      />
-      <SelectLocale />
+      />}
     </ButtonGroup>
 
     <QueryMeasures />
@@ -54,12 +57,11 @@ const ExplorerParams = props =>
     </ButtonGroup>
   </ExplorerColumn>;
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
+  isLocaleSelectEnabled: selectLocaleOptions(state).length > 1,
+  isCubeSelectEnabled: selectOlapCubeKeys(state).length > 1,
   query: selectCurrentQueryItem(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
-const mapDispatch = dispatch => ({});
-
-export default connect(mapState, mapDispatch)(ExplorerParams);
+export default connect(mapState)(ExplorerParams);

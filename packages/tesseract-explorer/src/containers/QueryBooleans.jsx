@@ -1,8 +1,11 @@
-import {Checkbox} from "@blueprintjs/core";
+import {ButtonGroup, Checkbox, ControlGroup, Divider, FormGroup, NumericInput} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {connect} from "react-redux";
 import QueryArea from "../components/QueryArea";
-import {doBooleanToggle} from "../state/params/actions";
+import SelectString from "../components/SelectString";
+import SelectMeasure from "../containers/ConnectedSelectMeasure";
+import {doBooleanToggle, doPaginationUpdate, doSortingUpdate} from "../state/params/actions";
+import {selectBooleans, selectPaginationParams, selectSortingParams} from "../state/params/selectors";
 import {selectServerBooleansEnabled} from "../state/server/selectors";
 import {shallowEqualExceptFns} from "../utils/validation";
 
@@ -16,8 +19,12 @@ import {shallowEqualExceptFns} from "../utils/validation";
  * @property {boolean} [debug]
  * @property {boolean} [distinct]
  * @property {boolean} [exclude_default_members]
+ * @property {number} limit
  * @property {boolean} [nonempty]
+ * @property {number} offset
  * @property {boolean} [parents]
+ * @property {string} sortDir
+ * @property {string} sortKey
  * @property {boolean} [sparse]
  * @property {string[]} _enabledBooleans
  */
@@ -30,7 +37,17 @@ import {shallowEqualExceptFns} from "../utils/validation";
  * @property {() => any} toggleNonEmptyHandler
  * @property {() => any} toggleParentsHandler
  * @property {() => any} toggleSparseHandler
+ * @property {(limit: number, offset: number) => any} updatePaginationHandler
+ * @property {(sortKey: string, sortDir: string) => any} updateSortingHandler
  */
+
+const sortDirections = {
+  asc: "Ascending",
+  desc: "Descending"
+};
+const sortDirectionList = Object.keys(sortDirections).map(
+  value => ({label: sortDirections[value], value})
+);
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 export const QueryBooleans = props =>
@@ -71,17 +88,55 @@ export const QueryBooleans = props =>
       checked={props.sparse || false}
       onChange={props.toggleSparseHandler}
     />}
+
+    <FormGroup label="Sort by">
+      <ControlGroup fill={true}>
+        <SelectMeasure
+          fill={true}
+          icon={props.sortKey ? "timeline-bar-chart" : false}
+          selectedItem={props.sortKey}
+          onItemSelect={measure => props.updateSortingHandler(measure.name, props.sortDir)}
+        />
+        <SelectString
+          selectedItem={sortDirections[props.sortDir]}
+          items={sortDirectionList}
+          onItemSelect={direction => props.updateSortingHandler(props.sortKey, direction.value)}
+        />
+      </ControlGroup>
+    </FormGroup>
+
+    <ButtonGroup fill={true}>
+      <FormGroup label="Results limit">
+        <NumericInput
+          fill={true}
+          onValueChange={limit => props.updatePaginationHandler(limit, props.offset)}
+          value={props.limit}
+        />
+      </FormGroup>
+
+      <Divider />
+
+      <FormGroup label="Results offset">
+        <NumericInput
+          fill={true}
+          onValueChange={offset => props.updatePaginationHandler(props.limit, offset)}
+          value={props.offset}
+        />
+      </FormGroup>
+    </ButtonGroup>
   </QueryArea>;
 
 export const MemoQueryBooleans = memo(QueryBooleans, shallowEqualExceptFns);
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   ...selectBooleans(state),
+  ...selectPaginationParams(state),
+  ...selectSortingParams(state),
   _enabledBooleans: selectServerBooleansEnabled(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+/** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({
   toggleDebugHandler() {
     dispatch(doBooleanToggle("debug"));
@@ -100,6 +155,12 @@ const mapDispatch = dispatch => ({
   },
   toggleSparseHandler() {
     dispatch(doBooleanToggle("sparse"));
+  },
+  updatePaginationHandler(limit, offset) {
+    dispatch(doPaginationUpdate(limit, offset));
+  },
+  updateSortingHandler(measure, direction) {
+    dispatch(doSortingUpdate(measure, direction));
   }
 });
 

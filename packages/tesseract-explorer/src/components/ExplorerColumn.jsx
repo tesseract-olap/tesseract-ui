@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import React, {useState} from "react";
-import PerfectScrollbar from "react-perfect-scrollbar";
+import ReactShadowScroll from "react-shadow-scroll";
 
 /**
  * @typedef OwnProps
@@ -35,9 +35,9 @@ export const ExplorerColumn = props => {
           {props.title}
         </h2>
       </div>
-      <PerfectScrollbar>
+      <ReactShadowScroll isShadow={false}>
         <div className={`wrapper ${props.className}-content`}>{props.children}</div>
-      </PerfectScrollbar>
+      </ReactShadowScroll>
     </div>
   );
 };

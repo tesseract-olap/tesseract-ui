@@ -71,4 +71,5 @@ For descriptive annotations, if you need texts for different languages, you can 
 
 ## License
 
-MIT © 2019 [Datawheel](https://datawheel.us/)
+© 2019 [Datawheel, LLC](https://datawheel.us/)  
+This project is made available under the [MIT License](./LICENSE).

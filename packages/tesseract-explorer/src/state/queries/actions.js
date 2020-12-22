@@ -4,7 +4,7 @@ export const QUERIES_SELECT = "explorer/QUERIES/SELECT";
 export const QUERIES_UPDATE = "explorer/QUERIES/UPDATE";
 
 /**
- * @param {Record<string, QueryItem>} payload
+ * @param {Record<string, TessExpl.Struct.QueryItem>} payload
  */
 export const doQueriesClear = payload => ({type: QUERIES_CLEAR, payload});
 
@@ -19,6 +19,6 @@ export const doQueriesRemove = payload => ({type: QUERIES_REMOVE, payload});
 export const doQueriesSelect = payload => ({type: QUERIES_SELECT, payload});
 
 /**
- * @param {QueryItem} payload
+ * @param {TessExpl.Struct.QueryItem} payload
  */
 export const doQueriesUpdate = payload => ({type: QUERIES_UPDATE, payload});

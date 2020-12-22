@@ -4,7 +4,7 @@ import {hydrateState} from "./hydrate";
 import {serializeState} from "./serialize";
 
 /**
- * @param {QueryParams} params
+ * @param {TessExpl.Struct.QueryParams} params
  * @returns {string}
  */
 export function serializePermalink(params) {
@@ -17,7 +17,7 @@ export function serializePermalink(params) {
 
 /**
  * @param {string} searchString
- * @returns {QueryParams}
+ * @returns {TessExpl.Struct.QueryParams}
  */
 export function hydratePermalink(searchString) {
   return hydrateState(formUrlDecode(searchString));

@@ -24,7 +24,7 @@ export function isNumeric(str) {
 
 /**
  * @param {any} query
- * @returns {query is QueryParams}
+ * @returns {query is TessExpl.Struct.QueryParams}
  */
 export function isQuery(query) {
   return (
@@ -51,7 +51,7 @@ export function isValidQuery(query) {
   );
 }
 
-/** @param {CutItem} item */
+/** @param {TessExpl.Struct.CutItem} item */
 export function isActiveCut(item) {
   return isActiveItem(item) && item.members.some(isActiveItem);
 }
@@ -63,7 +63,7 @@ export function isActiveItem(item) {
 
 /**
  * @param {any} obj
- * @returns {obj is FilterItem}
+ * @returns {obj is TessExpl.Struct.FilterItem}
  */
 export function isFilterItem(obj) {
   return obj.measure && obj.comparison && isNumeric(obj.interprettedValue);
@@ -71,7 +71,7 @@ export function isFilterItem(obj) {
 
 /**
  * @param {any} obj
- * @returns {obj is GrowthItem}
+ * @returns {obj is TessExpl.Struct.GrowthItem}
  */
 export function isGrowthItem(obj) {
   return obj && obj.level && obj.measure;
@@ -79,7 +79,7 @@ export function isGrowthItem(obj) {
 
 /**
  * @param {any} obj
- * @returns {obj is RcaItem}
+ * @returns {obj is TessExpl.Struct.RcaItem}
  */
 export function isRcaItem(obj) {
   return obj && obj.level1 && obj.level2 && obj.level1 !== obj.level2 && obj.measure;
@@ -87,14 +87,14 @@ export function isRcaItem(obj) {
 
 /**
  * @param {any} obj
- * @returns {obj is TopkItem}
+ * @returns {obj is TessExpl.Struct.TopkItem}
  */
 export function isTopkItem(obj) {
   return obj && obj.amount > 0 && obj.level && obj.measure;
 }
 
 /**
- * @type {(sum: number, item: IQueryItem) => number}
+ * @type {(sum: number, item: TessExpl.Struct.IQueryItem) => number}
  * @returns {number}
  */
 export function activeItemCounter(sum, item) {
@@ -102,7 +102,7 @@ export function activeItemCounter(sum, item) {
 }
 
 /**
- * @param {QueryParams} query
+ * @param {TessExpl.Struct.QueryParams} query
  */
 export function checkDrilldowns(query) {
   const drilldowns = Object.values(query.drilldowns);
@@ -127,7 +127,7 @@ export function checkDrilldowns(query) {
 }
 
 /**
- * @param {QueryParams} query
+ * @param {TessExpl.Struct.QueryParams} query
  */
 export function checkMeasures(query) {
   const measures = Object.values(query.measures);
@@ -144,7 +144,7 @@ export function checkMeasures(query) {
 }
 
 /**
- * @param {QueryParams} query
+ * @param {TessExpl.Struct.QueryParams} query
  */
 export function checkCuts(query) {
   const cuts = Object.values(query.cuts);

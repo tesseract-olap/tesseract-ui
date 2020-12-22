@@ -23,7 +23,7 @@ import {activeItemCounter} from "../utils/validation";
 /**
  * @typedef DispatchProps
  * @property {() => void} clearHandler
- * @property {(item: OlapLevel) => void} createHandler
+ * @property {(item: import("@datawheel/olap-client").AdaptedLevel) => void} createHandler
  * @property {(item: CutItem) => void} reloadMembersHandler
  * @property {(item: CutItem) => void} removeHandler
  * @property {(item: CutItem) => void} toggleHandler
@@ -65,12 +65,12 @@ const QueryCuts = props => {
   );
 };
 
-/** @type {import("react-redux").MapStateToProps<StateProps, OwnProps, ExplorerState>} */
+/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   items: selectCutItems(state)
 });
 
-/** @type {import("react-redux").MapDispatchToPropsFunction<DispatchProps, OwnProps>} */
+/** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({
   clearHandler() {
     dispatch(doCutClear());
