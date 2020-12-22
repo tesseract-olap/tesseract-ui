@@ -25,9 +25,9 @@ export const ExplorerColumn = props => {
 
   if (!isOpen) {
     return (
-      <div className={classNames("explorer-column closed", props.className)}>
+      <div className={classNames("explorer-column closed", props.className)} onClick={toggleHandler}>
+        <Button className="open-toggle" icon="menu-open" minimal />
         <div className="titlebar">
-          <Button className="open-toggle" icon="menu-open" minimal onClick={toggleHandler} />
           { title ? <h2 className="token">{title}</h2> : null }
         </div>
       </div>

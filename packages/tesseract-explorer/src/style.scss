@@ -58,10 +58,10 @@
       width: 100%;
 
       .token {
-        display: inline-block;
         font-size: inherit;
         margin: 0 1rem 0 0;
         text-decoration: none;
+        width: 100%;
       }
 
     }
@@ -69,16 +69,24 @@
     &.closed {
       width: 30px;
 
+      &:hover {
+        background: rgba($gray4, 0.3);
+        cursor: pointer;
+      }
+
+      & .open-toggle {
+        margin-top: 0.5rem;
+        &:hover {
+          background: none;
+        }
+      }
+
       & .titlebar {
-        grid-row: span 2;
         margin-top: 0;
+        overflow: hidden;
         transform: rotate(90deg);
         transform-origin: 15px 15px;
-
-        & .open-toggle {
-          margin-right: 0.5rem;
-          transform: rotate(-90deg);
-        }
+        width: 90vh;
       }
     }
 
