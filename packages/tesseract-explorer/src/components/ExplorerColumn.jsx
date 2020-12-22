@@ -2,6 +2,8 @@ import classNames from "classnames";
 import React, {useState} from "react";
 import ReactShadowScroll from "react-shadow-scroll";
 
+import {Button} from "@blueprintjs/core";
+
 /**
  * @typedef OwnProps
  * @property {string} [className]
@@ -11,7 +13,12 @@ import ReactShadowScroll from "react-shadow-scroll";
 
 /** @type {React.FC<OwnProps>} */
 export const ExplorerColumn = props => {
-  const {defaultOpen: initialOpenState = true} = props;
+
+  const {
+    defaultOpen: initialOpenState = true,
+    title
+  } = props;
+
   const [isOpen, setOpen] = useState(initialOpenState);
 
   const toggleHandler = () => setOpen(!isOpen);
@@ -20,9 +27,8 @@ export const ExplorerColumn = props => {
     return (
       <div className={classNames("explorer-column closed", props.className)}>
         <div className="titlebar">
-          <h2 className="token" onClick={toggleHandler}>
-            {props.title}
-          </h2>
+          <Button className="open-toggle" icon="menu-open" minimal onClick={toggleHandler} />
+          { title ? <h2 className="token">{title}</h2> : null }
         </div>
       </div>
     );
@@ -31,9 +37,8 @@ export const ExplorerColumn = props => {
   return (
     <div className={classNames("explorer-column", props.className)}>
       <div className="titlebar">
-        <h2 className="token" onClick={toggleHandler}>
-          {props.title}
-        </h2>
+        { title ? <h2 className="token">{title}</h2> : null }
+        <Button className="open-toggle" icon="menu-closed" minimal onClick={toggleHandler} />
       </div>
       <ReactShadowScroll isShadow={false}>
         <div className={`wrapper ${props.className}-content`}>{props.children}</div>
