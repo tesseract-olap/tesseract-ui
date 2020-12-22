@@ -46,6 +46,12 @@ function PageComponent(props) {
 
 ## Annotations
 
+tesseract-exporer comes with a script that will analyze the cubes in a given tesseract endpoint, and produce a markdown checklist of suggested annotations and dimension types to better improve the performance and user experience for tesseract-explorer and it's plugins. Simply run the `cube-audit` script followed by a base tesseract endpoint:
+
+```sh
+npx cube-audit https://api.oec.world/tesseract
+```
+
 ### Cube
 
 |Annotation Name|Description|
@@ -71,5 +77,5 @@ For descriptive annotations, if you need texts for different languages, you can 
 
 ## License
 
-© 2019 [Datawheel, LLC](https://datawheel.us/)  
+© 2019 [Datawheel, LLC](https://datawheel.us/)
 This project is made available under the [MIT License](./LICENSE).
