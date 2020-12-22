@@ -11,6 +11,9 @@
     "dist/explorer.esm.js",
     "dist/explorer.css"
   ],
+  "bin": {
+    "cube-audit": "scripts/cube-audit.js"
+  },
   "scripts": {
     "build": "rollup --config rollup.config.js --environment NODE_ENV:production,BABEL_ENV:production",
     "prepublishOnly": "npm run build",
@@ -35,6 +38,7 @@
     "classnames": "^2.2.6",
     "clipboard-copy": "^3.0.0",
     "d3-array": "^2.8.0",
+    "d3plus-text": "^0.10.1",
     "form-urldecoded": "^0.1.0",
     "form-urlencoded": "^4.2.1",
     "iso-639-1": "^2.1.4",
