@@ -30,7 +30,7 @@ import {buildQuery} from "../utils/structs";
 const ExplorerQueries = props => {
   const {onItemSelect, currentItem} = props;
   return (
-    <ExplorerColumn className={props.className} title="Queries" defaultOpen={props.items.length > 1}>
+    <ExplorerColumn className={props.className} title="Saved Queries" defaultOpen={props.items.length > 1}>
       <ButtonGroup vertical minimal>
         <Button
           className="action-create"

@@ -34,7 +34,7 @@ import {ConnectedSelectLocale as SelectLocale} from "./SelectLocale";
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const ExplorerParams = props =>
-  <ExplorerColumn className={props.className} title="Parameters">
+  <ExplorerColumn className={props.className} title="Query Setup">
     <ButtonGroup className="cube-locale" fill vertical>
       {props.isLocaleSelectEnabled && <SelectLocale />}
       {props.isCubeSelectEnabled && <SelectCube
