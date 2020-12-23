@@ -14,6 +14,7 @@ import {selectLocaleOptions} from "../state/server/selectors";
 
 /**
  * @typedef StateProps
+ * @property {boolean} isEnabled
  * @property {string} locale
  * @property {{label: string, value: string}[]} localeOptions
  */
@@ -24,25 +25,25 @@ import {selectLocaleOptions} from "../state/server/selectors";
  */
 
 /** @type {React.FC<OwnProps&StateProps&DispatchProps>} */
-export const SelectLocale = ({
-  className,
-  fill,
-  locale,
-  localeOptions,
-  updateLocaleHandler
-}) => <HTMLSelect
-  className={classNames("select-locale", className)}
-  fill={fill}
-  onChange={updateLocaleHandler}
-  options={localeOptions}
-  value={locale}
-/>;
+export const SelectLocale = props => props.isEnabled
+  ? <HTMLSelect
+    className={classNames("select-locale", props.className)}
+    fill={props.fill}
+    onChange={props.updateLocaleHandler}
+    options={props.localeOptions}
+    value={props.locale}
+  />
+  : null;
 
 /** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
-const mapState = state => ({
-  locale: selectLocaleCode(state) || "en",
-  localeOptions: selectLocaleOptions(state)
-});
+const mapState = state => {
+  const localeOptions = selectLocaleOptions(state);
+  return {
+    isEnabled: localeOptions.length > 1,
+    locale: selectLocaleCode(state) || "en",
+    localeOptions
+  };
+};
 
 /** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({

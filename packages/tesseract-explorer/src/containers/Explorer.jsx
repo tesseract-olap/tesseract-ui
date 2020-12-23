@@ -10,7 +10,7 @@ import {doClientSetup} from "../middleware/actions";
 import {updateLocaleList} from "../state/server/actions";
 import {selectServerState} from "../state/server/selectors";
 import {selectIsDarkTheme} from "../state/ui/selectors";
-import ExplorerParams from "./ExplorerParams";
+import {ExplorerParams} from "./ExplorerParams";
 import ExplorerQueries from "./ExplorerQueries";
 import ExplorerResults from "./ExplorerResults";
 
