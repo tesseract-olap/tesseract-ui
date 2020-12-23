@@ -2,6 +2,7 @@ import {ButtonGroup} from "@blueprintjs/core";
 import React from "react";
 import {ExplorerColumn} from "../components/ExplorerColumn";
 import ButtonExecuteQuery from "./ButtonExecuteQuery";
+import {ConnectedDownloadOptions as DownloadOptions} from "./DownloadOptions";
 import {ConnectedQueryBooleans as QueryBooleans} from "./QueryBooleans";
 import QueryCuts from "./QueryCuts";
 import QueryDrilldowns from "./QueryDrilldowns";
@@ -41,4 +42,6 @@ export const ExplorerParams = props =>
     <ButtonGroup className="query-actions" fill>
       <ButtonExecuteQuery />
     </ButtonGroup>
+
+    <DownloadOptions />
   </ExplorerColumn>;
