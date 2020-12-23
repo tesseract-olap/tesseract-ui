@@ -17,7 +17,7 @@ import DimensionMenuItem from "./MenuItemDimension";
 
 /** @type {React.FC<OwnProps & StateProps>} */
 const DimensionMenu = ({dimensions, selectedItems, onItemSelect}) =>
-  <Menu>
+  <Menu className="menu-dimension">
     {dimensions.map(dim =>
       <DimensionMenuItem
         dimension={dim}
