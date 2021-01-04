@@ -20,7 +20,7 @@ const ResultRaw = ({className, result: {data, headers, sourceCall, urlAggregate,
         </FormGroup>
 
         <FormGroup label="Response data">
-          <RawObject object={data} depthExpanded={data.length > 1200 ? 0 : 1} />
+          <RawObject object={data} depthExpanded={data.length > 600 ? 0 : 1} />
         </FormGroup>
       </div>
     </ScrollArea>
