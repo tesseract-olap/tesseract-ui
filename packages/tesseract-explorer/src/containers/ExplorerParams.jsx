@@ -16,6 +16,9 @@ import {ConnectedSelectLocale as SelectLocale} from "./SelectLocale";
 /**
  * @typedef OwnProps
  * @property {string} className
+ * @property {boolean} [enableGrowth]
+ * @property {boolean} [enableRca]
+ * @property {boolean} [enableTopk]
  */
 
 /** @type {React.FC<OwnProps>} */
@@ -34,9 +37,9 @@ export const ExplorerParams = props =>
     <QueryMeasures />
     <QueryDrilldowns />
     <QueryCuts />
-    <QueryGrowth />
-    <QueryRca />
-    <QueryTopk />
+    {props.enableGrowth && <QueryGrowth />}
+    {props.enableRca && <QueryRca />}
+    {props.enableTopk && <QueryTopk />}
     <QueryBooleans />
 
     <ButtonGroup className="query-actions" fill>
