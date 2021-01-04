@@ -31,7 +31,15 @@ const ButtonDownload = ({fileText, fileName, ...props}) =>
           const anchor = document.createElement("a");
           anchor.href = URL.createObjectURL(blob);
           anchor.download = fileName;
-          anchor.onclick = () => URL.revokeObjectURL(anchor.href);
+
+          const clickHandler = () => {
+            setTimeout(() => {
+              URL.revokeObjectURL(anchor.href);
+              anchor.removeEventListener("click", clickHandler);
+            }, 1000);
+          };
+          anchor.addEventListener("click", clickHandler, false);
+
           anchor.click();
         });
     }
