@@ -2,15 +2,17 @@
   "name": "@datawheel/tesseract-explorer",
   "version": "1.0.0-alpha.2",
   "description": "A react component to explore data from a tesseract-olap server.",
-  "main": "dist/explorer.cjs.js",
-  "module": "dist/explorer.esm.js",
-  "style": "dist/explorer.css",
-  "types": "types/explorer.d.ts",
-  "files": [
-    "dist/explorer.cjs.js",
-    "dist/explorer.esm.js",
-    "dist/explorer.css"
-  ],
+  "main": "./dist/explorer.cjs.js",
+  "module": "./dist/explorer.esm.js",
+  "style": "./dist/explorer.css",
+  "types": "./types/explorer.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/explorer.esm.js",
+      "require": "./dist/explorer.cjs.js",
+      "default": "./dist/explorer.cjs.js"
+    }
+  },
   "scripts": {
     "build": "rollup --config rollup.config.js --environment NODE_ENV:production,BABEL_ENV:production",
     "prepublishOnly": "npm run build",
