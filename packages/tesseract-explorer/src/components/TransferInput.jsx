@@ -24,7 +24,7 @@ export const TransferInput = ({
   items,
   onChange,
   getLabel = item => `${item}`,
-  searchPlaceholder = "Filter items (regex enabled)"
+  searchPlaceholder = "Filter items (supports regex)"
 }) => {
   const [filter, setFilter] = useState("");
 
@@ -83,7 +83,7 @@ export const TransferInput = ({
           {unselectedHidden > 0 &&
           <Menu.Divider title={`${unselectedHidden} items hidden`} />
           }
-          <ViewPortList items={unselected} itemMinSize={30}>
+          <ViewPortList items={unselected.slice(0, 1000)} itemMinSize={30}>
             {renderItem}
           </ViewPortList>
         </React.Fragment>
@@ -93,7 +93,7 @@ export const TransferInput = ({
           {selectedHidden > 0 &&
             <Menu.Divider title={`${selectedHidden} items hidden`} />
           }
-          <ViewPortList items={selected} itemMinSize={30}>
+          <ViewPortList items={selected.slice(0, 1000)} itemMinSize={30}>
             {renderItem}
           </ViewPortList>
         </React.Fragment>
