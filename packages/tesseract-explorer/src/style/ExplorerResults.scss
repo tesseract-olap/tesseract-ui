@@ -9,49 +9,36 @@
 }
 
 .data-raw {
+  padding: 0.75rem;
+  display: grid;
   overflow: auto;
-  max-height: 100%;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: auto auto 1fr;
+  gap: 0.75rem;
+
+  .#{$ns}-label {
+    font-weight: bold;
+  }
+
+  .sourceurl {
+    grid-column: span 2;
+  }
+
+  .rro {
+    &--parent {
+      padding-left: 1rem;
+    }
+    &--object-constructor {
+      font-style: italic;
+    }
+    &--name {
+      font-weight: bold;
+    }
+  }
 
   .code-block {
     margin: 0;
     overflow: auto;
-  }
-}
-
-.data-tree {
-  display: flex;
-  flex-direction: column;
-
-  .#{$ns}-tree-node {
-    &:hover {
-      background-color: rgba($gray5, 0.4);
-    }
-    .#{$ns}-dark &:hover {
-      background-color: rgba($gray1, 0.3);
-    }
-  }
-
-  .tree {
-    &-filter {
-      flex: 0 0 auto;
-      margin: 1rem;
-    }
-
-    &-content {
-      flex: 1 1 auto;
-      height: 0;
-      overflow: auto;
-    }
-
-    &-struct span {
-      display: inline-block;
-      min-width: 160px;
-      user-select: all;
-    }
-
-    &-key {
-      margin-right: 10px;
-    }
   }
 }
 

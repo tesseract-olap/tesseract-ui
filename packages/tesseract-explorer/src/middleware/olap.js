@@ -1,4 +1,4 @@
-import {Client as OLAPClient, DimensionType, Format, Level} from "@datawheel/olap-client";
+import {Client as OLAPClient, DimensionType, Level} from "@datawheel/olap-client";
 import {chartInterfaces} from "../enums";
 import {requestControl} from "../state/loading/actions";
 import {doCubeUpdate, doCutClear, doCutUpdate, doLocaleUpdate} from "../state/params/actions";
