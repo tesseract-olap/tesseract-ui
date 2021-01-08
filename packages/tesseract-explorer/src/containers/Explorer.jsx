@@ -16,8 +16,9 @@ import ExplorerResults from "./ExplorerResults";
 
 /**
  * @typedef OwnProps
- * @property {string | import("axios").AxiosRequestConfig} src The URL for the data server.
+ * @property {boolean} darkTheme
  * @property {string[]} locale A list of the available locale options
+ * @property {string | import("axios").AxiosRequestConfig} src The URL for the data server.
  * @property {Record<string, React.FunctionComponent | React.ComponentClass>} panels
  */
 
