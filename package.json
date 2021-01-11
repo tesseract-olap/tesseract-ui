@@ -3,8 +3,5 @@
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm"
-  },
-  "dependencies": {
-    "pnpm": "^5.0.0"
   }
 }
