@@ -46,5 +46,5 @@ function PageComponent(props) {
 
 ## License
 
-© 2019 [Datawheel, LLC](https://datawheel.us/)
+© 2019 [Datawheel, LLC](https://datawheel.us/)  
 This project is made available under the [MIT License](./LICENSE).
