@@ -11,9 +11,6 @@
     "dist/explorer.esm.js",
     "dist/explorer.css"
   ],
-  "bin": {
-    "cube-audit": "scripts/cube-audit.js"
-  },
   "scripts": {
     "build": "rollup --config rollup.config.js --environment NODE_ENV:production,BABEL_ENV:production",
     "prepublishOnly": "npm run build",
