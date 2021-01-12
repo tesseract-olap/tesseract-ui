@@ -13,7 +13,6 @@ import TagMeasure from "../components/TagMeasure";
 import {doMeasureClear, doMeasureToggle} from "../state/params/actions";
 import {selectMeasureItems} from "../state/params/selectors";
 import {safeRegExp} from "../utils/transform";
-import {activeItemCounter} from "../utils/validation";
 
 /**
  * @typedef OwnProps
@@ -40,8 +39,6 @@ const QueryMeasures = props => {
     const query = safeRegExp(filter, "i");
     filteredItems = filteredItems.filter(item => query.test(item.measure));
   }
-
-  const title = `Measures (${props.items.reduce(activeItemCounter, 0)})`;
 
   const resetFilter = () => setFilter("");
   const toolbar =
@@ -72,7 +69,7 @@ const QueryMeasures = props => {
     </Popover>;
 
   return (
-    <QueryArea className={props.className} title={title} toolbar={toolbar}>
+    <QueryArea className={props.className} title="Columns" toolbar={toolbar} collapsable={false}>
       {filteredItems.map(item =>
         <TagMeasure
           item={item}
