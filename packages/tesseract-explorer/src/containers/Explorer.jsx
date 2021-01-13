@@ -1,4 +1,3 @@
-import {Classes} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
@@ -9,14 +8,13 @@ import ResultTable from "../components/ResultTable";
 import {doClientSetup} from "../middleware/actions";
 import {updateLocaleList} from "../state/server/actions";
 import {selectServerState} from "../state/server/selectors";
-import {selectIsDarkTheme} from "../state/ui/selectors";
 import {ExplorerParams} from "./ExplorerParams";
 import ExplorerQueries from "./ExplorerQueries";
 import ExplorerResults from "./ExplorerResults";
 
 /**
  * @typedef OwnProps
- * @property {boolean} darkTheme
+ * @property {string} className
  * @property {string[]} locale A list of the available locale options
  * @property {string | import("axios").AxiosRequestConfig} src The URL for the data server.
  * @property {Record<string, React.FunctionComponent | React.ComponentClass>} panels
@@ -24,7 +22,6 @@ import ExplorerResults from "./ExplorerResults";
 
 /**
  * @typedef StateProps
- * @property {boolean} darkTheme
  * @property {boolean} isLoaded
  */
 
@@ -35,20 +32,25 @@ import ExplorerResults from "./ExplorerResults";
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
-const ExplorerComponent = ({locale, src, darkTheme, isLoaded, updateLocaleList, setupClient, panels}) => {
-  const [availableLocale] = useState(locale);
+const ExplorerComponent = props => {
+  const [availableLocale] = useState(props.locale);
 
   useEffect(() => {
-    updateLocaleList(locale);
-    setupClient(src);
-  }, [availableLocale, src]);
+    props.updateLocaleList(props.locale);
+    props.setupClient(props.src);
+  }, [availableLocale, props.src]);
 
   return (
-    <div className={classNames("explorer-wrapper", {[Classes.DARK]: darkTheme})}>
+    <div className={classNames("explorer-wrapper", props.className)}>
       <LoadingScreen className="explorer-loading" />
       <ExplorerQueries className="explorer-queries" />
-      {isLoaded ? <ExplorerParams className="explorer-params" /> : <div/>}
-      <ExplorerResults className="explorer-results" panels={panels} />
+      {props.isLoaded && <ExplorerParams
+        className="explorer-params"
+        enableGrowth={props.enableGrowth}
+        enableRca={props.enableRca}
+        enableTopk={props.enableTopk}
+      />}
+      <ExplorerResults className="explorer-results" panels={props.panels} />
     </div>
   );
 };
@@ -64,7 +66,6 @@ ExplorerComponent.defaultProps = {
 
 /** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
-  darkTheme: selectIsDarkTheme(state),
   isLoaded: Boolean(selectServerState(state).online)
 });
 

@@ -54,7 +54,6 @@ declare namespace TessExpl {
       explorerLoading: LoadingState;
       explorerQueries: QueriesState;
       explorerServer: ServerState;
-      explorerUi: UiState;
     }
 
     interface LoadingState {
@@ -77,12 +76,6 @@ declare namespace TessExpl {
       software: string;
       url: string;
       version: string;
-    }
-
-    interface UiState {
-      darkTheme: boolean;
-      debugDrawer: boolean;
-      starredDrawer: boolean;
     }
 
     type MapStateFn<T, U> = MapStateToProps<T, U, ExplorerState>;
