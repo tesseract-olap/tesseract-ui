@@ -20,16 +20,28 @@ const ButtonDownload = ({fileText, fileName, ...props}) =>
       evt.stopPropagation();
       evt.preventDefault();
 
-      const extension = fileName.split(".").pop();
-      const content = typeof fileText === "function" ? fileText() : fileText;
-      const blob = new Blob([content], {
-        type: mimeTypes[extension] || "application/octet-stream"
-      });
+      Promise.resolve()
+        .then(() => typeof fileText === "function" ? fileText() : fileText)
+        .then(content => {
+          const extension = fileName.split(".").pop();
+          const blob = new Blob([content], {
+            type: mimeTypes[extension] || "application/octet-stream"
+          });
 
-      const anchor = document.createElement("a");
-      anchor.href = URL.createObjectURL(blob);
-      anchor.download = fileName;
-      anchor.click();
+          const anchor = document.createElement("a");
+          anchor.href = URL.createObjectURL(blob);
+          anchor.download = fileName;
+
+          const clickHandler = () => {
+            setTimeout(() => {
+              URL.revokeObjectURL(anchor.href);
+              anchor.removeEventListener("click", clickHandler);
+            }, 1000);
+          };
+          anchor.addEventListener("click", clickHandler, false);
+
+          anchor.click();
+        });
     }
   });
 

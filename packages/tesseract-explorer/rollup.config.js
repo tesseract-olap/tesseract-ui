@@ -1,12 +1,15 @@
-import autoprefixer from "autoprefixer";
+import path from "path";
+
 import babel from "@rollup/plugin-babel";
-import cleanup from "rollup-plugin-cleanup";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import resolve from "@rollup/plugin-node-resolve";
-import styles from "rollup-plugin-styles";
 import replace from "@rollup/plugin-replace";
+import autoprefixer from "autoprefixer";
+import cleanup from "rollup-plugin-cleanup";
 import {string} from "rollup-plugin-string";
+import styles from "rollup-plugin-styles";
+
 import pkg from "./package.json";
 
 const environment = process.env.NODE_ENV;
@@ -48,7 +51,7 @@ export default commandLineArgs => ({
       include: ["**/*.d.ts"]
     }),
     styles({
-      mode: ["extract", "explorer.css"],
+      mode: ["extract", path.basename(pkg.style)],
       plugins: [autoprefixer()],
       sourcemap: inDevelopment
     }),

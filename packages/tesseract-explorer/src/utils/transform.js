@@ -18,8 +18,19 @@ export function csvSerialize(
 ) {
   const quoteSafe = value => {
     const str = `${value}`.trim();
-    return str.indexOf(colJoint) > -1 ? JSON.stringify(str) : str;
+    return str.includes(colJoint) ? JSON.stringify(str) : str;
   };
+
+  const cSortTable = sortingTableBy(data, cName);
+  const rSortTable = sortingTableBy(data, rName);
+
+  // Array of the members in the column axis
+  const cMembers = [...new Set(data.map(d => d[cName]))]
+    .sort((a, b) => cSortTable.indexOf(a) - cSortTable.indexOf(b));
+
+  // Array of the members in the row axis
+  const rMembers = [...new Set(data.map(d => d[rName]))]
+    .sort((a, b) => rSortTable.indexOf(a) - rSortTable.indexOf(b));
 
   /** @type {Map<string, Map<string, number>>} */
   const groupedData = regroup(
@@ -30,17 +41,18 @@ export function csvSerialize(
   );
 
   // Array of the members in the column axis
-  const headers = Array.from(groupedData.keys(), quoteSafe);
+  const headers = Array.from(cMembers, quoteSafe);
 
   // Array of numeric arrays. Outer array represents columns, inners represent rows. [||||]
-  // TODO: Currently just converted to string, should use value formatter.
-  const values = Array.from(groupedData.values(), col =>
-    Array.from(col.values(), quoteSafe)
-  );
+  const values = Array.from(cMembers, colName => {
+    const col = groupedData.get(colName) || new Map();
+    // TODO: Should use value formatter.
+    return Array.from(rMembers, rowName => col.get(rowName) || "");
+  });
 
   // Array of rows; first item is member in row axis, followed by each value for that row.
-  const rows = Array.from([...groupedData.values()][0], (row, rowIndex) =>
-    [row[0], ...values.map(col => col[rowIndex])]
+  const rows = Array.from(rMembers, (row, rowIndex) =>
+    [row, ...values.map(col => col[rowIndex])]
       .map(quoteSafe)
       .join(colJoint)
   );
@@ -52,20 +64,18 @@ export function csvSerialize(
  * @template T
  * @param {T[]} array
  * @param {keyof T | ((i: T) => string)} accesor
- * @param {Record<string, T[]>} target
+ * @returns {Map<string, T[]>}
  */
-export function groupBy(array, accesor, target = {}) {
+export function groupBy(array, accesor) {
   const accesorFn = typeof accesor === "function" ? accesor : i => i[accesor];
-  for (const value of array) {
+  const groups = new Map();
+  for (let i = 0; i < array.length; i++) {
+    const value = array[i];
     const key = accesorFn(value);
-    if (target.hasOwnProperty(key)) {
-      target[key].push(value);
-    }
-    else {
-      target[key] = [value];
-    }
+    const group = groups.get(key);
+    group ? group.push(value) : groups.set(key, [value]);
   }
-  return target;
+  return groups;
 }
 
 /**
@@ -86,7 +96,8 @@ export function joinName(nameParts) {
  */
 export function keyBy(array, accesor, target = {}) {
   const accesorFn = typeof accesor === "function" ? accesor : i => i[accesor];
-  for (const value of array) {
+  for (let i = 0; i < array.length; i++) {
+    const value = array[i];
     const key = accesorFn(value);
     target[key] = value;
   }
@@ -139,13 +150,7 @@ export function parseName(name) {
  */
 export function regroup(values, reduce, keyGetter, ...keys) {
   const groups = new Map();
-  for (let i = 0; i < values.length; i++) {
-    const value = values[i];
-    const key = keyGetter(value);
-    const group = groups.get(key);
-    group ? group.push(value) : groups.set(key, [value]);
-  }
-  const iter = groups.entries();
+  const iter = groupBy(values, keyGetter).entries();
   for (let item = iter.next(); !item.done; item = iter.next()) {
     const group = item.value;
     const value = keys.length === 0
@@ -172,6 +177,24 @@ export function safeRegExp(pattern, flags) {
     regex = new RegExp(pattern, flags);
   }
   return regex;
+}
+
+/**
+ * @template T
+ * @param {T[]} data
+ * @param {keyof T} name
+ */
+export function sortingTableBy(data, name) {
+  const idName = [`ID ${name}`, `${name} ID`].find(key => key in data[0]) || name;
+  const memberKeys = keyBy(data, idName);
+  return Object.values(memberKeys)
+    .sort((a, b) => {
+      const assumingNumeric = a[idName] - b[idName];
+      return isNaN(assumingNumeric)
+        ? `${a[idName]}`.localeCompare(`${b[idName]}`)
+        : assumingNumeric;
+    })
+    .map(d => d[name]);
 }
 
 /**

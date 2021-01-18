@@ -12,6 +12,7 @@ import {safeRegExp} from "../utils/transform";
  * @typedef OwnProps
  * @property {string} [className]
  * @property {boolean} [fill]
+ * @property {boolean} [hideIfEmpty]
  * @property {string} placeholderLoading
  * @property {string} placeholderEmpty
  */
@@ -31,16 +32,16 @@ import {safeRegExp} from "../utils/transform";
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 export const SelectCube = props => {
-  if (props.items.length === 0) {
-    return (
-      <Button
+  if (props.items.length < 2) {
+    return props.hideIfEmpty
+      ? null
+      : <Button
         alignText={Alignment.LEFT}
         className={classNames("select-cube", props.className)}
         disabled={true}
         icon="cube"
         text={props.placeholderLoading}
-      />
-    );
+      />;
   }
 
   const {selectedItem: item, fill} = props;

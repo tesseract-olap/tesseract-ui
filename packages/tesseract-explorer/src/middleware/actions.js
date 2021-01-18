@@ -1,4 +1,5 @@
 export const CLIENT_BUILDURLS = "explorer/CLIENT/BUILDURLS";
+export const CLIENT_DOWNLOAD = "explorer/CLIENT/DOWNLOAD";
 export const CLIENT_HYDRATEQUERY = "explorer/CLIENT/HYDRATEQUERY";
 export const CLIENT_LOADMEMBERS = "explorer/CLIENT/LOADMEMBERS";
 export const CLIENT_PARSE = "explorer/CLIENT/PARSE";
@@ -12,8 +13,11 @@ export const PERMALINK_UPDATE = "explorer/PERMALINK/UPDATE";
 /**  */
 export const buildQueryUrls = () => ({type: CLIENT_BUILDURLS});
 
-/** @param {CutItem} cut */
+/** @param {TessExpl.Struct.CutItem} cut */
 export const doFetchMembers = cut => ({type: CLIENT_LOADMEMBERS, payload: cut});
+
+/** @param {string} format */
+export const doDownloadQuery = format => ({type: CLIENT_DOWNLOAD, payload: format});
 
 /**  */
 export const doExecuteQuery = () => ({type: CLIENT_QUERY});

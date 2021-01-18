@@ -8,15 +8,15 @@ import classNames from "classnames";
 import React from "react";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {summaryGrowth} from "../utils/format";
-import {stringifyName} from "../utils/transform";
+import {joinName} from "../utils/transform";
 import SelectTimeLevel from "./SelectTimeLevel";
 
 /**
  * @typedef OwnProps
- * @property {GrowthItem} item
- * @property {(item: GrowthItem) => void} onToggle
- * @property {(item: GrowthItem) => void} onRemove
- * @property {(item: GrowthItem) => void} onUpdate
+ * @property {TessExpl.Struct.GrowthItem} item
+ * @property {(item: TessExpl.Struct.GrowthItem) => void} onToggle
+ * @property {(item: TessExpl.Struct.GrowthItem) => void} onRemove
+ * @property {(item: TessExpl.Struct.GrowthItem) => void} onUpdate
  */
 
 /** @type {React.FC<OwnProps>} */
@@ -36,7 +36,7 @@ const TagGrowth = ({item, onRemove, onToggle, onUpdate}) => {
           selectedItem={item.level}
           fill={true}
           onItemSelect={level =>
-            onUpdate({...item, level: stringifyName(level)})
+            onUpdate({...item, level: joinName([level.dimension, level.hierarchy, level.name])})
           }
           usePortal={false}
         />

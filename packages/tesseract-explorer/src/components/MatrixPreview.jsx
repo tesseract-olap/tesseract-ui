@@ -1,7 +1,7 @@
 import {NonIdealState} from "@blueprintjs/core";
 import {Cell, Column, RowHeaderCell, Table} from "@blueprintjs/table";
 import React, {memo} from "react";
-import {regroup, sumBy} from "../utils/transform";
+import {regroup, sortingTableBy, sumBy} from "../utils/transform";
 
 /**
  * @template T
@@ -22,8 +22,8 @@ export const MatrixPreview = ({columns, className, data, values, rows}) => {
     return <NonIdealState />;
   }
 
-  const columnKeys = [...new Set(data.map(d => d[columns]))];
-  const rowKeys = [...new Set(data.map(d => d[rows]))];
+  const columnKeys = sortingTableBy(data, columns);
+  const rowKeys = sortingTableBy(data, rows);
 
   /** @type {Map<string, Map<string, number>>} */
   const rolledData = regroup(
@@ -44,7 +44,7 @@ export const MatrixPreview = ({columns, className, data, values, rows}) => {
       key={`${columns}-${rows}-${values}`}
       numRows={rowKeys.length}
       rowHeaderCellRenderer={rowIndex => <RowHeaderCell name={rowKeys[rowIndex]} />}
-      rowHeights={rowKeys.map(() => 22)}
+      rowHeights={Array(rowKeys.length).fill(22)}
     >
       {columnKeys.map((columnKey, columnIndex) =>
         <Column

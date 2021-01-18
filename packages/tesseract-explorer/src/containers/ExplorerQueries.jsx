@@ -31,12 +31,12 @@ const ExplorerQueries = props => {
   const {onItemSelect, currentItem} = props;
   return (
     <ExplorerColumn className={props.className} title="Queries" defaultOpen={props.items.length > 1}>
-      <ButtonGroup vertical minimal>
+      <ButtonGroup alignText="left" fill vertical>
         <Button
           className="action-create"
           icon="insert"
           onClick={() => props.onItemCreate(currentItem)}
-          text="Duplicate query"
+          text="New query"
         />
         <Button
           className="action-parseurl"

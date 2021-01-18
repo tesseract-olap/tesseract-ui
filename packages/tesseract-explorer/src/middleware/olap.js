@@ -14,7 +14,7 @@ import {buildChartConfig} from "../utils/string";
 import {buildMeasure, buildQuery} from "../utils/structs";
 import {keyBy} from "../utils/transform";
 import {isValidQuery} from "../utils/validation";
-import {CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_PARSE, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP, doPermalinkUpdate} from "./actions";
+import {CLIENT_DOWNLOAD, CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_PARSE, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP, doPermalinkUpdate} from "./actions";
 import {hydrateCutMembers, hydrateDrilldownProperties} from "./utils";
 
 /**
@@ -331,6 +331,35 @@ const actionMap = {
       dispatch(doPermalinkUpdate());
 
       fetchSuccess(aggregation);
+    }
+    catch (error) {
+      dispatch(
+        doCurrentResultUpdate({error: error.message})
+      );
+      fetchFailure(error);
+    }
+  },
+
+  [CLIENT_DOWNLOAD]: async({action, client, dispatch, getState}) => {
+    const state = getState();
+    const params = selectCurrentQueryParams(state);
+
+    if (!isValidQuery(params)) return;
+
+    const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
+    fetchRequest();
+
+    try {
+      const cube = await client.getCube(params.cube);
+      const query = applyQueryParams(cube.query, params);
+      query.setFormat(action.payload);
+
+      const anchor = document.createElement("a");
+      anchor.href = query.toString("logiclayer");
+      anchor.download = `${cube.name}_${new Date().toISOString()}.${action.payload}`;
+      anchor.click();
+
+      fetchSuccess(anchor.href);
     }
     catch (error) {
       dispatch(

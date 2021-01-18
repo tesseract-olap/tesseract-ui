@@ -4,20 +4,17 @@ import {isValidQuery} from "../utils/validation";
 import {loadingInitialState, loadingReducer} from "./loading/reducer";
 import {queriesInitialState, queriesReducer} from "./queries/reducer";
 import {serverInitialState, serverReducer} from "./server/reducer";
-import {uiInitialState, uiReducer} from "./ui/reducer";
 
 /** @type {TessExpl.State.ExplorerState} */
 export const initialState = {
   explorerServer: serverInitialState,
   explorerLoading: loadingInitialState,
-  explorerQueries: queriesInitialState,
-  explorerUi: uiInitialState
+  explorerQueries: queriesInitialState
 };
 
 /** @returns {TessExpl.State.ExplorerState} */
 export function explorerInitialState() {
   const explorerQueries = {...queriesInitialState};
-  const explorerUi = {...uiInitialState};
 
   if (typeof window === "object") {
     const locationState =
@@ -35,20 +32,11 @@ export function explorerInitialState() {
       explorerQueries.current = defaultQuery.key;
       explorerQueries.itemMap = {[defaultQuery.key]: defaultQuery};
     }
-
-    const savedDarkTheme = window.localStorage.getItem("darkTheme");
-    if (typeof savedDarkTheme === "string") {
-      explorerUi.darkTheme = savedDarkTheme === "true";
-    }
-    else if (typeof window.matchMedia === "function") {
-      explorerUi.darkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
   }
 
   return {
     ...initialState,
-    explorerQueries,
-    explorerUi
+    explorerQueries
   };
 }
 
@@ -58,7 +46,6 @@ export function explorerReducer(state, action) {
   return {
     explorerServer: serverReducer(state.explorerServer, action),
     explorerLoading: loadingReducer(state.explorerLoading, action),
-    explorerQueries: queriesReducer(state.explorerQueries, action),
-    explorerUi: uiReducer(state.explorerUi, action)
+    explorerQueries: queriesReducer(state.explorerQueries, action)
   };
 }
