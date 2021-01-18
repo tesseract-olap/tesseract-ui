@@ -1,0 +1,28 @@
+{
+  "name": "@datawheel/cube-audit",
+  "version": "1.0.0",
+  "description": "A script to audit annotations on tesseract-olap servers.",
+  "bin": "cli.js",
+  "main": "index.js",
+  "readme": "README.md",
+  "files": [
+    "cli.js",
+    "index.js"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cubes",
+    "datawheel",
+    "schema",
+    "tesseract-olap"
+  ],
+  "author": "Dave Landry <dave@datawheel.us>",
+  "license": "MIT",
+  "dependencies": {
+    "@datawheel/olap-client": "^2.0.0-alpha.4",
+    "d3plus-text": "^0.10.1",
+    "lodash": "^4.17.20"
+  }
+}

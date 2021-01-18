@@ -12,6 +12,14 @@ A data exploration UI framework, to work with [`olap-client`](https://www.npmjs.
 
 A `npm init` script to easily create a single working instance of tesseract-ui in a server.
 
+### [Cube Audit script](./packages/cube-audit/)
+
+<a href="https://www.npmjs.com/package/@datawheel/cube-audit">
+  <img src="https://img.shields.io/npm/v/@datawheel/cube-audit.svg" alt="npm package" align="right">
+</a>
+
+A `npx` script to audit metainformation annotations on cubes from olap-client compatible servers.
+
 ### [DataExplorer](./packages/tesseract-explorer/)
 
 <a href="https://www.npmjs.com/package/@datawheel/tesseract-explorer">
@@ -30,5 +38,5 @@ A view plugin for DataExplorer. Integrates the [`@datawheel/vizbuilder`](https:/
 
 ## License
 
-© 2019 [Datawheel, LLC](https://datawheel.us/)  
+© 2020 [Datawheel, LLC](https://datawheel.us/)  
 This project is made available under the [MIT License](./LICENSE).

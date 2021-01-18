@@ -1,7 +1,5 @@
 packages:
-  - 'examples/datamexico'
-  - 'examples/thomasnet'
-  - 'examples/oec'
   - 'packages/create-tesseract-ui'
+  - 'packages/cube-audit'
   - 'packages/tesseract-explorer'
   - 'packages/view-vizbuilder'
