@@ -54,7 +54,7 @@ export const QueryBooleans = props =>
   <QueryArea className={props.className} title="Query options" open={false}>
     {props._enabledBooleans.includes("debug") && <Checkbox
       className="item-option"
-      label="Debug MDX"
+      label="Debug response"
       checked={props.debug || false}
       onChange={props.toggleDebugHandler}
     />}

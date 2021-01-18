@@ -23,24 +23,41 @@ declare namespace TessExpl {
 
   interface ExplorerProps {
     /**
+     * A classname to add to the app wrapper node.
+     */
+    className?: string;
+
+    /**
      * The URL for the data server.
      * Can be setup as a string, or a [AxiosRequestConfig](https://github.com/axios/axios#request-config)
      * for more complex handling of authorization/authentication.
      */
     src: string | AxiosRequestConfig;
 
-    /** A title to show on the navbar. */
-    title?: React.ReactNode;
-
     /** A list of the available locale options */
-    locale: string[];
+    locale?: string[];
 
     /**
      * The list of tabs to offer to the user to render the results.
      * Must be an object whose keys are the label of the tab to show in the UI,
      * and whose values are non-hydrated React Components.
      */
-    panels: Record<string, React.FunctionComponent | React.ComponentClass>;
+    panels?: Record<string, React.FunctionComponent | React.ComponentClass>;
+
+    /**
+     * Enables the Growth parameter group in the parameters panel.
+     */
+    enableGrowth?: boolean;
+
+    /**
+     * Enables the Rca parameter group in the parameters panel.
+     */
+    enableRca?: boolean;
+
+    /**
+     * Enables the Topk parameter group in the parameters panel.
+     */
+    enableTopk?: boolean;
   }
 
   interface ViewProps {

@@ -14,10 +14,13 @@ import ExplorerResults from "./ExplorerResults";
 
 /**
  * @typedef OwnProps
- * @property {string} className
- * @property {string[]} locale A list of the available locale options
+ * @property {string} [className]
+ * @property {string[]} [locale] A list of the available locale options
  * @property {string | import("axios").AxiosRequestConfig} src The URL for the data server.
- * @property {Record<string, React.FunctionComponent | React.ComponentClass>} panels
+ * @property {Record<string, React.FunctionComponent | React.ComponentClass>} [panels]
+ * @property {boolean} [enableGrowth] Enables the Growth parameter group in the parameters panel.
+ * @property {boolean} [enableRca] Enables the Rca parameter group in the parameters panel.
+ * @property {boolean} [enableTopk] Enables the Topk parameter group in the parameters panel.
  */
 
 /**
@@ -43,13 +46,19 @@ const ExplorerComponent = props => {
   return (
     <div className={classNames("explorer-wrapper", props.className)}>
       <LoadingScreen className="explorer-loading" />
-      <ExplorerQueries className="explorer-queries" />
-      {props.isLoaded && <ExplorerParams
-        className="explorer-params"
-        enableGrowth={props.enableGrowth}
-        enableRca={props.enableRca}
-        enableTopk={props.enableTopk}
-      />}
+      {props.isLoaded
+        ? <ExplorerQueries className="explorer-queries" />
+        : <div/>
+      }
+      {props.isLoaded
+        ? <ExplorerParams
+          className="explorer-params"
+          enableGrowth={props.enableGrowth}
+          enableRca={props.enableRca}
+          enableTopk={props.enableTopk}
+        />
+        : <div/>
+      }
       <ExplorerResults className="explorer-results" panels={props.panels} />
     </div>
   );
