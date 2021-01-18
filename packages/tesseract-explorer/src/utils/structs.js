@@ -1,5 +1,6 @@
-import {randomKey} from "./string";
 import {ensureArray} from "./array";
+import {randomKey} from "./string";
+import {joinName} from "./transform";
 
 /**
  * @param {any} props
@@ -89,7 +90,7 @@ export function buildDrilldown(props) {
     captionProperty: `${props.captionProperty || ""}`,
     dimension,
     dimType,
-    fullName: props.fullName || [dimension, hierarchy, level].join("."),
+    fullName: props.fullName || joinName([dimension, hierarchy, level]),
     hierarchy,
     key: props.key || randomKey(),
     level,
