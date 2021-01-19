@@ -23,6 +23,7 @@
   "dependencies": {
     "@datawheel/olap-client": "^2.0.0-alpha.4",
     "d3plus-text": "^0.10.1",
+    "getopts": "^2.2.5",
     "lodash": "^4.17.20"
   }
 }
