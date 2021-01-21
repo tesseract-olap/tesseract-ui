@@ -3,6 +3,7 @@ const sortBy = require("lodash/sortBy");
 const flatMap = require("lodash/flatMap");
 const deburr = require("lodash/deburr");
 const {strip} = require("d3plus-text");
+const {Logger} = require("./logger");
 
 const cubeAnnotations = [
   "source_name",
@@ -32,46 +33,64 @@ const geoRegex = regexFromList([
   "geografía", "continente", "país", "región", "estado", "provincia", "municipio", "ciudad"
 ]);
 
-module.exports = {auditServer};
+module.exports = {
+  auditorFactory,
+  auditServer: async (server, callback) => {
+    const auditServer = await auditorFactory({loggingLevel: "info", server});
+    return auditServer(callback);
+  }
+};
 
 /**
- * @param {string | import("axios").AxiosRequestConfig} server
- * @param {(report: any) => void} [callback]
+ * @param {object} options
+ * @param {string} options.loggingLevel
+ * @param {import("axios").AxiosRequestConfig} options.server
  */
-async function auditServer(server, callback) {
-  const client = await Client.fromURL(server);
+async function auditorFactory(options) {
+  const logger = new Logger(options.loggingLevel);
+  const client = await Client.fromURL(options.server);
   const status = await client.checkStatus();
 
-  const report = {
-    date: new Date()
-    .toLocaleString("en-US", {timeZone: "America/New_York"})
-    .replace("T", " ")
-    .replace(/\..*$/, ""),
-    server: status,
-  };
+  return auditServer;
 
-  const cubes = await client.getCubes();
-  const sortedCubes = sortBy(cubes, cube => cube.name);
-
-  if (typeof callback === "function") {
-    for (const cube of sortedCubes) {
-      const cubeValidationResult = await validateCube(cube);
-      callback(cubeValidationResult);
-    }
-    return report;
-  }
-  else {
-    return {
-      ...report,
-      cubes: await Promise.all(sortedCubes.map(validateCube))
+  /**
+   * Runs the auditor against the configured server
+   * @param {(cubeReport: any) => void} [cubeCallback]
+   */
+  async function auditServer(cubeCallback) {
+    const report = {
+      date: new Date()
+        .toLocaleString("en-US", {timeZone: "America/New_York"})
+        .replace("T", " ")
+        .replace(/\..*$/, ""),
+      server: status,
     };
+
+    const cubes = await client.getCubes();
+    const sortedCubes = sortBy(cubes, cube => cube.name);
+
+    if (typeof cubeCallback === "function") {
+      for (const cube of sortedCubes) {
+        const cubeValidationResult = await validateCube(cube);
+        cubeCallback(cubeValidationResult);
+      }
+      return report;
+    }
+    else {
+      return {
+        ...report,
+        cubes: await Promise.all(sortedCubes.map(validateCube))
+      };
+    }
   }
 
   /**
    * @param {import("@datawheel/olap-client").Cube} cube
+   * @returns {Promise<CubeReport>}
    */
   async function validateCube(cube) {
     const {annotations, dimensions, measures, name} = cube;
+    logger.debug("Validating cube:", name);
 
     /** @type {Issue[]} */
     const cubeIssues = cubeAnnotations
@@ -101,6 +120,7 @@ async function auditServer(server, callback) {
    */
   async function validateMeasure(measure) {
     const {annotations, name} = measure;
+    logger.debug("- Measure:", name);
 
     return measureAnnotations
       .filter(ann => !annotations[ann])
@@ -117,6 +137,8 @@ async function auditServer(server, callback) {
    * @returns {Promise<Issue[]>}
    */
   async function validateDimension(dimension) {
+    logger.debug("- Dimension:", dimension.name);
+
     const issues = [];
 
     if (dimension.dimensionType === DimensionType.Standard) {
@@ -140,26 +162,49 @@ async function auditServer(server, callback) {
     }
 
     for (const level of dimension.levelIterator) {
-      const members = await client.getMembers(level);
-      const suspect = members.find(member => /\d[\+\-\*\/\%]\d/.test(member.key + ""));
-      if (suspect) {
-        const {cube} = level;
-        const query = cube.query
-          .addMeasure(cube.measures[0])
-          .addDrilldown(level)
-          .addCut(level, [suspect.key + ""]);
+      const levelIssues = await validateLevel(level);
+      issues.push(...levelIssues);
+    }
 
-        try {
-          await client.execQuery(query);
-        }
-        catch (e) {
-          issues.push({
-            description: `The level "${level.name}" contains at least a member that matches \`{digit}-{digit}\`, which is failing on a cut. Ensure the level has a \`key_type="text"\` attribute.`,
-            entity: "level",
-            level: "low",
-            name: level.fullName
-          });
-        }
+    return issues;
+  }
+
+  /**
+   * @param {import("@datawheel/olap-client").Level} level
+   * @returns {Promise<Issue[]>}
+   */
+  async function validateLevel(level) {
+    logger.debug("- Level:", level.fullName);
+
+    const issues = [];
+
+    let suspect;
+    try {
+      const members = await client.getMembers(level);
+      suspect = members.find(member => /\d[\+\-\*\/\%]\d/.test(member.key + ""));
+    }
+    catch (e) {
+      logger.error("ERROR", `Unable to get member list\n  Cube: ${level.cube.name}\n  Level: ${level.fullName}`);
+    }
+
+    if (suspect) {
+      const {cube} = level;
+      const query = cube.query
+        .addMeasure(cube.measures[0])
+        .addDrilldown(level)
+        .addCut(level, [suspect.key + ""])
+        .setOption("debug", true);
+
+      try {
+        await client.execQuery(query);
+      }
+      catch (e) {
+        issues.push({
+          description: `The level "${level.name}" contains at least a member that matches \`{digit}-{digit}\`, which is failing on a cut. Ensure the level has a \`key_type="text"\` attribute.`,
+          entity: "level",
+          level: "low",
+          name: level.fullName
+        });
       }
     }
 
@@ -181,6 +226,15 @@ async function asyncValidation(list, validator) {
   }
   return results;
 }
+
+/**
+ * @typedef CubeReport
+ * @property {string} name The name of the cube this report refers to.
+ * @property {number} issueCount The total amount of issues
+ * @property {Issue[]} cubeIssues The list of issues related to this cube overall
+ * @property {Issue[]} dimensionIssues The list of issues related to this cube's dimensions
+ * @property {Issue[]} measureIssues The list of issues related to this cube's measures
+ */
 
 /**
  * @typedef Issue

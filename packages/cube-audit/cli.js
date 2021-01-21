@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const getopts = require("getopts");
-const { auditServer } = require(".");
+const {auditorFactory} = require(".");
 
 const helpText = `Datawheel / Cube Audit script
 Usage: npx @datawheel/cube-audit <server_url> [args]
@@ -17,6 +17,7 @@ Arguments:
                     Defaults to ./cube-audit.md
     -p, --password  The password in case of needing basic authentication.
     -u, --username  The username in case of needing basic authentication.
+    -v, --verbose   Prints the validation progress on screen.
 `;
 
 const options = getopts(process.argv.slice(2), {
@@ -24,12 +25,16 @@ const options = getopts(process.argv.slice(2), {
     help: "h",
     output: "o",
     password: "p",
-    username: "u"
+    username: "u",
+    verbose: "v"
   },
   default: {
     "output": "cube-audit.md"
   },
-  boolean: ["help"],
+  boolean: [
+    "help",
+    "verbose"
+  ],
   string: [
     "output",
     "password",
@@ -51,19 +56,31 @@ async function runCli(options) {
     process.exit(1);
   }
 
-  const suggestions = [];
+  const targetPath = path.resolve(process.cwd(), options.output);
+  const targetFile = fs.createWriteStream(targetPath);
+
+  const date = new Date()
+    .toLocaleString("en-US", {timeZone: "America/New_York"})
+    .replace("T", " ")
+    .replace(/\..*$/, "");
+
+  targetFile.write(`# Cube Audit\n\n`);
+  targetFile.write(`Data obtained from ${url} on ${date}.\n`);
+
+  const auditServer = await auditorFactory({
+    loggingLevel: options.verbose ? "debug" : "info",
+    server: {
+      url,
+      auth: options.username && options.password
+        ? { username: options.username, password: options.password }
+        : undefined,
+    }
+  });
+
   const checkboxIssueShort = issue => `- [ ] ${issue.description}`;
   const checkboxIssueFull = issue => `- [ ] **${issue.entity} \`${issue.name}\`**: ${issue.description}`;
 
-  const server = {
-    url,
-    auth: options.username && options.password
-      ? { username: options.username, password: options.password }
-      : undefined,
-  };
-
-  const report = await auditServer(server, cube => {
-    console.log("Validating cube:", cube.name);
+  await auditServer(cube => {
     if (cube.issueCount === 0) return;
 
     const result = [`\n## Cube: \`${cube.name}\``].concat(
@@ -73,25 +90,13 @@ async function runCli(options) {
       cube.dimensionIssues.map(checkboxIssueFull),
       cube.measureIssues.length > 0 ? "\n### Measure suggestions" : "",
       cube.measureIssues.map(checkboxIssueFull)
-    );
-    suggestions.push(...result);
+    ).filter(Boolean).join("\n");
+
+    targetFile.write(`${result}\n`);
   });
 
-  const output = `# Cube Audit
+  targetFile.write(`\n---\nFull documentation for tesseract-ui annotations [can be found here](https://github.com/tesseract-olap/tesseract-ui/tree/master/packages/cube-audit#annotations).\n`);
+  targetFile.close();
 
-Data obtained from ${report.server.url} on ${report.date}.
-${suggestions.filter(Boolean).join("\n")}
-
----
-Full documentation for tesseract-ui annotations can be found here: https://github.com/tesseract-olap/tesseract-ui/tree/master/packages/cube-audit#annotations
-`;
-
-  const targetPath = path.resolve(process.cwd(), options.output);
-  fs.writeFile(targetPath, output, "utf8", err => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log("Report created at", targetPath);
-  });
+  console.log("Report created at", targetPath);
 }

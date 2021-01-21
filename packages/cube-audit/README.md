@@ -18,7 +18,7 @@ No installation needed. `npx` will take care of downloading the script and runni
 
 The CLI interface supports some additional options. Run `npx @datawheel/cube-audit --help` for more details.
 
-You can also add it as a dependency on another project and import the `auditServer` named export:
+You can also add it as a dependency on another project and use the `auditServer` exported function:
 
 ```js
 const {auditServer} = require("@datawheel/cube-audit");
@@ -26,7 +26,8 @@ const {auditServer} = require("@datawheel/cube-audit");
 auditServer("https://api.oec.world/tesseract/").then(result => { ... });
 ```
 
-The `auditServer` function accepts an url `string` or an [`AxiosRequestConfig`](https://github.com/axios/axios#request-config) object. Optionally, it supports a second parameter for a callback function that is run for each cube with the resulting issues. The `result` of the audit is an object you can interpret easily to do other actions.
+The `auditServer` function accepts an url `string` or an [`AxiosRequestConfig`](https://github.com/axios/axios#request-config) object. Optionally, it supports a second parameter for a callback function that is run for each cube with the resulting issues; setting this parameter will also run each cube one after another instead of in parallel.  
+The `result` of the audit is an object you can interpret easily to do other actions.
 
 ## Annotations
 
