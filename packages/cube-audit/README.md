@@ -29,6 +29,10 @@ auditServer("https://api.oec.world/tesseract/").then(result => { ... });
 The `auditServer` function accepts an url `string` or an [`AxiosRequestConfig`](https://github.com/axios/axios#request-config) object. Optionally, it supports a second parameter for a callback function that is run for each cube with the resulting issues; setting this parameter will also run each cube one after another instead of in parallel.  
 The `result` of the audit is an object you can interpret easily to do other actions.
 
+### Error: "JavaScript heap out of memory"
+
+You might find a cube that has one or many levels with thousands or millions of members. In these cases is highly probable you will run out of memory, because V8's memory usage is by default limited to around 1.7GB. To increase this limit, set the environment variable `NODE_OPTIONS="--max_old_space_size=10000"` (where 10000 would mean 10GB, change accordingly), and run the script again.
+
 ## Annotations
 
 ### Cube
