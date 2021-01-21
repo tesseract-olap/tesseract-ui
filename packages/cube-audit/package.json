@@ -1,6 +1,6 @@
 {
   "name": "@datawheel/cube-audit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A script to audit annotations on tesseract-olap servers.",
   "bin": "cli.js",
   "main": "index.js",
