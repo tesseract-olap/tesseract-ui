@@ -5,6 +5,7 @@ const utils = require("./utils");
 module.exports = function(values) {
   const {name, targetPath} = values;
   utils.copyTemplateFile("index.js", targetPath);
+  utils.copyTemplateFile("style.css", targetPath);
 
   const readme = utils.readTemplateFile("README.md");
   const readmeFinal = utils.applyTemplate(readme, values);
@@ -16,6 +17,6 @@ module.exports = function(values) {
 
   const packageString = utils.readTemplateFile("package.json");
   const targetPackage = JSON.parse(packageString);
-  targetPackage.name = `${name}-tesseract-ui`;
+  targetPackage.name = `${name}-explorer`;
   utils.writeFile("package.json", targetPath, JSON.stringify(targetPackage, null, 2));
 };

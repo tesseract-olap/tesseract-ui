@@ -42,11 +42,18 @@ function writeFile(fileName, targetPath, contents) {
   return fs.writeFileSync(path.join(targetPath, fileName), contents);
 }
 
+function slugify(string) {
+  return `${string}`.trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s/g, "-");
+}
+
 module.exports = {
   applyTemplate,
   copyTemplateFile,
   makeDirectory,
   printError,
   readTemplateFile,
+  slugify,
   writeFile
 };

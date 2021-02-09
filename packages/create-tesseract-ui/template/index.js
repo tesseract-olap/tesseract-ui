@@ -2,7 +2,7 @@ import {
   Explorer,
   explorerReducer,
   olapMiddleware,
-  permalinkMiddleware,
+  permalinkMiddleware
 } from "@datawheel/tesseract-explorer";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -15,6 +15,7 @@ import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "@blueprintjs/table/lib/css/table.css";
 import "@datawheel/tesseract-explorer/dist/explorer.css";
+import "./style.css";
 
 const composeEnhancers =
   typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -24,7 +25,7 @@ const enhancers = composeEnhancers(
   applyMiddleware(olapMiddleware, permalinkMiddleware)
 );
 
-const store = createStore(explorerReducer, {}, enhancers);
+const store = createStore(explorerReducer, null, enhancers);
 
 const App = (props) => {
   return React.createElement(
@@ -32,15 +33,13 @@ const App = (props) => {
     { store: store },
     React.createElement(Explorer, {
       src: props.serverUrl,
-      title: props.appTitle,
     })
   );
 };
 
 ReactDOM.render(
   React.createElement(App, {
-    serverUrl: process.env.__SERVER_URL__,
-    appTitle: process.env.__APP_TITLE__
+    serverUrl: process.env.__SERVER_URL__
   }),
   document.getElementById("app")
 );
