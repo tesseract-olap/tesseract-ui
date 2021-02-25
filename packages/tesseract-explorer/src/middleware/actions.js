@@ -13,8 +13,11 @@ export const PERMALINK_UPDATE = "explorer/PERMALINK/UPDATE";
 /**  */
 export const buildQueryUrls = () => ({type: CLIENT_BUILDURLS});
 
-/** @param {TessExpl.Struct.CutItem} cut */
-export const doFetchMembers = cut => ({type: CLIENT_LOADMEMBERS, payload: cut});
+/**
+ * @param {TessExpl.Struct.CutItem} cut
+ * @returns {Promise<TessExpl.Struct.MemberRecords>}
+ */
+export const doFetchMembers = (dispatch, cut) => dispatch({type: CLIENT_LOADMEMBERS, payload: cut});
 
 /** @param {string} format */
 export const doDownloadQuery = format => ({type: CLIENT_DOWNLOAD, payload: format});

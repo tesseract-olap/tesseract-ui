@@ -9,8 +9,7 @@
     "target": "es2015"
   },
   "include": [
-    "./public",
     "./src",
-    "./types"
+    "index.d.ts"
   ]
 }

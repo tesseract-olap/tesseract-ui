@@ -55,9 +55,7 @@ export function serializeState(query) {
  * @returns {string}
  */
 export function serializeCut(item) {
-  return [stringifyName(item)]
-    .concat(item.members.filter(isActiveItem).map(m => m.key))
-    .join(",");
+  return [stringifyName(item)].concat(item.members).join(",");
 }
 
 /**

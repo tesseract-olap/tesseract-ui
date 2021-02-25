@@ -14,7 +14,7 @@ export const selectCubeName = createSelector(
 
 export const selectLocaleCode = createSelector(
   selectCurrentQueryParams,
-  params => params.locale
+  params => params.locale || ""
 );
 
 export const selectCutMap = createSelector(

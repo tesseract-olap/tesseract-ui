@@ -1,17 +1,17 @@
-import {Button, Classes, InputGroup, Menu, MenuItem} from "@blueprintjs/core";
+import {Button, Classes, InputGroup, Menu, MenuDivider, MenuItem} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {useMemo, useState} from "react";
 import ViewPortList from "react-viewport-list";
-import {safeRegExp} from "../utils/transform";
-import {activeItemCounter} from "../utils/validation";
+import {keyBy, safeRegExp} from "../utils/transform";
 
 import "../style/TransferInput.scss";
 
 /**
- * @template T
+ * @template {TessExpl.Struct.IQueryItem} T
  * @typedef OwnProps
- * @property {T[]} items
- * @property {(items: T[]) => void} onChange
+ * @property {Record<string, T>} items
+ * @property {T["key"][]} activeItems
+ * @property {(items: T["key"][]) => void} onChange
  * @property {(item: T) => string} [getLabel]
  * @property {string} [searchPlaceholder]
  */
@@ -20,39 +20,63 @@ import "../style/TransferInput.scss";
  * @template {TessExpl.Struct.IQueryItem} T
  * @type {React.FC<OwnProps<T>>}
  */
-export const TransferInput = ({
-  items,
-  onChange,
-  getLabel = item => `${item}`,
-  searchPlaceholder = "Filter items (supports regex)"
-}) => {
+export const TransferInput = props => {
+  const {
+    items,
+    activeItems,
+    onChange,
+    getLabel = item => `${item}`,
+    searchPlaceholder = "Filter items (supports regex)"
+  } = props;
+
   const [filter, setFilter] = useState("");
 
-  const toggleHandler = (item, idx = items.indexOf(item), key = item.key) => {
-    const index = idx > -1 ? idx : items.findIndex(itm => itm.key === key);
-    const nextItems = items.slice();
-    nextItems[index] = {...item, active: !item.active};
-    onChange(nextItems);
+  const toggleHandler = item => {
+    const index = activeItems.indexOf(item.key);
+    const nextActiveItems = activeItems.slice();
+    if (index > -1) {
+      nextActiveItems.splice(index, 1);
+    }
+    else {
+      nextActiveItems.push(item.key);
+      nextActiveItems.sort();
+    }
+    onChange(nextActiveItems);
   };
 
-  const {selected, unselected} = useMemo(() => {
-    const selected = items.slice(0, 0);
-    const unselected = items.slice(0, 0);
+  const activeKeys = useMemo(
+    () => keyBy(activeItems, key => key),
+    [activeItems]
+  );
+
+  const results = useMemo(() => {
+    const selected = [];
+    const unselected = [];
     const tester = safeRegExp(filter, "i");
-    let i = items.length;
-    while (i--) {
-      const item = items[i];
-      tester.test(getLabel(item)) &&
-        (item.active ? selected : unselected).unshift(item);
+
+    let index = 0;
+    const keys = Object.keys(items);
+
+    while (index < keys.length) {
+      const key = keys[index++];
+      const item = items[key];
+      if (!tester.test(getLabel(item))) continue;
+      activeKeys.hasOwnProperty(key)
+        ? selected.push(item)
+        : unselected.push(item);
     }
-    return {selected, unselected};
-  }, [items, filter]);
 
-  const selectedCount = items.reduce(activeItemCounter, 0);
-  const selectedHidden = selectedCount - selected.length;
+    return {
+      selected: selected.slice(0, 1000),
+      selectedCount: selected.length,
+      totalCount: keys.length,
+      unselected: unselected.slice(0, 1000),
+      unselectedCount: unselected.length
+    };
+  }, [items, activeKeys, filter]);
 
-  const unselectedCount = items.length - selectedCount;
-  const unselectedHidden = unselectedCount - unselected.length;
+  const selectedHidden = activeItems.length - results.selectedCount;
+  const unselectedHidden = results.totalCount - activeItems.length - results.unselectedCount;
 
   const rightElement = filter.length > 0
     ? <Button icon="cross" minimal={true} onClick={() => setFilter("")} />
@@ -60,9 +84,9 @@ export const TransferInput = ({
 
   /** @type {(item: T, index: number) => JSX.Element} */
   const renderItem = item => <MenuItem
-    icon={item.active ? "tick-circle" : undefined}
+    icon={activeKeys.hasOwnProperty(item.key) ? "tick-circle" : undefined}
     key={item.key}
-    onClick={() => toggleHandler(item)}
+    onClick={toggleHandler.bind(null, item)}
     shouldDismissPopover={false}
     text={getLabel(item)}
   />;
@@ -79,24 +103,16 @@ export const TransferInput = ({
         value={filter}
       />
       <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-        <React.Fragment>
-          {unselectedHidden > 0 &&
-          <Menu.Divider title={`${unselectedHidden} items hidden`} />
-          }
-          <ViewPortList items={unselected.slice(0, 1000)} itemMinSize={30}>
-            {renderItem}
-          </ViewPortList>
-        </React.Fragment>
+        {unselectedHidden > 0 && <MenuDivider title={`${unselectedHidden} items hidden`} />}
+        <ViewPortList items={results.unselected} itemMinSize={30}>
+          {renderItem}
+        </ViewPortList>
       </Menu>
       <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-        <React.Fragment>
-          {selectedHidden > 0 &&
-            <Menu.Divider title={`${selectedHidden} items hidden`} />
-          }
-          <ViewPortList items={selected.slice(0, 1000)} itemMinSize={30}>
-            {renderItem}
-          </ViewPortList>
-        </React.Fragment>
+        {selectedHidden > 0 && <MenuDivider title={`${selectedHidden} items hidden`} />}
+        <ViewPortList items={results.selected} itemMinSize={30}>
+          {renderItem}
+        </ViewPortList>
       </Menu>
     </div>
   );

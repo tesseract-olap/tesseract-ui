@@ -1,18 +1,23 @@
-import {FormGroup, Popover, PopoverInteractionKind, Position, Tag} from "@blueprintjs/core";
+import {FormGroup, Switch, Tag} from "@blueprintjs/core";
+import {Popover2, Popover2InteractionKind} from "@blueprintjs/popover2";
 import classNames from "classnames";
-import React from "react";
+import React, {useMemo} from "react";
 import {abbreviateFullName} from "../utils/format";
-import {levelRefToArray} from "../utils/transform";
+import {keyBy, levelRefToArray} from "../utils/transform";
+import {isActiveItem} from "../utils/validation";
 import SelectString from "./SelectString";
 import {TransferInput} from "./TransferInput";
 
+/** @type {React.FC<import("./TransferInput").OwnProps<TessExpl.Struct.PropertyItem>>} */
+export const PropertiesTransferInput = TransferInput;
+
 /**
  * @typedef OwnProps
- * @property {DrilldownItem} item
- * @property {(item: DrilldownItem) => void} onRemove
- * @property {(item: DrilldownItem) => void} onToggle
- * @property {(item: DrilldownItem, caption: string) => void} onCaptionUpdate
- * @property {(item: DrilldownItem, props: PropertyItem[]) => void} onPropertiesUpdate
+ * @property {TessExpl.Struct.DrilldownItem} item
+ * @property {(item: TessExpl.Struct.DrilldownItem) => void} onRemove
+ * @property {(item: TessExpl.Struct.DrilldownItem) => void} onToggle
+ * @property {(item: TessExpl.Struct.DrilldownItem, caption: string) => void} onCaptionUpdate
+ * @property {(item: TessExpl.Struct.DrilldownItem, props: TessExpl.Struct.PropertyItem[]) => void} onPropertiesUpdate
  */
 
 /** @type {React.FC<OwnProps>} */
@@ -21,10 +26,13 @@ const TagDrilldown = ({item, onRemove, onToggle, onCaptionUpdate, onPropertiesUp
     <Tag
       className={classNames("tag-item tag-drilldown", {hidden: !item.active})}
       fill={true}
-      icon="layer"
+      icon={
+        <span onClickCapture={evt => evt.stopPropagation()}>
+          <Switch checked={item.active} onChange={() => onToggle(item)} />
+        </span>
+      }
       interactive={true}
       large={true}
-      onClick={() => onToggle(item)}
       onRemove={evt => {
         evt.stopPropagation();
         onRemove(item);
@@ -36,6 +44,13 @@ const TagDrilldown = ({item, onRemove, onToggle, onCaptionUpdate, onPropertiesUp
   if (item.properties.length === 0) {
     return target;
   }
+
+  const propertyRecords = useMemo(
+    () => keyBy(item.properties, item => item.key),
+    [item.properties]
+  );
+
+  const activeProperties = item.properties.filter(isActiveItem).map(item => item.key);
 
   /** @type {import("@blueprintjs/core").IOptionProps[]} */
   const captionItems = [{label: "[None]", value: ""}];
@@ -55,26 +70,34 @@ const TagDrilldown = ({item, onRemove, onToggle, onCaptionUpdate, onPropertiesUp
         />
       </FormGroup>
       <FormGroup className="submenu-form-group" label="Properties">
-        <TransferInput
+        <PropertiesTransferInput
+          activeItems={activeProperties}
           getLabel={item => item.name}
-          items={item.properties}
-          onChange={properties => onPropertiesUpdate(item, properties)}
+          items={propertyRecords}
+          onChange={actProps => {
+            const properties = item.properties.map(
+              prop => ({...prop, active: actProps.includes(prop.key)})
+            );
+            onPropertiesUpdate(item, properties);
+          }}
         />
       </FormGroup>
     </div>;
 
   return (
-    <Popover
-      autoFocus={true}
-      boundary="viewport"
+    <Popover2
       content={content}
       fill={true}
       hoverCloseDelay={500}
-      interactionKind={PopoverInteractionKind.HOVER}
+      interactionKind={Popover2InteractionKind.CLICK}
+      modifiers={{
+        flip: {options: {rootBoundary: "viewport"}},
+        preventOverflow: {options: {rootBoundary: "viewport"}}
+      }}
       popoverClassName="param-popover"
-      position={Position.RIGHT_TOP}
-      target={target}
-    />
+    >
+      {target}
+    </Popover2>
   );
 };
 

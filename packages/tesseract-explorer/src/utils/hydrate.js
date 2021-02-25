@@ -5,7 +5,6 @@ import {
   buildDrilldown,
   buildFilter,
   buildMeasure,
-  buildMember,
   buildGrowth,
   buildRca,
   buildTopk
@@ -45,11 +44,7 @@ export function hydrateState(query) {
  */
 export function hydrateCut(item) {
   const [fullName, ...members] = item.split(",");
-  return buildCut({
-    ...parseName(fullName),
-    active: true,
-    members: members.filter(Boolean).map(key => buildMember({active: true, key}))
-  });
+  return buildCut({...parseName(fullName), active: true, members});
 }
 
 /**

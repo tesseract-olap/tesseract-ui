@@ -5,7 +5,7 @@
   "main": "./dist/explorer.cjs.js",
   "module": "./dist/explorer.esm.js",
   "style": "./dist/explorer.css",
-  "types": "./types/explorer.d.ts",
+  "types": "./index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/explorer.esm.js",
@@ -53,6 +53,7 @@
     "@babel/preset-env": "^7.12.0",
     "@babel/preset-react": "^7.12.0",
     "@blueprintjs/core": "^3.38.0",
+    "@blueprintjs/popover2": "^0.1.2",
     "@blueprintjs/select": "^3.15.0",
     "@blueprintjs/table": "^3.8.0",
     "@datawheel/eslint-config": "^1.0.2",
@@ -80,6 +81,7 @@
   },
   "peerDependencies": {
     "@blueprintjs/core": "^3.32.0",
+    "@blueprintjs/popover2": "^0.1.2",
     "@blueprintjs/select": "^3.14.0",
     "@blueprintjs/table": "^3.8.0",
     "react": "^16.8.6",

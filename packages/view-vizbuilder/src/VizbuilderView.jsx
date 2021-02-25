@@ -26,7 +26,7 @@ export const VizbuilderView = props => {
         dimension: item.dimension,
         hierarchy: item.hierarchy,
         level: item.level,
-        members: item.members.map(item => item.key)
+        members: item.members
       })),
       drilldowns: mapActives(params.drilldowns, item => ({
         caption: item.captionProperty,

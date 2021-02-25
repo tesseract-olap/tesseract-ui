@@ -9,7 +9,7 @@
   }
 
   .select-cube {
-    .#{$ns}-popover-target > div {
+    .#{$ns}-popover2-target > div {
       width: 100%;
     }
   }
@@ -69,5 +69,9 @@
 
   &.hidden {
     opacity: 0.5;
+  }
+
+  .#{$ns}-switch {
+    margin: 0 -5px;
   }
 }

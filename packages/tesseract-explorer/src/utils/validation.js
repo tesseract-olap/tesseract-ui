@@ -53,7 +53,7 @@ export function isValidQuery(query) {
 
 /** @param {TessExpl.Struct.CutItem} item */
 export function isActiveCut(item) {
-  return isActiveItem(item) && item.members.some(isActiveItem);
+  return isActiveItem(item) && item.members.length > 0;
 }
 
 /** @param {{active: boolean}} item */

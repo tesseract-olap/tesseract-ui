@@ -12,7 +12,7 @@ This project has some peer dependencies, which must be installed by the used man
 
 ```bash
 npm install react@16 react-dom@16 react-redux@7 redux@4
-npm install @blueprintjs/core@3 @blueprintjs/select@3 @blueprintjs/table@3
+npm install @blueprintjs/core@3 @blueprintjs/popover2@0 @blueprintjs/select@3 @blueprintjs/table@3
 ```
 
 This is to prevent conflicts with hooks implemented in React 16.7, and to allow compatibility with the minor version of blueprintjs the user chooses.

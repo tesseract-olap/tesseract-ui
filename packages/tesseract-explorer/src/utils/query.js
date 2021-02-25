@@ -1,5 +1,5 @@
 import {Order, Measure} from "@datawheel/olap-client";
-import {buildCut, buildDrilldown, buildFilter, buildGrowth, buildMeasure, buildMember, buildRca, buildTopk} from "./structs";
+import {buildCut, buildDrilldown, buildFilter, buildGrowth, buildMeasure, buildRca, buildTopk} from "./structs";
 import {keyBy} from "./transform";
 import {isActiveCut, isActiveItem, isGrowthItem, isRcaItem, isTopkItem} from "./validation";
 
@@ -13,8 +13,7 @@ export function applyQueryParams(query, params) {
   });
 
   Object.values(params.cuts).forEach(item => {
-    isActiveCut(item) &&
-      query.addCut(item, item.members.filter(isActiveItem).map(m => m.key));
+    isActiveCut(item) && query.addCut(item, item.members);
   });
 
   Object.values(params.drilldowns).forEach(item => {
@@ -51,7 +50,7 @@ export function applyQueryParams(query, params) {
     query.setSorting(params.sortKey, params.sortDir === "desc");
   }
 
-  query.setPagination(params.pagiLimit, params.pagiOffset);
+  query.setPagination(params.pagiLimit || 0, params.pagiOffset);
 
   return query;
 }
@@ -98,7 +97,7 @@ export function extractQueryParams(query) {
     return buildCut({
       ...level.toJSON(),
       active: true,
-      members: cutRecord[cutLevel].map(key => buildMember({active: true, key})),
+      members: cutRecord[cutLevel],
       membersLoaded: false
     });
   });

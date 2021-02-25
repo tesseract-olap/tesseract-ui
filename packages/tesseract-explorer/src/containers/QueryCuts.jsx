@@ -2,11 +2,11 @@ import {Button, Intent} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import QueryArea from "../components/QueryArea";
-import TagCut from "../components/TagCut";
+import {TagCut} from "../components/TagCut";
 import ButtonSelectLevel from "../components/ButtonSelectLevel";
 import {doFetchMembers} from "../middleware/actions";
 import {doCutUpdate, doCutRemove, doCutClear} from "../state/params/actions";
-import {selectCutItems} from "../state/params/selectors";
+import {selectCutItems, selectLocaleCode} from "../state/params/selectors";
 import {buildCut} from "../utils/structs";
 import {activeItemCounter} from "../utils/validation";
 
@@ -17,17 +17,18 @@ import {activeItemCounter} from "../utils/validation";
 
 /**
  * @typedef StateProps
- * @property {CutItem[]} items
+ * @property {TessExpl.Struct.CutItem[]} items
+ * @property {string} locale
  */
 
 /**
  * @typedef DispatchProps
  * @property {() => void} clearHandler
  * @property {(item: import("@datawheel/olap-client").AdaptedLevel) => void} createHandler
- * @property {(item: CutItem) => void} reloadMembersHandler
- * @property {(item: CutItem) => void} removeHandler
- * @property {(item: CutItem) => void} toggleHandler
- * @property {(item: CutItem, members: MemberItem[]) => void} updateMembersHandler
+ * @property {(item: TessExpl.Struct.CutItem) => Promise<TessExpl.Struct.MemberRecords>} loadMembersHandler
+ * @property {(item: TessExpl.Struct.CutItem) => void} removeHandler
+ * @property {(item: TessExpl.Struct.CutItem) => void} toggleHandler
+ * @property {(item: TessExpl.Struct.CutItem, members: string[]) => void} updateMembersHandler
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
@@ -55,7 +56,8 @@ const QueryCuts = props => {
         <TagCut
           item={item}
           key={item.key}
-          onMembersReload={props.reloadMembersHandler}
+          locale={props.locale}
+          memberFetcher={props.loadMembersHandler}
           onMembersUpdate={props.updateMembersHandler}
           onRemove={props.removeHandler}
           onToggle={props.toggleHandler}
@@ -67,7 +69,8 @@ const QueryCuts = props => {
 
 /** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
-  items: selectCutItems(state)
+  items: selectCutItems(state),
+  locale: selectLocaleCode(state)
 });
 
 /** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
@@ -78,10 +81,12 @@ const mapDispatch = dispatch => ({
   createHandler(level) {
     const cutItem = buildCut(level);
     dispatch(doCutUpdate(cutItem));
-    dispatch(doFetchMembers(cutItem));
   },
-  reloadMembersHandler(item) {
-    dispatch(doFetchMembers(item));
+  loadMembersHandler(item) {
+    return doFetchMembers(dispatch, item).then(members => {
+      dispatch(doCutUpdate({...item, active: true}));
+      return members;
+    });
   },
   removeHandler(item) {
     dispatch(doCutRemove(item.key));

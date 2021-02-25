@@ -30,14 +30,9 @@ export function buildQuery(props) {
       topk: params.topk || {}
     },
     result: {
-      chartConfig: `config = {
-  x: d => d[levelName],
-  y: d => d[measureName]
-};
-`,
-      chartType: "BarChart",
       data: [],
       error: null,
+      headers: {},
       sourceCall: "",
       status: 0,
       urlAggregate: "",
@@ -60,14 +55,12 @@ export function buildCut(props) {
   return {
     active: typeof props.active === "boolean" ? props.active : false,
     dimension,
-    error: props.error || undefined,
+    fullName: props.fullName || [dimension, hierarchy, level].join("."),
     hierarchy,
     key: props.key || randomKey(),
     level,
-    fullName: props.fullName || [dimension, hierarchy, level].join("."),
-    uniqueName: props.uniqueName || level,
     members: Array.isArray(props.members) ? props.members : [],
-    membersLoaded: typeof props.membersLoaded === "boolean" ? props.membersLoaded : false
+    uniqueName: props.uniqueName || level
   };
 }
 

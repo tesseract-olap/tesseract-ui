@@ -42,7 +42,7 @@ declare namespace TessExpl {
      * Must be an object whose keys are the label of the tab to show in the UI,
      * and whose values are non-hydrated React Components.
      */
-    panels?: Record<string, React.FunctionComponent | React.ComponentClass>;
+    panels?: Record<string, React.FunctionComponent<ViewProps> | React.ComponentClass<ViewProps>>;
 
     /**
      * Enables the Growth parameter group in the parameters panel.
@@ -143,12 +143,10 @@ declare namespace TessExpl {
 
     interface CutItem extends IQueryItem {
       dimension: string;
-      error?: Error;
       fullName: string;
       hierarchy: string;
       level: string;
-      members: MemberItem[];
-      membersLoaded: boolean;
+      members: string[];
       uniqueName: string;
     }
 
@@ -205,6 +203,8 @@ declare namespace TessExpl {
       measure: string;
       order: "asc" | "desc";
     }
+
+    type MemberRecords = Record<string, MemberItem>;
 
     type MeasurableItem = MeasureItem | FilterItem;
 

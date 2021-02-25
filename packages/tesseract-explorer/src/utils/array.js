@@ -63,7 +63,7 @@ export function sortByKey(array, key, descendent = true) {
       ? (a, b) => `${b[key]}`.localeCompare(`${a[key]}`)
       : (a, b) => `${a[key]}`.localeCompare(`${b[key]}`);
   }
-  return array.slice().sort(sorterFunction);
+  return array.sort(sorterFunction);
 }
 
 /**
