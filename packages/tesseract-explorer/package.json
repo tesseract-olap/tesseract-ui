@@ -39,7 +39,6 @@
     "form-urldecoded": "^0.1.0",
     "form-urlencoded": "^4.2.0",
     "iso-639-1": "^2.1.0",
-    "memoize-one": "^5.1.0",
     "pluralize": "^8.0.0",
     "react-raw-object": "^1.0.0",
     "react-shadow-scroll": "^2.1.0",

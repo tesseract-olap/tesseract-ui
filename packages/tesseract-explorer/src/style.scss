@@ -44,7 +44,8 @@
   &-column {
     display: flex;
     flex-flow: column nowrap;
-    max-height: 100vh;
+    height: 100%;
+    min-height: 100px;
 
     & > .titlebar {
       flex: 0 0 30px;
@@ -123,8 +124,17 @@
   @include box-area;
 }
 
-.param-popover .#{$ns}-popover-content {
-  padding: 0.75rem;
+.param-popover {
+  .#{$ns}-popover2-content {
+    padding: 0.75rem;
+  }
+
+  .submenu-form-group {
+    margin-bottom: 0;
+  }
+  .submenu-form-group + .submenu-form-group {
+    margin-top: 18px;
+  }
 }
 
 .#{$ns}-table-container {

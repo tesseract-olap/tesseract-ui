@@ -24,22 +24,29 @@
     grid-column: span 2;
   }
 
-  .rro {
-    &--parent {
-      padding-left: 1rem;
-    }
-    &--object-constructor {
-      font-style: italic;
-    }
-    &--name {
-      font-weight: bold;
-    }
-  }
-
   .code-block {
     margin: 0;
     overflow: auto;
   }
+}
+
+.rro {
+  &--parent {
+    font-family: 'Roboto Mono', 'Consolas', Monaco, 'Courier New', Courier, monospace;
+    overflow: hidden;
+    padding-left: 1rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &--object-constructor {
+    font-style: italic;
+  }
+  &--name {
+    font-weight: bold;
+  }
+  &--type-number > &--value { color: #00a; }
+  &--type-string > &--value { color: #0a0; }
+  &--type-boolean > &--value { color: #a00; }
 }
 
 .data-matrix {

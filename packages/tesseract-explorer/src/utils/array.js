@@ -1,7 +1,3 @@
-const defaultIndexOf = (haystack, needle) => haystack.indexOf(needle);
-export const findByProperty = property => (haystack, needle) =>
-  haystack.findIndex(item => item[property] === needle[property]);
-
 /**
  * Ensures the returned value is always an array.
  * @template T
@@ -9,39 +5,31 @@ export const findByProperty = property => (haystack, needle) =>
  * @returns {T[]}
  */
 export function ensureArray(value) {
-  /** @type {T[]} */
-  const target = [];
+  /** @type {T[]} */ const target = [];
   return value == null ? target : target.concat(value);
 }
 
-export function toggleFromArray(haystack, needle, finder = defaultIndexOf) {
-  const index = finder(haystack, needle);
-  const haystackClone = haystack.slice();
-  if (index > -1) {
-    haystackClone.splice(index, 1);
-  }
-  else {
-    haystackClone.push(needle);
-  }
-  return haystackClone;
-}
+/**
+ * @template T
+ * @param {T[] | Record<string, T>} items
+ * @param {(value: T, key: string) => boolean} filter
+ * @returns {IterableIterator<T>}
+ */
+export function itemIteratorFactory(items, filter) {
+  const keys = Object.keys(items);
 
-export function replaceFromArray(haystack, needle, finder = defaultIndexOf) {
-  const index = finder(haystack, needle);
-  const haystackClone = haystack.slice();
-  if (index > -1) {
-    haystackClone[index] = needle;
-  }
-  return haystackClone;
-}
+  let index = 0;
+  const next = () => {
+    let key, value;
+    do {
+      key = keys[index];
+      value = items[key];
+    } while (index++ < keys.length && !filter(value, key));
+    return {done: key === undefined, value};
+  };
 
-export function removeFromArray(haystack, needle, finder = defaultIndexOf) {
-  const index = finder(haystack, needle);
-  const haystackClone = haystack.slice();
-  if (index > -1) {
-    haystackClone.splice(index, 1);
-  }
-  return haystackClone;
+  const iterator = {next, [Symbol.iterator]: () => iterator};
+  return iterator;
 }
 
 /**

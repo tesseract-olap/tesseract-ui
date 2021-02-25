@@ -18,7 +18,7 @@ const ResultTable = props => {
   const [sortDescending, setSortDescending] = useState(true);
 
   const sortedData = useMemo(
-    () => sortByKey(data, sortKey, sortDescending),
+    () => sortByKey(data.slice(), sortKey, sortDescending),
     [data, sortKey, sortDescending]
   );
 
