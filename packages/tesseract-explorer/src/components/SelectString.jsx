@@ -32,7 +32,7 @@ const SelectString = props => {
       items={items}
       filterable={items.length > 6}
       onItemSelect={props.onItemSelect}
-      popoverProps={{fill, minimal: true, captureDismiss: true}}
+      popoverProps={{fill, minimal: true, captureDismiss: true, portalClassName: "select-stringproperty-overlay"}}
     >
       <Button
         alignText={Alignment.LEFT}

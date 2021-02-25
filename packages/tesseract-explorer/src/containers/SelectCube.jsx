@@ -53,7 +53,7 @@ export const SelectCube = props => {
       itemRenderer={props.itemRenderer}
       items={props.items}
       onItemSelect={props.onItemSelect}
-      popoverProps={{fill, minimal: true}}
+      popoverProps={{fill, minimal: true, portalClassName: "select-cube-overlay"}}
     >
       <Button
         alignText={Alignment.LEFT}

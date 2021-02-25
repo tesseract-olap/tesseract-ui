@@ -62,7 +62,7 @@ const SelectMeasure = props => {
       itemRenderer={props.itemRenderer || defaultProps.itemRenderer}
       items={props.items}
       onItemSelect={props.onItemSelect}
-      popoverProps={{fill, minimal: true, usePortal}}
+      popoverProps={{fill, minimal: true, usePortal, portalClassName: "select-measure-overlay"}}
     >
       <Button
         alignText={Alignment.LEFT}
