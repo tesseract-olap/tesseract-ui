@@ -10,16 +10,18 @@ import HierarchyMenuItem from "./MenuItemHierarchy";
  */
 
 /** @type {React.FC<OwnProps>} */
-const DimensionMenuItem = ({dimension, selectedItems, onItemSelect}) => {
+const DimensionMenuItem = props => {
+  const {dimension} = props;
   const {hierarchies} = dimension;
+
   if (hierarchies.length === 1) {
     return (
       <HierarchyMenuItem
         dimension={dimension}
         hierarchy={hierarchies[0]}
         key={hierarchies[0].uri}
-        onItemSelect={onItemSelect}
-        selectedItems={selectedItems}
+        onItemSelect={props.onItemSelect}
+        selectedItems={props.selectedItems}
       />
     );
   }
@@ -32,8 +34,8 @@ const DimensionMenuItem = ({dimension, selectedItems, onItemSelect}) => {
             dimension={dimension}
             hierarchy={hie}
             key={hie.uri}
-            onItemSelect={onItemSelect}
-            selectedItems={selectedItems}
+            onItemSelect={props.onItemSelect}
+            selectedItems={props.selectedItems}
           />
         )}
       </MenuItem>

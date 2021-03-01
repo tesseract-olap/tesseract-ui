@@ -5,11 +5,7 @@ import {RawObject} from "react-raw-object";
 import {useTranslation} from "../utils/useTranslation";
 import {DebugURL} from "./DebugURL";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- * @property {TessExpl.Struct.QueryResult} result
- */
+/** @type {React.FC<TessExpl.ViewProps>} */
 const ResultRaw = props => {
   const {headers, sourceCall, urlAggregate, urlLogicLayer} = props.result;
 

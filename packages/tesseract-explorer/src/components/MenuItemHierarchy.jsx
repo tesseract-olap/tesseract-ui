@@ -13,31 +13,27 @@ import LevelMenuItem from "./MenuItemLevel";
  */
 
 /** @type {React.FC<OwnProps>} */
-const HierarchyMenuItem = ({
-  childItem,
-  dimension,
-  hierarchy,
-  onItemSelect,
-  selectedItems
-}) => {
+const HierarchyMenuItem = props => {
+  const {hierarchy} = props;
   const {levels} = hierarchy;
-  const name = childItem
+  const name = props.childItem
     ? hierarchy.name
     : abbreviateFullName([hierarchy.dimension, hierarchy.name]);
 
   if (levels.length === 1) {
     return (
       <LevelMenuItem
-        dimension={dimension}
+        dimension={props.dimension}
         hierarchy={hierarchy}
         key={levels[0].uri}
         level={levels[0]}
-        onItemSelect={onItemSelect}
-        selectedItems={selectedItems}
+        onItemSelect={props.onItemSelect}
+        selectedItems={props.selectedItems}
       />
     );
   }
   else {
+    const {dimension, onItemSelect, selectedItems} = props;
     return (
       <MenuItem key={hierarchy.uri} icon="layers" text={name}>
         {levels.map(lvl =>

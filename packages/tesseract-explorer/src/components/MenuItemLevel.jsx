@@ -14,22 +14,16 @@ import {levelRefToArray, stringifyName} from "../utils/transform";
  */
 
 /** @type {React.FC<OwnProps>} */
-const LevelMenuItem = ({
-  childItem,
-  dimension,
-  hierarchy,
-  level,
-  selectedItems,
-  onItemSelect
-}) => {
-  const name = childItem ? level.name : abbreviateFullName(levelRefToArray(level));
+const LevelMenuItem = props => {
+  const {level} = props;
+  const name = props.childItem ? level.name : abbreviateFullName(levelRefToArray(level));
 
   return (
     <MenuItem
-      disabled={selectedItems.includes(stringifyName(level))}
+      disabled={props.selectedItems.includes(stringifyName(level))}
       icon="layer"
       key={level.uri}
-      onClick={() => onItemSelect(level, hierarchy, dimension)}
+      onClick={() => props.onItemSelect(level, props.hierarchy, props.dimension)}
       text={name}
     />
   );

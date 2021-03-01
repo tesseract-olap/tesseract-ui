@@ -13,14 +13,7 @@ import {isActiveItem} from "../utils/validation";
 import ButtonDownload from "./ButtonDownload";
 import {MemoMatrixPreview as MatrixPreview} from "./MatrixPreview";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- * @property {TessExpl.Struct.QueryParams} params
- * @property {TessExpl.Struct.QueryResult} result
- */
-
-/** @type {React.FC<OwnProps>} */
+/** @type {React.FC<TessExpl.ViewProps>} */
 const ResultPivot = ({className, params, result}) => {
   const {data} = result;
 
@@ -71,7 +64,7 @@ const ResultPivot = ({className, params, result}) => {
       <div className="toolbar">
         {warnings}
 
-        <h3>{t("title_parameters")}</h3>
+        <h3>{t("pivot_view.title_params")}</h3>
         <FormGroup label={t("pivot_view.label_ddcolumn")} labelFor="matrix-columns">
           <HTMLSelect
             fill={true}
@@ -100,7 +93,7 @@ const ResultPivot = ({className, params, result}) => {
           />
         </FormGroup>
 
-        <h3>{t("action_download")}</h3>
+        <h3>{t("pivot_view.title_download")}</h3>
         <ButtonGroup fill>
           <ButtonDownload
             text="CSV"

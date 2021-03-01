@@ -5,13 +5,7 @@ import React, {useMemo, useState} from "react";
 import {sortByKey} from "../utils/array";
 import {useTranslation} from "../utils/useTranslation";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- * @property {QueryResult} result
- */
-
-/** @type {React.FC<OwnProps>} */
+/** @type {React.FC<TessExpl.ViewProps>} */
 const ResultTable = props => {
   const {data = []} = props.result;
 

@@ -16,14 +16,14 @@ import DimensionMenuItem from "./MenuItemDimension";
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */
-const DimensionMenu = ({dimensions, selectedItems, onItemSelect}) =>
+const DimensionMenu = props =>
   <Menu className="menu-dimension">
-    {dimensions.map(dim =>
+    {props.dimensions.map(dim =>
       <DimensionMenuItem
         dimension={dim}
         key={dim.uri}
-        onItemSelect={onItemSelect}
-        selectedItems={selectedItems}
+        onItemSelect={props.onItemSelect}
+        selectedItems={props.selectedItems}
       />
     )}
   </Menu>;
