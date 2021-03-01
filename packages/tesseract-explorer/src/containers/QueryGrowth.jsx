@@ -12,6 +12,7 @@ import {
 import {selectGrowthItems} from "../state/params/selectors";
 import {summaryGrowth} from "../utils/format";
 import {buildGrowth} from "../utils/structs";
+import {useTranslation} from "../utils/useTranslation";
 import {isActiveItem, isGrowthItem} from "../utils/validation";
 
 /**
@@ -21,30 +22,29 @@ import {isActiveItem, isGrowthItem} from "../utils/validation";
 
 /**
  * @typedef StateProps
- * @property {GrowthItem[]} items
+ * @property {TessExpl.Struct.GrowthItem[]} items
  */
 
 /**
  * @typedef DispatchProps
  * @property {() => void} clearHandler
  * @property {() => void} createHandler
- * @property {(item: GrowthItem) => void} removeHandler
- * @property {(item: GrowthItem) => void} toggleHandler
- * @property {(item: GrowthItem) => void} updateHandler
+ * @property {(item: TessExpl.Struct.GrowthItem) => void} removeHandler
+ * @property {(item: TessExpl.Struct.GrowthItem) => void} toggleHandler
+ * @property {(item: TessExpl.Struct.GrowthItem) => void} updateHandler
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const QueryGrowth = props => {
   const {items, removeHandler, toggleHandler, updateHandler} = props;
-  const totalCounter = items.length;
-  const firstActiveItem = items
-    .filter(item => isActiveItem(item) && isGrowthItem(item))
-    .pop();
 
-  const title = `Growth: ${firstActiveItem ? summaryGrowth(firstActiveItem) : "None"}`;
+  const {translate: t} = useTranslation();
+
+  const firstActiveItem = items.find(item => isActiveItem(item) && isGrowthItem(item));
+  const title = `${t("params.title_area_growth")}: ${firstActiveItem ? t("params.summary_growth", summaryGrowth(firstActiveItem)) : t("placeholders.none")}`;
   const toolbar =
     <React.Fragment>
-      {totalCounter > 0 &&
+      {items.length > 0 &&
         <Button icon="trash" intent={Intent.DANGER} onClick={props.clearHandler} />
       }
       <Button icon="new-object" onClick={props.createHandler} />

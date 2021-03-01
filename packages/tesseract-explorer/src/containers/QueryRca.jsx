@@ -7,6 +7,7 @@ import {doRcaClear, doRcaRemove, doRcaSelect, doRcaUpdate} from "../state/params
 import {selectRcaItems} from "../state/params/selectors";
 import {summaryRca} from "../utils/format";
 import {buildRca} from "../utils/structs";
+import {useTranslation} from "../utils/useTranslation";
 import {isActiveItem, isRcaItem} from "../utils/validation";
 
 /**
@@ -16,30 +17,29 @@ import {isActiveItem, isRcaItem} from "../utils/validation";
 
 /**
  * @typedef StateProps
- * @property {RcaItem[]} items
+ * @property {TessExpl.Struct.RcaItem[]} items
  */
 
 /**
  * @typedef DispatchProps
  * @property {() => void} clearHandler
  * @property {() => void} createHandler
- * @property {(item: RcaItem) => void} removeHandler
- * @property {(item: RcaItem) => void} toggleHandler
- * @property {(item: RcaItem) => void} updateHandler
+ * @property {(item: TessExpl.Struct.RcaItem) => void} removeHandler
+ * @property {(item: TessExpl.Struct.RcaItem) => void} toggleHandler
+ * @property {(item: TessExpl.Struct.RcaItem) => void} updateHandler
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const QueryRca = props => {
   const {items, removeHandler, toggleHandler, updateHandler} = props;
-  const totalCounter = items.length;
-  const firstActiveItem = items
-    .filter(item => isActiveItem(item) && isRcaItem(item))
-    .pop();
 
-  const title = `RCA: ${firstActiveItem ? summaryRca(firstActiveItem) : "None"}`;
+  const {translate: t} = useTranslation();
+
+  const firstActiveItem = items.find(item => isActiveItem(item) && isRcaItem(item));
+  const title = `${t("params.title_area_rca")}: ${firstActiveItem ? t("params.summary_rca", summaryRca(firstActiveItem)) : t("placeholders.none")}`;
   const toolbar =
     <React.Fragment>
-      {totalCounter > 0 &&
+      {items.length > 0 &&
         <Button icon="trash" intent={Intent.DANGER} onClick={props.clearHandler} />
       }
       <Button icon="new-object" onClick={props.createHandler} />

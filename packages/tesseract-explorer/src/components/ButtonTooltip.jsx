@@ -13,9 +13,7 @@ import React from "react";
  */
 
 /** @type {React.FC<ButtonProps & OwnProps>} */
-const ButtonTooltip = ({tooltip, intent, position, ...buttonProps}) =>
+export const ButtonTooltip = ({tooltip, intent, position, ...buttonProps}) =>
   <Tooltip autoFocus={false} content={tooltip} intent={intent} position={position}>
     <Button {...buttonProps} />
   </Tooltip>;
-
-export default ButtonTooltip;

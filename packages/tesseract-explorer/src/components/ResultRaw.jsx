@@ -1,33 +1,46 @@
+import {Classes, FormGroup} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {Fragment} from "react";
-import {FormGroup, Classes} from "@blueprintjs/core";
-import {DebugURL} from "./DebugURL";
 import {RawObject} from "react-raw-object";
+import {useTranslation} from "../utils/useTranslation";
+import {DebugURL} from "./DebugURL";
 
 /**
  * @typedef OwnProps
  * @property {string} [className]
  * @property {TessExpl.Struct.QueryResult} result
  */
+const ResultRaw = props => {
+  const {headers, sourceCall, urlAggregate, urlLogicLayer} = props.result;
 
-const ResultRaw = ({className, result: {data, headers, sourceCall, urlAggregate, urlLogicLayer}}) =>
-  <div className={classNames("data-raw", className)}>
-    {urlLogicLayer && <FormGroup className="sourceurl" label="LogicLayer API URL">
-      <DebugURL url={urlLogicLayer} />
-    </FormGroup>}
+  const {translate: t} = useTranslation();
 
-    {urlAggregate && <FormGroup className="sourceurl" label="Aggregate API URL">
-      <DebugURL url={urlAggregate} />
-    </FormGroup>}
+  const jssourceLabel =
+    <Fragment>
+      {t("debug_view.jssource_prefix")}
+      <a href="https://www.npmjs.com/package/@datawheel/olap-client">olap-client</a>
+      {t("debug_view.jssource_suffix")}
+    </Fragment>;
 
-    <FormGroup className="headers" label="Response headers">
-      <RawObject object={headers} depthExpanded={1} />
-    </FormGroup>
+  return (
+    <div className={classNames("data-raw", props.className)}>
+      {urlLogicLayer && <FormGroup className="sourceurl" label={t("debug_view.url_logiclayer")}>
+        <DebugURL url={urlLogicLayer} />
+      </FormGroup>}
 
-    {sourceCall && <FormGroup className="sourcecall" label={<Fragment>{"Javascript source for "}<a href="https://www.npmjs.com/package/@datawheel/olap-client">olap-client</a></Fragment>}>
-      <pre className={classNames(Classes.CODE_BLOCK, "jscall")}>{sourceCall}</pre>
-    </FormGroup>}
-  </div>;
+      {urlAggregate && <FormGroup className="sourceurl" label={t("debug_view.url_aggregate")}>
+        <DebugURL url={urlAggregate} />
+      </FormGroup>}
 
+      <FormGroup className="headers" label={t("debug_view.httpheaders")}>
+        <RawObject object={headers} depthExpanded={1} />
+      </FormGroup>
+
+      {sourceCall && <FormGroup className="sourcecall" label={jssourceLabel}>
+        <pre className={classNames(Classes.CODE_BLOCK, "jscall")}>{sourceCall}</pre>
+      </FormGroup>}
+    </div>
+  );
+};
 
 export default ResultRaw;

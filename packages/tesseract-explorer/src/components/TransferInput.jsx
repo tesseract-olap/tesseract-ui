@@ -3,6 +3,7 @@ import classNames from "classnames";
 import React, {useMemo, useState} from "react";
 import ViewPortList from "react-viewport-list";
 import {keyBy, safeRegExp} from "../utils/transform";
+import {useTranslation} from "../utils/useTranslation";
 
 import "../style/TransferInput.scss";
 
@@ -12,8 +13,7 @@ import "../style/TransferInput.scss";
  * @property {Record<string, T>} items
  * @property {T["key"][]} activeItems
  * @property {(items: T["key"][]) => void} onChange
- * @property {(item: T) => string} [getLabel]
- * @property {string} [searchPlaceholder]
+ * @property {(item: T) => string} getLabel
  */
 
 /**
@@ -25,9 +25,10 @@ export const TransferInput = props => {
     items,
     activeItems,
     onChange,
-    getLabel = item => `${item}`,
-    searchPlaceholder = "Filter items (supports regex)"
+    getLabel
   } = props;
+
+  const {translate: t} = useTranslation();
 
   const [filter, setFilter] = useState("");
 
@@ -97,23 +98,27 @@ export const TransferInput = props => {
         className="item-filter"
         leftIcon="search"
         onChange={evt => setFilter(evt.target.value)}
-        placeholder={searchPlaceholder}
+        placeholder={t("transfer_input.search_placeholder")}
         rightElement={rightElement}
         type="search"
         value={filter}
       />
       <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-        {unselectedHidden > 0 && <MenuDivider title={`${unselectedHidden} items hidden`} />}
+        {unselectedHidden > 0 && <MenuDivider title={t("transfer_input.count_hidden", {n: unselectedHidden})} />}
         <ViewPortList items={results.unselected} itemMinSize={30}>
           {renderItem}
         </ViewPortList>
       </Menu>
       <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-        {selectedHidden > 0 && <MenuDivider title={`${selectedHidden} items hidden`} />}
+        {selectedHidden > 0 && <MenuDivider title={t("transfer_input.count_hidden", {n: selectedHidden})} />}
         <ViewPortList items={results.selected} itemMinSize={30}>
           {renderItem}
         </ViewPortList>
       </Menu>
     </div>
   );
+};
+
+TransferInput.defaultProps = {
+  getLabel: item => `${item}`
 };

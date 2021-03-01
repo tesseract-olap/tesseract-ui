@@ -2,7 +2,6 @@ import {Button, Intent} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import QueryArea from "../components/QueryArea";
-import TagMeasure from "../components/TagMeasure";
 import {doMeasureClear, doMeasureToggle} from "../state/params/actions";
 import {selectFilterItems} from "../state/params/selectors";
 import {activeItemCounter} from "../utils/validation";

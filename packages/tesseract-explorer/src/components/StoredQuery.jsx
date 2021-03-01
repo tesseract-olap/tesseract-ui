@@ -1,6 +1,7 @@
 import {Alignment, Button, Intent, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {memo} from "react";
+import {useTranslation} from "../utils/useTranslation";
 import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
 
 /**
@@ -12,8 +13,9 @@ import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
  */
 
 /** @type {React.FC<OwnProps>} */
-export const StoredQuery = ({active, className, item, onClick}) => {
-  const {params} = item;
+export const StoredQuery = props => {
+  const {params} = props.item;
+  const {translate: t} = useTranslation();
 
   const levelList = Object.values(params.drilldowns)
     .filter(isActiveItem)
@@ -25,16 +27,16 @@ export const StoredQuery = ({active, className, item, onClick}) => {
   return (
     <Button
       alignText={params.cube ? Alignment.LEFT : undefined}
-      className={classNames(className)}
+      className={classNames(props.className)}
       fill
-      intent={active ? Intent.PRIMARY : Intent.NONE}
-      onClick={onClick}
+      intent={props.active ? Intent.PRIMARY : Intent.NONE}
+      onClick={props.onClick}
       tabIndex={0}
     >
       {params.cube && <Tag fill icon="cube">{params.cube}</Tag>}
       {measureList.length > 0 && <Tag fill icon="th-list">{measureList.join(", ")}</Tag>}
       {levelList.length > 0 && <Tag fill icon="layers">{levelList.join(", ")}</Tag>}
-      {!params.cube && "No parameters set"}
+      {!params.cube && t("queries.unset_parameters")}
     </Button>
   );
 };

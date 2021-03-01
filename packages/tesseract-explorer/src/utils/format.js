@@ -1,6 +1,5 @@
-import pluralize from "pluralize";
 import {splitName} from "./transform";
-import {isGrowthItem, isRcaItem, isTopkItem, isFilterItem} from "./validation";
+import {isFilterItem} from "./validation";
 
 /**
  * Simplifies a fullname for UI display.
@@ -40,34 +39,33 @@ export function summaryFilter(filter) {
 
 /**
  * @param {TessExpl.Struct.GrowthItem} growth
- * @returns {string}
  */
 export function summaryGrowth(growth) {
-  if (!isGrowthItem(growth)) return "";
-  const measureName = growth.measure;
-  const levelName = abbreviateFullName(growth.level);
-  return `${measureName} by ${levelName}`;
+  return {
+    level: abbreviateFullName(growth.level),
+    measure: growth.measure
+  };
 }
 
 /**
  * @param {TessExpl.Struct.RcaItem} rca
- * @returns {string}
  */
 export function summaryRca(rca) {
-  if (!isRcaItem(rca)) return "";
-  const measureName = rca.measure;
-  const level1Name = abbreviateFullName(rca.level1);
-  const level2Name = abbreviateFullName(rca.level2);
-  return `${level1Name} on ${measureName} by ${level2Name}`;
+  return {
+    level1: abbreviateFullName(rca.level1),
+    level2: abbreviateFullName(rca.level2),
+    measure: rca.measure
+  };
 }
 
 /**
  * @param {TessExpl.Struct.TopkItem} topk
- * @returns {string}
  */
 export function summaryTopk(topk) {
-  if (!isTopkItem(topk)) return "";
-  const measureName = pluralize(topk.measure, topk.amount);
-  const levelName = abbreviateFullName(topk.level);
-  return `Top ${topk.amount} ${measureName} by ${levelName} (${topk.order})`;
+  return {
+    amount: topk.amount,
+    level: abbreviateFullName(topk.level),
+    measure: topk.measure,
+    order: topk.order
+  };
 }

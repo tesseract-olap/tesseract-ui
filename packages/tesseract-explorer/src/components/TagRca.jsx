@@ -4,18 +4,23 @@ import React from "react";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {summaryRca} from "../utils/format";
 import {stringifyName} from "../utils/transform";
+import {useTranslation} from "../utils/useTranslation";
+import {isRcaItem} from "../utils/validation";
 import SelectLevel from "./SelectLevel";
 
 /**
  * @typedef OwnProps
- * @property {RcaItem} item
- * @property {(item: RcaItem) => void} [onToggle]
- * @property {(item: RcaItem) => void} [onRemove]
- * @property {(item: RcaItem) => void} [onUpdate]
+ * @property {TessExpl.Struct.RcaItem} item
+ * @property {(item: TessExpl.Struct.RcaItem) => void} onToggle
+ * @property {(item: TessExpl.Struct.RcaItem) => void} onRemove
+ * @property {(item: TessExpl.Struct.RcaItem) => void} onUpdate
  */
 
 /** @type {React.FC<OwnProps>} */
-const TagRca = ({item, onRemove, onToggle, onUpdate}) => {
+const TagRca = props => {
+  const {item, onRemove, onToggle, onUpdate} = props;
+  const {translate: t} = useTranslation();
+
   const content =
     <ControlGroup className="rca-input" vertical={true}>
       <SelectLevel
@@ -48,7 +53,7 @@ const TagRca = ({item, onRemove, onToggle, onUpdate}) => {
         onRemove(item);
       }}
     >
-      {summaryRca(item) || "[Incomplete parameters]"}
+      {isRcaItem(item) ? t("params.summary_rca", summaryRca(item)) : t("placeholders.incomplete")}
     </Tag>;
 
   return (

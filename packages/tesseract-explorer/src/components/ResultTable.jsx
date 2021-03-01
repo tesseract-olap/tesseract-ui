@@ -3,6 +3,7 @@ import {Cell, Column, ColumnHeaderCell, Table} from "@blueprintjs/table";
 import classNames from "classnames";
 import React, {useMemo, useState} from "react";
 import {sortByKey} from "../utils/array";
+import {useTranslation} from "../utils/useTranslation";
 
 /**
  * @typedef OwnProps
@@ -13,6 +14,8 @@ import {sortByKey} from "../utils/array";
 /** @type {React.FC<OwnProps>} */
 const ResultTable = props => {
   const {data = []} = props.result;
+
+  const {translate: t} = useTranslation();
 
   const [sortKey, setSortKey] = useState("");
   const [sortDescending, setSortDescending] = useState(true);
@@ -38,12 +41,12 @@ const ResultTable = props => {
         <MenuItem
           icon="sort-asc"
           onClick={() => [setSortKey(columnKey), setSortDescending(false)]}
-          text="Sort Asc"
+          text={t("table_view.sort_asc")}
         />
         <MenuItem
           icon="sort-desc"
           onClick={() => [setSortKey(columnKey), setSortDescending(true)]}
-          text="Sort Desc"
+          text={t("table_view.sort_desc")}
         />
       </Menu>;
     const columnHeaderCellRenderer = () =>

@@ -7,6 +7,7 @@ import {doParseQueryUrl} from "../middleware/actions";
 import {doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectCurrentQueryItem, selectQueryItems} from "../state/queries/selectors";
 import {buildQuery} from "../utils/structs";
+import { useTranslation } from "../utils/useTranslation";
 
 /**
  * @typedef OwnProps
@@ -29,8 +30,10 @@ import {buildQuery} from "../utils/structs";
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const ExplorerQueries = props => {
   const {onItemSelect, currentItem} = props;
+  const {translate: t} = useTranslation();
+
   return (
-    <ExplorerColumn className={props.className} title="Queries" defaultOpen={props.items.length > 1}>
+    <ExplorerColumn className={props.className} title={t("queries.column_title")} defaultOpen={props.items.length > 1}>
       <ButtonGroup alignText="left" fill vertical>
         <Button
           className="action-create"

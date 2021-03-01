@@ -20,32 +20,8 @@ import {safeRegExp} from "../utils/transform";
  * @property {(selectedItem: IOptionProps) => void} onItemSelect
  */
 
-/** @type {React.FC<OwnProps>} */
-const SelectString = props => {
-  const {fill, items, selectedItem, placeholder = ""} = props;
-
-  return (
-    <Select
-      className={classNames("select-stringproperty", props.className)}
-      itemListPredicate={props.itemListPredicate}
-      itemRenderer={props.itemRenderer}
-      items={items}
-      filterable={items.length > 6}
-      onItemSelect={props.onItemSelect}
-      popoverProps={{fill, minimal: true, captureDismiss: true, portalClassName: "select-stringproperty-overlay"}}
-    >
-      <Button
-        alignText={Alignment.LEFT}
-        className={props.className}
-        fill={fill}
-        rightIcon="double-caret-vertical"
-        text={selectedItem || placeholder}
-      />
-    </Select>
-  );
-};
-
-SelectString.defaultProps = {
+/** @type {Required<Pick<OwnProps, "itemListPredicate" | "itemRenderer">>} */
+const defaultProps = {
   itemListPredicate(query, items) {
     const tester = safeRegExp(query, "i");
     return items.filter(item => tester.test(`${typeof item === "object" ? item.label || item.value : item}`));
@@ -64,4 +40,28 @@ SelectString.defaultProps = {
   }
 };
 
-export default SelectString;
+/** @type {React.FC<OwnProps>} */
+export const SelectString = props => {
+  const {fill, items} = props;
+  return (
+    <Select
+      className={classNames("select-stringproperty", props.className)}
+      itemListPredicate={props.itemListPredicate || defaultProps.itemListPredicate}
+      itemRenderer={props.itemRenderer || defaultProps.itemRenderer}
+      items={items}
+      filterable={items.length > 6}
+      onItemSelect={props.onItemSelect}
+      popoverProps={{fill, minimal: true, captureDismiss: true, portalClassName: "select-stringproperty-overlay"}}
+    >
+      <Button
+        alignText={Alignment.LEFT}
+        className={props.className}
+        fill={fill}
+        rightIcon="double-caret-vertical"
+        text={props.selectedItem || props.placeholder || ""}
+      />
+    </Select>
+  );
+};
+
+SelectString.defaultProps = defaultProps;

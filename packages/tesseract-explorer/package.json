@@ -11,7 +11,8 @@
       "import": "./dist/explorer.esm.js",
       "require": "./dist/explorer.cjs.js",
       "default": "./dist/explorer.cjs.js"
-    }
+    },
+    "./style.css": "./dist/explorer.css"
   },
   "scripts": {
     "build": "rollup --config rollup.config.js --environment NODE_ENV:production,BABEL_ENV:production",
@@ -39,7 +40,6 @@
     "form-urldecoded": "^0.1.0",
     "form-urlencoded": "^4.2.0",
     "iso-639-1": "^2.1.0",
-    "pluralize": "^8.0.0",
     "react-raw-object": "^1.0.0",
     "react-shadow-scroll": "^2.1.0",
     "react-viewport-list": "^3.0.0",

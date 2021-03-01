@@ -4,10 +4,12 @@ import classNames from "classnames";
 import React, {useEffect, useState} from "react";
 import {abbreviateFullName} from "../utils/format";
 import {levelRefToArray} from "../utils/transform";
-import ButtonTagExtra from "./ButtonTagExtra";
+import {useTranslation} from "../utils/useTranslation";
+import {ButtonTagExtra} from "./ButtonTagExtra";
 import {TransferInput} from "./TransferInput";
 
 /** @type {React.FC<import("./TransferInput").OwnProps<TessExpl.Struct.MemberItem>>} */
+// @ts-ignore
 export const MembersTransferInput = TransferInput;
 
 /**
@@ -24,6 +26,8 @@ export const MembersTransferInput = TransferInput;
 export const TagCut = props => {
   const {item, memberFetcher, onMembersUpdate, onRemove, onToggle} = props;
   const label = abbreviateFullName(levelRefToArray(item));
+
+  const {translate: t} = useTranslation();
 
   const [error, setError] = useState("");
   const [members, setMembers] = useState({});
@@ -74,12 +78,12 @@ export const TagCut = props => {
           <Callout
             icon="warning-sign"
             intent={Intent.WARNING}
-            title="Error while loading member list"
+            title={t("params.error_fetchmembers_title")}
           >
-            <p>An error ocurred while loading the member list.</p>
+            <p>{t("params.error_fetchmembers_detail")}</p>
             <p>{error}</p>
             <p>
-              <Button text="Reload" onClick={reloadHandler} />
+              <Button text={t("action_reload")} onClick={reloadHandler} />
             </p>
           </Callout>
         }
@@ -94,7 +98,7 @@ export const TagCut = props => {
           icon="warning-sign"
           rightIcon={
             <ButtonGroup minimal={true}>
-              <ButtonTagExtra icon="refresh" onClick={reloadHandler} />
+              <ButtonTagExtra icon="refresh" title={t("action_reload")} onClick={reloadHandler} />
             </ButtonGroup>
           }
           intent={Intent.WARNING}
@@ -113,7 +117,7 @@ export const TagCut = props => {
   return (
     <Popover2
       content={
-        <FormGroup className="submenu-form-group" label="Members">
+        <FormGroup className="submenu-form-group" label={t("params.title_members")}>
           <MembersTransferInput
             activeItems={item.members}
             getLabel={item => item.name}
@@ -143,7 +147,7 @@ export const TagCut = props => {
         interactive={true}
         onRemove={removeHandler}
       >
-        {`${label} (${uniqueActive ? uniqueActive.name : `${activeCount} selected`})`}
+        {`${label} (${uniqueActive ? uniqueActive.name : t("params.count_cuts", {n: activeCount})})`}
       </Tag>
     </Popover2>
   );

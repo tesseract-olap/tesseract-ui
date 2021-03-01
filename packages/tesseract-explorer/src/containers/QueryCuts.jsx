@@ -1,13 +1,14 @@
 import {Button, Intent} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
+import ButtonSelectLevel from "../components/ButtonSelectLevel";
 import QueryArea from "../components/QueryArea";
 import {TagCut} from "../components/TagCut";
-import ButtonSelectLevel from "../components/ButtonSelectLevel";
 import {doFetchMembers} from "../middleware/actions";
-import {doCutUpdate, doCutRemove, doCutClear} from "../state/params/actions";
+import {doCutClear, doCutRemove, doCutUpdate} from "../state/params/actions";
 import {selectCutItems, selectLocaleCode} from "../state/params/selectors";
 import {buildCut} from "../utils/structs";
+import {useTranslation} from "../utils/useTranslation";
 import {activeItemCounter} from "../utils/validation";
 
 /**
@@ -34,13 +35,13 @@ import {activeItemCounter} from "../utils/validation";
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const QueryCuts = props => {
   const {items} = props;
-  const totalCount = items.length;
-  const activeCount = items.reduce(activeItemCounter, 0);
 
-  const title = `Cuts (${activeCount})`;
+  const {translate: t} = useTranslation();
+
+  const title = `${t("params.title_area_cuts")} (${items.reduce(activeItemCounter, 0)})`;
   const toolbar =
     <React.Fragment>
-      {totalCount > 0 &&
+      {items.length > 0 &&
         <Button icon="trash" intent={Intent.DANGER} onClick={props.clearHandler} />
       }
       <ButtonSelectLevel

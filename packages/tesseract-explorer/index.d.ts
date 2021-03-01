@@ -58,13 +58,26 @@ declare namespace TessExpl {
      * Enables the Topk parameter group in the parameters panel.
      */
     enableTopk?: boolean;
+
+    /**
+     * The Translation labels to use in the UI.
+     */
+    translations?: Translation;
+
+    /**
+     * The default locale to use in the Explorer component UI.
+     */
+    uiLocale?: string;
   }
 
   interface ViewProps {
+    className?: string;
     cube: OlapClnt.AdaptedCube;
-    result: Struct.QueryResult;
     params: Struct.QueryParams;
+    result: Struct.QueryResult;
   }
+
+  type Translation = Record<string, string | Record<string, string>>;
 
   namespace State {
     interface ExplorerState {

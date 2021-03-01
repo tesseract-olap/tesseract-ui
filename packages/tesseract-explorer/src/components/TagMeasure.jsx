@@ -3,7 +3,7 @@ import React from "react";
 
 /**
  * @typedef OwnProps
- * @property {MeasureItem} item
+ * @property {TessExpl.Struct.MeasureItem} item
  * @property {(event: React.FormEvent<HTMLInputElement>) => void} [onToggle]
  */
 

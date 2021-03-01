@@ -9,7 +9,9 @@ import React from "react";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {summaryGrowth} from "../utils/format";
 import {joinName} from "../utils/transform";
-import SelectTimeLevel from "./SelectTimeLevel";
+import {useTranslation} from "../utils/useTranslation";
+import {isGrowthItem} from "../utils/validation";
+import {SelectTimeLevel} from "./SelectTimeLevel";
 
 /**
  * @typedef OwnProps
@@ -20,10 +22,13 @@ import SelectTimeLevel from "./SelectTimeLevel";
  */
 
 /** @type {React.FC<OwnProps>} */
-const TagGrowth = ({item, onRemove, onToggle, onUpdate}) => {
+const TagGrowth = props => {
+  const {item, onRemove, onToggle, onUpdate} = props;
+  const {translate: t} = useTranslation();
+
   const content =
     <div className="growth-submenu">
-      <FormGroup label="Measure" helperText=".">
+      <FormGroup label={t("params.label_measure")} helperText=".">
         <SelectMeasure
           selectedItem={item.measure}
           fill={true}
@@ -31,7 +36,7 @@ const TagGrowth = ({item, onRemove, onToggle, onUpdate}) => {
           usePortal={false}
         />
       </FormGroup>
-      <FormGroup label="Time level">
+      <FormGroup label={t("params.label_timelevel")}>
         <SelectTimeLevel
           selectedItem={item.level}
           fill={true}
@@ -56,7 +61,7 @@ const TagGrowth = ({item, onRemove, onToggle, onUpdate}) => {
         onRemove(item);
       }}
     >
-      {summaryGrowth(item) || "[Incomplete parameters]"}
+      {isGrowthItem(item) ? t("params.summary_growth", summaryGrowth(item)) : t("placeholders.incomplete")}
     </Tag>;
 
   return <Popover

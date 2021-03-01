@@ -7,7 +7,7 @@ import classNames from "classnames";
  */
 
 /** @type {React.FC<OwnProps>} */
-const AnimatedCube = props =>
+export const AnimatedCube = props =>
   <div className={classNames("animated-cube", props.className)}>
     <div className="cube">
       <span />
@@ -20,5 +20,3 @@ const AnimatedCube = props =>
       <span />
     </div>
   </div>;
-
-export default AnimatedCube;

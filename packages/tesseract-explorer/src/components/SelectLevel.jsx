@@ -2,6 +2,7 @@ import {Alignment, Button, Popover, Position} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {ensureArray} from "../utils/array";
 import {abbreviateFullName} from "../utils/format";
+import {useTranslation} from "../utils/useTranslation";
 import {shallowEqualExceptFns} from "../utils/validation";
 import MenuDimension from "./MenuDimension";
 
@@ -10,7 +11,6 @@ import MenuDimension from "./MenuDimension";
  * @property {string} [className]
  * @property {boolean} [fill]
  * @property {import("@blueprintjs/core").IconName | false} [icon]
- * @property {string} [placeholder]
  * @property {string|undefined} [selectedItem]
  * @property {keyof JSX.IntrinsicElements} [targetTagName]
  * @property {keyof JSX.IntrinsicElements} [wrapperTagName]
@@ -20,12 +20,8 @@ import MenuDimension from "./MenuDimension";
 
 /** @type {React.FC<OwnProps>} */
 const SelectLevel = props => {
-  const {
-    fill,
-    icon = "layer",
-    placeholder = "Level...",
-    selectedItem
-  } = props;
+  const {fill, icon, selectedItem} = props;
+  const {translate: t} = useTranslation();
 
   return (
     <Popover
@@ -42,7 +38,7 @@ const SelectLevel = props => {
         fill={fill}
         icon={icon}
         rightIcon="double-caret-vertical"
-        text={selectedItem ? abbreviateFullName(selectedItem) : placeholder}
+        text={selectedItem ? abbreviateFullName(selectedItem) : t("selectlevel_placeholder")}
       />
       <MenuDimension
         selectedItems={ensureArray(selectedItem)}
@@ -50,6 +46,10 @@ const SelectLevel = props => {
       />
     </Popover>
   );
+};
+
+SelectLevel.defaultProps = {
+  icon: "layer"
 };
 
 export default memo(SelectLevel, shallowEqualExceptFns);

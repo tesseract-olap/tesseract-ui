@@ -1,12 +1,13 @@
 import {ButtonGroup, Checkbox, ControlGroup, Divider, FormGroup, NumericInput} from "@blueprintjs/core";
-import React, {memo} from "react";
+import React, {memo, useMemo} from "react";
 import {connect} from "react-redux";
 import QueryArea from "../components/QueryArea";
-import SelectString from "../components/SelectString";
+import {SelectString} from "../components/SelectString";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {doBooleanToggle, doPaginationUpdate, doSortingUpdate} from "../state/params/actions";
 import {selectBooleans, selectPaginationParams, selectSortingParams} from "../state/params/selectors";
 import {selectServerBooleansEnabled} from "../state/server/selectors";
+import {useTranslation} from "../utils/useTranslation";
 import {shallowEqualExceptFns} from "../utils/validation";
 
 /**
@@ -41,90 +42,98 @@ import {shallowEqualExceptFns} from "../utils/validation";
  * @property {(sortKey: string, sortDir: string) => any} updateSortingHandler
  */
 
-const sortDirections = {
-  asc: "Ascending",
-  desc: "Descending"
-};
-const sortDirectionList = Object.keys(sortDirections).map(
-  value => ({label: sortDirections[value], value})
-);
-
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
-export const QueryBooleans = props =>
-  <QueryArea className={props.className} title="Query options" open={false}>
-    {props._enabledBooleans.includes("debug") && <Checkbox
-      className="item-option"
-      label="Debug response"
-      checked={props.debug || false}
-      onChange={props.toggleDebugHandler}
-    />}
-    {props._enabledBooleans.includes("distinct") && <Checkbox
-      className="item-option"
-      label="Apply DISTINCT to drilldowns"
-      checked={props.distinct || false}
-      onChange={props.toggleDistinctHandler}
-    />}
-    {props._enabledBooleans.includes("exclude_default_members") && <Checkbox
-      className="item-option"
-      label="Exclude default members"
-      checked={props.exclude_default_members || false}
-      onChange={props.toggleExcludeDefaultMembersHandler}
-    />}
-    {props._enabledBooleans.includes("nonempty") && <Checkbox
-      className="item-option"
-      label="Only return non-empty data"
-      checked={props.nonempty || false}
-      onChange={props.toggleNonEmptyHandler}
-    />}
-    {props._enabledBooleans.includes("parents") && <Checkbox
-      className="item-option"
-      label="Include parent levels"
-      checked={props.parents || false}
-      onChange={props.toggleParentsHandler}
-    />}
-    {props._enabledBooleans.includes("sparse") && <Checkbox
-      className="item-option"
-      label="Optimize sparse results"
-      checked={props.sparse || false}
-      onChange={props.toggleSparseHandler}
-    />}
+export const QueryBooleans = props => {
+  const {translate: t} = useTranslation();
 
-    <FormGroup label="Sort by">
-      <ControlGroup fill={true}>
-        <SelectMeasure
-          fill={true}
-          icon={props.sortKey ? "timeline-bar-chart" : false}
-          selectedItem={props.sortKey}
-          onItemSelect={measure => props.updateSortingHandler(measure.name, props.sortDir)}
-        />
-        <SelectString
-          selectedItem={sortDirections[props.sortDir]}
-          items={sortDirectionList}
-          onItemSelect={direction => props.updateSortingHandler(props.sortKey, direction.value)}
-        />
-      </ControlGroup>
-    </FormGroup>
+  const sort = useMemo(() => {
+    const directions = {
+      asc: t("params.direction_asc"),
+      desc: t("params.direction_desc")
+    };
+    const options = Object.keys(directions)
+      .map(value => ({label: directions[value], value}));
 
-    <ButtonGroup fill={true}>
-      <FormGroup label="Results limit">
-        <NumericInput
-          fill={true}
-          onValueChange={limit => props.updatePaginationHandler(limit, props.offset)}
-          value={props.limit}
-        />
+    return {directions, options};
+  }, []);
+
+  return (
+    <QueryArea className={props.className} title={t("params.title_area_options")} open={false}>
+      {props._enabledBooleans.includes("debug") && <Checkbox
+        className="item-option"
+        label={t("params.label_boolean_debug")}
+        checked={props.debug || false}
+        onChange={props.toggleDebugHandler}
+      />}
+      {props._enabledBooleans.includes("distinct") && <Checkbox
+        className="item-option"
+        label={t("params.label_boolean_distinct")}
+        checked={props.distinct || false}
+        onChange={props.toggleDistinctHandler}
+      />}
+      {props._enabledBooleans.includes("exclude_default_members") && <Checkbox
+        className="item-option"
+        label={t("params.label_boolean_exclude_default_members")}
+        checked={props.exclude_default_members || false}
+        onChange={props.toggleExcludeDefaultMembersHandler}
+      />}
+      {props._enabledBooleans.includes("nonempty") && <Checkbox
+        className="item-option"
+        label={t("params.label_boolean_nonempty")}
+        checked={props.nonempty || false}
+        onChange={props.toggleNonEmptyHandler}
+      />}
+      {props._enabledBooleans.includes("parents") && <Checkbox
+        className="item-option"
+        label={t("params.label_boolean_parents")}
+        checked={props.parents || false}
+        onChange={props.toggleParentsHandler}
+      />}
+      {props._enabledBooleans.includes("sparse") && <Checkbox
+        className="item-option"
+        label={t("params.label_boolean_sparse")}
+        checked={props.sparse || false}
+        onChange={props.toggleSparseHandler}
+      />}
+
+      <FormGroup label={t("params.label_sorting_key")}>
+        <ControlGroup fill={true}>
+          <SelectMeasure
+            fill={true}
+            icon={props.sortKey ? "timeline-bar-chart" : false}
+            selectedItem={props.sortKey}
+            onItemSelect={measure => props.updateSortingHandler(measure.name, props.sortDir)}
+          />
+          <SelectString
+            selectedItem={sort.directions[props.sortDir]}
+            items={sort.options}
+            onItemSelect={direction => props.updateSortingHandler(props.sortKey, direction.value)}
+          />
+        </ControlGroup>
       </FormGroup>
 
-      <Divider />
+      <ButtonGroup fill={true}>
+        <FormGroup label={t("params.label_pagination_limit")}>
+          <NumericInput
+            fill={true}
+            onValueChange={limit => props.updatePaginationHandler(limit, props.offset)}
+            value={props.limit}
+          />
+        </FormGroup>
 
-      <FormGroup label="Results offset">
-        <NumericInput
-          fill={true}
-          onValueChange={offset => props.updatePaginationHandler(props.limit, offset)}
-          value={props.offset}
-        />
-      </FormGroup>
-    </ButtonGroup>
-  </QueryArea>;
+        <Divider />
+
+        <FormGroup label={t("params.label_pagination_offset")}>
+          <NumericInput
+            fill={true}
+            onValueChange={offset => props.updatePaginationHandler(props.limit, offset)}
+            value={props.offset}
+          />
+        </FormGroup>
+      </ButtonGroup>
+    </QueryArea>
+  );
+};
 
 export const MemoQueryBooleans = memo(QueryBooleans, shallowEqualExceptFns);
 

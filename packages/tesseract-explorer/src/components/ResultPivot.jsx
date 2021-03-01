@@ -8,6 +8,7 @@ import {
 import classNames from "classnames";
 import React, {useState, useMemo} from "react";
 import {csvSerialize} from "../utils/transform";
+import {useTranslation} from "../utils/useTranslation";
 import {isActiveItem} from "../utils/validation";
 import ButtonDownload from "./ButtonDownload";
 import {MemoMatrixPreview as MatrixPreview} from "./MatrixPreview";
@@ -22,6 +23,8 @@ import {MemoMatrixPreview as MatrixPreview} from "./MatrixPreview";
 /** @type {React.FC<OwnProps>} */
 const ResultPivot = ({className, params, result}) => {
   const {data} = result;
+
+  const {translate: t} = useTranslation();
 
   const initial = useMemo(() => {
     const dd = Object.values(params.drilldowns).filter(isActiveItem);
@@ -56,11 +59,11 @@ const ResultPivot = ({className, params, result}) => {
 
   const warnings =
     levelNames.length < 2
-      ? <Callout intent={Intent.DANGER}>A pivot table needs 2 different drilldowns and a measure to work.</Callout>
+      ? <Callout intent={Intent.DANGER}>{t("pivot_view.callout_onedimension")}</Callout>
       : levelNames.length > 2
         ? measureAggType !== "SUM"
-          ? <Callout intent={Intent.WARNING}>The current query contains more than 2 drilldowns, and the aggregation type of the measure is not &quot;SUM&quot;. The values you&apos;re getting might not be meaningful.</Callout>
-          : <Callout>There&apos;s more than 2 drilldowns in this query. Remaining values will be summed.</Callout>
+          ? <Callout intent={Intent.WARNING}>{t("pivot_view.callout_notsummeasure")}</Callout>
+          : <Callout>{t("pivot_view.callout_sumdimensions")}</Callout>
         : undefined;
 
   return (
@@ -68,9 +71,8 @@ const ResultPivot = ({className, params, result}) => {
       <div className="toolbar">
         {warnings}
 
-        <h3>Parameters</h3>
-
-        <FormGroup label="Column drilldown" labelFor="matrix-columns">
+        <h3>{t("title_parameters")}</h3>
+        <FormGroup label={t("pivot_view.label_ddcolumn")} labelFor="matrix-columns">
           <HTMLSelect
             fill={true}
             id="matrix-columns"
@@ -79,8 +81,7 @@ const ResultPivot = ({className, params, result}) => {
             value={pivotColumns}
           />
         </FormGroup>
-
-        <FormGroup label="Row drilldown" labelFor="matrix-rows">
+        <FormGroup label={t("pivot_view.label_ddrow")} labelFor="matrix-rows">
           <HTMLSelect
             fill={true}
             id="matrix-rows"
@@ -89,8 +90,7 @@ const ResultPivot = ({className, params, result}) => {
             value={pivotRows}
           />
         </FormGroup>
-
-        <FormGroup label="Value measure" labelFor="matrix-values">
+        <FormGroup label={t("pivot_view.label_valmeasure")} labelFor="matrix-values">
           <HTMLSelect
             fill={true}
             id="matrix-values"
@@ -100,7 +100,7 @@ const ResultPivot = ({className, params, result}) => {
           />
         </FormGroup>
 
-        <h3>Download</h3>
+        <h3>{t("action_download")}</h3>
         <ButtonGroup fill>
           <ButtonDownload
             text="CSV"

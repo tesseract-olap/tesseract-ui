@@ -1,6 +1,7 @@
 import {Alignment, Button, Popover, Position} from "@blueprintjs/core";
 import React from "react";
 import {ensureArray} from "../utils/array";
+import {useTranslation} from "../utils/useTranslation";
 import TimeDimensionMenu from "./MenuTimeDimension";
 
 /**
@@ -15,12 +16,8 @@ import TimeDimensionMenu from "./MenuTimeDimension";
  */
 
 /** @type {React.FC<OwnProps>} */
-const SelectTimeLevel = props => {
-  const {
-    fill,
-    icon = "calendar",
-    placeholder = "Time level..."
-  } = props;
+export const SelectTimeLevel = props => {
+  const {translate: t} = useTranslation();
 
   return (
     <Popover
@@ -33,7 +30,7 @@ const SelectTimeLevel = props => {
           onItemSelect={props.onItemSelect}
         />
       }
-      fill={fill}
+      fill={props.fill}
       minimal={true}
       position={Position.BOTTOM_LEFT}
       usePortal={props.usePortal}
@@ -41,14 +38,12 @@ const SelectTimeLevel = props => {
         <Button
           alignText={Alignment.LEFT}
           fill={true}
-          icon={icon}
+          icon={props.icon ?? "calendar"}
           rightIcon="double-caret-vertical"
-          text={props.selectedItem || placeholder}
+          text={props.selectedItem || t("selecttimelevel_placeholder")}
         />
       }
     >
     </Popover>
   );
 };
-
-export default SelectTimeLevel;

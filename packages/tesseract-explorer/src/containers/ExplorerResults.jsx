@@ -2,13 +2,14 @@ import {NonIdealState, Tab, Tabs} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {Suspense, useState} from "react";
 import {connect} from "react-redux";
-import AnimatedCube from "../components/AnimatedCube";
+import {AnimatedCube} from "../components/AnimatedCube";
 import {selectLoadingState} from "../state/loading/selectors";
 import {selectCurrentQueryParams} from "../state/params/selectors";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectCurrentQueryResult} from "../state/results/selectors";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server/selectors";
+import {useTranslation} from "../utils/useTranslation";
 
 /**
  * @typedef OwnProps
@@ -33,13 +34,15 @@ const ExplorerResults = props => {
   const {data, error} = props.result;
   const [currentTab, setCurrentTab] = useState(Object.keys(panels)[0]);
 
+  const {translate: t} = useTranslation();
+
   if (error) {
     return (
       <NonIdealState
         className={classNames("initial-view error", props.className)}
         description={
           <div className="error-description">
-            <p>There was a problem with the last query:</p>
+            <p>{t("results.error_execquery_detail")}</p>
             <p className="error-detail">{error}</p>
           </div>
         }
@@ -53,17 +56,17 @@ const ExplorerResults = props => {
       return <NonIdealState
         className="explorer-error"
         icon="globe-network"
-        title="You are not connected to the internet."
+        title={t("results.error_disconnected_title")}
       />;
     }
 
     return <NonIdealState
       className="explorer-error"
       icon="error"
-      title="There's a problem contacting with the server"
+      title={t("results.error_serveroffline_title")}
       description={
         <span>
-          {"Check the availability of the URL "}
+          {t("results.error_serveroffline_detail")}
           <a href={props.serverUrl} target="_blank" rel="noopener noreferrer">{props.serverUrl}</a>.
         </span>
       }
@@ -84,8 +87,8 @@ const ExplorerResults = props => {
       <NonIdealState
         className={classNames("initial-view empty", props.className)}
         icon="square"
-        title="Empty dataset"
-        description="The query didn't return elements. Try again with different parameters."
+        title={t("results.error_emptyresult_title")}
+        description={t("results.error_emptyresult_detail")}
       />
     );
   }
@@ -99,9 +102,9 @@ const ExplorerResults = props => {
         onChange={newTab => setCurrentTab(`${newTab}`)}
         selectedTabId={currentTab}
       >
-        {Object.keys(panels).map(key => <Tab id={key} key={key} title={key} />)}
+        {Object.keys(panels).map(key => <Tab id={key} key={key} title={t(key)} />)}
         <Tabs.Expander />
-        <h2 className="token">{`${data.length} rows`}</h2>
+        <h2 className="token">{t("results.count_rows", {n: data.length})}</h2>
       </Tabs>
       <div className={`wrapper ${props.className}-content`}>
         <Suspense fallback={<AnimatedCube />}>

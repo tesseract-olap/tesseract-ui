@@ -7,6 +7,7 @@ import TagDrilldown from "../components/TagDrilldown";
 import {doDrilldownClear, doDrilldownRemove, doDrilldownUpdate} from "../state/params/actions";
 import {selectDrilldownItems} from "../state/params/selectors";
 import {buildDrilldown} from "../utils/structs";
+import {useTranslation} from "../utils/useTranslation";
 import {activeItemCounter} from "../utils/validation";
 
 /**
@@ -16,29 +17,29 @@ import {activeItemCounter} from "../utils/validation";
 
 /**
  * @typedef StateProps
- * @property {DrilldownItem[]} items
+ * @property {TessExpl.Struct.DrilldownItem[]} items
  */
 
 /**
  * @typedef DispatchProps
  * @property {() => void} clearHandler
  * @property {(level: import("@datawheel/olap-client").AdaptedLevel, hierarchy: import("@datawheel/olap-client").AdaptedHierarchy, dimension: import("@datawheel/olap-client").AdaptedDimension) => any} createHandler
- * @property {(item: DrilldownItem) => void} removeHandler
- * @property {(item: DrilldownItem) => void} toggleHandler
- * @property {(item: DrilldownItem, caption: string) => void} updateCaptionHandler
- * @property {(item: DrilldownItem, props: PropertyItem[]) => void} updatePropertiesHandler
+ * @property {(item: TessExpl.Struct.DrilldownItem) => void} removeHandler
+ * @property {(item: TessExpl.Struct.DrilldownItem) => void} toggleHandler
+ * @property {(item: TessExpl.Struct.DrilldownItem, caption: string) => void} updateCaptionHandler
+ * @property {(item: TessExpl.Struct.DrilldownItem, props: TessExpl.Struct.PropertyItem[]) => void} updatePropertiesHandler
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const QueryDrilldowns = props => {
   const {items} = props;
-  const totalCount = items.length;
-  const activeCount = items.reduce(activeItemCounter, 0);
 
-  const title = `Drilldowns (${activeCount})`;
+  const {translate: t} = useTranslation();
+
+  const title = `${t("params.title_area_drilldowns")} (${items.reduce(activeItemCounter, 0)})`;
   const toolbar =
     <React.Fragment>
-      {totalCount > 0 &&
+      {items.length > 0 &&
         <Button icon="trash" intent={Intent.DANGER} onClick={props.clearHandler} />
       }
       <ButtonSelectLevel

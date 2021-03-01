@@ -12,6 +12,7 @@ import {
 import {selectTopkItems} from "../state/params/selectors";
 import {summaryTopk} from "../utils/format";
 import {buildTopk} from "../utils/structs";
+import {useTranslation} from "../utils/useTranslation";
 import {isActiveItem, isTopkItem} from "../utils/validation";
 
 /**
@@ -21,30 +22,29 @@ import {isActiveItem, isTopkItem} from "../utils/validation";
 
 /**
  * @typedef StateProps
- * @property {TopkItem[]} items
+ * @property {TessExpl.Struct.TopkItem[]} items
  */
 
 /**
  * @typedef DispatchProps
  * @property {() => void} clearHandler
  * @property {() => void} createHandler
- * @property {(item: TopkItem) => void} removeHandler
- * @property {(item: TopkItem) => void} toggleHandler
- * @property {(item: TopkItem) => void} updateHandler
+ * @property {(item: TessExpl.Struct.TopkItem) => void} removeHandler
+ * @property {(item: TessExpl.Struct.TopkItem) => void} toggleHandler
+ * @property {(item: TessExpl.Struct.TopkItem) => void} updateHandler
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const QueryTopk = props => {
   const {items, removeHandler, toggleHandler, updateHandler} = props;
-  const totalCounter = items.length;
-  const firstActiveItem = items
-    .filter(item => isActiveItem(item) && isTopkItem(item))
-    .pop();
 
-  const title = firstActiveItem ? summaryTopk(firstActiveItem) : "Topk: None";
+  const {translate: t} = useTranslation();
+
+  const firstActiveItem = items.find(item => isActiveItem(item) && isTopkItem(item));
+  const title = `${t("params.title_area_topk")}: ${firstActiveItem ? t("params.summary_topk", summaryTopk(firstActiveItem)) : t("placeholders.none")}`;
   const toolbar =
     <React.Fragment>
-      {totalCounter > 0 &&
+      {items.length > 0 &&
         <Button icon="trash" intent={Intent.DANGER} onClick={props.clearHandler} />
       }
       <Button icon="new-object" onClick={props.createHandler} />

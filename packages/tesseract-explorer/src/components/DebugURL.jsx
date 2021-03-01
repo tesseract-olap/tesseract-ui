@@ -1,12 +1,17 @@
 import {AnchorButton, ButtonGroup, InputGroup, Intent} from "@blueprintjs/core";
 import React from "react";
+import {useTranslation} from "../utils/useTranslation";
 import ButtonCopy from "./ButtonCopy";
 
-export const DebugURL = ({url, labelOpen = "Open", labelCopy = "Copy"}) => {
+export const DebugURL = props => {
+  const {url} = props;
+
+  const {translate: t} = useTranslation();
+
   const toolbar =
     <ButtonGroup>
-      <AnchorButton href={url} icon="share" target="_blank" text={labelOpen} />
-      <ButtonCopy copyText={url} icon="link" intent={Intent.PRIMARY} text={labelCopy} />
+      <AnchorButton href={url} icon="share" target="_blank" text={t("action_open")} />
+      <ButtonCopy copyText={url} icon="link" intent={Intent.PRIMARY} text={t("action_copy")} />
     </ButtonGroup>;
 
   return (

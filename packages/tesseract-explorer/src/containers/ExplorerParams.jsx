@@ -1,6 +1,7 @@
 import {ButtonGroup} from "@blueprintjs/core";
 import React from "react";
 import {ExplorerColumn} from "../components/ExplorerColumn";
+import {useTranslation} from "../utils/useTranslation";
 import ButtonExecuteQuery from "./ButtonExecuteQuery";
 import {ConnectedDownloadOptions as DownloadOptions} from "./DownloadOptions";
 import {ConnectedQueryBooleans as QueryBooleans} from "./QueryBooleans";
@@ -22,29 +23,29 @@ import {ConnectedSelectLocale as SelectLocale} from "./SelectLocale";
  */
 
 /** @type {React.FC<OwnProps>} */
-export const ExplorerParams = props =>
-  <ExplorerColumn className={props.className} title="Parameters">
-    <ButtonGroup className="cube-locale" fill vertical>
-      <SelectLocale />
-      <SelectCube
-        fill
-        hideIfEmpty
-        placeholderEmpty="Select cube..."
-        placeholderLoading="Loading..."
-      />
-    </ButtonGroup>
+export const ExplorerParams = props => {
+  const {translate: t} = useTranslation();
 
-    <QueryMeasures />
-    <QueryDrilldowns />
-    <QueryCuts />
-    {props.enableGrowth && <QueryGrowth />}
-    {props.enableRca && <QueryRca />}
-    {props.enableTopk && <QueryTopk />}
-    <QueryBooleans />
+  return (
+    <ExplorerColumn className={props.className} title={t("params.column_title")}>
+      <ButtonGroup className="cube-locale" fill vertical>
+        <SelectLocale />
+        <SelectCube fill hideIfEmpty />
+      </ButtonGroup>
 
-    <ButtonGroup className="query-actions" fill>
-      <ButtonExecuteQuery />
-    </ButtonGroup>
+      <QueryMeasures />
+      <QueryDrilldowns />
+      <QueryCuts />
+      {props.enableGrowth && <QueryGrowth />}
+      {props.enableRca && <QueryRca />}
+      {props.enableTopk && <QueryTopk />}
+      <QueryBooleans />
 
-    <DownloadOptions />
-  </ExplorerColumn>;
+      <ButtonGroup className="query-actions" fill>
+        <ButtonExecuteQuery />
+      </ButtonGroup>
+
+      <DownloadOptions />
+    </ExplorerColumn>
+  );
+};

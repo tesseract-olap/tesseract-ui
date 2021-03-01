@@ -7,14 +7,13 @@ import {doCubeSet} from "../middleware/actions";
 import {selectOlapCube} from "../state/selectors";
 import {selectOlapCubeItems} from "../state/server/selectors";
 import {safeRegExp} from "../utils/transform";
+import {useTranslation} from "../utils/useTranslation";
 
 /**
  * @typedef OwnProps
  * @property {string} [className]
  * @property {boolean} [fill]
  * @property {boolean} [hideIfEmpty]
- * @property {string} placeholderLoading
- * @property {string} placeholderEmpty
  */
 
 /**
@@ -32,16 +31,12 @@ import {safeRegExp} from "../utils/transform";
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 export const SelectCube = props => {
+  const {translate: t} = useTranslation();
+
   if (props.items.length < 2) {
     return props.hideIfEmpty
       ? null
-      : <Button
-        alignText={Alignment.LEFT}
-        className={classNames("select-cube", props.className)}
-        disabled={true}
-        icon="cube"
-        text={props.placeholderLoading}
-      />;
+      : <Button className={classNames("select-cube", props.className)} loading />;
   }
 
   const {selectedItem: item, fill} = props;
@@ -61,7 +56,7 @@ export const SelectCube = props => {
         fill={fill}
         icon="cube"
         rightIcon="double-caret-vertical"
-        text={item ? item.caption || item.name : props.placeholderEmpty}
+        text={item ? item.caption || item.name : t("placeholders.unselected")}
       />
     </Select>
   );

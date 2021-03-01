@@ -4,11 +4,13 @@ import classNames from "classnames";
 import React, {useMemo} from "react";
 import {abbreviateFullName} from "../utils/format";
 import {keyBy, levelRefToArray} from "../utils/transform";
+import {useTranslation} from "../utils/useTranslation";
 import {isActiveItem} from "../utils/validation";
-import SelectString from "./SelectString";
+import {SelectString} from "./SelectString";
 import {TransferInput} from "./TransferInput";
 
 /** @type {React.FC<import("./TransferInput").OwnProps<TessExpl.Struct.PropertyItem>>} */
+// @ts-ignore
 export const PropertiesTransferInput = TransferInput;
 
 /**
@@ -21,7 +23,10 @@ export const PropertiesTransferInput = TransferInput;
  */
 
 /** @type {React.FC<OwnProps>} */
-const TagDrilldown = ({item, onRemove, onToggle, onCaptionUpdate, onPropertiesUpdate}) => {
+const TagDrilldown = props => {
+  const {item, onRemove, onToggle, onCaptionUpdate, onPropertiesUpdate} = props;
+  const {translate: t} = useTranslation();
+
   const target =
     <Tag
       className={classNames("tag-item tag-drilldown", {hidden: !item.active})}
@@ -53,11 +58,11 @@ const TagDrilldown = ({item, onRemove, onToggle, onCaptionUpdate, onPropertiesUp
   const activeProperties = item.properties.filter(isActiveItem).map(item => item.key);
 
   /** @type {import("@blueprintjs/core").IOptionProps[]} */
-  const captionItems = [{label: "[None]", value: ""}];
+  const captionItems = [{label: t("placeholders.unselected"), value: ""}];
 
   const content =
     <div className="drilldown-submenu">
-      <FormGroup className="submenu-form-group" label="Caption">
+      <FormGroup className="submenu-form-group" label={t("params.title_caption")}>
         <SelectString
           fill={true}
           items={captionItems.concat(item.properties.map(item => ({value: item.name})))}
@@ -65,11 +70,11 @@ const TagDrilldown = ({item, onRemove, onToggle, onCaptionUpdate, onPropertiesUp
             ? onCaptionUpdate(item, "")
             : onCaptionUpdate(item, `${typeof caption === "object" ? caption.label || caption.value : caption}`)
           }
-          placeholder="[None]"
+          placeholder={t("placeholders.unselected")}
           selectedItem={item.captionProperty}
         />
       </FormGroup>
-      <FormGroup className="submenu-form-group" label="Properties">
+      <FormGroup className="submenu-form-group" label={t("params.title_properties")}>
         <PropertiesTransferInput
           activeItems={activeProperties}
           getLabel={item => item.name}

@@ -1,10 +1,11 @@
 import {Button, ButtonGroup, Classes, Intent} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
+import {ButtonTooltip} from "../components/ButtonTooltip";
 import {doExecuteQuery} from "../middleware/actions";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint} from "../state/server/selectors";
-import ButtonTooltip from "../components/ButtonTooltip";
+import {useTranslation} from "../utils/useTranslation";
 
 /**
  * @typedef {import("@blueprintjs/core").IButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>} ButtonProps
@@ -23,11 +24,13 @@ import ButtonTooltip from "../components/ButtonTooltip";
 
 /** @type {React.FC<StateProps & DispatchProps>} */
 const ButtonExecuteQuery = props => {
+  const {translate: t} = useTranslation();
+
   const execButton = <Button
     fill={true}
     icon="database"
     intent={Intent.PRIMARY}
-    text="Execute query"
+    text={t("action_querydata")}
     onClick={props.executeQueryHandler}
   />;
 
@@ -39,7 +42,7 @@ const ButtonExecuteQuery = props => {
       <ButtonTooltip
         className={Classes.FIXED}
         icon="exchange"
-        tooltip={`Current endpoint: ${props.endpoint}`}
+        tooltip={t("params.current_endpoint", {label: props.endpoint})}
         onClick={props.updateEndpointHandler}
       />
     </ButtonGroup>

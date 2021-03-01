@@ -3,6 +3,7 @@ import {Select} from "@blueprintjs/select";
 import classNames from "classnames";
 import React, {memo} from "react";
 import {safeRegExp} from "../utils/transform";
+import {useTranslation} from "../utils/useTranslation";
 import {shallowEqualExceptFns} from "../utils/validation";
 
 /**
@@ -19,19 +20,13 @@ import {shallowEqualExceptFns} from "../utils/validation";
  * @property {boolean} [usePortal]
  */
 
+/** @type {Required<Pick<OwnProps, "icon" | "itemListPredicate" | "itemRenderer">>} */
 const defaultProps = {
-
-  /**
-   * @type {import("@blueprintjs/select").ItemListPredicate<import("@datawheel/olap-client").AdaptedMeasure>}
-   */
+  icon: "timeline-bar-chart",
   itemListPredicate(query, items) {
     const tester = safeRegExp(query, "i");
     return items.filter(item => tester.test(item.caption || item.name));
   },
-
-  /**
-   * @type {import("@blueprintjs/select").ItemRenderer<import("@datawheel/olap-client").AdaptedMeasure>}
-   */
   itemRenderer(item, {handleClick, modifiers}) {
     return (
       <MenuItem
@@ -45,14 +40,11 @@ const defaultProps = {
   }
 };
 
-/** @type {React.FC<OwnProps & import("../containers/ServerStatus").StateProps>} */
+/** @type {React.FC<OwnProps>} */
 const SelectMeasure = props => {
-  const {
-    fill,
-    icon = "timeline-bar-chart",
-    placeholder = "Measure...",
-    usePortal
-  } = props;
+  const {fill, usePortal} = props;
+
+  const {translate: t} = useTranslation();
 
   return (
     <Select
@@ -68,9 +60,9 @@ const SelectMeasure = props => {
         alignText={Alignment.LEFT}
         className={props.className}
         fill={fill}
-        icon={icon}
+        icon={props.icon || defaultProps.icon}
         rightIcon="double-caret-vertical"
-        text={props.selectedItem || placeholder}
+        text={props.selectedItem || t("selectmeasure_placeholder")}
       />
     </Select>
   );
