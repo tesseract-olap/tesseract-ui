@@ -4,7 +4,7 @@ import classNames from "classnames";
 import React, {useEffect, useState} from "react";
 import {abbreviateFullName} from "../utils/format";
 import {levelRefToArray} from "../utils/transform";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {ButtonTagExtra} from "./ButtonTagExtra";
 import {TransferInput} from "./TransferInput";
 

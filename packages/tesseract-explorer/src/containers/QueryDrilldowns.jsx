@@ -7,7 +7,7 @@ import TagDrilldown from "../components/TagDrilldown";
 import {doDrilldownClear, doDrilldownRemove, doDrilldownUpdate} from "../state/params/actions";
 import {selectDrilldownItems} from "../state/params/selectors";
 import {buildDrilldown} from "../utils/structs";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {activeItemCounter} from "../utils/validation";
 
 /**

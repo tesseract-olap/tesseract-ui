@@ -9,7 +9,7 @@ import React from "react";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {summaryGrowth} from "../utils/format";
 import {joinName} from "../utils/transform";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {isGrowthItem} from "../utils/validation";
 import {SelectTimeLevel} from "./SelectTimeLevel";
 

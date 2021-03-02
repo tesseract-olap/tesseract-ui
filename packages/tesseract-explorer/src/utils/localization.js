@@ -1,11 +1,10 @@
 /* eslint-disable comma-dangle */
+import {translationFactory} from "@datawheel/use-translation";
 
-/** @type {TessExpl.Translation} */
-export const LOCALE_EN = {
+export const LOCALE = {
   action_copy: "Copy",
   action_download: "Download",
   action_open: "Open",
-  action_query: "Execute query",
   action_reload: "Reload",
   comparison: {
     EQ: "Equal to",
@@ -24,6 +23,7 @@ export const LOCALE_EN = {
   },
   loading: "Loading...",
   params: {
+    action_execute: "Execute query",
     column_title: "Parameters",
     count_cuts: "{n} selected",
     current_endpoint: "Current endpoint: {label}",
@@ -75,6 +75,8 @@ export const LOCALE_EN = {
     none: "[None]",
   },
   queries: {
+    action_create: "New query",
+    action_parse: "Query from URL",
     column_title: "Queries",
     unset_parameters: "No parameters set",
   },
@@ -101,3 +103,10 @@ export const LOCALE_EN = {
     search_placeholder: "Filter (regex enabled)",
   },
 };
+
+const translation = translationFactory({
+  defaultLocale: "en",
+  defaultTranslation: LOCALE
+});
+
+export const {useTranslation, TranslationConsumer, TranslationProvider} = translation;

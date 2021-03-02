@@ -3,7 +3,7 @@ import {Cell, Column, ColumnHeaderCell, Table} from "@blueprintjs/table";
 import classNames from "classnames";
 import React, {useMemo, useState} from "react";
 import {sortByKey} from "../utils/array";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 
 /** @type {React.FC<TessExpl.ViewProps>} */
 const ResultTable = props => {

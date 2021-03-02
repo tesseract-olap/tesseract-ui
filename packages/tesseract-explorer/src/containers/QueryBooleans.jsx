@@ -7,7 +7,7 @@ import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {doBooleanToggle, doPaginationUpdate, doSortingUpdate} from "../state/params/actions";
 import {selectBooleans, selectPaginationParams, selectSortingParams} from "../state/params/selectors";
 import {selectServerBooleansEnabled} from "../state/server/selectors";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {shallowEqualExceptFns} from "../utils/validation";
 
 /**

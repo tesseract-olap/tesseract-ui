@@ -1,7 +1,7 @@
 import {Alignment, Button, Intent, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {memo} from "react";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
 
 /**

@@ -12,7 +12,7 @@ import {
 import {selectGrowthItems} from "../state/params/selectors";
 import {summaryGrowth} from "../utils/format";
 import {buildGrowth} from "../utils/structs";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {isActiveItem, isGrowthItem} from "../utils/validation";
 
 /**

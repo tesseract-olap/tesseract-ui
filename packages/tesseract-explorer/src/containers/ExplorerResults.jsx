@@ -9,7 +9,7 @@ import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectCurrentQueryResult} from "../state/results/selectors";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server/selectors";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef OwnProps

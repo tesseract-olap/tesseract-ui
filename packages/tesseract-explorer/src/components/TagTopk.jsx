@@ -5,7 +5,7 @@ import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {orderOptions} from "../enums";
 import {summaryTopk} from "../utils/format";
 import {stringifyName} from "../utils/transform";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import SelectLevel from "./SelectLevel";
 
 /**

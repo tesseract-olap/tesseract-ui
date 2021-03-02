@@ -8,7 +8,7 @@ import {
 import classNames from "classnames";
 import React, {useState, useMemo} from "react";
 import {csvSerialize} from "../utils/transform";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {isActiveItem} from "../utils/validation";
 import ButtonDownload from "./ButtonDownload";
 import {MemoMatrixPreview as MatrixPreview} from "./MatrixPreview";

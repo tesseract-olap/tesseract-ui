@@ -3,7 +3,7 @@ import React from "react";
 import {connect} from "react-redux";
 import {doDownloadQuery} from "../middleware/actions";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef OwnProps

@@ -2,7 +2,7 @@ import {Alignment, Button, Popover, Position} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {ensureArray} from "../utils/array";
 import {abbreviateFullName} from "../utils/format";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {shallowEqualExceptFns} from "../utils/validation";
 import MenuDimension from "./MenuDimension";
 

@@ -7,7 +7,7 @@ import {doCubeSet} from "../middleware/actions";
 import {selectOlapCube} from "../state/selectors";
 import {selectOlapCubeItems} from "../state/server/selectors";
 import {safeRegExp} from "../utils/transform";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef OwnProps

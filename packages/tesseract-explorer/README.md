@@ -2,6 +2,8 @@
 
 A friendly interface to explore the contents of a tesseract-olap server.
 
+[![npm package](https://img.shields.io/npm/v/@datawheel/tesseract-explorer.svg)](https://www.npmjs.com/package/@datawheel/tesseract-explorer)
+
 ## Installation
 
 ```bash

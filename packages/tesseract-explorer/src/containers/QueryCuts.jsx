@@ -8,7 +8,7 @@ import {doFetchMembers} from "../middleware/actions";
 import {doCutClear, doCutRemove, doCutUpdate} from "../state/params/actions";
 import {selectCutItems, selectLocaleCode} from "../state/params/selectors";
 import {buildCut} from "../utils/structs";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {activeItemCounter} from "../utils/validation";
 
 /**

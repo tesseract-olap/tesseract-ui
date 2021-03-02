@@ -3,7 +3,7 @@ import {Select} from "@blueprintjs/select";
 import classNames from "classnames";
 import React, {memo} from "react";
 import {safeRegExp} from "../utils/transform";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {shallowEqualExceptFns} from "../utils/validation";
 
 /**

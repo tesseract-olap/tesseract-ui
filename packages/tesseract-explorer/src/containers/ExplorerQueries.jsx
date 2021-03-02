@@ -6,8 +6,8 @@ import {MemoStoredQuery as StoredQuery} from "../components/StoredQuery";
 import {doParseQueryUrl} from "../middleware/actions";
 import {doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectCurrentQueryItem, selectQueryItems} from "../state/queries/selectors";
+import {useTranslation} from "../utils/localization";
 import {buildQuery} from "../utils/structs";
-import { useTranslation } from "../utils/useTranslation";
 
 /**
  * @typedef OwnProps
@@ -39,13 +39,13 @@ const ExplorerQueries = props => {
           className="action-create"
           icon="insert"
           onClick={() => props.onItemCreate(currentItem)}
-          text="New query"
+          text={t("queries.action_create")}
         />
         <Button
           className="action-parseurl"
           icon="bring-data"
           onClick={props.parseQueryUrlHandler}
-          text="Query from URL"
+          text={t("queries.action_parse")}
         />
       </ButtonGroup>
 

@@ -8,7 +8,7 @@ import ResultTable from "../components/ResultTable";
 import {doClientSetup} from "../middleware/actions";
 import {updateLocaleList} from "../state/server/actions";
 import {selectServerState} from "../state/server/selectors";
-import {TranslationProvider} from "../utils/useTranslation";
+import {TranslationProvider} from "../utils/localization";
 import {ExplorerParams} from "./ExplorerParams";
 import ExplorerQueries from "./ExplorerQueries";
 import ExplorerResults from "./ExplorerResults";

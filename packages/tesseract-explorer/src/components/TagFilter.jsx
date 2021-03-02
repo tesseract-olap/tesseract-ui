@@ -4,7 +4,7 @@ import React from "react";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {Comparison} from "../enums";
 import {summaryFilter} from "../utils/format";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef OwnProps

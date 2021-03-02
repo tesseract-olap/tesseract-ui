@@ -12,7 +12,7 @@ import {
 import {selectTopkItems} from "../state/params/selectors";
 import {summaryTopk} from "../utils/format";
 import {buildTopk} from "../utils/structs";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {isActiveItem, isTopkItem} from "../utils/validation";
 
 /**

@@ -7,7 +7,7 @@ import {doRcaClear, doRcaRemove, doRcaSelect, doRcaUpdate} from "../state/params
 import {selectRcaItems} from "../state/params/selectors";
 import {summaryRca} from "../utils/format";
 import {buildRca} from "../utils/structs";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {isActiveItem, isRcaItem} from "../utils/validation";
 
 /**

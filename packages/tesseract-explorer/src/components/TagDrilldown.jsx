@@ -4,7 +4,7 @@ import classNames from "classnames";
 import React, {useMemo} from "react";
 import {abbreviateFullName} from "../utils/format";
 import {keyBy, levelRefToArray} from "../utils/transform";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 import {isActiveItem} from "../utils/validation";
 import {SelectString} from "./SelectString";
 import {TransferInput} from "./TransferInput";

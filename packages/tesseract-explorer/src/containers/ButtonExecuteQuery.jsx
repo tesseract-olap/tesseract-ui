@@ -5,7 +5,7 @@ import {ButtonTooltip} from "../components/ButtonTooltip";
 import {doExecuteQuery} from "../middleware/actions";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint} from "../state/server/selectors";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef {import("@blueprintjs/core").IButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>} ButtonProps
@@ -30,7 +30,7 @@ const ButtonExecuteQuery = props => {
     fill={true}
     icon="database"
     intent={Intent.PRIMARY}
-    text={t("action_querydata")}
+    text={t("params.action_execute")}
     onClick={props.executeQueryHandler}
   />;
 

@@ -3,7 +3,7 @@ import classNames from "classnames";
 import React, {useMemo, useState} from "react";
 import ViewPortList from "react-viewport-list";
 import {keyBy, safeRegExp} from "../utils/transform";
-import {useTranslation} from "../utils/useTranslation";
+import {useTranslation} from "../utils/localization";
 
 import "../style/TransferInput.scss";
 
