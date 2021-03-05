@@ -1,6 +1,8 @@
+import ISO6391 from "iso-639-1";
 import {createSelector} from "reselect";
 import {getKeys, getValues} from "../helpers";
 import {selectCurrentQueryItem} from "../queries/selectors";
+import {selectServerState} from "../server/selectors";
 
 export const selectCurrentQueryParams = createSelector(
   selectCurrentQueryItem,
@@ -12,9 +14,16 @@ export const selectCubeName = createSelector(
   params => params.cube
 );
 
-export const selectLocaleCode = createSelector(
-  selectCurrentQueryParams,
-  params => params.locale || ""
+export const selectLocale = createSelector(
+  [selectCurrentQueryParams, selectServerState],
+  (params, server) => {
+    const code = params.locale || server.localeOptions[0] || "";
+    return {
+      code,
+      name: ISO6391.getName(code),
+      nativeName: ISO6391.getNativeName(code)
+    };
+  }
 );
 
 export const selectCutMap = createSelector(

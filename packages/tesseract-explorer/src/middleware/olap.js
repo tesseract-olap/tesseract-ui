@@ -1,7 +1,7 @@
 import {Client as OLAPClient} from "@datawheel/olap-client";
 import {requestControl} from "../state/loading/actions";
 import {doCubeUpdate, doLocaleUpdate} from "../state/params/actions";
-import {selectCubeName, selectCurrentQueryParams, selectLocaleCode, selectMeasureMap} from "../state/params/selectors";
+import {selectCubeName, selectCurrentQueryParams, selectLocale, selectMeasureMap} from "../state/params/selectors";
 import {doQueriesClear, doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectQueryItems} from "../state/queries/selectors";
 import {doCurrentResultUpdate} from "../state/results/actions";
@@ -192,11 +192,11 @@ const actionMap = {
   [CLIENT_SETLOCALE]: ({action, dispatch, getState}) => {
     console.debug("CLIENT_SETLOCALE");
     const state = getState();
-    const currentLocale = selectLocaleCode(state);
+    const locale = selectLocale(state);
 
     return Promise.resolve(action.payload)
       .then(nextLocale => {
-        if (currentLocale !== nextLocale) {
+        if (locale.code !== nextLocale) {
           dispatch(doLocaleUpdate(nextLocale));
           return dispatch({type: CLIENT_QUERY});
         }
@@ -214,10 +214,14 @@ const actionMap = {
     console.debug("CLIENT_LOADMEMBERS");
     const state = getState();
     const cubeName = selectCubeName(state);
-    const locale = selectLocaleCode(state);
+    const locale = selectLocale(state);
 
     return client.getCube(cubeName)
-      .then(cube => fetchCutMembers({cube, cutItem: action.payload, locale}));
+      .then(cube => fetchCutMembers({
+        cube,
+        cutItem: action.payload,
+        locale: locale.code
+      }));
   },
 
   /**

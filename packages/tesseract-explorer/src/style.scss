@@ -137,6 +137,10 @@
   }
 }
 
+.#{$ns}-fill > .#{$ns}-popover-target > div {
+  width: 100%;
+}
+
 .#{$ns}-table-container {
   margin: 0;
   outline: 0 none;

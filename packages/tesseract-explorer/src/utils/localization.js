@@ -37,6 +37,7 @@ export const LOCALE = {
     label_boolean_parents: "Include parent levels",
     label_boolean_sparse: "Optimize sparse results",
     label_cube: "Cube: {label}",
+    label_locale: "Language: {label}",
     label_measure: "Measure",
     label_pagination_limit: "Results limit",
     label_pagination_offset: "Results offset",

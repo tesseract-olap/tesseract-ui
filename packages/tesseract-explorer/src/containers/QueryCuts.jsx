@@ -6,7 +6,7 @@ import QueryArea from "../components/QueryArea";
 import {TagCut} from "../components/TagCut";
 import {doFetchMembers} from "../middleware/actions";
 import {doCutClear, doCutRemove, doCutUpdate} from "../state/params/actions";
-import {selectCutItems, selectLocaleCode} from "../state/params/selectors";
+import {selectCutItems, selectLocale} from "../state/params/selectors";
 import {buildCut} from "../utils/structs";
 import {useTranslation} from "../utils/localization";
 import {activeItemCounter} from "../utils/validation";
@@ -71,7 +71,7 @@ const QueryCuts = props => {
 /** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
   items: selectCutItems(state),
-  locale: selectLocaleCode(state)
+  locale: selectLocale(state).code
 });
 
 /** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
