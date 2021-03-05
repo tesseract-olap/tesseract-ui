@@ -2,13 +2,16 @@ import {ButtonGroup, Checkbox, ControlGroup, Divider, FormGroup, NumericInput} f
 import React, {memo, useMemo} from "react";
 import {connect} from "react-redux";
 import QueryArea from "../components/QueryArea";
-import {SelectString} from "../components/SelectString";
+import {SelectObject} from "../components/Select";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {doBooleanToggle, doPaginationUpdate, doSortingUpdate} from "../state/params/actions";
 import {selectBooleans, selectPaginationParams, selectSortingParams} from "../state/params/selectors";
 import {selectServerBooleansEnabled} from "../state/server/selectors";
 import {useTranslation} from "../utils/localization";
-import {shallowEqualExceptFns} from "../utils/validation";
+import {shallowEqualExceptFns, shallowEqualForProps} from "../utils/validation";
+
+/** @type {React.FC<import("../components/Select").SelectObjectProps<{value: string, label: string}>>} */
+const SelectDirection = memo(SelectObject, shallowEqualForProps("items", "selectedItem"));
 
 /**
  * @typedef OwnProps
@@ -51,9 +54,10 @@ export const QueryBooleans = props => {
       asc: t("params.direction_asc"),
       desc: t("params.direction_desc")
     };
-    const options = Object.keys(directions)
-      .map(value => ({label: directions[value], value}));
-
+    const options = [
+      {value: "asc", label: directions.asc},
+      {value: "desc", label: directions.desc}
+    ];
     return {directions, options};
   }, []);
 
@@ -104,10 +108,11 @@ export const QueryBooleans = props => {
             selectedItem={props.sortKey}
             onItemSelect={measure => props.updateSortingHandler(measure.name, props.sortDir)}
           />
-          <SelectString
-            selectedItem={sort.directions[props.sortDir]}
+          <SelectDirection
+            getLabel={item => item.label}
             items={sort.options}
             onItemSelect={direction => props.updateSortingHandler(props.sortKey, direction.value)}
+            selectedItem={sort.directions[props.sortDir]}
           />
         </ControlGroup>
       </FormGroup>
