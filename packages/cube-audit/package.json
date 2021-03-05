@@ -20,7 +20,15 @@
     "tesseract-olap"
   ],
   "author": "Dave Landry <dave@datawheel.us>",
+  "contributors": [
+    "Francisco Abarzua <francisco@datawheel.us>"
+  ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Datawheel/tesseract-ui.git",
+    "directory": "packages/cube-audit"
+  },
   "dependencies": {
     "@datawheel/olap-client": "^2.0.0-alpha.4",
     "d3plus-text": "^0.10.1",
