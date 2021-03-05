@@ -120,13 +120,19 @@ export const SelectCube = props => {
         icon="cube"
         items={cubeItems}
         onItemSelect={props.onItemSelect}
-        selectedItem={t("params.label_cube", {label: selectedItem.caption || selectedItem.name})}
+        selectedItem={t("params.label_cube", {
+          name: selectedItem.name,
+          caption: selectedItem.annotations.caption
+        })}
       />
       : <Button
         alignText={Alignment.LEFT}
         className="select-cube unique"
         icon="cube"
-        text={t("params.label_cube", {label: selectedItem.caption || selectedItem.name})}
+        text={t("params.label_cube", {
+          name: selectedItem.name,
+          caption: selectedItem.annotations.caption
+        })}
       />
     : null;
 

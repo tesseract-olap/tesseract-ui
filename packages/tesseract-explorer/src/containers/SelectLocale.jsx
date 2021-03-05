@@ -16,7 +16,7 @@ const SelectLocaleOptions = SelectObject;
 
 /**
  * @typedef StateProps
- * @property {string} localeName
+ * @property {{code: string, name: string, nativeName: string}} locale
  * @property {{label: string, value: string}[]} localeOptions
  */
 
@@ -41,14 +41,14 @@ export const SelectLocale = props => {
       icon="translate"
       items={props.localeOptions}
       onItemSelect={props.updateLocaleHandler}
-      selectedItem={t("params.label_locale", {label: props.localeName})}
+      selectedItem={t("params.label_locale", props.locale)}
     />
   );
 };
 
 /** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
-  localeName: selectLocale(state).nativeName,
+  locale: selectLocale(state),
   localeOptions: selectLocaleOptions(state)
 });
 
