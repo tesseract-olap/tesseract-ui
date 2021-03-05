@@ -1,27 +1,26 @@
-import {Alignment, Button, MenuItem} from "@blueprintjs/core";
-import {Select} from "@blueprintjs/select";
-import classNames from "classnames";
-import React from "react";
+import {Alignment, Button} from "@blueprintjs/core";
+import React, {Fragment, memo, useEffect, useMemo, useState} from "react";
 import {connect} from "react-redux";
+import {SelectObject, SelectPrimitive} from "../components/Select";
 import {doCubeSet} from "../middleware/actions";
 import {selectOlapCube} from "../state/selectors";
 import {selectOlapCubeItems} from "../state/server/selectors";
-import {safeRegExp} from "../utils/transform";
 import {useTranslation} from "../utils/localization";
+import {regroup} from "../utils/transform";
+import {shallowEqualForProps} from "../utils/validation";
+
+/** @type {React.FC<import("../components/Select").SelectObjectProps<import("@datawheel/olap-client").AdaptedCube>>} */
+const SelectAdaptedCube = memo(SelectObject, shallowEqualForProps("items", "selectedItem"));
 
 /**
  * @typedef OwnProps
  * @property {string} [className]
- * @property {boolean} [fill]
- * @property {boolean} [hideIfEmpty]
  */
 
 /**
  * @typedef StateProps
- * @property {import("@blueprintjs/select").ItemListPredicate<import("@datawheel/olap-client").AdaptedCube>} itemListPredicate
- * @property {import("@blueprintjs/select").ItemRenderer<import("@datawheel/olap-client").AdaptedCube>} itemRenderer
  * @property {import("@datawheel/olap-client").AdaptedCube[]} items
- * @property {import("@datawheel/olap-client").AdaptedCube} [selectedItem]
+ * @property {import("@datawheel/olap-client").AdaptedCube | undefined} selectedItem
  */
 
 /**
@@ -31,68 +30,126 @@ import {useTranslation} from "../utils/localization";
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 export const SelectCube = props => {
+  const {items, selectedItem} = props;
+
   const {translate: t} = useTranslation();
 
-  if (props.items.length < 2) {
-    return props.hideIfEmpty
-      ? null
-      : <Button className={classNames("select-cube", props.className)} loading />;
-  }
+  const [topic, setTopic] = useState("");
+  const [subtopic, setSubtopic] = useState("");
 
-  const {selectedItem: item, fill} = props;
+  const topicTree = useMemo(() => {
+    const getters = [item => item.annotations.topic, item => item.annotations.subtopic]
+      .filter(getter => items.some(getter));
+    return regroup(items, item => item, ...getters);
+  }, [items]);
+
+  const topicItems = useMemo(() => [...topicTree.keys()], [topicTree]);
+
+  const subtopicItems = useMemo(() => {
+    const topicChildren = topicTree.get(topic) || [];
+    return !Array.isArray(topicChildren) ? [...topicChildren.keys()] : [];
+  }, [topicTree, topic]);
+
+  const cubeItems = useMemo(() => {
+    if (topicItems.length === 0) return items;
+    const topicChildren = topicTree.get(topic) || [];
+    if (Array.isArray(topicChildren)) return topicChildren;
+    const subtopicChildren = topicChildren.get(subtopic) || [];
+    return Array.isArray(subtopicChildren) ? subtopicChildren : [];
+  }, [topicTree, topic, subtopic]);
+
+  useEffect(() => {
+    if (!items.length || !selectedItem) return;
+
+    if (topicItems.length > 0 && !topicItems.includes(topic)) {
+      setTopic(topicItems[0]);
+    }
+    if (subtopicItems.length > 0 && !subtopicItems.includes(subtopic)) {
+      setSubtopic(subtopicItems[0]);
+    }
+    if (cubeItems.length > 0 && !cubeItems.includes(selectedItem)) {
+      props.onItemSelect(cubeItems[0]);
+    }
+  }, [items, selectedItem, topic, subtopic]);
+
+  const selectTopic = topicItems.length > 0 && topic
+    ? topicItems.length > 1
+      ? <SelectPrimitive
+        className="select-topic"
+        fill={true}
+        icon="folder-open"
+        items={topicItems}
+        onItemSelect={topic => {
+          setTopic(topic);
+          setSubtopic("");
+        }}
+        selectedItem={t("params.label_topic", {label: topic})}
+      />
+      : <Button
+        alignText={Alignment.LEFT}
+        className="select-topic unique"
+        icon="folder-open"
+        text={t("params.label_topic", {label: topic})}
+      />
+    : null;
+
+  const selectSubtopic = subtopicItems.length > 0 && subtopic
+    ? subtopicItems.length > 1
+      ? <SelectPrimitive
+        className="select-subtopic"
+        fill={true}
+        icon="properties"
+        items={subtopicItems}
+        onItemSelect={setSubtopic}
+        selectedItem={t("params.label_subtopic", {label: subtopic})}
+      />
+      : <Button
+        alignText={Alignment.LEFT}
+        className="select-subtopic unique"
+        icon="properties"
+        text={t("params.label_subtopic", {label: subtopic})}
+      />
+    : null;
+
+  const selectCube = selectedItem
+    ? cubeItems.length > 1
+      ? <SelectAdaptedCube
+        className="select-cube"
+        fill={true}
+        getLabel={item => item.caption || item.name}
+        icon="cube"
+        items={cubeItems}
+        onItemSelect={props.onItemSelect}
+        selectedItem={t("params.label_cube", {label: selectedItem.caption || selectedItem.name})}
+      />
+      : <Button
+        alignText={Alignment.LEFT}
+        className="select-cube unique"
+        icon="cube"
+        text={t("params.label_cube", {label: selectedItem.caption || selectedItem.name})}
+      />
+    : null;
 
   return (
-    <Select
-      className={classNames("select-cube", props.className)}
-      itemListPredicate={props.itemListPredicate}
-      itemRenderer={props.itemRenderer}
-      items={props.items}
-      onItemSelect={props.onItemSelect}
-      popoverProps={{fill, minimal: true, portalClassName: "select-cube-overlay"}}
-    >
-      <Button
-        alignText={Alignment.LEFT}
-        className={props.className}
-        fill={fill}
-        icon="cube"
-        rightIcon="double-caret-vertical"
-        text={item ? item.caption || item.name : t("placeholders.unselected")}
-      />
-    </Select>
+    <Fragment>
+      {selectTopic}
+      {selectSubtopic}
+      {selectCube}
+    </Fragment>
   );
 };
 
-/** @type {import("@blueprintjs/select").ItemListPredicate<import("@datawheel/olap-client").AdaptedCube>} */
-function itemListPredicate(query, items) {
-  const tester = safeRegExp(query, "i");
-  return items.filter(item => tester.test(item.caption || item.name));
-}
-
-/** @type {import("@blueprintjs/select").ItemRenderer<import("@datawheel/olap-client").AdaptedCube>} */
-function itemRenderer(item, {modifiers, handleClick}) {
-  return (
-    <MenuItem
-      active={modifiers.active}
-      disabled={modifiers.disabled}
-      icon="cube"
-      key={item.uri}
-      onClick={handleClick}
-      text={item.caption || item.name}
-    />
-  );
-}
-
 /** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
 const mapState = state => ({
-  itemListPredicate,
-  itemRenderer,
   items: selectOlapCubeItems(state),
   selectedItem: selectOlapCube(state)
 });
 
 /** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
 const mapDispatch = dispatch => ({
-  onItemSelect: cube => dispatch(doCubeSet(cube.name))
+  onItemSelect(cube) {
+    dispatch(doCubeSet(cube.name));
+  }
 });
 
 export const ConnectedSelectCube = connect(mapState, mapDispatch)(SelectCube);

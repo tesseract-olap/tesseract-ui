@@ -1,15 +1,11 @@
-import {Button, ButtonGroup, Classes, Intent} from "@blueprintjs/core";
-import React from "react";
+import {Button, Classes, Intent} from "@blueprintjs/core";
+import React, {Fragment} from "react";
 import {connect} from "react-redux";
 import {ButtonTooltip} from "../components/ButtonTooltip";
 import {doExecuteQuery} from "../middleware/actions";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint} from "../state/server/selectors";
 import {useTranslation} from "../utils/localization";
-
-/**
- * @typedef {import("@blueprintjs/core").IButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>} ButtonProps
- */
 
 /**
  * @typedef StateProps
@@ -23,7 +19,7 @@ import {useTranslation} from "../utils/localization";
  */
 
 /** @type {React.FC<StateProps & DispatchProps>} */
-const ButtonExecuteQuery = props => {
+export const ButtonExecuteQuery = props => {
   const {translate: t} = useTranslation();
 
   const execButton = <Button
@@ -37,7 +33,7 @@ const ButtonExecuteQuery = props => {
   if (!props.endpoint) return execButton;
 
   return (
-    <ButtonGroup fill={true}>
+    <Fragment>
       {execButton}
       <ButtonTooltip
         className={Classes.FIXED}
@@ -45,7 +41,7 @@ const ButtonExecuteQuery = props => {
         tooltip={t("params.current_endpoint", {label: props.endpoint})}
         onClick={props.updateEndpointHandler}
       />
-    </ButtonGroup>
+    </Fragment>
   );
 };
 
@@ -64,4 +60,4 @@ const mapDispatch = dispatch => ({
   }
 });
 
-export default connect(mapState, mapDispatch)(ButtonExecuteQuery);
+export const ConnectedButtonExecuteQuery = connect(mapState, mapDispatch)(ButtonExecuteQuery);
