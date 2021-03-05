@@ -61,9 +61,13 @@ export function csvSerialize(
 }
 
 /**
+ * Groups the objects from an array in a Map where the key is determined by
+ * an accesor function or a property of the object. The values of the Map are
+ * always arrays with at least 1 object.
+ * Returning `undefined` by the accesor ignores the object.
  * @template T
  * @param {T[]} array
- * @param {keyof T | ((i: T) => string)} accesor
+ * @param {keyof T | ((i: T) => string | undefined | null)} accesor
  * @returns {Map<string, T[]>}
  */
 export function groupBy(array, accesor) {
@@ -72,6 +76,7 @@ export function groupBy(array, accesor) {
   for (let i = 0; i < array.length; i++) {
     const value = array[i];
     const key = accesorFn(value);
+    if (key == null) continue;
     const group = groups.get(key);
     group ? group.push(value) : groups.set(key, [value]);
   }
@@ -140,23 +145,30 @@ export function parseName(name) {
 }
 
 /**
+ * @template U
+ * @typedef {Map<string, U | NestedMap<U>>} NestedMap
+ */
+
+/**
  * @template T
  * @template U
  * @param {T[]} values
  * @param {(group: T[]) => U} reduce
- * @param {(data: T) => string} keyGetter
- * @param  {...(data: T) => string} keys
- * @returns {Map<string, U> | Map<string, Map<string, U>>}
+ * @param  {...(keyof T | ((data: T) => string | undefined | null))} keyGetters
+ * @returns {NestedMap<U>}
  */
-export function regroup(values, reduce, keyGetter, ...keys) {
+export function regroup(values, reduce, ...keyGetters) {
   const groups = new Map();
-  const iter = groupBy(values, keyGetter).entries();
-  for (let item = iter.next(); !item.done; item = iter.next()) {
-    const group = item.value;
-    const value = keys.length === 0
-      ? reduce(group[1])
-      : regroup(group[1], reduce, ...keys);
-    groups.set(group[0], value);
+  if (keyGetters.length > 0) {
+    const [keyGetter, ...restGetters] = keyGetters;
+    const iter = groupBy(values, keyGetter).entries();
+    for (let item = iter.next(); !item.done; item = iter.next()) {
+      const group = item.value;
+      const value = restGetters.length === 0
+        ? reduce(group[1])
+        : regroup(group[1], reduce, ...restGetters);
+      groups.set(group[0], value);
+    }
   }
   return groups;
 }

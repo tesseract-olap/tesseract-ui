@@ -15,6 +15,17 @@ export function shallowEqualExceptFns(
 }
 
 /**
+ * Returns a shallow equal function for use with React.memo, where the compared
+ * properties are specified beforehand.
+ * @template T
+ * @param  {...keyof T} props
+ * @returns {(prev: T, next: T) => boolean}
+ */
+export function shallowEqualForProps(...props) {
+  return (prev, next) => props.every(key => prev[key] === next[key]);
+}
+
+/**
  * @param {any} str
  * @returns {str is number}
  */

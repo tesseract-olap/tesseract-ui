@@ -70,10 +70,10 @@ export const selectBooleans = createSelector(
 
 export const selectPaginationParams = createSelector(
   selectCurrentQueryParams,
-  params => ({limit: params.pagiLimit, offset: params.pagiOffset})
+  params => ({limit: params.pagiLimit || 0, offset: params.pagiOffset || 0})
 );
 
 export const selectSortingParams = createSelector(
   selectCurrentQueryParams,
-  params => ({sortKey: params.sortKey, sortDir: params.sortDir})
+  params => ({sortKey: params.sortKey || "", sortDir: params.sortDir})
 );

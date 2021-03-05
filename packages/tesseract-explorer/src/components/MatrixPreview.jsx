@@ -13,11 +13,10 @@ import {regroup, sortingTableBy, sumBy} from "../utils/transform";
  * @property {keyof T | undefined} values
  */
 
-/**
- * @template {Record<string, number>} T
- * @type {React.FC<OwnProps<T>>}
- */
-export const MatrixPreview = ({columns, className, data, values, rows}) => {
+/** @type {React.FC<OwnProps<Record<string, number>>>} */
+export const MatrixPreview = props => {
+  const {columns, data, values, rows} = props;
+
   if (!columns || !rows || columns === rows || !values || data.length === 0) {
     return <NonIdealState />;
   }
@@ -25,7 +24,6 @@ export const MatrixPreview = ({columns, className, data, values, rows}) => {
   const columnKeys = sortingTableBy(data, columns);
   const rowKeys = sortingTableBy(data, rows);
 
-  /** @type {Map<string, Map<string, number>>} */
   const rolledData = regroup(
     data,
     group => sumBy(group, values),
@@ -35,7 +33,7 @@ export const MatrixPreview = ({columns, className, data, values, rows}) => {
 
   return (
     <Table
-      className={className}
+      className={props.className}
       enableColumnResizing={true}
       enableRowResizing={false}
       getCellClipboardData={(rowIndex, columnIndex) =>

@@ -11,6 +11,22 @@ export function ensureArray(value) {
 
 /**
  * @template T
+ * @template U
+ * @param {T[]} items
+ * @param {(item: T, index: number, array: T[]) => U | null} callback
+ * @returns {U[]}
+ */
+export function filterMap(items, callback) {
+  /** @type {U[]} */ const output = [];
+  for (let i = 0; i < items.length; i++) {
+    const result = callback(items[i], i, items);
+    result !== null && output.push(result);
+  }
+  return output;
+}
+
+/**
+ * @template T
  * @param {T[] | Record<string, T>} items
  * @param {(value: T, key: string) => boolean} filter
  * @returns {IterableIterator<T>}

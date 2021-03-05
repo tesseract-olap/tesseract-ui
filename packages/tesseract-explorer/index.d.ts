@@ -1,4 +1,5 @@
 import * as OlapClnt from "@datawheel/olap-client";
+import {TranslationProviderProps} from "@datawheel/use-translation";
 import {AxiosRequestConfig} from "axios";
 import {default as React} from "react";
 import {MapDispatchToProps, MapStateToProps} from "react-redux";
@@ -62,12 +63,12 @@ declare namespace TessExpl {
     /**
      * The Translation labels to use in the UI.
      */
-    translations?: Translation;
+    translations?: TranslationProviderProps["translations"];
 
     /**
      * The default locale to use in the Explorer component UI.
      */
-    uiLocale?: string;
+    uiLocale?: TranslationProviderProps["defaultLocale"];
   }
 
   interface ViewProps {
@@ -76,8 +77,6 @@ declare namespace TessExpl {
     params: Struct.QueryParams;
     result: Struct.QueryResult;
   }
-
-  type Translation = Record<string, string | Record<string, string>>;
 
   namespace State {
     interface ExplorerState {
