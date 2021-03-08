@@ -2,6 +2,12 @@
   "name": "@datawheel/tesseract-ui-repo",
   "private": true,
   "scripts": {
+    "mono:release": "node scripts/release.js",
     "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {
+    "chosen": "0.0.2",
+    "semver": "^7.3.4",
+    "simple-git": "^2.36.0"
   }
 }
