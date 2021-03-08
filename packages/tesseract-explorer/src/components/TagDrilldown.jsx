@@ -1,5 +1,4 @@
-import {FormGroup, Switch, Tag} from "@blueprintjs/core";
-import {Popover2, Popover2InteractionKind} from "@blueprintjs/popover2";
+import {FormGroup, Popover, PopoverInteractionKind, Switch, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {memo, useMemo} from "react";
 import {abbreviateFullName} from "../utils/format";
@@ -70,7 +69,7 @@ const TagDrilldown = props => {
           items={captionItems}
           onItemSelect={caption => onCaptionUpdate(item, caption.level ? caption.name : "")}
           getLabel={item => item.name}
-          selectedItem={item.captionProperty}
+          selectedItem={item.captionProperty || undefined}
         />
       </FormGroup>
       <FormGroup className="submenu-form-group" label={t("params.title_properties")}>
@@ -89,19 +88,15 @@ const TagDrilldown = props => {
     </div>;
 
   return (
-    <Popover2
+    <Popover
+      boundary="viewport"
       content={content}
       fill={true}
-      hoverCloseDelay={500}
-      interactionKind={Popover2InteractionKind.CLICK}
-      modifiers={{
-        flip: {options: {rootBoundary: "viewport"}},
-        preventOverflow: {options: {rootBoundary: "viewport"}}
-      }}
+      interactionKind={PopoverInteractionKind.CLICK}
       popoverClassName="param-popover"
     >
       {target}
-    </Popover2>
+    </Popover>
   );
 };
 

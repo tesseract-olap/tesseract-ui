@@ -1,17 +1,8 @@
-&-content {
-}
-
 .cube-locale {
   padding: 0.75rem;
 
   &:empty {
     display: none;
-  }
-
-  .select-cube {
-    .#{$ns}-popover2-target > div {
-      width: 100%;
-    }
   }
 }
 

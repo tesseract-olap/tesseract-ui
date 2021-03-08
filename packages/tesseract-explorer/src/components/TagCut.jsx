@@ -1,10 +1,9 @@
-import {Button, ButtonGroup, Callout, FormGroup, Intent, Spinner, Switch, Tag} from "@blueprintjs/core";
-import {Popover2, Popover2InteractionKind} from "@blueprintjs/popover2";
+import {Button, ButtonGroup, Callout, FormGroup, Intent, Popover, PopoverInteractionKind, Spinner, Switch, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {useEffect, useState} from "react";
 import {abbreviateFullName} from "../utils/format";
-import {levelRefToArray} from "../utils/transform";
 import {useTranslation} from "../utils/localization";
+import {levelRefToArray} from "../utils/transform";
 import {ButtonTagExtra} from "./ButtonTagExtra";
 import {TransferInput} from "./TransferInput";
 
@@ -48,7 +47,7 @@ export const TagCut = props => {
         setLoadingMembers(false);
       })
       .catch(err => {
-        setError(`${err.message}\n${err.stack}`);
+        setError(`${err.message}`);
         setMembers({});
         setLoadingMembers(false);
       });
@@ -73,7 +72,8 @@ export const TagCut = props => {
 
   if (error) {
     return (
-      <Popover2
+      <Popover
+        boundary="viewport"
         content={
           <Callout
             icon="warning-sign"
@@ -81,7 +81,7 @@ export const TagCut = props => {
             title={t("params.error_fetchmembers_title")}
           >
             <p>{t("params.error_fetchmembers_detail")}</p>
-            <p>{error}</p>
+            <p style={{whiteSpace: "pre-line"}}>{error}</p>
             <p>
               <Button text={t("action_reload")} onClick={reloadHandler} />
             </p>
@@ -89,25 +89,26 @@ export const TagCut = props => {
         }
         fill={true}
         hoverCloseDelay={500}
-        interactionKind={Popover2InteractionKind.CLICK}
+        interactionKind={PopoverInteractionKind.HOVER}
+        popoverClassName="param-popover"
       >
         <Tag
           className={classNames("tag-item tag-cut error", {hidden: !item.active})}
-          large={true}
           fill={true}
           icon="warning-sign"
+          intent={Intent.WARNING}
+          interactive={false}
+          large={true}
           rightIcon={
             <ButtonGroup minimal={true}>
               <ButtonTagExtra icon="refresh" title={t("action_reload")} onClick={reloadHandler} />
             </ButtonGroup>
           }
-          intent={Intent.WARNING}
-          onClick={toggleHandler}
           onRemove={removeHandler}
         >
           {label}
         </Tag>
-      </Popover2>
+      </Popover>
     );
   }
 
@@ -115,7 +116,8 @@ export const TagCut = props => {
   const uniqueActive = activeCount === 1 && members[item.members[0]];
 
   return (
-    <Popover2
+    <Popover
+      boundary="viewport"
       content={
         <FormGroup className="submenu-form-group" label={t("params.title_members")}>
           <MembersTransferInput
@@ -127,12 +129,7 @@ export const TagCut = props => {
         </FormGroup>
       }
       fill={true}
-      hoverCloseDelay={500}
-      interactionKind={Popover2InteractionKind.CLICK}
-      modifiers={{
-        flip: {options: {rootBoundary: "viewport"}},
-        preventOverflow: {options: {rootBoundary: "viewport"}}
-      }}
+      interactionKind={PopoverInteractionKind.CLICK}
       popoverClassName="param-popover"
     >
       <Tag
@@ -149,6 +146,6 @@ export const TagCut = props => {
       >
         {`${label} (${uniqueActive ? uniqueActive.name : t("params.count_cuts", {n: activeCount})})`}
       </Tag>
-    </Popover2>
+    </Popover>
   );
 };

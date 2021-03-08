@@ -14,7 +14,7 @@ This project has some peer dependencies, which must be installed by the used man
 
 ```bash
 npm install react@16 react-dom@16 react-redux@7 redux@4
-npm install @blueprintjs/core@3 @blueprintjs/popover2@0 @blueprintjs/select@3 @blueprintjs/table@3
+npm install @blueprintjs/core@3 @blueprintjs/select@3 @blueprintjs/table@3
 ```
 
 This is to prevent conflicts with hooks implemented in React 16.7, and to allow compatibility with the minor version of blueprintjs the user chooses.
@@ -46,11 +46,10 @@ import {Explorer as TesseractExplorer} from "@datawheel/tesseract-explorer";
 import "normalize.css/normalize.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
-import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "@blueprintjs/table/lib/css/table.css";
 
-// Tesseract Explorer's stylesheets comes after
+// Tesseract Explorer's stylesheets must come after
 import "@datawheel/tesseract-explorer/dist/explorer.css";
 
 function PageComponent(props) {
@@ -97,7 +96,7 @@ interface ViewProps {
 }
 ```
 
-This also means the `Explorer` component can be extended with external views that make use of the same interface.
+This also means the `Explorer` component can be extended with external views that make use of the same interface. You can check how these are composed on [the typing definitions file](./index.d.ts).
 
 ### Data locale
 
@@ -113,6 +112,39 @@ function PageComponent(props) {
 ```
 
 These will be presented in the UI as a selector with the name of the language, and the parameter will be added to the queries.
+
+### UI Localization
+
+By default the user interface will be in English, but you can localize it using the these properties:
+
+```jsx
+function PageComponent(props) {
+  return <TesseractExplorer
+    src="https://tesseract.server.url/"
+    translations={translations}
+    uiLocale="es"
+  />;
+}
+```
+
+* `translations` must be an object where the keys are the locale codes you intend to make available in the app, and the values are dictionaries that complies with the labels [defined in this file](./src/utils/localization.js).  
+  This object is also exported by this package so you can check it yourself.
+* `uiLocale`, which is not related to the `locale` property mentioned in the earlier section, must be a string matching one of the keys defined in the `translations` property.
+
+When used, both properties are required.  
+The locale keys used not necesarily must be ISO 639 codes; any string can do, but must match on both properties.
+
+Some translation labels do interpolation of values when used. These are optional, but encouraged, and some can have additional values available:
+
+* `params.current_endpoint` replaces `{label}` with the current kind of endpoint (`"aggregate"` or `"logiclayer"`) if the server is Tesseract OLAP
+* `params.label_cube` has the `{name}` and `{caption}` properties of the cube (though `caption` comes from `annotations.caption`)
+* `params.label_locale` has `{code}`, `{name}`, and `{nativeName}`, which would match to `"es"`, `"Spanish"`, and `"Español"`, respectively (and these values come from the options passed to `locale`)
+* `params.label_topic` and `label_subtopic` replace `{label}` with its respective values from the cube annotations
+* `summary_growth`, `summary_rca`, and `summary_topk` allow you to compose a sentence summarizing what each mean:
+  - `summary_growth`: `level`, `measure`
+  - `summary_rca`: `level1`, `level2`, `measure`
+  - `summary_topk`: `amount`, `level`, `measure`, `order`
+* Wherever a number is used, the `{n}` tag contains the value, and you can define a label for the singular and plural forms: `key` for the singular, and `key_plural` for the plural.
 
 ## License
 
