@@ -1,7 +1,7 @@
 import {Button, Intent} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import QueryArea from "../components/QueryArea";
+import {QueryArea} from "../components/QueryArea";
 import TagRca from "../components/TagRca";
 import {doRcaClear, doRcaRemove, doRcaSelect, doRcaUpdate} from "../state/params/actions";
 import {selectRcaItems} from "../state/params/selectors";
@@ -46,8 +46,14 @@ const QueryRca = props => {
     </React.Fragment>;
 
   return (
-    <QueryArea className={props.className} title={title} toolbar={toolbar}>
-      {props.items.map(item =>
+    <QueryArea
+      className={props.className}
+      open={false}
+      title={title}
+      toolbar={toolbar}
+      tooltip={t("params.tooltip_area_rca")}
+    >
+      {items.map(item =>
         <TagRca
           item={item}
           key={item.key}

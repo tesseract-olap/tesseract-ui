@@ -1,7 +1,7 @@
 import {Button, Classes, Intent} from "@blueprintjs/core";
 import React, {Fragment} from "react";
 import {connect} from "react-redux";
-import {ButtonTooltip} from "../components/ButtonTooltip";
+import {ButtonTooltip} from "../components/Tooltips";
 import {doExecuteQuery} from "../middleware/actions";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint, selectServerSoftware} from "../state/server/selectors";
@@ -39,7 +39,7 @@ export const ButtonExecuteQuery = props => {
       <ButtonTooltip
         className={Classes.FIXED}
         icon="exchange"
-        tooltip={t("params.current_endpoint", {label: props.endpoint})}
+        tooltipText={t("params.current_endpoint", {label: props.endpoint})}
         onClick={props.updateEndpointHandler}
       />
     </Fragment>

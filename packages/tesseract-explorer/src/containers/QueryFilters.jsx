@@ -1,9 +1,10 @@
 import {Button, Intent} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import QueryArea from "../components/QueryArea";
+import {QueryArea} from "../components/QueryArea";
 import {doMeasureClear, doMeasureToggle} from "../state/params/actions";
 import {selectFilterItems} from "../state/params/selectors";
+import { useTranslation } from "../utils/localization";
 import {activeItemCounter} from "../utils/validation";
 
 /**
@@ -25,20 +26,25 @@ import {activeItemCounter} from "../utils/validation";
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const QueryFilters = props => {
   const {items} = props;
-  const totalCount = items.length;
-  const activeCount = items.reduce(activeItemCounter, 0);
 
-  const title = `Filters (${activeCount})`;
+  const {translate: t} = useTranslation();
+
   const toolbar =
     <React.Fragment>
-      {totalCounter > 0 &&
+      {items.length > 0 &&
         <Button icon="trash" intent={Intent.DANGER} onClick={props.clearHandler} />
       }
       <Button icon="new-object" onClick={props.createHandler} />
     </React.Fragment>;
 
   return (
-    <QueryArea className={props.className} title={title} toolbar={toolbar}>
+    <QueryArea
+      className={props.className}
+      open={true}
+      title={t("params.title_area_filters")}
+      toolbar={toolbar}
+      tooltip={t("params.title_area_filters", {n: `${items.reduce(activeItemCounter, 0)}`})}
+    >
       {items.map(item =>
         <TagFilter
           item={item}

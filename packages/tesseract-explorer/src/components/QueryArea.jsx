@@ -1,7 +1,8 @@
 import {Button, ButtonGroup, Divider, Icon, Intent} from "@blueprintjs/core";
+import classNames from "classnames";
 import React from "react";
 import ScrollArea from "react-shadow-scroll";
-import classNames from "classnames";
+import {IconTooltip} from "./Tooltips";
 
 /**
  * @typedef OwnProps
@@ -9,24 +10,31 @@ import classNames from "classnames";
  * @property {string} [className]
  * @property {string} title
  * @property {React.ReactNode} [toolbar]
+ * @property {string} [tooltip]
  * @property {string} [warning]
  * @property {() => void} [stopBubbling]
  */
 
 /** @type {React.FC<OwnProps>} */
-const QueryArea = ({children, className, open = true, stopBubbling, title, toolbar, warning}) =>
-  <details className={classNames("query-area", className)} open={open}>
-    <summary className="details-title">
-      <Icon className="icon-chevron" icon="chevron-right" />
-      <span className="title">{title}</span>
-      <ButtonGroup minimal onClick={stopBubbling}>
-        {toolbar}
-        {warning && <Divider />}
-        {warning && <Button disabled intent={Intent.WARNING} icon="warning-sign" />}
-      </ButtonGroup>
-    </summary>
-    <ScrollArea isShadow={false}>{children}</ScrollArea>
-  </details>;
+export const QueryArea = props => {
+  const {tooltip, warning} = props;
+  return (
+    <details className={classNames("query-area", props.className)} open={props.open}>
+      <summary className="details-title">
+        <Icon className="icon-chevron" icon="chevron-right" />
+        <span className="title">{props.title}</span>
+        {tooltip && <IconTooltip tooltipText={tooltip} icon="info-sign" />}
+        <span className="spacer"></span>
+        <ButtonGroup minimal onClick={props.stopBubbling}>
+          {props.toolbar}
+          {warning && <Divider />}
+          {warning && <Button disabled intent={Intent.WARNING} icon="warning-sign" />}
+        </ButtonGroup>
+      </summary>
+      <ScrollArea isShadow={false}>{props.children}</ScrollArea>
+    </details>
+  );
+};
 
 QueryArea.defaultProps = {
   stopBubbling(evt) {
@@ -34,5 +42,3 @@ QueryArea.defaultProps = {
     evt.preventDefault();
   }
 };
-
-export default QueryArea;

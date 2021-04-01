@@ -1,7 +1,7 @@
 import {Button, Intent} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
-import QueryArea from "../components/QueryArea";
+import {QueryArea} from "../components/QueryArea";
 import TagGrowth from "../components/TagGrowth";
 import {
   doGrowthClear,
@@ -51,7 +51,13 @@ const QueryGrowth = props => {
     </React.Fragment>;
 
   return (
-    <QueryArea className={props.className} title={title} toolbar={toolbar}>
+    <QueryArea
+      className={props.className}
+      open={false}
+      title={title}
+      toolbar={toolbar}
+      tooltip={t("params.tooltip_area_growth")}
+    >
       {items.map(item =>
         <TagGrowth
           item={item}

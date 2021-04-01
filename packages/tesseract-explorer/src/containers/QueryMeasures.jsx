@@ -8,7 +8,7 @@ import {
 } from "@blueprintjs/core";
 import React, {useMemo, useState} from "react";
 import {connect} from "react-redux";
-import QueryArea from "../components/QueryArea";
+import {QueryArea} from "../components/QueryArea";
 import TagMeasure from "../components/TagMeasure";
 import {doMeasureClear, doMeasureToggle} from "../state/params/actions";
 import {selectMeasureItems} from "../state/params/selectors";
@@ -34,19 +34,19 @@ import {activeItemCounter} from "../utils/validation";
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const QueryMeasures = props => {
+  const {items} = props;
+
   const [filter, setFilter] = useState("");
 
   const {translate: t} = useTranslation();
 
-  const items = useMemo(() => {
+  const filteredItems = useMemo(() => {
     if (filter) {
       const query = safeRegExp(filter, "i");
-      return props.items.filter(item => query.test(item.measure));
+      return items.filter(item => query.test(item.measure));
     }
-    return props.items;
-  }, [props.items, filter]);
-
-  const title = `${t("params.title_area_measures")} (${props.items.reduce(activeItemCounter, 0)})`;
+    return items;
+  }, [items, filter]);
 
   const resetFilter = () => setFilter("");
   const toolbar =
@@ -77,8 +77,14 @@ const QueryMeasures = props => {
     </Popover>;
 
   return (
-    <QueryArea className={props.className} title={title} toolbar={toolbar}>
-      {items.map(item =>
+    <QueryArea
+      className={props.className}
+      open={true}
+      title={t("params.title_area_measures", {n: `${items.reduce(activeItemCounter, 0)}`})}
+      toolbar={toolbar}
+      tooltip={t("params.tooltip_area_measures")}
+    >
+      {filteredItems.map(item =>
         <TagMeasure
           item={item}
           key={item.key}

@@ -2,7 +2,7 @@ import {Button, Intent} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import ButtonSelectLevel from "../components/ButtonSelectLevel";
-import QueryArea from "../components/QueryArea";
+import {QueryArea} from "../components/QueryArea";
 import TagDrilldown from "../components/TagDrilldown";
 import {doDrilldownClear, doDrilldownRemove, doDrilldownUpdate} from "../state/params/actions";
 import {selectDrilldownItems} from "../state/params/selectors";
@@ -36,7 +36,6 @@ const QueryDrilldowns = props => {
 
   const {translate: t} = useTranslation();
 
-  const title = `${t("params.title_area_drilldowns")} (${items.reduce(activeItemCounter, 0)})`;
   const toolbar =
     <React.Fragment>
       {items.length > 0 &&
@@ -50,7 +49,13 @@ const QueryDrilldowns = props => {
     </React.Fragment>;
 
   return (
-    <QueryArea className={props.className} title={title} toolbar={toolbar}>
+    <QueryArea
+      className={props.className}
+      open={true}
+      title={t("params.title_area_drilldowns", {n: `${items.reduce(activeItemCounter, 0)}`})}
+      toolbar={toolbar}
+      tooltip={t("params.tooltip_area_drilldowns")}
+    >
       {items.map(item =>
         <TagDrilldown
           key={item.key}

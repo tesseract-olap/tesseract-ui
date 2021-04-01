@@ -1,7 +1,7 @@
 import {ButtonGroup, Checkbox, ControlGroup, Divider, FormGroup, NumericInput} from "@blueprintjs/core";
 import React, {memo, useMemo} from "react";
 import {connect} from "react-redux";
-import QueryArea from "../components/QueryArea";
+import {QueryArea} from "../components/QueryArea";
 import {SelectObject} from "../components/Select";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {doBooleanToggle, doPaginationUpdate, doSortingUpdate} from "../state/params/actions";
@@ -62,7 +62,12 @@ export const QueryBooleans = props => {
   }, []);
 
   return (
-    <QueryArea className={props.className} title={t("params.title_area_options")} open={false}>
+    <QueryArea
+      className={props.className}
+      open={false}
+      title={t("params.title_area_options")}
+      tooltip={t("params.tooltip_area_options")}
+    >
       {props._enabledBooleans.includes("debug") && <Checkbox
         className="item-option"
         label={t("params.label_boolean_debug")}

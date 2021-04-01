@@ -11,12 +11,15 @@
 }
 
 .query-area {
+  position: relative;
+
   .details-title {
     align-items: center;
     display: flex;
     flex-flow: row nowrap;
     margin: 1px 0;
     padding: 0;
+    padding-left: 30px;
     min-height: 30px;
     @include box-area;
 
@@ -28,6 +31,8 @@
   & .icon-chevron {
     padding: 7px;
     position: absolute;
+    top: 0;
+    left: 0;
     transition: transform 0.15s linear;
   }
   &[open] .icon-chevron {
@@ -36,9 +41,14 @@
 
   .title {
     display: block;
-    flex: 1 1 auto;
-    padding: 0.25rem 0 0.25rem 30px;
+    flex: 0 0 auto;
     line-height: 1.1em;
+    padding-right: 6px;
+  }
+
+  .spacer {
+    display: block;
+    flex: 1 0 auto;
   }
 
   & > .container {
