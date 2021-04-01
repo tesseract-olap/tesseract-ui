@@ -1,4 +1,4 @@
-import {Client as OLAPClient} from "@datawheel/olap-client";
+import {Client as OLAPClient, TesseractDataSource} from "@datawheel/olap-client";
 import {requestControl} from "../state/loading/actions";
 import {doCubeUpdate, doLocaleUpdate} from "../state/params/actions";
 import {selectCubeName, selectCurrentQueryParams, selectLocale, selectMeasureMap} from "../state/params/selectors";
@@ -71,7 +71,13 @@ const actionMap = {
         const [serverInfo, cubes] = result;
         const cubeMap = keyBy(cubes, i => i.name);
 
-        dispatch(doServerUpdate({...serverInfo, cubeMap}));
+        dispatch(doServerUpdate({
+          ...serverInfo,
+          endpoint: serverInfo.software === TesseractDataSource.softwareName
+            ? "logiclayer"
+            : "aggregate",
+          cubeMap
+        }));
         fetchSuccess();
         return dispatch({type: CLIENT_HYDRATEQUERY, payload: cubes[0]?.name});
       })
@@ -267,7 +273,7 @@ const actionMap = {
       const cube = await client.getCube(params.cube);
       const query = applyQueryParams(cube.query, params);
 
-      const endpoint = selectServerEndpoint(state) || "logiclayer";
+      const endpoint = selectServerEndpoint(state);
       const aggregation = await client.execQuery(query, endpoint);
       dispatch(
         doCurrentResultUpdate({

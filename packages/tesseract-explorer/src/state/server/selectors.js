@@ -10,10 +10,9 @@ export function selectServerState(state) {
   return "explorer" in state ? state.explorer.explorerServer : state.explorerServer;
 }
 
-export const selectServerEndpoint = createSelector(
-  selectServerState,
-  server => server.software === "tesseract-olap" ? server.endpoint : null
-);
+export const selectServerSoftware = createSelector(selectServerState, server => server.software);
+
+export const selectServerEndpoint = createSelector(selectServerState, server => server.endpoint);
 
 export const selectServerBooleansEnabled = createSelector(
   selectServerState,

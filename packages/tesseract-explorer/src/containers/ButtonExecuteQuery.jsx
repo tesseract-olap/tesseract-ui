@@ -4,12 +4,13 @@ import {connect} from "react-redux";
 import {ButtonTooltip} from "../components/ButtonTooltip";
 import {doExecuteQuery} from "../middleware/actions";
 import {doUpdateEndpoint} from "../state/server/actions";
-import {selectServerEndpoint} from "../state/server/selectors";
+import {selectServerEndpoint, selectServerSoftware} from "../state/server/selectors";
 import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef StateProps
- * @property {string | null} endpoint
+ * @property {string} endpoint
+ * @property {string} software
  */
 
 /**
@@ -30,7 +31,7 @@ export const ButtonExecuteQuery = props => {
     onClick={props.executeQueryHandler}
   />;
 
-  if (!props.endpoint) return execButton;
+  if (props.software !== "tesseract-olap") return execButton;
 
   return (
     <Fragment>
@@ -47,7 +48,8 @@ export const ButtonExecuteQuery = props => {
 
 /** @type {TessExpl.State.MapStateFn<StateProps, {}>} */
 const mapState = state => ({
-  endpoint: selectServerEndpoint(state)
+  endpoint: selectServerEndpoint(state),
+  software: selectServerSoftware(state)
 });
 
 /** @type {TessExpl.State.MapDispatchFn<DispatchProps, {}>} */
