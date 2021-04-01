@@ -51,6 +51,9 @@ async function auditorFactory(options) {
   const client = await Client.fromURL(options.server);
   const status = await client.checkStatus();
 
+  const levelCache = new Map();
+  const propertyCache = new Map();
+
   return auditServer;
 
   /**
@@ -154,7 +157,8 @@ async function auditorFactory(options) {
           : undefined;
 
       if (dimType) issues.push({
-        description: `This dimension may be ${dimType} based. If so, add \`type="${DimensionType[dimType]}"\` to the \`<Dimension>\`/\`<SharedDimension>\` in your schema files to enable ${dimType.toLowerCase()}-specific features in tesseract-ui and it's plugins.`,
+        description: `This dimension may be ${dimType} based.`,
+        solution: `If so, add \`type="${DimensionType[dimType]}"\` to the \`<Dimension>\`/\`<SharedDimension>\` in your schema files to enable ${dimType.toLowerCase()}-specific features in tesseract-ui and it's plugins.`,
         entity: "dimension",
         level: "middle",
         name: dimension.name,
@@ -178,6 +182,18 @@ async function auditorFactory(options) {
 
     const issues = [];
 
+    const cachedLevel = levelCache.get(level.uniqueName);
+    if (cachedLevel) {
+      issues.push({
+        description: `The level "${level.fullName}" needs an uniqueName across its cube. It currently clashes with the uniqueName for "${cachedLevel.fullName}".`,
+        solution: `Change the level name to something unique across the cube, or setup a uniqueName on tesseract's logiclayer.json file.`,
+        entity: "level",
+        level: "low",
+        name: level.fullName
+      });
+    }
+    levelCache.set(level.uniqueName, level);
+
     let suspect;
     try {
       const members = await client.getMembers(level);
@@ -200,12 +216,47 @@ async function auditorFactory(options) {
       }
       catch (e) {
         issues.push({
-          description: `The level "${level.name}" contains at least a member that matches \`{digit}-{digit}\`, which is failing on a cut. Ensure the level has a \`key_type="text"\` attribute.`,
+          description: `The level "${level.name}" contains at least a member that matches \`{digit}-{digit}\`, which is failing on a cut.`,
+          solution: `Ensure the level has a \`key_type="text"\` attribute.`,
           entity: "level",
           level: "low",
           name: level.fullName
         });
       }
+    }
+
+    return issues;
+  }
+
+  /**
+   * @param {import("@datawheel/olap-client").Property} prop
+   * @returns {Promise<Issue[]>}
+   */
+  async function validateProperty(prop) {
+    logger.debug("  - Property:", prop.fullName);
+
+    const issues = [];
+
+    const cachedProp = propertyCache.get(prop.uniqueName);
+    if (cachedProp) {
+      issues.push({
+        description: `The property "${prop.name}", belonging to level "${prop.level.fullName}", needs an uniqueName across its cube. It currently clashes with "${cachedProp.uniqueName}" from level "${cachedProp.level.fullName}".`,
+        solution: `Change the property name to something unique across the cube, or setup a uniqueName on tesseract's logiclayer.json file.`,
+        entity: "property",
+        level: "low",
+        name: prop.fullName
+      });
+    }
+    propertyCache.set(prop.uniqueName, prop);
+
+    if (prop.name in prop.cube.measuresByName) {
+      issues.push({
+        description: `The property "${prop.name}", belonging to level "${prop.level.fullName}", has the same name as a measure, which causes conflicts when using certain functions.`,
+        solution: `Use a different property name.`,
+        entity: "property",
+        level: "low",
+        name: prop.fullName
+      });
     }
 
     return issues;
@@ -242,4 +293,5 @@ async function asyncValidation(list, validator) {
  * @property {string} entity The object in the cube abstraction with the problem.
  * @property {string} level The priority level of the problem.
  * @property {string} name The name of the object in the abstraction.
+ * @property {string} [solution] The action to take to solve the problem.
  */
