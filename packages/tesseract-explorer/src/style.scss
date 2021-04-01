@@ -137,8 +137,12 @@
   }
 }
 
-.#{$ns}-fill > .#{$ns}-popover-target > div {
-  width: 100%;
+.#{$ns}-fill > .#{$ns}-popover-target {
+  max-width: 100%;
+
+  & > div {
+    width: 100%;
+  }
 }
 
 .#{$ns}-table-container {

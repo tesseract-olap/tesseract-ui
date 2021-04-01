@@ -54,6 +54,7 @@ export const SelectPrimitive = props => {
       filterable={props.filterable ?? props.items.length > 6}
       onItemSelect={props.onItemSelect}
       popoverProps={{
+        boundary: "viewport",
         fill: props.fill,
         minimal: props.minimal,
         captureDismiss: true,

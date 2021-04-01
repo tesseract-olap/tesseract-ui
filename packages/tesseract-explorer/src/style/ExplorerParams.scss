@@ -6,6 +6,11 @@
   }
 }
 
+.#{$ns}-button-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .query-actions {
   padding: 0.75rem;
 }
