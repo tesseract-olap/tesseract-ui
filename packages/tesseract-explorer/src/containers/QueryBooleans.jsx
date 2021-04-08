@@ -47,19 +47,19 @@ const SelectDirection = memo(SelectObject, shallowEqualForProps("items", "select
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 export const QueryBooleans = props => {
-  const {translate: t} = useTranslation();
+  const {locale, translate: t} = useTranslation();
 
   const sort = useMemo(() => {
     const directions = {
-      asc: t("params.direction_asc"),
-      desc: t("params.direction_desc")
+      asc: t("direction.ASC"),
+      desc: t("direction.DESC")
     };
     const options = [
       {value: "asc", label: directions.asc},
       {value: "desc", label: directions.desc}
     ];
     return {directions, options};
-  }, []);
+  }, [locale]);
 
   return (
     <QueryArea
