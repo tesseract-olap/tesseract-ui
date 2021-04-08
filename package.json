@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "chosen": "0.0.2",
-    "semver": "^7.3.4",
-    "simple-git": "^2.36.0"
+    "semver": "^7.3.5",
+    "simple-git": "^2.37.0"
   }
 }
