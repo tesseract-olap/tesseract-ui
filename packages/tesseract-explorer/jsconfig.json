@@ -3,6 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "checkJs": true,
     "jsx": "react",
+    "lib": ["es2019.object"],
     "module": "commonJS",
     "moduleResolution": "node",
     "strictNullChecks": true,

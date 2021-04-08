@@ -1,4 +1,4 @@
-import {Alignment, Button, ButtonGroup} from "@blueprintjs/core";
+import {Button, ButtonGroup} from "@blueprintjs/core";
 import classNames from "classnames";
 import React from "react";
 import {SelectObject, SelectPrimitive} from "./Select";
@@ -9,7 +9,7 @@ import {SelectObject, SelectPrimitive} from "./Select";
  * @property {T[]} items
  * @property {(item: T, event?: React.SyntheticEvent<HTMLElement, Event> | undefined) => void} onItemSelect
  * @property {T} selectedItem
- * @property {string} text
+ * @property {string} [text]
  * @property {string} [className]
  * @property {boolean} [fill]
  * @property {(item: T) => string} [getLabel]
@@ -24,22 +24,14 @@ export const SelectWithButtons = props => {
     return null;
   }
 
-  if (items.length < 2) {
-    return (
-      <Button
-        alignText={Alignment.LEFT}
-        className={classNames(props.className, "unique")}
-        text={props.text}
-        title={props.text}
-      />
-    );
-  }
-
   if (items.length < 4) {
     return (
       <ButtonGroup fill className={classNames(props.className, "as-buttons")}>
         {items.map(item => <Button
-          className={classNames(props.className, "select-button", {selected: selectedItem === item})}
+          className={classNames(props.className, "select-button", {
+            selected: selectedItem === item,
+            unique: items.length === 1
+          })}
           intent={selectedItem === item ? "primary" : undefined}
           key={item}
           onClick={evt => props.onItemSelect(item, evt)}
@@ -58,7 +50,7 @@ export const SelectWithButtons = props => {
         getLabel={getLabel}
         items={items}
         onItemSelect={props.onItemSelect}
-        selectedItem={props.text}
+        selectedItem={props.text || getLabel(selectedItem)}
       />
     );
   }
@@ -69,7 +61,7 @@ export const SelectWithButtons = props => {
       fill={fill}
       items={items}
       onItemSelect={props.onItemSelect}
-      selectedItem={props.text}
+      selectedItem={props.text || selectedItem}
     />
   );
 };

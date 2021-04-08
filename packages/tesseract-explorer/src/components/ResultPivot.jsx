@@ -6,15 +6,19 @@ import {
   Intent
 } from "@blueprintjs/core";
 import classNames from "classnames";
-import React, {useState, useMemo} from "react";
-import {csvSerialize} from "../utils/transform";
+import {format} from "d3plus-format";
+import React, {useMemo, useState} from "react";
+import {filterMap} from "../utils/array";
+import {defaultFormatters, useFormatter} from "../utils/format";
 import {useTranslation} from "../utils/localization";
+import {csvSerialize} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
 import ButtonDownload from "./ButtonDownload";
 import {MemoMatrixPreview as MatrixPreview} from "./MatrixPreview";
 
 /** @type {React.FC<TessExpl.ViewProps>} */
-const ResultPivot = ({className, params, result}) => {
+const ResultPivot = props => {
+  const {params, result} = props;
   const {data} = result;
 
   const {translate: t} = useTranslation();
@@ -41,6 +45,8 @@ const ResultPivot = ({className, params, result}) => {
   const [pivotRows, setPivotRows] = useState(initial.pivotRows);
   const [pivotValues, setPivotValues] = useState(initial.pivotValues);
 
+  const [formatTemplates, userFormats, setUserFormats] = useFormatter(props.cube.measures);
+
   const fileName = [params.cube, pivotColumns, pivotRows, pivotValues].join("-");
 
   const measureAggType = useMemo(() => {
@@ -50,20 +56,37 @@ const ResultPivot = ({className, params, result}) => {
     return measure ? measure.aggType : "UNKNOWN";
   }, [pivotValues]);
 
-  const warnings =
-    levelNames.length < 2
-      ? <Callout intent={Intent.DANGER}>{t("pivot_view.callout_onedimension")}</Callout>
-      : levelNames.length > 2
-        ? measureAggType !== "SUM"
-          ? <Callout intent={Intent.WARNING}>{t("pivot_view.callout_notsummeasure")}</Callout>
-          : <Callout>{t("pivot_view.callout_sumdimensions")}</Callout>
-        : undefined;
+  const availableFormatters = filterMap(
+    Object.keys(defaultFormatters).concat(formatTemplates[pivotValues] || ""),
+    (key, index, list) => {
+      if (!key || key === "identity" || list.indexOf(key) !== index) {
+        return null;
+      }
+      const formatter = defaultFormatters[key] || format(key);
+      return {label: formatter(12345.678), value: key};
+    }
+  );
+  const formatterKey = userFormats[pivotValues] ||
+                       formatTemplates[pivotValues] ||
+                       "Decimal";
+
+  const warnings = [];
+  if (levelNames.length < 2) {
+    warnings.push(
+      <Callout key="callout_onedimension" intent={Intent.DANGER}>{t("pivot_view.callout_onedimension")}</Callout>
+    );
+  }
+  else if (levelNames.length > 2) {
+    warnings.push(
+      measureAggType !== "SUM"
+        ? <Callout key="callout_notsummeasure" intent={Intent.WARNING}>{t("pivot_view.callout_notsummeasure")}</Callout>
+        : <Callout key="callout_sumdimensions">{t("pivot_view.callout_sumdimensions")}</Callout>
+    );
+  }
 
   return (
-    <div className={classNames("data-matrix", className)}>
+    <div className={classNames("data-matrix", props.className)}>
       <div className="toolbar">
-        {warnings}
-
         <h3>{t("pivot_view.title_params")}</h3>
         <FormGroup label={t("pivot_view.label_ddcolumn")} labelFor="matrix-columns">
           <HTMLSelect
@@ -93,6 +116,21 @@ const ResultPivot = ({className, params, result}) => {
           />
         </FormGroup>
 
+        <FormGroup label={t("pivot_view.label_formatter")} labelFor="matrix-formatters">
+          <HTMLSelect
+            fill={true}
+            id="matrix-formatters"
+            onChange={evt => setUserFormats({
+              ...userFormats,
+              [pivotValues]: evt.target.value
+            })}
+            options={availableFormatters}
+            value={formatterKey}
+          />
+        </FormGroup>
+
+        {warnings}
+
         <h3>{t("pivot_view.title_download")}</h3>
         <ButtonGroup fill>
           <ButtonDownload
@@ -113,11 +151,12 @@ const ResultPivot = ({className, params, result}) => {
       </div>
 
       <MatrixPreview
-        columns={pivotColumns}
         className="preview"
+        columns={pivotColumns}
         data={data}
-        values={pivotValues}
+        formatterKey={formatterKey}
         rows={pivotRows}
+        values={pivotValues}
       />
     </div>
   );

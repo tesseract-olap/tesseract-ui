@@ -21,6 +21,10 @@ export const LOCALE = {
     url_aggregate: "Aggregate API URL",
     url_logiclayer: "LogicLayer API URL",
   },
+  direction: {
+    ASC: "Ascending",
+    DESC: "Descending",
+  },
   loading: "Loading...",
   params: {
     action_execute: "Execute query",
@@ -64,7 +68,7 @@ export const LOCALE = {
     title_members: "Members",
     title_properties: "Properties",
     tooltip_area_cuts: "",
-    tooltip_area_drilldowns: "Something",
+    tooltip_area_drilldowns: "",
     tooltip_area_filters: "",
     tooltip_area_growth: "",
     tooltip_area_measures: "",
@@ -78,6 +82,7 @@ export const LOCALE = {
     callout_sumdimensions: "There's more than 2 drilldowns in this query. Remaining values will be summed.",
     label_ddcolumn: "Column drilldown",
     label_ddrow: "Row drilldown",
+    label_formatter: "Numeral format",
     label_valmeasure: "Value measure",
     title_download: "Download matrix",
     title_params: "Matrix params",
@@ -107,6 +112,7 @@ export const LOCALE = {
   selectmeasure_placeholder: "Measure...",
   selecttimelevel_placeholder: "Time level...",
   table_view: {
+    numeral_format: "Numeral format",
     sort_asc: "Sort Asc",
     sort_desc: "Sort Desc",
   },

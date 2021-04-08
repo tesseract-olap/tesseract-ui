@@ -38,6 +38,7 @@
     "@datawheel/use-translation": "^0.1.0",
     "classnames": "^2.2.6",
     "clipboard-copy": "^3.2.0",
+    "d3plus-format": "^1.0.0",
     "form-urldecoded": "^0.1.0",
     "form-urlencoded": "^4.2.0",
     "iso-639-1": "^2.1.0",
