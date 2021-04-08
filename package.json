@@ -2,6 +2,7 @@
   "name": "@datawheel/tesseract-ui-repo",
   "private": true,
   "scripts": {
+    "example": "pnpm start --filter example",
     "mono:release": "node scripts/release.js",
     "preinstall": "npx only-allow pnpm"
   },
