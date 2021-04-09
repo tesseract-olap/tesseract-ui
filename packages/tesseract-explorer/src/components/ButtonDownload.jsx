@@ -13,9 +13,10 @@ const mimeTypes = {
  */
 
 /** @type {React.FC<ButtonProps & {fileText: (() => string) | string, fileName: string}>} */
-const ButtonDownload = ({fileText, fileName, ...props}) =>
-  createElement(Button, {
-    ...props,
+export const ButtonDownload = props => {
+  const {fileText, fileName, ...restProps} = props;
+  return createElement(Button, {
+    ...restProps,
     onClick: evt => {
       evt.stopPropagation();
       evt.preventDefault();
@@ -24,17 +25,17 @@ const ButtonDownload = ({fileText, fileName, ...props}) =>
         .then(() => typeof fileText === "function" ? fileText() : fileText)
         .then(content => {
           const extension = fileName.split(".").pop();
-          const blob = new Blob([content], {
+          const blob = new window.Blob([content], {
             type: mimeTypes[extension] || "application/octet-stream"
           });
 
           const anchor = document.createElement("a");
-          anchor.href = URL.createObjectURL(blob);
+          anchor.href = window.URL.createObjectURL(blob);
           anchor.download = fileName;
 
           const clickHandler = () => {
             setTimeout(() => {
-              URL.revokeObjectURL(anchor.href);
+              window.URL.revokeObjectURL(anchor.href);
               anchor.removeEventListener("click", clickHandler);
             }, 1000);
           };
@@ -44,5 +45,4 @@ const ButtonDownload = ({fileText, fileName, ...props}) =>
         });
     }
   });
-
-export default ButtonDownload;
+};

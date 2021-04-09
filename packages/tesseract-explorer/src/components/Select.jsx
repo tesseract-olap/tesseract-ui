@@ -2,7 +2,7 @@ import {Alignment, Button, MenuItem} from "@blueprintjs/core";
 import {Select} from "@blueprintjs/select";
 import classNames from "classnames";
 import React from "react";
-import {useTranslation} from "../utils/localization";
+import {useTranslation} from "../hooks/translation";
 import {safeRegExp} from "../utils/transform";
 
 /** @type {import("@blueprintjs/select").ItemListPredicate<string | number | boolean>} */

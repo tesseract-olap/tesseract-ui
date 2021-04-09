@@ -2,8 +2,8 @@ import {Alignment, Button, MenuItem} from "@blueprintjs/core";
 import {Select} from "@blueprintjs/select";
 import classNames from "classnames";
 import React, {memo} from "react";
+import {useTranslation} from "../hooks/translation";
 import {safeRegExp} from "../utils/transform";
-import {useTranslation} from "../utils/localization";
 import {shallowEqualExceptFns} from "../utils/validation";
 
 /**

@@ -27,17 +27,22 @@ export const SelectWithButtons = props => {
   if (items.length < 4) {
     return (
       <ButtonGroup fill className={classNames(props.className, "as-buttons")}>
-        {items.map(item => <Button
-          className={classNames(props.className, "select-button", {
-            selected: selectedItem === item,
-            unique: items.length === 1
-          })}
-          intent={selectedItem === item ? "primary" : undefined}
-          key={item}
-          onClick={evt => props.onItemSelect(item, evt)}
-          text={getLabel ? getLabel(item) : item}
-          title={getLabel ? getLabel(item) : item}
-        />)}
+        {items.map(item => {
+          const label = getLabel ? getLabel(item) : item;
+          return (
+            <Button
+              className={classNames(props.className, "select-button", {
+                selected: selectedItem === item,
+                unique: items.length === 1
+              })}
+              intent={selectedItem === item ? "primary" : undefined}
+              key={label}
+              onClick={evt => props.onItemSelect(item, evt)}
+              text={label}
+              title={label}
+            />
+          );
+        })}
       </ButtonGroup>
     );
   }

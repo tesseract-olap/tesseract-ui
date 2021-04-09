@@ -3,16 +3,11 @@ import React from "react";
 import {connect} from "react-redux";
 import {QueryArea} from "../components/QueryArea";
 import TagTopk from "../components/TagTopk";
-import {
-  doTopkClear,
-  doTopkRemove,
-  doTopkSelect,
-  doTopkUpdate
-} from "../state/params/actions";
+import {useTranslation} from "../hooks/translation";
+import {doTopkClear, doTopkRemove, doTopkSelect, doTopkUpdate} from "../state/params/actions";
 import {selectTopkItems} from "../state/params/selectors";
 import {summaryTopk} from "../utils/format";
 import {buildTopk} from "../utils/structs";
-import {useTranslation} from "../utils/localization";
 import {isActiveItem, isTopkItem} from "../utils/validation";
 
 /**

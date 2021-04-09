@@ -2,8 +2,8 @@ import {Button, Classes, InputGroup, Menu, MenuDivider, MenuItem} from "@bluepri
 import classNames from "classnames";
 import React, {useMemo, useState} from "react";
 import ViewPortList from "react-viewport-list";
+import {useTranslation} from "../hooks/translation";
 import {keyBy, safeRegExp} from "../utils/transform";
-import {useTranslation} from "../utils/localization";
 
 import "../style/TransferInput.scss";
 

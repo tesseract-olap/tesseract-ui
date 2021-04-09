@@ -1,9 +1,9 @@
 import {Button, ButtonGroup} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
+import {useTranslation} from "../hooks/translation";
 import {doDownloadQuery} from "../middleware/actions";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
-import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef OwnProps

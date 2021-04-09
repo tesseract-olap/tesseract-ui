@@ -3,13 +3,13 @@ import classNames from "classnames";
 import React, {Suspense, useState} from "react";
 import {connect} from "react-redux";
 import {AnimatedCube} from "../components/AnimatedCube";
+import {useTranslation} from "../hooks/translation";
 import {selectLoadingState} from "../state/loading/selectors";
 import {selectCurrentQueryParams} from "../state/params/selectors";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectCurrentQueryResult} from "../state/results/selectors";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server/selectors";
-import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef OwnProps

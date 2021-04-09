@@ -3,9 +3,9 @@ import classNames from "classnames";
 import React from "react";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {orderOptions} from "../enums";
+import {useTranslation} from "../hooks/translation";
 import {summaryTopk} from "../utils/format";
 import {stringifyName} from "../utils/transform";
-import {useTranslation} from "../utils/localization";
 import SelectLevel from "./SelectLevel";
 
 /**

@@ -4,10 +4,10 @@ import {connect} from "react-redux";
 import ButtonSelectLevel from "../components/ButtonSelectLevel";
 import {QueryArea} from "../components/QueryArea";
 import TagDrilldown from "../components/TagDrilldown";
+import {useTranslation} from "../hooks/translation";
 import {doDrilldownClear, doDrilldownRemove, doDrilldownUpdate} from "../state/params/actions";
 import {selectDrilldownItems} from "../state/params/selectors";
 import {buildDrilldown} from "../utils/structs";
-import {useTranslation} from "../utils/localization";
 import {activeItemCounter} from "../utils/validation";
 
 /**

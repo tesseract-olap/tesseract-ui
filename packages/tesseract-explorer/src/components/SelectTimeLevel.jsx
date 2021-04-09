@@ -1,7 +1,7 @@
 import {Alignment, Button, Popover, Position} from "@blueprintjs/core";
 import React from "react";
+import {useTranslation} from "../hooks/translation";
 import {ensureArray} from "../utils/array";
-import {useTranslation} from "../utils/localization";
 import TimeDimensionMenu from "./MenuTimeDimension";
 
 /**

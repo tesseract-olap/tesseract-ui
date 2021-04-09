@@ -1,42 +1,5 @@
-import {regroup, splitName} from "./transform";
+import {splitName} from "./transform";
 import {isFilterItem} from "./validation";
-import {formatAbbreviate} from "d3plus-format";
-import { useEffect, useMemo, useState } from "react";
-
-export const defaultFormatters = {
-  identity: n => `${n}`,
-  Decimal: new Intl.NumberFormat(undefined, {useGrouping: false}).format,
-  Dollars: new Intl.NumberFormat(undefined, {style: "currency", currency: "USD"}).format,
-  Human: n => formatAbbreviate(n, "en-US"),
-  Milliards: new Intl.NumberFormat(undefined, {useGrouping: true}).format
-};
-
-/**
- * React Hook to get a list of available formatters and store the user preferences.
- * @param {import("@datawheel/olap-client").AdaptedMeasure[]} measures
- * @returns {[Record<string, string | undefined>, Record<string, string | undefined>, React.Dispatch<React.SetStateAction<Record<string, string | undefined>>>]}
- */
-export function useFormatter(measures) {
-  /** @type {Record<string, string | undefined>} */
-  const formatTemplates = useMemo(() => {
-    /** @type {Map<string, any>} */
-    const map = regroup(
-      measures,
-      result => result[0].annotations.format_template ||
-                result[0].annotations.units_of_measurement,
-      item => item.name
-    );
-    return Object.fromEntries([...map.entries()]);
-  }, [measures]);
-
-  const [userFormats, setUserFormats] = useState(formatTemplates);
-
-  useEffect(() => {
-    setUserFormats(formatTemplates);
-  }, [formatTemplates]);
-
-  return [formatTemplates, userFormats, setUserFormats];
-}
 
 /**
  * Simplifies a fullname for UI display.

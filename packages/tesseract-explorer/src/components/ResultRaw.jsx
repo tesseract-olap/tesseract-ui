@@ -2,7 +2,7 @@ import {Classes, FormGroup} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {Fragment} from "react";
 import {RawObject} from "react-raw-object";
-import {useTranslation} from "../utils/localization";
+import {useTranslation} from "../hooks/translation";
 import {DebugURL} from "./DebugURL";
 
 /** @type {React.FC<TessExpl.ViewProps>} */

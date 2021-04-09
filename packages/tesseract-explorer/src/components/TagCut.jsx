@@ -1,8 +1,8 @@
 import {Button, ButtonGroup, Callout, FormGroup, Intent, Popover, PopoverInteractionKind, Spinner, Switch, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {useEffect, useState} from "react";
+import {useTranslation} from "../hooks/translation";
 import {abbreviateFullName} from "../utils/format";
-import {useTranslation} from "../utils/localization";
 import {levelRefToArray} from "../utils/transform";
 import {ButtonTagExtra} from "./ButtonTagExtra";
 import {TransferInput} from "./TransferInput";

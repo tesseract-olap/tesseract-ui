@@ -1,19 +1,13 @@
-import {
-  ButtonGroup,
-  Callout,
-  FormGroup,
-  HTMLSelect,
-  Intent
-} from "@blueprintjs/core";
+import {ButtonGroup, Callout, FormGroup, HTMLSelect, Intent} from "@blueprintjs/core";
 import classNames from "classnames";
 import {format} from "d3plus-format";
 import React, {useMemo, useState} from "react";
+import {useTranslation} from "../hooks/translation";
 import {filterMap} from "../utils/array";
 import {defaultFormatters, useFormatter} from "../utils/format";
-import {useTranslation} from "../utils/localization";
 import {csvSerialize} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
-import ButtonDownload from "./ButtonDownload";
+import {ButtonDownload} from "./ButtonDownload";
 import {MemoMatrixPreview as MatrixPreview} from "./MatrixPreview";
 
 /** @type {React.FC<TessExpl.ViewProps>} */

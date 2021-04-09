@@ -2,10 +2,10 @@ import {Button, Classes, Intent} from "@blueprintjs/core";
 import React, {Fragment} from "react";
 import {connect} from "react-redux";
 import {ButtonTooltip} from "../components/Tooltips";
+import {useTranslation} from "../hooks/translation";
 import {doExecuteQuery} from "../middleware/actions";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint, selectServerSoftware} from "../state/server/selectors";
-import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef StateProps

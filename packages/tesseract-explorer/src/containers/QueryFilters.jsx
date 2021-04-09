@@ -2,9 +2,9 @@ import {Button, Intent} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
 import {QueryArea} from "../components/QueryArea";
+import {useTranslation} from "../hooks/translation";
 import {doMeasureClear, doMeasureToggle} from "../state/params/actions";
 import {selectFilterItems} from "../state/params/selectors";
-import { useTranslation } from "../utils/localization";
 import {activeItemCounter} from "../utils/validation";
 
 /**

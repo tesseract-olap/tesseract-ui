@@ -1,10 +1,10 @@
 import React, {Fragment, memo, useEffect, useMemo, useState} from "react";
 import {connect} from "react-redux";
 import {SelectWithButtons} from "../components/SelectWithButtons";
+import {useTranslation} from "../hooks/translation";
 import {doCubeSet} from "../middleware/actions";
 import {selectOlapCube} from "../state/selectors";
 import {selectOlapCubeItems} from "../state/server/selectors";
-import {useTranslation} from "../utils/localization";
 import {groupBy} from "../utils/transform";
 import {shallowEqualForProps} from "../utils/validation";
 

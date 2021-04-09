@@ -1,8 +1,8 @@
 import {FormGroup, Popover, PopoverInteractionKind, Switch, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {memo, useMemo} from "react";
+import {useTranslation} from "../hooks/translation";
 import {abbreviateFullName} from "../utils/format";
-import {useTranslation} from "../utils/localization";
 import {keyBy, levelRefToArray} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
 import {SelectObject} from "./Select";

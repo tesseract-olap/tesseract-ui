@@ -1,8 +1,8 @@
 import {NonIdealState, Overlay, Spinner} from "@blueprintjs/core";
 import React from "react";
 import {connect} from "react-redux";
+import {useTranslation} from "../hooks/translation";
 import {selectLoadingState} from "../state/loading/selectors";
-import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef OwnProps

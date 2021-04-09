@@ -1,12 +1,11 @@
 import {Menu, MenuDivider, MenuItem} from "@blueprintjs/core";
-import {Cell, Column, Table} from "@blueprintjs/table";
+import {Cell, Column, ColumnHeaderCell, Table} from "@blueprintjs/table";
 import classNames from "classnames";
 import {format} from "d3plus-format";
 import React, {useMemo, useState} from "react";
+import {useTranslation} from "../hooks/translation";
 import {filterMap, sortByKey} from "../utils/array";
 import {defaultFormatters, useFormatter} from "../utils/format";
-import {useTranslation} from "../utils/localization";
-import {ColumnHeaderCell} from "./ColumnHeaderCell";
 
 /** @type {React.FC<TessExpl.ViewProps>} */
 const ResultTable = props => {

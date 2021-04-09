@@ -4,10 +4,10 @@ import {connect} from "react-redux";
 import {QueryArea} from "../components/QueryArea";
 import {SelectObject} from "../components/Select";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
+import {useTranslation} from "../hooks/translation";
 import {doBooleanToggle, doPaginationUpdate, doSortingUpdate} from "../state/params/actions";
 import {selectBooleans, selectPaginationParams, selectSortingParams} from "../state/params/selectors";
 import {selectServerBooleansEnabled} from "../state/server/selectors";
-import {useTranslation} from "../utils/localization";
 import {shallowEqualExceptFns, shallowEqualForProps} from "../utils/validation";
 
 /** @type {React.FC<import("../components/Select").SelectObjectProps<{value: string, label: string}>>} */
