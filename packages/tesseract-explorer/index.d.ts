@@ -5,9 +5,7 @@ import {default as React} from "react";
 import {MapDispatchToProps, MapStateToProps} from "react-redux";
 import {default as Redux} from "redux";
 
-// tslint:disable-next-line:export-just-namespace
 export = TessExpl;
-export as namespace TessExpl;
 
 declare namespace TessExpl {
   const Explorer: React.FC<ExplorerProps>;
@@ -35,6 +33,13 @@ declare namespace TessExpl {
      */
     src: string | AxiosRequestConfig;
 
+    /**
+     * Defines an index of formatter functions available to the measures shown
+     * in the app, besides a limited list of default ones. The key used comes
+     * from `measure.annotations.units_of_measurement`, if present.
+     */
+    formatters?: Record<string, Formatter>;
+
     /** A list of the available locale options */
     locale?: string[];
 
@@ -44,21 +49,6 @@ declare namespace TessExpl {
      * and whose values are non-hydrated React Components.
      */
     panels?: Record<string, React.FunctionComponent<ViewProps> | React.ComponentClass<ViewProps>>;
-
-    /**
-     * Enables the Growth parameter group in the parameters panel.
-     */
-    enableGrowth?: boolean;
-
-    /**
-     * Enables the Rca parameter group in the parameters panel.
-     */
-    enableRca?: boolean;
-
-    /**
-     * Enables the Topk parameter group in the parameters panel.
-     */
-    enableTopk?: boolean;
 
     /**
      * The Translation labels to use in the UI.
@@ -77,6 +67,8 @@ declare namespace TessExpl {
     params: Struct.QueryParams;
     result: Struct.QueryResult;
   }
+
+  type Formatter = (d: number) => string;
 
   namespace State {
     interface ExplorerState {

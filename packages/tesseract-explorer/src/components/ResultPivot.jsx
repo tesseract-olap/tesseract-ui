@@ -1,10 +1,8 @@
 import {ButtonGroup, Callout, FormGroup, HTMLSelect, Intent} from "@blueprintjs/core";
 import classNames from "classnames";
-import {format} from "d3plus-format";
 import React, {useMemo, useState} from "react";
+import {useFormatter} from "../hooks/formatter";
 import {useTranslation} from "../hooks/translation";
-import {filterMap} from "../utils/array";
-import {defaultFormatters, useFormatter} from "../utils/format";
 import {csvSerialize} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
 import {ButtonDownload} from "./ButtonDownload";
@@ -39,9 +37,12 @@ const ResultPivot = props => {
   const [pivotRows, setPivotRows] = useState(initial.pivotRows);
   const [pivotValues, setPivotValues] = useState(initial.pivotValues);
 
-  const [formatTemplates, userFormats, setUserFormats] = useFormatter(props.cube.measures);
-
-  const fileName = [params.cube, pivotColumns, pivotRows, pivotValues].join("-");
+  const {
+    getAvailableKeys,
+    getFormatter,
+    getFormatterKey,
+    setFormat
+  } = useFormatter(props.cube.measures);
 
   const measureAggType = useMemo(() => {
     const measure = Object.values(params.measures).find(
@@ -50,33 +51,21 @@ const ResultPivot = props => {
     return measure ? measure.aggType : "UNKNOWN";
   }, [pivotValues]);
 
-  const availableFormatters = filterMap(
-    Object.keys(defaultFormatters).concat(formatTemplates[pivotValues] || ""),
-    (key, index, list) => {
-      if (!key || key === "identity" || list.indexOf(key) !== index) {
-        return null;
-      }
-      const formatter = defaultFormatters[key] || format(key);
-      return {label: formatter(12345.678), value: key};
-    }
-  );
-  const formatterKey = userFormats[pivotValues] ||
-                       formatTemplates[pivotValues] ||
-                       "Decimal";
+  const availableFormatterKeys = getAvailableKeys(pivotValues)
+    .map(key => ({label: getFormatter(key)(12345.678), value: key}));
+  const formatterKey = getFormatterKey(pivotValues) || "undefined";
+  const formatter = getFormatter(formatterKey);
 
   const warnings = [];
-  if (levelNames.length < 2) {
-    warnings.push(
-      <Callout key="callout_onedimension" intent={Intent.DANGER}>{t("pivot_view.callout_onedimension")}</Callout>
-    );
-  }
-  else if (levelNames.length > 2) {
+  if (levelNames.length > 2) {
     warnings.push(
       measureAggType !== "SUM"
-        ? <Callout key="callout_notsummeasure" intent={Intent.WARNING}>{t("pivot_view.callout_notsummeasure")}</Callout>
-        : <Callout key="callout_sumdimensions">{t("pivot_view.callout_sumdimensions")}</Callout>
+        ? <Callout key="notsummeasure" intent={Intent.WARNING}>{t("pivot_view.warning_notsummeasure")}</Callout>
+        : <Callout key="sumdimensions">{t("pivot_view.warning_sumdimensions")}</Callout>
     );
   }
+
+  const fileName = [params.cube, pivotColumns, pivotRows, pivotValues].join("_");
 
   return (
     <div className={classNames("data-matrix", props.className)}>
@@ -114,11 +103,8 @@ const ResultPivot = props => {
           <HTMLSelect
             fill={true}
             id="matrix-formatters"
-            onChange={evt => setUserFormats({
-              ...userFormats,
-              [pivotValues]: evt.target.value
-            })}
-            options={availableFormatters}
+            onChange={evt => setFormat(pivotValues, evt.target.value)}
+            options={[{label: t("placeholders.none"), value: "undefined"}].concat(availableFormatterKeys)}
             value={formatterKey}
           />
         </FormGroup>
@@ -131,14 +117,14 @@ const ResultPivot = props => {
             text="CSV"
             fileName={`${fileName}.csv`}
             fileText={() =>
-              csvSerialize(data, pivotColumns, pivotRows, pivotValues, ",")
+              csvSerialize(data, pivotColumns, pivotRows, pivotValues, formatter, ",")
             }
           />
           <ButtonDownload
             text="TSV"
             fileName={`${fileName}.tsv`}
             fileText={() =>
-              csvSerialize(data, pivotColumns, pivotRows, pivotValues, "\t")
+              csvSerialize(data, pivotColumns, pivotRows, pivotValues, formatter, "\t")
             }
           />
         </ButtonGroup>
@@ -146,11 +132,12 @@ const ResultPivot = props => {
 
       <MatrixPreview
         className="preview"
-        columns={pivotColumns}
         data={data}
+        columnProperty={pivotColumns}
+        rowProperty={pivotRows}
+        valueProperty={pivotValues}
+        formatter={formatter}
         formatterKey={formatterKey}
-        rows={pivotRows}
-        values={pivotValues}
       />
     </div>
   );

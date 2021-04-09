@@ -5,6 +5,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import ResultPivot from "../components/ResultPivot";
 import ResultRaw from "../components/ResultRaw";
 import ResultTable from "../components/ResultTable";
+import {SettingsProvider} from "../hooks/settings";
 import {TranslationProvider} from "../hooks/translation";
 import {doClientSetup} from "../middleware/actions";
 import {updateLocaleList} from "../state/server/actions";
@@ -34,25 +35,27 @@ const ExplorerComponent = props => {
   }, [availableLocale, props.src]);
 
   return (
-    <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
-      <div className={classNames("explorer-wrapper", props.className)}>
-        <LoadingScreen className="explorer-loading" />
-        {props.isLoaded
-          ? <ExplorerQueries className="explorer-queries" />
-          : <div/>
-        }
-        {props.isLoaded
-          ? <ExplorerParams
-            className="explorer-params"
-            enableGrowth={props.enableGrowth}
-            enableRca={props.enableRca}
-            enableTopk={props.enableTopk}
-          />
-          : <div/>
-        }
-        <ExplorerResults className="explorer-results" panels={props.panels} />
-      </div>
-    </TranslationProvider>
+    <SettingsProvider formatters={props.formatters}>
+      <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
+        <div className={classNames("explorer-wrapper", props.className)}>
+          <LoadingScreen className="explorer-loading" />
+          {props.isLoaded
+            ? <ExplorerQueries className="explorer-queries" />
+            : <div/>
+          }
+          {props.isLoaded
+            ? <ExplorerParams
+              className="explorer-params"
+              enableGrowth={props.enableGrowth}
+              enableRca={props.enableRca}
+              enableTopk={props.enableTopk}
+            />
+            : <div/>
+          }
+          <ExplorerResults className="explorer-results" panels={props.panels} />
+        </div>
+      </TranslationProvider>
+    </SettingsProvider>
   );
 };
 

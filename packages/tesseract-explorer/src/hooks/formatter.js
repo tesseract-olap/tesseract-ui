@@ -1,41 +1,83 @@
-import {format} from "d3plus-format";
-import {useEffect, useMemo, useState} from "react";
-import {useSettings} from "../hooks/settings";
-import {regroup} from "./transform";
+/* eslint-disable comma-dangle */
+/* eslint-disable lines-around-comment */
+
+import {format, formatAbbreviate} from "d3plus-format";
+import {useEffect, useRef, useState} from "react";
+import {useSettings} from "./settings";
+
+export const defaultFormatters = {
+  undefined: n => n,
+  identity: n => `${n}`,
+  Decimal: new Intl.NumberFormat(undefined, {useGrouping: false}).format,
+  Dollars: new Intl.NumberFormat(undefined, {style: "currency", currency: "USD"}).format,
+  Human: n => formatAbbreviate(n, "en-US"),
+  Milliards: new Intl.NumberFormat(undefined, {useGrouping: true}).format
+};
+
+export const basicFormatterKeys = ["Decimal", "Milliards", "Human"];
 
 /**
  * React Hook to get a list of available formatters and store the user preferences.
  * @param {import("@datawheel/olap-client").AdaptedMeasure[]} measures
- * @returns {[Record<string, string | undefined>, Record<string, string | undefined>, React.Dispatch<React.SetStateAction<Record<string, string | undefined>>>]}
+ * @returns {FormatterHookContext}
  */
 export function useFormatter(measures) {
   const {formatters} = useSettings();
 
-  /** @type {Record<string, string | undefined>} */
-  const formatTemplates = useMemo(() => {
+  const [currentFormats, setCurrentFormats] = useState({});
+  const originKeys = useRef({});
 
-    /** @type {Map<string, any>} */
-    const map = regroup(
-      measures,
-      result => result[0].annotations.format_template ||
-                result[0].annotations.units_of_measurement,
-      item => item.name
-    );
-    return Object.fromEntries([...map.entries()]);
+  useEffect(() => {
+    /** @type {[string, string | undefined][]} */
+    const tuplesRefKey = measures.map(item => {
+      const {annotations: ann} = item;
+      return [item.name, ann.format_template || ann.units_of_measurement];
+    });
+    const record = Object.fromEntries(tuplesRefKey);
+    originKeys.current = record;
+    setCurrentFormats(record);
   }, [measures]);
+
+  const setFormat = (ref, formatter) => setCurrentFormats({
+    ...currentFormats,
+    [ref]: formatter
+  });
+
+  const getAvailableKeys = ref => {
+    const originKey = originKeys.current[ref];
+    return originKey ? [originKey].concat(basicFormatterKeys) : basicFormatterKeys;
+  };
+
+  const getFormatterKey = ref => currentFormats[ref] || originKeys.current[ref];
 
   const getFormatter = key => {
     if ((/^[A-Z]{3}$/).test(key)) {
-      return new Intl.NumberFormat(undefined, {style: "currency", currency: key}).format;
+      return formatters[key] || new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: key
+      }).format;
     }
-    return formatters[key] || defaultFormatters[key] || format(key);
+    try {
+      return formatters[key] || defaultFormatters[key] || format(key);
+    }
+    catch {
+      console.error(`Formatter not configured: "${key}"`);
+      return defaultFormatters.identity;
+    }
   };
 
-  const [userFormats, setUserFormats] = useState(formatTemplates);
-
-  useEffect(() => {
-    setUserFormats(formatTemplates);
-  }, [formatTemplates]);
-
-  return {formatTemplates, getFormatter, userFormats, setUserFormats};
+  return {
+    getAvailableKeys,
+    getFormatter,
+    getFormatterKey,
+    setFormat,
+  };
 }
+
+/**
+ * @typedef FormatterHookContext
+ * @property {(ref: string) => string[]} getAvailableKeys
+ * @property {(ref: string) => string | undefined} getFormatterKey
+ * @property {(key: string) => TessExpl.Formatter} getFormatter
+ * @property {(ref: string, key: string) => void} setFormat
+ */

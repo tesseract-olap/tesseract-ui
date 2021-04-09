@@ -45,6 +45,9 @@ ReactDOM.render(
       src="/olap/"
       title="Tesseract UI BETA"
       panels={PANELS}
+      formatters={{
+        Sheep: n => `🐑 ${n.toFixed()}`
+      }}
     />
   </Provider>,
   document.getElementById("app")

@@ -146,6 +146,29 @@ Some translation labels do interpolation of values when used. These are optional
   - `summary_topk`: `amount`, `level`, `measure`, `order`
 * Wherever a number is used, the `{n}` tag contains the value, and you can define a label for the singular and plural forms: `key` for the singular, and `key_plural` for the plural.
 
+### Additional formatters
+
+The `formatters` property allows the user to set an index of formatter functions, which transform how the measures are shown in the UI.
+To setup custom formatters, pass an object where the key is the name of the formatter, and its value is the function used to format, which must comply with the `Formatter` type: `(value: number) => string`
+
+```jsx
+// A good performance optimization is to memoize the object being passed
+const formatterIndex = useMemo(() => ({
+  Sheep: n => `🐑 ${n.toFixed()}`
+}), []);
+
+<TesseractExplorer
+  {...}
+  formatters={formatterIndex}
+/>;
+```
+
+The app comes with a limited list of default ones: `Decimal` (1234.567), `Milliards` (1,234.567), `Dollars` ($1,234.57), and `Human` (1.23k).
+The key used to select a formatter comes from the `format_template` annotation, and if not present, the `units_of_measurement` annotation in the measure data.  
+* If the measure contains the `format_template` annotation, it is used to create a custom formatter on runtime. [Check the documentation](https://github.com/d3plus/d3plus-format#readme) for details on how to build and customize a template.
+* If the `units_of_measurement` set is an official ISO 4217 currency code (three letters in caps), it will be parsed into a currency formatter using the browser's [`Intl.NumberFormat`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) constructor. Otherwise, the key is looked in the `formatters` property object and in the default formatters list.  
+* If any of these are present, numbers are presented in Decimal format.
+
 ## License
 
 ©2018-2021 [Datawheel, LLC](https://datawheel.us/)  
