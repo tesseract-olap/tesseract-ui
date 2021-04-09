@@ -2,6 +2,7 @@ import {FormGroup, Popover, PopoverInteractionKind, Switch, Tag} from "@blueprin
 import classNames from "classnames";
 import React, {memo, useMemo} from "react";
 import {useTranslation} from "../hooks/translation";
+import {filterMap} from "../utils/array";
 import {abbreviateFullName} from "../utils/format";
 import {keyBy, levelRefToArray} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
@@ -48,16 +49,18 @@ const TagDrilldown = props => {
       {abbreviateFullName(levelRefToArray(item))}
     </Tag>;
 
-  if (item.properties.length === 0) {
-    return target;
-  }
-
   const propertyRecords = useMemo(
     () => keyBy(item.properties, item => item.key),
     [item.properties]
   );
 
-  const activeProperties = item.properties.filter(isActiveItem).map(item => item.key);
+  if (item.properties.length === 0) {
+    return target;
+  }
+
+  const activeProperties = filterMap(item.properties, item =>
+    isActiveItem(item) ? item.key : null
+  );
 
   const captionItems = [{name: t("placeholders.unselected")}].concat(item.properties);
 
