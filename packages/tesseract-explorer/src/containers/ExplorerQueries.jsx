@@ -3,10 +3,10 @@ import React from "react";
 import {connect} from "react-redux";
 import {ExplorerColumn} from "../components/ExplorerColumn";
 import {MemoStoredQuery as StoredQuery} from "../components/StoredQuery";
+import {useTranslation} from "../hooks/translation";
 import {doParseQueryUrl} from "../middleware/actions";
 import {doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectCurrentQueryItem, selectQueryItems} from "../state/queries/selectors";
-import {useTranslation} from "../utils/localization";
 import {buildQuery} from "../utils/structs";
 
 /**

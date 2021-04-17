@@ -1,7 +1,7 @@
 import {ButtonGroup} from "@blueprintjs/core";
 import React from "react";
 import {ExplorerColumn} from "../components/ExplorerColumn";
-import {useTranslation} from "../utils/localization";
+import {useTranslation} from "../hooks/translation";
 import {ConnectedButtonExecuteQuery as ButtonExecuteQuery} from "./ButtonExecuteQuery";
 import {ConnectedDownloadOptions as DownloadOptions} from "./DownloadOptions";
 import {ConnectedQueryBooleans as QueryBooleans} from "./QueryBooleans";

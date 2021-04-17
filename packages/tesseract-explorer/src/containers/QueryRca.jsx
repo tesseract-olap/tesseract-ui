@@ -3,11 +3,11 @@ import React from "react";
 import {connect} from "react-redux";
 import {QueryArea} from "../components/QueryArea";
 import TagRca from "../components/TagRca";
+import {useTranslation} from "../hooks/translation";
 import {doRcaClear, doRcaRemove, doRcaSelect, doRcaUpdate} from "../state/params/actions";
 import {selectRcaItems} from "../state/params/selectors";
 import {summaryRca} from "../utils/format";
 import {buildRca} from "../utils/structs";
-import {useTranslation} from "../utils/localization";
 import {isActiveItem, isRcaItem} from "../utils/validation";
 
 /**

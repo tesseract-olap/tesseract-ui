@@ -3,8 +3,8 @@ import classNames from "classnames";
 import React from "react";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {Comparison} from "../enums";
+import {useTranslation} from "../hooks/translation";
 import {summaryFilter} from "../utils/format";
-import {useTranslation} from "../utils/localization";
 
 /**
  * @typedef OwnProps

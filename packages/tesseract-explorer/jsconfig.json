@@ -3,6 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "checkJs": true,
     "jsx": "react",
+    "lib": ["dom", "es2019.object"],
     "module": "commonJS",
     "moduleResolution": "node",
     "strictNullChecks": true,
@@ -10,6 +11,7 @@
   },
   "include": [
     "./src",
-    "index.d.ts"
+    "index.d.ts",
+    "global.d.ts"
   ]
 }

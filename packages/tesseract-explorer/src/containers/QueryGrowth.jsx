@@ -3,16 +3,11 @@ import React from "react";
 import {connect} from "react-redux";
 import {QueryArea} from "../components/QueryArea";
 import TagGrowth from "../components/TagGrowth";
-import {
-  doGrowthClear,
-  doGrowthRemove,
-  doGrowthSelect,
-  doGrowthUpdate
-} from "../state/params/actions";
+import {useTranslation} from "../hooks/translation";
+import {doGrowthClear, doGrowthRemove, doGrowthSelect, doGrowthUpdate} from "../state/params/actions";
 import {selectGrowthItems} from "../state/params/selectors";
 import {summaryGrowth} from "../utils/format";
 import {buildGrowth} from "../utils/structs";
-import {useTranslation} from "../utils/localization";
 import {isActiveItem, isGrowthItem} from "../utils/validation";
 
 /**

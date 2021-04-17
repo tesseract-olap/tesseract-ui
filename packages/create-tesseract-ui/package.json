@@ -14,13 +14,13 @@
     "directory": "packages/create-tesseract-ui"
   },
   "dependencies": {
-    "cac": "^6.7.0",
-    "cross-spawn": "^6.0.0",
-    "kleur": "^3.0.0",
-    "prompts": "^2.4.0"
+    "cac": "^6.7.2",
+    "cross-spawn": "^6.0.5",
+    "kleur": "^3.0.3",
+    "prompts": "^2.4.1"
   },
   "devDependencies": {
-    "@types/node": "^12.19.0"
+    "@types/node": "^12.20.7"
   },
   "keywords": [
     "create",

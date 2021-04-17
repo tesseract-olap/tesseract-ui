@@ -1,15 +1,14 @@
 {
   "name": "@datawheel/tesseract-vizbuilder",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Generates a vizbuilder view for results query in Tesseract Explorer.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "index.d.ts",
   "style": "dist/view-vizbuilder.css",
   "scripts": {
-    "build": "rollup --config rollup.config.js --environment NODE_ENV:production,BABEL_ENV:production",
-    "prepublishOnly": "npm run build",
-    "watch": "rollup --config rollup.config.js --environment NODE_ENV:development,BABEL_ENV:development --watch"
+    "build": "rollup --config ../../rollup.config.js --environment NODE_ENV:production",
+    "watch": "rollup --config ../../rollup.config.js --environment NODE_ENV:development --watch"
   },
   "keywords": [
     "charts",
@@ -28,40 +27,18 @@
     "directory": "packages/view-vizbuilder"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.12.5",
-    "@datawheel/vizbuilder": "^0.1.0",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "@babel/runtime-corejs3": "^7.13.10",
+    "@datawheel/vizbuilder": "^0.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.0",
-    "@babel/plugin-proposal-class-properties": "^7.12.0",
-    "@babel/plugin-transform-runtime": "^7.12.0",
-    "@babel/preset-env": "^7.12.0",
-    "@babel/preset-react": "^7.12.0",
-    "@datawheel/eslint-config": "^1.0.0",
-    "@datawheel/tesseract-explorer": "workspace:^1.0.0-alpha.5",
-    "@rollup/plugin-babel": "^5.2.0",
-    "@rollup/plugin-commonjs": "^16.0.0",
-    "@rollup/plugin-node-resolve": "^10.0.0",
-    "@rollup/plugin-replace": "^2.3.0",
-    "autoprefixer": "^10.2.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.18.0",
-    "eslint-plugin-react": "^7.22.0",
-    "rollup": "^2.38.0",
-    "rollup-plugin-cleanup": "^3.2.0",
-    "rollup-plugin-terser": "^7.0.0",
-    "sass": "^1.32.0"
+    "@datawheel/tesseract-explorer": "workspace:^1.0.0-alpha.9",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "rollup": "^2.45.2"
   },
   "peerDependencies": {
-    "@datawheel/tesseract-explorer": "^1.0.0-alpha.0"
-  },
-  "eslintConfig": {
-    "extends": "@datawheel",
-    "ignorePatterns": [
-      "**/dist/*",
-      "**/node_modules/*"
-    ]
+    "@datawheel/tesseract-explorer": "^1.0.0-alpha.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
   }
 }

@@ -1,10 +1,10 @@
 import React from "react";
 import {connect} from "react-redux";
 import {SelectObject} from "../components/Select";
+import {useTranslation} from "../hooks/translation";
 import {doLocaleSet} from "../middleware/actions";
 import {selectLocale} from "../state/params/selectors";
 import {selectLocaleOptions} from "../state/server/selectors";
-import {useTranslation} from "../utils/localization";
 
 /** @type {React.FC<import("../components/Select").SelectObjectProps<{label: string, value: string}>>} */
 const SelectLocaleOptions = SelectObject;

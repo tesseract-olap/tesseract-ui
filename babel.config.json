@@ -1,4 +1,9 @@
 {
+  "babelrcRoots": [
+    ".",
+    "example",
+    "packages/*"
+  ],
   "plugins": [
     ["@babel/plugin-transform-runtime", {
       "corejs": 3,

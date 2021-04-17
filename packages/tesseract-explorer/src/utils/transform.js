@@ -5,6 +5,7 @@
  * @param {string} cName Property on the columns side
  * @param {string} rName Property on the rows side
  * @param {string} vName Property with the value
+ * @param {TessExpl.Formatter | undefined} formatter A formatter function for the values
  * @param {string} [colJoint=","] Joint character for the columns
  * @param {string} [rowJoint="\n"] Joint character for the columns
  */
@@ -13,6 +14,7 @@ export function csvSerialize(
   cName,
   rName,
   vName,
+  formatter = n => `${n}`,
   colJoint = ",",
   rowJoint = "\n"
 ) {
@@ -21,14 +23,13 @@ export function csvSerialize(
     return str.includes(colJoint) ? JSON.stringify(str) : str;
   };
 
-  const cSortTable = sortingTableBy(data, cName);
-  const rSortTable = sortingTableBy(data, rName);
-
   // Array of the members in the column axis
+  const cSortTable = sortingTableBy(data, cName);
   const cMembers = [...new Set(data.map(d => d[cName]))]
     .sort((a, b) => cSortTable.indexOf(a) - cSortTable.indexOf(b));
 
   // Array of the members in the row axis
+  const rSortTable = sortingTableBy(data, rName);
   const rMembers = [...new Set(data.map(d => d[rName]))]
     .sort((a, b) => rSortTable.indexOf(a) - rSortTable.indexOf(b));
 
@@ -45,9 +46,11 @@ export function csvSerialize(
 
   // Array of numeric arrays. Outer array represents columns, inners represent rows. [||||]
   const values = Array.from(cMembers, colName => {
-    const col = groupedData.get(colName) || new Map();
-    // TODO: Should use value formatter.
-    return Array.from(rMembers, rowName => col.get(rowName) || "");
+    const col = groupedData.get(colName) || new Map([["", undefined]]);
+    return Array.from(rMembers, rowName => {
+      const value = col.get(rowName);
+      return value != null ? formatter(value) : "";
+    });
   });
 
   // Array of rows; first item is member in row axis, followed by each value for that row.
@@ -194,11 +197,12 @@ export function safeRegExp(pattern, flags) {
 /**
  * @template T
  * @param {T[]} data
- * @param {keyof T} name
+ * @param {string} name
+ * @returns {string[]}
  */
 export function sortingTableBy(data, name) {
   const idName = [`ID ${name}`, `${name} ID`].find(key => key in data[0]) || name;
-  const memberKeys = keyBy(data, idName);
+  const memberKeys = keyBy(data, d => d[idName]);
   return Object.values(memberKeys)
     .sort((a, b) => {
       const assumingNumeric = a[idName] - b[idName];

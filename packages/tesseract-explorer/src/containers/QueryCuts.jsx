@@ -4,11 +4,11 @@ import {connect} from "react-redux";
 import ButtonSelectLevel from "../components/ButtonSelectLevel";
 import {QueryArea} from "../components/QueryArea";
 import {TagCut} from "../components/TagCut";
+import {useTranslation} from "../hooks/translation";
 import {doFetchMembers} from "../middleware/actions";
 import {doCutClear, doCutRemove, doCutUpdate} from "../state/params/actions";
 import {selectCutItems, selectLocale} from "../state/params/selectors";
 import {buildCut} from "../utils/structs";
-import {useTranslation} from "../utils/localization";
 import {activeItemCounter} from "../utils/validation";
 
 /**

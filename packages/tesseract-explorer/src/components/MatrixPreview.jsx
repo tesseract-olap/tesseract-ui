@@ -1,34 +1,50 @@
 import {NonIdealState} from "@blueprintjs/core";
 import {Cell, Column, RowHeaderCell, Table} from "@blueprintjs/table";
 import React, {memo} from "react";
+import {useTranslation} from "../hooks/translation";
 import {regroup, sortingTableBy, sumBy} from "../utils/transform";
 
 /**
  * @template T
  * @typedef OwnProps
  * @property {string} [className]
- * @property {keyof T | undefined} columns
  * @property {T[]} data
- * @property {keyof T | undefined} rows
- * @property {keyof T | undefined} values
+ * @property {keyof T | undefined} columnProperty
+ * @property {keyof T | undefined} rowProperty
+ * @property {keyof T | undefined} valueProperty
+ * @property {string | undefined} formatterKey
+ * @property {TessExpl.Formatter | undefined} formatter
  */
 
 /** @type {React.FC<OwnProps<Record<string, number>>>} */
 export const MatrixPreview = props => {
-  const {columns, data, values, rows} = props;
+  const {columnProperty, data, valueProperty, rowProperty} = props;
+  const formatter = props.formatter || (n => n);
 
-  if (!columns || !rows || columns === rows || !values || data.length === 0) {
-    return <NonIdealState />;
+  const {translate: t} = useTranslation();
+
+  if (!columnProperty || !rowProperty || !valueProperty) {
+    return <NonIdealState
+      icon="warning-sign"
+      title={t("pivot_view.error_missingparams")}
+    />;
+  }
+  if (columnProperty === rowProperty) {
+    return <NonIdealState
+      icon="warning-sign"
+      title={t("pivot_view.error_onedimension")}
+    />;
   }
 
-  const columnKeys = sortingTableBy(data, columns);
-  const rowKeys = sortingTableBy(data, rows);
+  const colMembers = sortingTableBy(data, columnProperty);
+  const rowMembers = sortingTableBy(data, rowProperty);
 
-  const rolledData = regroup(
+  /** @type {Map<string, Map<string, number>>} */
+  const nestedData = regroup(
     data,
-    group => sumBy(group, values),
-    i => `${i[columns]}`,
-    i => `${i[rows]}`
+    group => sumBy(group, valueProperty),
+    columnProperty,
+    rowProperty
   );
 
   return (
@@ -36,30 +52,34 @@ export const MatrixPreview = props => {
       className={props.className}
       enableColumnResizing={true}
       enableRowResizing={false}
-      getCellClipboardData={(rowIndex, columnIndex) =>
-        rolledData.get(`${columnKeys[columnIndex]}`).get(`${rowKeys[rowIndex]}`)
-      }
-      key={`${columns}-${rows}-${values}`}
-      numRows={rowKeys.length}
-      rowHeaderCellRenderer={rowIndex => <RowHeaderCell name={rowKeys[rowIndex]} />}
-      rowHeights={Array(rowKeys.length).fill(22)}
+      getCellClipboardData={(rowIndex, colIndex) => {
+        const columnData = nestedData.get(colMembers[colIndex]);
+        const value = columnData && columnData.get(rowMembers[rowIndex]);
+        return value != null ? formatter(value) : "";
+      }}
+      key={`${columnProperty}-${rowProperty}-${valueProperty}-${props.formatterKey}`}
+      numRows={rowMembers.length}
+      rowHeaderCellRenderer={rowIndex => <RowHeaderCell name={rowMembers[rowIndex]} />}
+      rowHeights={Array(rowMembers.length).fill(22)}
     >
-      {columnKeys.map((columnKey, columnIndex) =>
-        <Column
-          cellRenderer={rowIndex =>
-            <Cell
-              className="column-number"
-              columnIndex={columnIndex}
-              rowIndex={rowIndex}
-            >
-              {rolledData.get(`${columnKey}`).get(`${rowKeys[rowIndex]}`)}
-            </Cell>
-          }
-          key={`${columnKey}-${values}`}
-          id={`col${columnKey}`}
-          name={columnKey}
-        />
-      )}
+      {colMembers.map(colHeader => {
+        const columnData = nestedData.get(colHeader);
+        return (
+          <Column
+            cellRenderer={(rowIndex, colIndex) => {
+              const value = columnData && columnData.get(rowMembers[rowIndex]);
+              return (
+                <Cell className="column-number" columnIndex={colIndex} rowIndex={rowIndex}>
+                  {value != null ? formatter(value) : ""}
+                </Cell>
+              );
+            }}
+            key={`${colHeader}-${valueProperty}`}
+            id={`col${colHeader}`}
+            name={colHeader}
+          />
+        );
+      })}
     </Table>
   );
 };

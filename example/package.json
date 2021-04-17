@@ -1,0 +1,27 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "poi --serve"
+  },
+  "author": "Datawheel, LLC.",
+  "dependencies": {
+    "@blueprintjs/core": "^3.42.0",
+    "@blueprintjs/icons": "^3.26.0",
+    "@blueprintjs/select": "^3.15.9",
+    "@blueprintjs/table": "^3.8.27",
+    "@datawheel/tesseract-explorer": "workspace:*",
+    "@datawheel/tesseract-vizbuilder": "workspace:*",
+    "normalize.css": "^8.0.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "react-redux": "^7.2.3",
+    "redux": "^4.0.5"
+  },
+  "devDependencies": {
+    "poi": "^12.10.3"
+  }
+}

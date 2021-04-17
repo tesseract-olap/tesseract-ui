@@ -6,6 +6,8 @@ const simpleGit = require("simple-git");
 const semverInc = require("semver/functions/inc");
 const prompt = require("chosen");
 
+const {traversePackages} = require("./toolbox/traverse");
+
 const LINE = "----------------------------------------------------------------------";
 const releaseType = ["prerelease", "prepatch", "patch", "preminor", "minor", "premajor", "major"];
 
@@ -24,21 +26,9 @@ async function monorepoRelease(git) {
   const packagesPath = path.resolve(rootPath, "packages");
 
   // iterate over the things inside the packages/ folder
-  const files = await fs.readdir(packagesPath, {
-    encoding: "utf8",
-    withFileTypes: true
-  });
-  for (const file of files) {
-    // only if it's a folder
-    if (!file.isDirectory()) continue;
-
-    const folderName = file.name;
-    const packagePath = path.resolve(packagesPath, folderName);
-    const manifestPath = path.resolve(packagePath, "package.json");
-    const manifest = require(manifestPath);
-
-    // and not a private package
-    if (manifest.private) continue;
+  const packagesIterator = traversePackages(packagesPath);
+  for (const packageMeta of packagesIterator) {
+    const {folderName, manifestPath, manifest} = packageMeta;
 
     const packageName = manifest.name;
     const packageVersion = manifest.version;
@@ -55,9 +45,9 @@ async function monorepoRelease(git) {
 
     // for each commit that can have possibly modified the package
     for (const commitHash of commitsSince) {
-      // get the commit hash, commit message, and list of files changed
+      // get the [commit hash + commit message], and list of files changed
       const [commitMeta, ...filesChanged] = await git
-        .show([commitHash, "--name-only", `--pretty=format:* [%h] %s`])
+        .show([commitHash, "--name-only", "--pretty=format:* [%h] %s"])
         .then(result => result.split("\n").filter(Boolean));
 
       // if any of the files involved in this commit is from this package
@@ -77,17 +67,21 @@ ${commitsInvolved.join("\n")}
       // ask the user which kind of increment apply to the version
       const incrementType = await new Promise((resolve, reject) => {
         console.log("Which type of version increment apply?");
-        prompt.choose(releaseType, answer => {
+        prompt.choose(["skip", ...releaseType], answer => {
           answer ? resolve(answer) : reject("Operation canceled by the user.");
         }, {});
       });
+      if (incrementType === "skip") {
+        console.log(`Skipping version increment for package ${packageName}`);
+        continue;
+      }
       const nextVersion = semverInc(packageVersion, incrementType);
       const nextTag = `${packageName}@${nextVersion}`;
 
       // bump version on manifest and commit
       await fs.writeFile(
         manifestPath,
-        JSON.stringify({...manifest, version: nextVersion}, null, 2) + "\r\n",
+        `${JSON.stringify({...manifest, version: nextVersion}, null, 2)}\r\n`,
         {encoding: "utf8"}
       );
       await git.commit(nextTag, [manifestPath]);
@@ -95,6 +89,8 @@ ${commitsInvolved.join("\n")}
       // create a new tag for the release
       const nextTagTitle = `Release ${packageName} v${nextVersion}\n`;
       await git.addAnnotatedTag(nextTag, [nextTagTitle].concat(commitsInvolved).join("\n"));
+
+      console.log(`Created version release ${nextTag}`);
     }
   }
 }

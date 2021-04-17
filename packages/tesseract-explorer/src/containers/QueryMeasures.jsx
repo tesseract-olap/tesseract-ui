@@ -1,19 +1,12 @@
-import {
-  Button,
-  InputGroup,
-  Intent,
-  Popover,
-  PopoverInteractionKind,
-  Position
-} from "@blueprintjs/core";
+import {Button, InputGroup, Intent, Popover, PopoverInteractionKind, Position} from "@blueprintjs/core";
 import React, {useMemo, useState} from "react";
 import {connect} from "react-redux";
 import {QueryArea} from "../components/QueryArea";
 import TagMeasure from "../components/TagMeasure";
+import {useTranslation} from "../hooks/translation";
 import {doMeasureClear, doMeasureToggle} from "../state/params/actions";
 import {selectMeasureItems} from "../state/params/selectors";
 import {safeRegExp} from "../utils/transform";
-import {useTranslation} from "../utils/localization";
 import {activeItemCounter} from "../utils/validation";
 
 /**

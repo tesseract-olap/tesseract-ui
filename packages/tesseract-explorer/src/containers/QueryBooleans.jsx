@@ -4,10 +4,10 @@ import {connect} from "react-redux";
 import {QueryArea} from "../components/QueryArea";
 import {SelectObject} from "../components/Select";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
+import {useTranslation} from "../hooks/translation";
 import {doBooleanToggle, doPaginationUpdate, doSortingUpdate} from "../state/params/actions";
 import {selectBooleans, selectPaginationParams, selectSortingParams} from "../state/params/selectors";
 import {selectServerBooleansEnabled} from "../state/server/selectors";
-import {useTranslation} from "../utils/localization";
 import {shallowEqualExceptFns, shallowEqualForProps} from "../utils/validation";
 
 /** @type {React.FC<import("../components/Select").SelectObjectProps<{value: string, label: string}>>} */
@@ -47,19 +47,19 @@ const SelectDirection = memo(SelectObject, shallowEqualForProps("items", "select
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 export const QueryBooleans = props => {
-  const {translate: t} = useTranslation();
+  const {locale, translate: t} = useTranslation();
 
   const sort = useMemo(() => {
     const directions = {
-      asc: t("params.direction_asc"),
-      desc: t("params.direction_desc")
+      asc: t("direction.ASC"),
+      desc: t("direction.DESC")
     };
     const options = [
       {value: "asc", label: directions.asc},
       {value: "desc", label: directions.desc}
     ];
     return {directions, options};
-  }, []);
+  }, [locale]);
 
   return (
     <QueryArea

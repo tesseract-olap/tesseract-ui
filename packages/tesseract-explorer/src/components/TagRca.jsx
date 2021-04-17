@@ -2,9 +2,9 @@ import {ControlGroup, Popover, PopoverInteractionKind, Tag} from "@blueprintjs/c
 import classNames from "classnames";
 import React from "react";
 import SelectMeasure from "../containers/ConnectedSelectMeasure";
+import {useTranslation} from "../hooks/translation";
 import {summaryRca} from "../utils/format";
 import {stringifyName} from "../utils/transform";
-import {useTranslation} from "../utils/localization";
 import {isRcaItem} from "../utils/validation";
 import SelectLevel from "./SelectLevel";
 
