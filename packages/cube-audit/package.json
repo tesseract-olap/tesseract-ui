@@ -30,12 +30,17 @@
     "directory": "packages/cube-audit"
   },
   "dependencies": {
-    "@datawheel/olap-client": "^2.0.0-alpha.4",
+    "@datawheel/olap-client": "^2.0.0-beta.1",
     "d3plus-text": "^0.10.1",
     "getopts": "^2.2.5",
     "lodash": "^4.17.20"
   },
   "devDependencies": {
     "@types/node": "^12.19.0"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 11
+    }
   }
 }

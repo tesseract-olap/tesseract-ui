@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "checkJs": true,
+    "lib": ["es2015", "es2016"],
+    "module": "commonJS",
     "moduleResolution": "node",
     "strictNullChecks": true,
     "target": "es2016"

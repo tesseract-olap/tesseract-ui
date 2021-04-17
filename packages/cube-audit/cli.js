@@ -42,7 +42,10 @@ const options = getopts(process.argv.slice(2), {
   ]
 });
 
-runCli(options);
+runCli(options).catch(err => {
+  console.error(err.message);
+  process.exit(1);
+});
 
 async function runCli(options) {
   if (options.help || options._.includes("help")) {
@@ -77,11 +80,32 @@ async function runCli(options) {
     }
   });
 
-  const checkboxIssueShort = issue => `- [ ] ${issue.description}`;
-  const checkboxIssueFull = issue => `- [ ] **${issue.entity} \`${issue.name}\`**: ${issue.description}`;
-
   await auditServer(cube => {
     if (cube.issueCount === 0) return;
+
+    /** @type {Map<string, {key: string, text: string, index: number}>} */
+    const noteMap = new Map();
+
+    /** @type {(solution: string | undefined) => string} */
+    const getFootnote = text => {
+      if (!text) return "";
+      const key = `${cube.name}-${shortHash(text)}`;
+      const item = noteMap.get(key) || {key, text, index: noteMap.size};
+      noteMap.set(key, item);
+      return `[<sup>${item.index}</sup>](#${item.key})`;
+    }
+
+    /** @type {(issue: Issue) => string} */
+    const checkboxIssueShort = issue => {
+      const footnote = getFootnote(issue.solution);
+      return `- [ ] ${issue.description} ${footnote}`;
+    }
+
+    /** @type {(issue: Issue) => string} */
+    const checkboxIssueFull = issue => {
+      const footnote = getFootnote(issue.solution);
+      return `- [ ] **${issue.entity} \`${issue.name}\`**: ${issue.description}${footnote}`;
+    }
 
     const result = [`\n## Cube: \`${cube.name}\``].concat(
       cube.cubeIssues.length > 0 ? "\n### Cube suggestions" : "",
@@ -89,7 +113,9 @@ async function runCli(options) {
       cube.dimensionIssues.length > 0 ? "\n### Dimension suggestions" : "",
       cube.dimensionIssues.map(checkboxIssueFull),
       cube.measureIssues.length > 0 ? "\n### Measure suggestions" : "",
-      cube.measureIssues.map(checkboxIssueFull)
+      cube.measureIssues.map(checkboxIssueFull),
+      noteMap.size > 0 ? "\n### Suggested solutions" : "",
+      Array.from(noteMap.values(), item => `- <a name="${item.key}"><sup>${item.index}</sup></a> ${item.text}`)
     ).filter(Boolean).join("\n");
 
     targetFile.write(`${result}\n`);
@@ -99,4 +125,13 @@ async function runCli(options) {
   targetFile.close();
 
   console.log("Report created at", targetPath);
+}
+
+function shortHash(text) {
+  let hash = 5381;
+  let index = text.length;
+  while (index--) {
+    hash = (hash * 33) ^ text.charCodeAt(index);
+  }
+  return (hash >>> 0).toString(36);
 }
