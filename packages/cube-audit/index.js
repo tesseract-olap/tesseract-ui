@@ -1,6 +1,7 @@
 const {Client, DimensionType} = require("@datawheel/olap-client");
 const sortBy = require("lodash/sortBy");
 const flatMap = require("lodash/flatMap");
+const flatten = require("lodash/flatten");
 const deburr = require("lodash/deburr");
 const {strip} = require("d3plus-text");
 const {Logger} = require("./logger");
@@ -35,29 +36,30 @@ const geoRegex = regexFromList([
 
 module.exports = {
   auditorFactory,
-  auditServer: async (server, callback) => {
-    const auditServer = await auditorFactory({loggingLevel: "info", server});
-    return auditServer(callback);
-  }
+  auditServer,
 };
 
 /**
- * @param {object} options
- * @param {string} options.loggingLevel
- * @param {import("axios").AxiosRequestConfig} options.server
+ * @param {OlapClient.ServerConfig} server
+ * @param {(report: CubeReport) => void} [callback]
+ * @returns {Promise<AuditorResult>}
+ */
+async function auditServer(server, callback) {
+  const auditServer = await auditorFactory({loggingLevel: "info", server});
+  return auditServer(callback);
+}
+
+/**
+ * @param {AuditorFactoryOptions} options
+ * @returns {Promise<Auditor>}
  */
 async function auditorFactory(options) {
   const logger = new Logger(options.loggingLevel);
   const client = await Client.fromURL(options.server);
   const status = await client.checkStatus();
 
-  return auditServer;
-
-  /**
-   * Runs the auditor against the configured server
-   * @param {(cubeReport: any) => void} [cubeCallback]
-   */
-  async function auditServer(cubeCallback) {
+  /** @type {Auditor} */
+  const auditor = async (callback) => {
     const report = {
       date: new Date()
         .toLocaleString("en-US", {timeZone: "America/New_York"})
@@ -68,54 +70,61 @@ async function auditorFactory(options) {
 
     const cubes = await client.getCubes();
     const sortedCubes = sortBy(cubes, cube => cube.name);
+    const meta = {logger, client};
 
-    if (typeof cubeCallback === "function") {
+    if (typeof callback === "function") {
       for (const cube of sortedCubes) {
-        const cubeValidationResult = await validateCube(cube);
-        cubeCallback(cubeValidationResult);
+        const validationResult = await cubeValidator(cube, meta);
+        callback(validationResult);
       }
       return report;
     }
     else {
+      const validatedCubes = sortedCubes.map(cube => cubeValidator(cube, meta));
       return {
         ...report,
-        cubes: await Promise.all(sortedCubes.map(validateCube))
+        cubes: await Promise.all(validatedCubes)
       };
     }
-  }
+  };
 
-  /**
-   * @param {import("@datawheel/olap-client").Cube} cube
-   * @returns {Promise<CubeReport>}
-   */
-  async function validateCube(cube) {
-    const {annotations, dimensions, measures, name} = cube;
-    logger.debug("Validating cube:", name);
+  return auditor;
+}
 
-    /** @type {Issue[]} */
-    const cubeIssues = cubeAnnotations
-      .filter(ann => !annotations[ann])
-      .map(missAnn => ({
-        description: "Missing annotation: ".concat(missAnn),
-        entity: "cube",
-        level: "high",
-        name,
-      }));
+/**
+ * @param {OlapClient.Cube} cube
+ * @returns {Promise<CubeReport>}
+ */
+async function cubeValidator(cube, {logger, client}) {
+  const {annotations, dimensions, measures, name} = cube;
+  logger.debug("Validating cube:", name);
 
-    const dimensionIssues = await asyncValidation(dimensions, validateDimension);
-    const measureIssues = await asyncValidation(measures, validateMeasure);
+  const levelCache = new Map();
+  const propertyCache = new Map();
 
-    return {
+  /** @type {Issue[]} */
+  const cubeIssues = cubeAnnotations
+    .filter(ann => !annotations[ann])
+    .map(missAnn => ({
+      description: `Missing annotation: \`${missAnn}\``,
+      entity: "cube",
+      level: "high",
       name,
-      issueCount: cubeIssues.length + dimensionIssues.length + measureIssues.length,
-      cubeIssues,
-      dimensionIssues,
-      measureIssues,
-    };
-  }
+    }));
+
+  const dimensionIssues = await asyncValidation(dimensions, validateDimension);
+  const measureIssues = await asyncValidation(measures, validateMeasure);
+
+  return {
+    name,
+    issueCount: cubeIssues.length + dimensionIssues.length + measureIssues.length,
+    cubeIssues,
+    dimensionIssues,
+    measureIssues,
+  };
 
   /**
-   * @param {import("@datawheel/olap-client").Measure} measure
+   * @param {OlapClient.Measure} measure
    * @returns {Promise<Issue[]>}
    */
   async function validateMeasure(measure) {
@@ -125,7 +134,7 @@ async function auditorFactory(options) {
     return measureAnnotations
       .filter(ann => !annotations[ann])
       .map(missAnn => ({
-        description: "Missing annotation: ".concat(missAnn),
+        description: `Missing annotation: \`${missAnn}\``,
         entity: "measure",
         level: "high",
         name,
@@ -133,12 +142,13 @@ async function auditorFactory(options) {
   }
 
   /**
-   * @param {import("@datawheel/olap-client").Dimension} dimension
+   * @param {OlapClient.Dimension} dimension
    * @returns {Promise<Issue[]>}
    */
   async function validateDimension(dimension) {
     logger.debug("- Dimension:", dimension.name);
 
+    /** @type {Issue[]} */
     const issues = [];
 
     if (dimension.dimensionType === DimensionType.Standard) {
@@ -153,12 +163,15 @@ async function auditorFactory(options) {
           ? "Geographic"
           : undefined;
 
-      if (dimType) issues.push({
-        description: `This dimension may be ${dimType} based. If so, add \`type="${DimensionType[dimType]}"\` to the \`<Dimension>\`/\`<SharedDimension>\` in your schema files to enable ${dimType.toLowerCase()}-specific features in tesseract-ui and it's plugins.`,
-        entity: "dimension",
-        level: "middle",
-        name: dimension.name,
-      });
+      if (dimType) {
+        issues.push({
+          description: `This dimension may be ${dimType} based.`,
+          solution: `${dimType}-related dimensions must be declared in the schema file, using the \`type="${DimensionType[dimType]}"\` attribute on its \`<Dimension>\`/\`<SharedDimension>\` node, in order to enable specific features in tesseract-ui and it's plugins.`,
+          entity: "dimension",
+          level: "middle",
+          name: dimension.name,
+        });
+      }
     }
 
     for (const level of dimension.levelIterator) {
@@ -170,23 +183,31 @@ async function auditorFactory(options) {
   }
 
   /**
-   * @param {import("@datawheel/olap-client").Level} level
+   * @param {OlapClient.Level} level
    * @returns {Promise<Issue[]>}
    */
   async function validateLevel(level) {
     logger.debug("- Level:", level.fullName);
 
+    /** @type {Issue[]} */
     const issues = [];
 
-    let suspect;
-    try {
-      const members = await client.getMembers(level);
-      suspect = members.find(member => /\d[\+\-\*\/\%]\d/.test(member.key + ""));
+    const cachedLevel = levelCache.get(level.uniqueName);
+    if (cachedLevel) {
+      issues.push({
+        description: `This level needs an uniqueName across its cube. Currently clashes with the uniqueName for "${cachedLevel.fullName}".`,
+        solution: `Change one (or all) level name to something unique across the cube, or setup a uniqueName on tesseract's logiclayer.json file.`,
+        entity: "level",
+        level: "low",
+        name: level.fullName
+      });
     }
-    catch (e) {
-      logger.error("ERROR", `Unable to get member list\n  Cube: ${level.cube.name}\n  Level: ${level.fullName}`);
-    }
+    levelCache.set(level.uniqueName, level);
 
+    const members = await client.getMembers(level).catch(() => {
+      logger.error("ERROR", `Unable to get member list\n  Cube: ${level.cube.name}\n  Level: ${level.fullName}`);
+    });
+    const suspect = members.find(member => /\d[\+\-\*\/\%]\d/.test(member.key + ""));
     if (suspect) {
       const {cube} = level;
       const query = cube.query
@@ -195,17 +216,54 @@ async function auditorFactory(options) {
         .addCut(level, [suspect.key + ""])
         .setOption("debug", true);
 
-      try {
-        await client.execQuery(query);
-      }
-      catch (e) {
+      await client.execQuery(query).catch(() => {
         issues.push({
-          description: `The level "${level.name}" contains at least a member that matches \`{digit}-{digit}\`, which is failing on a cut. Ensure the level has a \`key_type="text"\` attribute.`,
+          description: `This level contains at least a member that matches the pattern \`{digit}-{digit}\`, which makes the query fail if used on a cut.`,
+          solution: `Ensure the \`<Level />\` in the schema contains a \`key_type="text"\` attribute.`,
           entity: "level",
           level: "low",
           name: level.fullName
         });
-      }
+      });
+    }
+
+    const propValidation = level.properties.map(validateProperty);
+    const propIssues = await Promise.all(propValidation);
+    issues.push(...flatten(propIssues));
+
+    return issues;
+  }
+
+  /**
+   * @param {OlapClient.Property} prop
+   * @returns {Promise<Issue[]>}
+   */
+  async function validateProperty(prop) {
+    logger.debug("- Property:", prop.fullName);
+
+    /** @type {Issue[]} */
+    const issues = [];
+
+    const cachedProp = propertyCache.get(prop.uniqueName);
+    if (cachedProp) {
+      issues.push({
+        description: `The property "${prop.name}", belonging to level "${prop.level.fullName}", needs an uniqueName across its cube. It currently clashes with "${cachedProp.uniqueName}" from level "${cachedProp.level.fullName}".`,
+        solution: `Change the property name to something unique across the cube, or setup a uniqueName on tesseract's logiclayer.json file.`,
+        entity: "property",
+        level: "low",
+        name: prop.fullName
+      });
+    }
+    propertyCache.set(prop.uniqueName, prop);
+
+    if (prop.name in prop.cube.measuresByName) {
+      issues.push({
+        description: `The property "${prop.name}", belonging to level "${prop.level.fullName}", has the same name as a measure, which causes conflicts when using certain functions.`,
+        solution: `Use a different property name.`,
+        entity: "property",
+        level: "low",
+        name: prop.fullName
+      });
     }
 
     return issues;
@@ -218,28 +276,6 @@ async function auditorFactory(options) {
  * @param {(item: T) => Promise<Issue[]>} validator
  */
 async function asyncValidation(list, validator) {
-  /** @type {Issue[]} */
-  const results = [];
-  for (const item of list) {
-    const result = await validator(item);
-    results.push(...result);
-  }
-  return results;
+  const results = list.map(validator);
+  return Promise.all(results).then(flatten);
 }
-
-/**
- * @typedef CubeReport
- * @property {string} name The name of the cube this report refers to.
- * @property {number} issueCount The total amount of issues
- * @property {Issue[]} cubeIssues The list of issues related to this cube overall
- * @property {Issue[]} dimensionIssues The list of issues related to this cube's dimensions
- * @property {Issue[]} measureIssues The list of issues related to this cube's measures
- */
-
-/**
- * @typedef Issue
- * @property {string} description A text explaining the issue, and optionally a way to solve it.
- * @property {string} entity The object in the cube abstraction with the problem.
- * @property {string} level The priority level of the problem.
- * @property {string} name The name of the object in the abstraction.
- */
