@@ -6,6 +6,7 @@
   "module": "./dist/explorer.esm.js",
   "style": "./dist/explorer.css",
   "types": "./index.d.ts",
+  "readme": "./README.md",
   "exports": {
     ".": {
       "import": "./dist/explorer.esm.js",
@@ -14,6 +15,12 @@
     },
     "./style.css": "./dist/explorer.css"
   },
+  "files": [
+    "dist/explorer.css",
+    "dist/explorer.esm.js",
+    "dist/explorer.cjs.js",
+    "index.d.ts"
+  ],
   "scripts": {
     "build": "rollup --config ../../rollup.config.js --environment NODE_ENV:production",
     "watch": "rollup --config ../../rollup.config.js --environment NODE_ENV:development --watch"
