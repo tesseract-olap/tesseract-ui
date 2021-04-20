@@ -7,7 +7,8 @@ export const SERIAL_BOOLEAN = {
   DISTINCT: 2,
   NONEMPTY: 4,
   PARENTS: 8,
-  SPARSE: 16
+  SPARSE: 16,
+  EXCLUDE_DEFAULT_MEMBERS: 32
 };
 
 export const Comparison = {

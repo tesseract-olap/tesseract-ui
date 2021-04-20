@@ -1,7 +1,7 @@
 import {buildQuery} from "../../utils/structs";
 import {omitRecord} from "../helpers";
-import effectsCurrentParams from "../params/reducer";
-import effectsCurrentResult from "../results/reducer";
+import {paramsEffectors} from "../params/reducer";
+import {resultsEffectors} from "../results/reducer";
 import {QUERIES_CLEAR, QUERIES_REMOVE, QUERIES_SELECT, QUERIES_UPDATE} from "./actions";
 
 /** @type {TessExpl.State.QueriesState} */
@@ -14,22 +14,25 @@ export const queriesInitialState = {
 
 /** @type {import("redux").Reducer<TessExpl.State.QueriesState>} */
 export function queriesReducer(state = queriesInitialState, {type: actionType, payload}) {
-  const effector = effects[actionType];
+  const effector = queriesEffectors[actionType];
   if (effector) {
     return effector(state, payload);
   }
+
   const currentQuery = state.itemMap[state.current];
-  const effectorParams = effectsCurrentParams[actionType];
+
+  const effectorParams = paramsEffectors[actionType];
   if (effectorParams) {
-    return effects[QUERIES_UPDATE](state, {
+    return queriesEffectors[QUERIES_UPDATE](state, {
       ...currentQuery,
       isDirty: true,
       params: effectorParams(currentQuery.params, payload)
     });
   }
-  const effectorResult = effectsCurrentResult[actionType];
+
+  const effectorResult = resultsEffectors[actionType];
   if (effectorResult) {
-    return effects[QUERIES_UPDATE](state, {
+    return queriesEffectors[QUERIES_UPDATE](state, {
       ...currentQuery,
       isDirty: payload.hasOwnProperty("data") || payload.hasOwnProperty("error")
         ? false
@@ -40,18 +43,30 @@ export function queriesReducer(state = queriesInitialState, {type: actionType, p
   return state;
 }
 
-const effects = {
+const queriesEffectors = {
 
-  /** @type {(state: TessExpl.State.QueriesState, payload?: any) => TessExpl.State.QueriesState} */
+  /**
+   * By default, removes all queries from the application state.
+   * If passed a payload, replaces the query map from the application state with
+   * its contents, and selects a new current query in the UI.
+   * @type {(state: TessExpl.State.QueriesState, payload?: any) => TessExpl.State.QueriesState}
+   */
   [QUERIES_CLEAR]: (state, itemMap = {}) => {
     const current = itemMap[state.current] ? state.current : Object.keys(itemMap)[0];
     return {current, itemMap};
   },
 
-  /** @type {(state: TessExpl.State.QueriesState, payload: string) => TessExpl.State.QueriesState} */
+  /**
+   * Selects a new current query in the UI.
+   * @type {(state: TessExpl.State.QueriesState, payload: string) => TessExpl.State.QueriesState}
+   */
   [QUERIES_SELECT]: (state, current) => ({current, itemMap: state.itemMap}),
 
-  /** @type {(state: TessExpl.State.QueriesState, payload: string) => TessExpl.State.QueriesState} */
+  /**
+   * Removes a query from the application state. If this query was currently
+   * selected, the selection changes to the first query in the map.
+   * @type {(state: TessExpl.State.QueriesState, payload: string) => TessExpl.State.QueriesState}
+   */
   [QUERIES_REMOVE]: (state, queryItemKey) => {
     const amount = Object.keys(state.itemMap).length;
     if (amount < 2) return state;
@@ -61,9 +76,13 @@ const effects = {
     return {current, itemMap};
   },
 
-  /** @type {(state: TessExpl.State.QueriesState, payload: TessExpl.Struct.QueryItem) => TessExpl.State.QueriesState} */
+  /**
+   * Updates the contents of a query.
+   * The payload replaces the query in the state, instead of extending it.
+   * @type {(state: TessExpl.State.QueriesState, payload: TessExpl.Struct.QueryItem) => TessExpl.State.QueriesState}
+   */
   [QUERIES_UPDATE]: (state, queryItem) => ({
-    ...state,
+    current: state.current,
     itemMap: {...state.itemMap, [queryItem.key]: queryItem}
   })
 };

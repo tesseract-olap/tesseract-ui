@@ -10,7 +10,7 @@ import MenuDimensions from "./MenuDimension";
 
 /**
  * @typedef OwnProps
- * @property {TessExpl.Struct.LevelRef[]} selectedItems
+ * @property {TessExpl.Struct.LevelDescriptor[]} selectedItems
  * @property {(
  *   level: OlapClient.PlainLevel,
  *   hierarchy: OlapClient.PlainHierarchy,

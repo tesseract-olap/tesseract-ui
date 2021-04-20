@@ -1,7 +1,7 @@
 import {RESULT_UPDATE} from "./actions";
 
 /** @type {Record<string, (results: TessExpl.Struct.QueryResult, payload: any) => TessExpl.Struct.QueryResult>} */
-const effects = {
+export const resultsEffectors = {
 
   /**
    * @param {TessExpl.Struct.QueryResult} results
@@ -13,5 +13,3 @@ const effects = {
     data: payload.error ? [] : payload.data ?? results.data
   })
 };
-
-export default effects;

@@ -14,7 +14,6 @@ declare namespace TessExpl {
   const PivotView: React.FC<ViewProps>;
   const TableView: React.FC<ViewProps>;
 
-  const explorerInitialState: () => State.ExplorerState;
   const explorerReducer: Redux.Reducer<State.ExplorerState>;
 
   const olapMiddleware: Redux.Middleware<{}, State.ExplorerState>;
@@ -114,7 +113,7 @@ declare namespace TessExpl {
     }
 
     interface QueryParams {
-      booleans: Record<string, boolean>;
+      booleans: Record<string, undefined | boolean>;
       cube: string;
       cuts: Record<string, CutItem>;
       drilldowns: Record<string, DrilldownItem>;
@@ -213,6 +212,7 @@ declare namespace TessExpl {
     type MeasurableItem = MeasureItem | FilterItem;
 
     interface SerializedQuery {
+      query?: string;
       booleans?: number;
       cube: string;
       cuts?: string[];
@@ -231,12 +231,27 @@ declare namespace TessExpl {
       name: string;
     }
 
-    interface LevelRef {
+    interface LevelDescriptor {
       dimension: string;
       hierarchy: string;
       level: string;
     }
 
-    type LevelDescriptor = LevelLike | LevelRef;
+    type LevelReference = LevelLike | LevelDescriptor;
+  }
+
+  namespace OlapMiddleware {
+    interface Action<T, U> {
+      type: T;
+      payload: U;
+    }
+
+    interface ActionMapParams<T, U = any> {
+      action: Action<T, U>;
+      client: OlapClnt.Client;
+      dispatch: Redux.Dispatch;
+      getState: () => State.ExplorerState;
+      next: Redux.Dispatch;
+    };
   }
 }

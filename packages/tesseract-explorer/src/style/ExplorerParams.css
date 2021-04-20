@@ -19,9 +19,10 @@
   padding: 0;
   padding-left: 30px;
   min-height: 30px;
+  list-style: none;
 }
 
-.query-area .details-title::details-marker {
+.query-area .details-title::-webkit-details-marker {
   display: none;
 }
 

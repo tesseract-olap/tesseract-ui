@@ -55,10 +55,11 @@ export function hydrateDrilldownProperties(cube, drilldownItem) {
       const sameHie = hierarchy ? hierarchy === level.hierarchy.name : true;
       const sameDim = dimension ? dimension === level.dimension.name : true;
       if (sameDim && sameHie) {
-        const properties = level.properties.map(property => {
-          const active = activeProperties.includes(property.name);
-          return buildProperty({...property, active});
-        });
+        const properties = level.properties.map(property => buildProperty({
+          active: activeProperties.includes(property.name),
+          level: property.level.uniqueName,
+          name: property.name
+        }));
         const dimType = level.dimension.dimensionType;
         return buildDrilldown({...drilldownItem, dimType, properties});
       }

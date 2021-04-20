@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {ExplorerColumn} from "../components/ExplorerColumn";
 import {MemoStoredQuery as StoredQuery} from "../components/StoredQuery";
 import {useTranslation} from "../hooks/translation";
-import {doParseQueryUrl} from "../middleware/actions";
+import {doExecuteQuery, doParseQueryUrl} from "../middleware/actions";
 import {doQueriesRemove, doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectCurrentQueryItem, selectQueryItems} from "../state/queries/selectors";
 import {buildQuery} from "../utils/structs";
@@ -88,7 +88,11 @@ const mapDispatch = dispatch => ({
     const string = window.prompt("Enter the URL of the query you want to parse:");
     if (string) {
       const url = new URL(string);
-      dispatch(doParseQueryUrl(url.toString()));
+      Promise.resolve(url)
+        .then(doParseQueryUrl)
+        .then(dispatch)
+        .then(doExecuteQuery)
+        .then(dispatch);
     }
   }
 });

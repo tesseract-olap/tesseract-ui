@@ -6,6 +6,14 @@ export function randomKey() {
 }
 
 /** */
+export function decodeUrlFromBase64(str) {
+  const decodedStr = (str + "===".slice((str.length + 3) % 4))
+    .replace(/-/g, "+")
+    .replace(/_/g, "/");
+  return window.atob(decodedStr);
+}
+
+/** */
 export function buildDatumTypes(datum) {
   return `interface Datum {
 ${Object.keys(datum).map(key => `  "${key}": ${typeof datum[key]};`).join("\n")}

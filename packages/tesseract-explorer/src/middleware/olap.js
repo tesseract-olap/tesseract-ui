@@ -11,7 +11,7 @@ import {applyQueryParams, extractQueryParams} from "../utils/query";
 import {buildMeasure, buildQuery} from "../utils/structs";
 import {keyBy} from "../utils/transform";
 import {isValidQuery} from "../utils/validation";
-import {CLIENT_DOWNLOAD, CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_PARSE, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP, doPermalinkUpdate} from "./actions";
+import {CLIENT_DOWNLOAD, CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_PARSE, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP, doExecuteQuery, doPermalinkParse, doPermalinkUpdate} from "./actions";
 import {fetchCutMembers, hydrateDrilldownProperties} from "./utils";
 
 /**
@@ -28,18 +28,6 @@ import {fetchCutMembers, hydrateDrilldownProperties} from "./utils";
  * info for all the members in each cut.
  *
  * After this, the UI is ready to receive orders.
- *
- * CLIENT_SETCUBE(cubeName)
- * Receives the name of the cube, get the info
- */
-
-/**
- * @typedef ActionMapParams
- * @property {import("redux").AnyAction} action
- * @property {OLAPClient} client
- * @property {import("redux").Dispatch} dispatch
- * @property {() => TessExpl.State.ExplorerState} getState
- * @property {import("redux").Dispatch} next
  */
 
 const actionMap = {
@@ -47,29 +35,23 @@ const actionMap = {
   /**
    * Sets a new DataSource to the client instance, gets the server info, and
    * initializes the general state accordingly.
-   * @param {ActionMapParams} param0
-   * @param {string} param0.action.payload The URL for the server to use
+   * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_SETUP, OlapClient.ServerConfig>} param
    */
   [CLIENT_SETUP]: ({action, client, dispatch}) => {
-    console.debug("CLIENT_SETUP");
-    const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(
-      dispatch,
-      action
-    );
+    const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
     fetchRequest();
 
-    return Promise.resolve(action.payload)
-      .then(OLAPClient.dataSourceFromURL)
+    return OLAPClient.dataSourceFromURL(action.payload)
       .then(datasource => {
         client.setDataSource(datasource);
         return Promise.all([
           datasource.checkStatus(),
-          datasource.fetchCubes()
+          client.getCubes()
         ]);
       })
       .then(result => {
         const [serverInfo, cubes] = result;
-        const cubeMap = keyBy(cubes, i => i.name);
+        const cubeMap = keyBy(cubes.map(c => c.toJSON()), i => i.name);
 
         dispatch(doServerUpdate({
           ...serverInfo,
@@ -79,10 +61,14 @@ const actionMap = {
           cubeMap
         }));
         fetchSuccess();
-        return dispatch({type: CLIENT_HYDRATEQUERY, payload: cubes[0]?.name});
+
+        return Promise.resolve()
+          .then(() => dispatch(doPermalinkParse()))
+          .then(() => dispatch({type: CLIENT_HYDRATEQUERY, payload: cubes[0].name}));
       })
-      .then(() => dispatch({type: CLIENT_QUERY}))
+      .then(() => dispatch(doExecuteQuery()))
       .catch(error => {
+        console.error("Startup error:", error);
         dispatch(
           doServerUpdate({
             online: false,
@@ -97,11 +83,10 @@ const actionMap = {
 
   /**
    * Reads the current queryState and fills the missing information.
-   * @param {ActionMapParams} param0
-   * @param {string} param0.action.payload suggested default cube name
+   * Action Payload: suggested default cube name
+   * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_HYDRATEQUERY, string>} param
    */
   [CLIENT_HYDRATEQUERY]: ({action, client, dispatch, getState}) => {
-    console.debug("CLIENT_HYDRATEQUERY");
     const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
     fetchRequest();
 
@@ -160,11 +145,10 @@ const actionMap = {
    * Changes the current cube and updates related state
    * If the new cube contains a measure with the same name as a measure in the
    * previous cube, keep its state
-   * @param {ActionMapParams} param0
-   * @param {string} param0.action.payload cube name
+   * Action payload: cube name
+   * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_SETCUBE, string>} param
    */
   [CLIENT_SETCUBE]: ({action, client, dispatch, getState}) => {
-    console.debug("CLIENT_SETCUBE");
     const state = getState();
     const currentMeasureMap = selectMeasureMap(state);
 
@@ -192,32 +176,29 @@ const actionMap = {
 
   /**
    * Intercepts the order to update locale and dispatches the needed actions.
-   * @param {ActionMapParams} param0
-   * @param {string} param0.action.payload
+   * Action payload: ISO 639-2 locale code
+   * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_SETLOCALE, string>} param
    */
   [CLIENT_SETLOCALE]: ({action, dispatch, getState}) => {
-    console.debug("CLIENT_SETLOCALE");
     const state = getState();
     const locale = selectLocale(state);
 
     return Promise.resolve(action.payload)
       .then(nextLocale => {
-        if (locale.code !== nextLocale) {
-          dispatch(doLocaleUpdate(nextLocale));
-          return dispatch({type: CLIENT_QUERY});
+        if (locale.code === nextLocale) {
+          return null;
         }
-        return null;
+        dispatch(doLocaleUpdate(nextLocale));
+        return dispatch(doExecuteQuery());
       });
   },
 
   /**
    * Takes a newly generated CutItem and fills its list of associated members.
    * Returns a copy of the CutItem with its members property filled.
-   * @param {ActionMapParams} param0
-   * @param {CutItem} param0.action.payload
+   * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_LOADMEMBERS, TessExpl.Struct.CutItem>} param
    */
   [CLIENT_LOADMEMBERS]: ({action, client, getState}) => {
-    console.debug("CLIENT_LOADMEMBERS");
     const state = getState();
     const cubeName = selectCubeName(state);
     const locale = selectLocale(state);
@@ -233,13 +214,14 @@ const actionMap = {
   /**
    * Parses a query URL into a olap-client Query object, then into a QueryParam object
    * and inyects it into a new QueryItem in the UI.
-   * @param {ActionMapParams} param0
+   * Action payload: URL to parse
+   * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_PARSE, string>} param
    */
   [CLIENT_PARSE]: ({action, client, dispatch}) => {
     const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
     fetchRequest();
 
-    return client.parseQueryURL(action.payload)
+    return client.parseQueryURL(action.payload, {anyServer: true})
       .then(query => {
         const queryItem = buildQuery({
           params: extractQueryParams(query)
@@ -251,16 +233,14 @@ const actionMap = {
         dispatch(doQueriesSelect(queryItem.key));
       })
       .then(null, fetchFailure)
-      .then(() => dispatch({type: CLIENT_HYDRATEQUERY}))
-      .then(() => dispatch({type: CLIENT_QUERY}));
+      .then(() => dispatch({type: CLIENT_HYDRATEQUERY}));
   },
 
   /**
    * Executes the current queryState, and store the result in the State
-   * @param {ActionMapParams} param0
+   * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_QUERY, undefined>} param
    */
   [CLIENT_QUERY]: async({action, client, dispatch, getState}) => {
-    console.debug("CLIENT_QUERY");
     const state = getState();
     const params = selectCurrentQueryParams(state);
 
@@ -298,6 +278,11 @@ const actionMap = {
     }
   },
 
+  /**
+   * Initiates a new download of the queried data by the current parameters.
+   * Action payload: The format the user wants the data, from OlapClient options.
+   * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_DOWNLOAD, OlapClient.Format>} param
+   */
   [CLIENT_DOWNLOAD]: async({action, client, dispatch, getState}) => {
     const state = getState();
     const params = selectCurrentQueryParams(state);

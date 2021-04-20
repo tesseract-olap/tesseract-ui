@@ -41,46 +41,33 @@ export const SelectCube = props => {
     setLevel: setLevel1,
     keys: level1Keys,
     values: level1Values
-  } = useLevel(items, item => item.annotations.topic);
+  } = useLevel(items, selectedItem, item => item.annotations.topic);
 
   const {
     level: level2,
     setLevel: setLevel2,
     keys: level2Keys,
     values: level2Values
-  } = useLevel(level1Values, item => item.annotations.subtopic);
+  } = useLevel(level1Values, selectedItem, item => item.annotations.subtopic);
 
   const {
     level: level3,
     setLevel: setLevel3,
     keys: level3Keys,
     values: level3Values
-  } = useLevel(level2Values, item => item.annotations.table);
+  } = useLevel(level2Values, selectedItem, item => item.annotations.table);
 
-  const cubeItems = level3Values.length > 0
-    ? level3Values
-    : level2Values.length > 0
-      ? level2Values
-      : level1Values.length > 0
-        ? level1Values
-        : items;
+  const cubeItems =
+    level3Values.length > 0 ? level3Values :
+    level2Values.length > 0 ? level2Values :
+    level1Values.length > 0 ? level1Values :
+    /* else */                items;
 
   useEffect(() => {
-    if (!items.length || !selectedItem) return;
-
-    if (level1Keys.length > 0 && !level1Keys.includes(level1)) {
-      setLevel1(level1Keys[0]);
-    }
-    if (level2Keys.length > 0 && !level2Keys.includes(level2)) {
-      setLevel2(level2Keys[0]);
-    }
-    if (level3Keys.length > 0 && !level3Keys.includes(level3)) {
-      setLevel3(level3Keys[0]);
-    }
-    if (cubeItems.length > 0 && !cubeItems.includes(selectedItem)) {
+    if (selectedItem && cubeItems.length > 0 && !cubeItems.includes(selectedItem)) {
       props.onItemSelect(cubeItems[0]);
     }
-  }, [items, selectedItem, level1Keys, level1, level2Keys, level2, level3Keys, level3]);
+  }, [cubeItems, selectedItem]);
 
   const selectCube = selectedItem
     ? <SelectAdaptedCube
@@ -143,11 +130,16 @@ export const ConnectedSelectCube = connect(mapState, mapDispatch)(SelectCube);
 /**
  * @template T
  * @param {T[]} items
+ * @param {T | undefined} currentItem
  * @param {(item: T) => string | null | undefined} accessor
  * @returns
  */
-function useLevel(items, accessor) {
-  const [level, setLevel] = useState("");
+function useLevel(items, currentItem, accessor) {
+  const [level, setLevel] = useState(() => currentItem && accessor(currentItem) || "");
+
+  useEffect(() => {
+    currentItem && setLevel(accessor(currentItem) || "");
+  }, [currentItem]);
 
   const [keys, values] = useMemo(() => {
     const tree = groupBy(items, accessor);
