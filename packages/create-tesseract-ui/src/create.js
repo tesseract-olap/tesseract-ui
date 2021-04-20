@@ -7,16 +7,20 @@ module.exports = function(values) {
   utils.copyTemplateFile("index.js", targetPath);
   utils.copyTemplateFile("style.css", targetPath);
 
-  const readme = utils.readTemplateFile("README.md");
-  const readmeFinal = utils.applyTemplate(readme, values);
-  utils.writeFile("README.md", targetPath, readmeFinal);
+  const index = utils.readTemplateFile("index.html");
+  const indexFinal = utils.applyTemplate(index, values);
+  utils.writeFile("index.html", targetPath, indexFinal);
 
-  const poiConfig = utils.readTemplateFile("poi.config.js");
-  const poiConfigFinal = utils.applyTemplate(poiConfig, values);
-  utils.writeFile("poi.config.js", targetPath, poiConfigFinal);
+  const viteConfig = utils.readTemplateFile("vite.config.js");
+  const viteConfigFinal = utils.applyTemplate(viteConfig, values);
+  utils.writeFile("vite.config.js", targetPath, viteConfigFinal);
 
   const packageString = utils.readTemplateFile("package.json");
   const targetPackage = JSON.parse(packageString);
   targetPackage.name = `${name}-explorer`;
   utils.writeFile("package.json", targetPath, JSON.stringify(targetPackage, null, 2));
+
+  const readme = utils.readTemplateFile("README.md");
+  const readmeFinal = utils.applyTemplate(readme, values);
+  utils.writeFile("README.md", targetPath, readmeFinal);
 };

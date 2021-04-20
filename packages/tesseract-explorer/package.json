@@ -8,7 +8,6 @@
   "types": "./index.d.ts",
   "exports": {
     ".": {
-      "development": "./src/index.js",
       "import": "./dist/explorer.esm.js",
       "require": "./dist/explorer.cjs.js",
       "default": "./dist/explorer.cjs.js"

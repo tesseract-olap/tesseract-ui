@@ -4,14 +4,21 @@ const {red} = require("kleur");
 const fs = require("fs");
 const path = require("path");
 
+/**
+ * @param {string} message
+ */
 function printError(message) {
   console.error(`${red("Error:")} ${message}`);
 }
 
+/**
+ * @param {string} targetPath
+ */
 function makeDirectory(targetPath) {
   try {
     fs.mkdirSync(targetPath);
-  } catch (e) {
+  }
+  catch (e) {
     const contents = fs.readdirSync(targetPath);
     if (contents.length > 0) {
       printError("The target directory already exists and isn't empty.");
@@ -20,13 +27,20 @@ function makeDirectory(targetPath) {
   }
 }
 
+/**
+ * @param {string} string
+ * @param {Record<string, string>} values
+ */
 function applyTemplate(string, values) {
   return string
     .replace(/\$TEMPLATE_NAME/g, values.name)
-    .replace(/\$TEMPLATE_SERVER/g, values.serverUrl)
-    .replace(/\$TEMPLATE_TITLE/g, values.title);
+    .replace(/\$TEMPLATE_SERVER/g, values.serverUrl);
 }
 
+/**
+ * @param {string} fileName
+ * @param {string} targetPath
+ */
 function copyTemplateFile(fileName, targetPath) {
   return fs.copyFileSync(
     require.resolve(`../template/${fileName}`),
@@ -34,14 +48,25 @@ function copyTemplateFile(fileName, targetPath) {
   );
 }
 
+/**
+ * @param {string} fileName
+ */
 function readTemplateFile(fileName) {
   return fs.readFileSync(require.resolve(`../template/${fileName}`), "utf8");
 }
 
+/**
+ * @param {string} fileName
+ * @param {string} targetPath
+ * @param {string} contents
+ */
 function writeFile(fileName, targetPath, contents) {
   return fs.writeFileSync(path.join(targetPath, fileName), contents);
 }
 
+/**
+ * @param {string} string
+ */
 function slugify(string) {
   return `${string}`.trim().toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")

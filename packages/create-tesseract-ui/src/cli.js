@@ -12,7 +12,7 @@ const create = require("./create");
 const utils = require("./utils");
 const validate = require("./validate");
 
-const LINE = `-----------------------------------------------------------`;
+const LINE = "-----------------------------------------------------------";
 
 cli
   .command("<directory>", "Create a tesseract-ui boilerplate in the defined directory.")
@@ -30,7 +30,6 @@ cli.parse();
  * @param {string} targetFolder
  * @param {object} options
  * @param {string} options.env
- * @param {string} options.name
  * @param {string} options.server
  * @param {boolean} options.nginx
  */
@@ -73,7 +72,7 @@ ${LINE}`);
   create({
     name: utils.slugify(targetFolder),
     serverUrl: options.server,
-    targetPath,
+    targetPath
   });
 
   console.log(LINE);
@@ -83,43 +82,45 @@ ${LINE}`);
   if (options.env === "production") {
     console.log(LINE);
     console.log("Building app...");
-    spawn.sync("npx", ["poi", "--prod", "--no-clear-console"], {cwd: targetPath, stdio: "inherit"});
+    spawn.sync("npx", ["vite", "build"], {cwd: targetPath, stdio: "inherit"});
 
     console.log(LINE);
-    console.log(`The tesseract-ui boilerplate was successfully built on`);
+    console.log("The tesseract-ui boilerplate was successfully built on");
     console.log(green(path.join(targetPath, "dist")));
 
     if (options.nginx) {
       console.log(`${LINE}
 Configuration example for nginx:
+
 If the app will be hosted on the root of a domain, set:
 ${grey(`server {
   ...
-  root ${targetPath};
-  try_files $uri $uri/ =404;
+  root       ${path.join(targetPath, "dist/")};
+  try_files  $uri $uri/ =404;
   ...
 }`)}
+
 If the app will be hosted in a /pathname/ use:
 ${grey(`server {
   ...
   location ^~ /pathname {
-    alias ${path.join(targetPath, "dist/")};
-    try_files $uri $uri/ =404;
+    alias      ${path.join(targetPath, "dist/")};
+    try_files  $uri $uri/ =404;
   }
   ...
 }`)}
 `);
     }
     else {
-      console.log(`We suggest you to point the virtual server root folder to this path.`);
+      console.log("We suggest you to point the virtual server root folder to this path.");
     }
   }
   else {
     console.log(`${LINE}
 The tesseract-ui boilerplate is ready to run in development mode.
-Use the command ${yellow(`npm start`)} to start the server, the app will then
-run on ${green(`http://localhost:4000`)}
-To build a production bundle, run ${yellow(`npm run build`)}
+Use the command ${yellow("npm start")} to start the server, the app will then
+run on ${green("http://localhost:4000")}
+To build a production bundle, run ${yellow("npm run build")}
 The bundle will be generated in ${path.join(targetPath, "dist/")}
 `);
   }

@@ -4,6 +4,7 @@ import React from "react";
 import "@datawheel/tesseract-vizbuilder/dist/view-vizbuilder.css";
 
 const FORMATTERS = {
+  Sheep: n => `🐑 ${n.toFixed()}`
 };
 
 const TOPOJSON = {
