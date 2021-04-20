@@ -7,12 +7,12 @@ import DimensionMenuItem from "./MenuItemDimension";
 /**
  * @typedef OwnProps
  * @property {string[]} selectedItems
- * @property {(level: import("@datawheel/olap-client").AdaptedLevel, hierarchy: import("@datawheel/olap-client").AdaptedHierarchy, dimension: import("@datawheel/olap-client").AdaptedDimension) => any} onItemSelect
+ * @property {(level: OlapClient.PlainLevel, hierarchy: OlapClient.PlainHierarchy, dimension: OlapClient.PlainDimension) => any} onItemSelect
  */
 
 /**
  * @typedef StateProps
- * @property {import("@datawheel/olap-client").AdaptedDimension[]} dimensions
+ * @property {OlapClient.PlainDimension[]} dimensions
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */

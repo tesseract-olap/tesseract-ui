@@ -25,7 +25,7 @@ import {activeItemCounter} from "../utils/validation";
 /**
  * @typedef DispatchProps
  * @property {() => void} clearHandler
- * @property {(item: import("@datawheel/olap-client").AdaptedLevel) => void} createHandler
+ * @property {(item: OlapClient.PlainLevel) => void} createHandler
  * @property {(item: TessExpl.Struct.CutItem) => Promise<TessExpl.Struct.MemberRecords>} loadMembersHandler
  * @property {(item: TessExpl.Struct.CutItem) => void} removeHandler
  * @property {(item: TessExpl.Struct.CutItem) => void} toggleHandler

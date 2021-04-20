@@ -18,7 +18,7 @@ export const basicFormatterKeys = ["Decimal", "Milliards", "Human"];
 
 /**
  * React Hook to get a list of available formatters and store the user preferences.
- * @param {import("@datawheel/olap-client").AdaptedMeasure[]} measures
+ * @param {OlapClient.PlainMeasure[]} measures
  * @returns {FormatterHookContext}
  */
 export function useFormatter(measures) {

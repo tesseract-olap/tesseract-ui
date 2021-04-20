@@ -11,10 +11,10 @@ import {shallowEqualExceptFns} from "../utils/validation";
  * @property {string} [className]
  * @property {boolean} [fill]
  * @property {import("@blueprintjs/core").IconName | false} [icon]
- * @property {import("@datawheel/olap-client").AdaptedMeasure[]} items
- * @property {import("@blueprintjs/select").ItemListPredicate<import("@datawheel/olap-client").AdaptedMeasure>} [itemListPredicate]
- * @property {import("@blueprintjs/select").ItemRenderer<import("@datawheel/olap-client").AdaptedMeasure>} [itemRenderer]
- * @property {(item: import("@datawheel/olap-client").AdaptedMeasure) => void} onItemSelect
+ * @property {OlapClient.PlainMeasure[]} items
+ * @property {BlueprintSelect.ItemListPredicate<OlapClient.PlainMeasure>} [itemListPredicate]
+ * @property {BlueprintSelect.ItemRenderer<OlapClient.PlainMeasure>} [itemRenderer]
+ * @property {(item: OlapClient.PlainMeasure) => void} onItemSelect
  * @property {string} [placeholder]
  * @property {string | undefined} selectedItem
  * @property {boolean} [usePortal]

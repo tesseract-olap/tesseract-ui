@@ -131,7 +131,7 @@ const actionMap = {
 
         const resolvedDrilldowns = Object.values(params.drilldowns)
           .map(drilldownItem =>
-            hydrateDrilldownProperties({cube, drilldownItem})
+            hydrateDrilldownProperties(cube, drilldownItem)
           )
           .filter(Boolean);
         const drilldowns = keyBy(resolvedDrilldowns, i => i.key);

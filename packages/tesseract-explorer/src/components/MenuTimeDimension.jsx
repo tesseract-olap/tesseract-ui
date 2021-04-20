@@ -8,12 +8,12 @@ import HierarchyMenuItem from "./MenuItemHierarchy";
 /**
  * @typedef OwnProps
  * @property {string[]} [selectedItems]
- * @property {(level: import("@datawheel/olap-client").AdaptedLevel) => any} onItemSelect
+ * @property {(level: OlapClient.PlainLevel) => any} onItemSelect
  */
 
 /**
  * @typedef StateProps
- * @property {import("@datawheel/olap-client").AdaptedHierarchy[]} hierarchies
+ * @property {OlapClient.PlainHierarchy[]} hierarchies
  */
 
 /** @type {React.FC<OwnProps & StateProps>} */

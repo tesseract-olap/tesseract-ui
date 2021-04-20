@@ -10,11 +10,11 @@ import MenuDimension from "./MenuDimension";
  * @typedef OwnProps
  * @property {string} [className]
  * @property {boolean} [fill]
- * @property {import("@blueprintjs/core").IconName | false} [icon]
+ * @property {BlueprintCore.IconName | false} [icon]
  * @property {string|undefined} [selectedItem]
  * @property {keyof JSX.IntrinsicElements} [targetTagName]
  * @property {keyof JSX.IntrinsicElements} [wrapperTagName]
- * @property {(level: import("@datawheel/olap-client").AdaptedLevel) => void} onItemSelect
+ * @property {(level: OlapClient.PlainLevel) => void} onItemSelect
  * @property {boolean} [usePortal]
  */
 

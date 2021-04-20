@@ -19,7 +19,7 @@ import {selectServerState} from "../state/server/selectors";
 
 /**
  * @typedef StateProps
- * @property {import("@datawheel/olap-client").AdaptedCube} cube
+ * @property {OlapClient.PlainCube} cube
  * @property {boolean} isDirtyQuery
  * @property {boolean} isLoading
  * @property {boolean | undefined} isServerOnline

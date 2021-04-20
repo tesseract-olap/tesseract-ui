@@ -8,7 +8,7 @@ import {selectOlapMeasureItems} from "../state/selectors";
 
 /**
  * @typedef StateProps
- * @property {import("@datawheel/olap-client").AdaptedMeasure[]} items
+ * @property {OlapClient.PlainMeasure[]} items
  */
 
 /** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */

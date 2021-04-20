@@ -4,7 +4,7 @@ import {keyBy} from "./transform";
 import {isActiveCut, isActiveItem, isGrowthItem, isRcaItem, isTopkItem} from "./validation";
 
 /**
- * @param {import("@datawheel/olap-client").Query} query
+ * @param {OlapClient.Query} query
  * @param {TessExpl.Struct.QueryParams} params
  */
 export function applyQueryParams(query, params) {
@@ -19,15 +19,18 @@ export function applyQueryParams(query, params) {
   Object.values(params.drilldowns).forEach(item => {
     if (!isActiveItem(item)) return;
     query.addDrilldown(item);
-    item.captionProperty && query.addCaption(item, item.captionProperty);
+    item.captionProperty &&
+      query.addCaption({...item, property: item.captionProperty});
     item.properties.forEach(prop => {
-      isActiveItem(prop) && query.addProperty(item, prop.name);
+      isActiveItem(prop) && query.addProperty({...item, property: prop.name});
     });
   });
 
   Object.values(params.growth).forEach(item => {
-    isGrowthItem(item) && isActiveItem(item) &&
-      query.setGrowth(item.level, item.measure);
+    isGrowthItem(item) && isActiveItem(item) && query.addCalculation("growth", {
+      category: item.level,
+      value: item.measure,
+    });
   });
 
   Object.values(params.measures).forEach(item => {
@@ -35,13 +38,20 @@ export function applyQueryParams(query, params) {
   });
 
   Object.values(params.rca).forEach(item => {
-    isRcaItem(item) && isActiveItem(item) &&
-      query.setRCA(item.level1, item.level2, item.measure);
+    isRcaItem(item) && isActiveItem(item) && query.addCalculation("rca", {
+      category: item.level1,
+      location: item.level2,
+      value: item.measure,
+    });
   });
 
   Object.values(params.topk).forEach(item => {
-    isTopkItem(item) && isActiveItem(item) &&
-      query.setTop(item.amount, item.level, item.measure, Order[item.order]);
+    isTopkItem(item) && isActiveItem(item) && query.addCalculation("topk", {
+      amount: item.amount,
+      category: item.level,
+      order: Order[item.order],
+      value: item.measure,
+    });
   });
 
   params.locale && query.setLocale(params.locale);
@@ -56,7 +66,7 @@ export function applyQueryParams(query, params) {
 }
 
 /**
- * @param {import("@datawheel/olap-client").Query} query
+ * @param {OlapClient.Query} query
  * @returns {TessExpl.Struct.QueryParams}
  */
 export function extractQueryParams(query) {
@@ -66,28 +76,32 @@ export function extractQueryParams(query) {
   const drilldowns = query.getParam("drilldowns").map(buildDrilldown);
   const measures = query.getParam("measures").map(buildMeasure);
   const filters = query.getParam("filters").map(buildFilter);
+  const calculations = query.getParam("calculations").reverse();
 
-  const growth = query.getParam("growth");
+  /** @type {OlapClient.QueryCalcGrowth | undefined} */
+  const growth = calculations.find(item => item.kind === "growth");
   const growthItem = growth && buildGrowth({
     active: true,
-    measure: growth.measure?.name,
-    level: growth.level?.uniqueName
+    measure: Measure.isMeasure(growth.value) ? growth.value.name : growth.value,
+    level: growth.category.uniqueName
   });
 
-  const rca = query.getParam("rca");
+  /** @type {OlapClient.QueryCalcRca | undefined} */
+  const rca = calculations.find(item => item.kind === "rca");
   const rcaItem = rca && buildRca({
     active: true,
-    level1: rca.level1?.uniqueName,
-    level2: rca.level2?.uniqueName,
-    measure: rca.measure?.name
+    level1: rca.category.uniqueName,
+    level2: rca.location.uniqueName,
+    measure: Measure.isMeasure(rca.value) ? rca.value.name : rca.value,
   });
 
-  const topk = query.getParam("topk");
+  /** @type {OlapClient.QueryCalcTopk | undefined} */
+  const topk = calculations.find(item => item.kind === "topk");
   const topkItem = topk && buildTopk({
     active: true,
     amount: topk.amount,
-    level: topk.level?.uniqueName,
-    measure: topk.measure?.name,
+    level: topk.category.uniqueName,
+    measure: Measure.isMeasure(topk.value) ? topk.value.name : topk.value,
     order: topk.order
   });
 
@@ -122,10 +136,10 @@ export function extractQueryParams(query) {
     growth: growthItem ? {[growthItem.key]: growthItem} : {},
     locale: query.getParam("locale"),
     measures: keyBy(measures, getKey),
-    pagiLimit: pagination.amount,
+    pagiLimit: pagination.limit,
     pagiOffset: pagination.offset,
     rca: rcaItem ? {[rcaItem.key]: rcaItem} : {},
-    sortDir: sorting.direction,
+    sortDir: sorting.direction === "asc" ? "asc" : "desc",
     sortKey: Measure.isMeasure(sorting.property)
       ? sorting.property.name
       : `${sorting.property || ""}`,

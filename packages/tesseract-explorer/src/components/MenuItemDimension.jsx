@@ -4,8 +4,8 @@ import HierarchyMenuItem from "./MenuItemHierarchy";
 
 /**
  * @typedef OwnProps
- * @property {import("@datawheel/olap-client").AdaptedDimension} dimension
- * @property {(level: import("@datawheel/olap-client").AdaptedLevel, hierarchy: import("@datawheel/olap-client").AdaptedHierarchy, dimension: import("@datawheel/olap-client").AdaptedDimension) => any} onItemSelect
+ * @property {OlapClient.PlainDimension} dimension
+ * @property {(level: OlapClient.PlainLevel, hierarchy: OlapClient.PlainHierarchy, dimension: OlapClient.PlainDimension) => any} onItemSelect
  * @property {string[]} selectedItems
  */
 

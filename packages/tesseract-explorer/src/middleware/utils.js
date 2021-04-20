@@ -5,7 +5,7 @@ import {isActiveItem} from "../utils/validation";
 /**
  * Updates the list of members of a CutItem
  * @param {object} p
- * @param {import("@datawheel/olap-client").Cube} p.cube
+ * @param {OlapClient.Cube} p.cube
  * @param {TessExpl.Struct.CutItem} p.cutItem
  * @param {string|undefined} p.locale
  * @returns {Promise<TessExpl.Struct.MemberRecords>}
@@ -40,12 +40,11 @@ export function fetchCutMembers({cube, cutItem, locale}) {
 
 /**
  * Updates the list of properties of a DrilldownItem.
- * @param {object} p
- * @param {import("@datawheel/olap-client").Cube} p.cube
- * @param {TessExpl.Struct.DrilldownItem} p.drilldownItem
+ * @param {OlapClient.Cube} cube
+ * @param {TessExpl.Struct.DrilldownItem} drilldownItem
  * @returns {TessExpl.Struct.DrilldownItem}
  */
-export function hydrateDrilldownProperties({cube, drilldownItem}) {
+export function hydrateDrilldownProperties(cube, drilldownItem) {
   const activeProperties = ensureArray(drilldownItem.properties)
     .filter(isActiveItem)
     .map(prop => prop.name);

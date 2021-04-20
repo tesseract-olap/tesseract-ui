@@ -8,8 +8,8 @@ import TimeDimensionMenu from "./MenuTimeDimension";
  * @typedef OwnProps
  * @property {string} [className]
  * @property {boolean} [fill]
- * @property {import("@blueprintjs/core").IconName | false} [icon]
- * @property {(level: import("@datawheel/olap-client").AdaptedLevel) => void} [onItemSelect]
+ * @property {BlueprintCore.IconName | false} [icon]
+ * @property {(level: OlapClient.PlainLevel) => void} [onItemSelect]
  * @property {string} [placeholder]
  * @property {string | undefined} selectedItem
  * @property {boolean} [usePortal]

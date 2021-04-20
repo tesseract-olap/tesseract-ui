@@ -5,16 +5,16 @@ import {shallowEqualExceptFns} from "../utils/validation";
 import MenuDimensions from "./MenuDimension";
 
 /**
- * @typedef {import("@blueprintjs/core").IButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>} ButtonProps
+ * @typedef {BlueprintCore.IButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>} ButtonProps
  */
 
 /**
  * @typedef OwnProps
  * @property {TessExpl.Struct.LevelRef[]} selectedItems
  * @property {(
- *   level: import("@datawheel/olap-client").AdaptedLevel,
- *   hierarchy: import("@datawheel/olap-client").AdaptedHierarchy,
- *   dimension: import("@datawheel/olap-client").AdaptedDimension
+ *   level: OlapClient.PlainLevel,
+ *   hierarchy: OlapClient.PlainHierarchy,
+ *   dimension: OlapClient.PlainDimension,
  *   ) => any} onItemSelect
  * @property {boolean} [usePortal]
  */

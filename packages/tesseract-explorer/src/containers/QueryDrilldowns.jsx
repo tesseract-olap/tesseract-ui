@@ -23,7 +23,7 @@ import {activeItemCounter} from "../utils/validation";
 /**
  * @typedef DispatchProps
  * @property {() => void} clearHandler
- * @property {(level: import("@datawheel/olap-client").AdaptedLevel, hierarchy: import("@datawheel/olap-client").AdaptedHierarchy, dimension: import("@datawheel/olap-client").AdaptedDimension) => any} createHandler
+ * @property {(level: OlapClient.PlainLevel, hierarchy: OlapClient.PlainHierarchy, dimension: OlapClient.PlainDimension) => any} createHandler
  * @property {(item: TessExpl.Struct.DrilldownItem) => void} removeHandler
  * @property {(item: TessExpl.Struct.DrilldownItem) => void} toggleHandler
  * @property {(item: TessExpl.Struct.DrilldownItem, caption: string) => void} updateCaptionHandler

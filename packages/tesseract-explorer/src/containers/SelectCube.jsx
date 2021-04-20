@@ -11,7 +11,7 @@ import {shallowEqualForProps} from "../utils/validation";
 /** @type {React.FC<import("../components/SelectWithButtons").OwnProps<string>>} */
 const SelectLevel = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
 
-/** @type {React.FC<import("../components/SelectWithButtons").OwnProps<import("@datawheel/olap-client").AdaptedCube>>} */
+/** @type {React.FC<import("../components/SelectWithButtons").OwnProps<OlapClient.PlainCube>>} */
 const SelectAdaptedCube = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
 
 /**
@@ -21,13 +21,13 @@ const SelectAdaptedCube = memo(SelectWithButtons, shallowEqualForProps("items", 
 
 /**
  * @typedef StateProps
- * @property {import("@datawheel/olap-client").AdaptedCube[]} items
- * @property {import("@datawheel/olap-client").AdaptedCube | undefined} selectedItem
+ * @property {OlapClient.PlainCube[]} items
+ * @property {OlapClient.PlainCube | undefined} selectedItem
  */
 
 /**
  * @typedef DispatchProps
- * @property {(cube: import("@datawheel/olap-client").AdaptedCube) => void} onItemSelect
+ * @property {(cube: OlapClient.PlainCube) => void} onItemSelect
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
