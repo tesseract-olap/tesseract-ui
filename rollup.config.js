@@ -8,7 +8,6 @@ import replace from "@rollup/plugin-replace";
 import autoprefixer from "autoprefixer";
 import cleanup from "rollup-plugin-cleanup";
 import styles from "rollup-plugin-styles";
-import {terser} from "rollup-plugin-terser";
 
 /** @returns {import("rollup").RollupOptions} */
 export default cliArgs => {
@@ -68,7 +67,7 @@ export default cliArgs => {
       commonjs({
         include: ["node_modules/**"]
       }),
-      inProduction && terser(),
+      // inProduction && terser(),
       cleanup()
     ],
     external: id => extPackages.some(pkg => id.startsWith(pkg)),

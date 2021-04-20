@@ -1,4 +1,5 @@
 import path from "path";
+import reactRefresh from "@vitejs/plugin-react-refresh";
 
 const basePath = path.resolve(__dirname, "..");
 
@@ -17,6 +18,9 @@ const config = {
       replacement: path.resolve(basePath, "./packages/view-vizbuilder/src/index.js")
     }]
   },
+  plugins: [
+    reactRefresh()
+  ],
   server: {
     proxy: {
       "/olap/": {
