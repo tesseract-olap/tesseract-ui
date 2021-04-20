@@ -1,8 +1,12 @@
 const {promises: fs} = require("fs");
 const path = require("path");
 
+module.exports = {
+  traversePackages
+};
+
 /**
- * @typedef {PackageMeta}
+ * @typedef PackageMeta
  * @property {string} folderName
  * @property {string} manifestPath
  * @property {any} manifest
@@ -11,19 +15,19 @@ const path = require("path");
 
 /**
  * @param {string} packagesPath
- * @returns {IterableIterator<PackageMeta>}
+ * @returns {Promise<IterableIterator<PackageMeta>>}
  */
-export async function traversePackages(packagesPath) {
+async function traversePackages(packagesPath) {
   const files = await fs.readdir(packagesPath, {
     encoding: "utf8",
     withFileTypes: true
   });
 
-  let index = 0;
+  let index = -1;
 
   /** */
   function next() {
-    while (index++ < files.length) {
+    while (++index < files.length) {
       const file = files[index];
 
       if (!file.isDirectory()) continue;

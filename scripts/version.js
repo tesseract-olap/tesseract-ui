@@ -26,7 +26,7 @@ async function monorepoRelease(git) {
   const packagesPath = path.resolve(rootPath, "packages");
 
   // iterate over the things inside the packages/ folder
-  const packagesIterator = traversePackages(packagesPath);
+  const packagesIterator = await traversePackages(packagesPath);
   for (const packageMeta of packagesIterator) {
     const {folderName, manifestPath, manifest} = packageMeta;
 
