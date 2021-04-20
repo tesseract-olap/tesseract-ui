@@ -38,7 +38,7 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/node": "^12.20.7"
+    "@types/node": "^12.20.10"
   },
   "eslintConfig": {
     "parserOptions": {
