@@ -20,8 +20,8 @@ export const DownloadOptions = props => {
   const {translate: t} = useTranslation();
   return props.isDirty
     ? null
-    : <div className="download-area">
-      <h4>{t("params.title_downloaddata")}</h4>
+    : <div className="download-area p-3">
+      <h4 className="mt-0 mb-3">{t("params.title_downloaddata")}</h4>
       <ButtonGroup fill>
         <Button onClick={() => props.dispatch(doDownloadQuery("csv"))}>CSV</Button>
         <Button onClick={() => props.dispatch(doDownloadQuery("jsonarrays"))}>JSON Arrays</Button>

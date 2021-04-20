@@ -1,0 +1,65 @@
+.cube-locale:empty {
+  display: none;
+}
+
+.bp3-button-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.query-area {
+  position: relative;
+}
+
+.query-area .details-title {
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 1px 0;
+  padding: 0;
+  padding-left: 30px;
+  min-height: 30px;
+}
+
+.query-area .details-title::details-marker {
+  display: none;
+}
+
+.query-area .icon-chevron {
+  padding: 7px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.15s linear;
+}
+.query-area[open] .icon-chevron {
+  transform: rotate(90deg);
+}
+
+.query-area .title {
+  display: block;
+  flex: 0 0 auto;
+  line-height: 1.1em;
+  padding-right: 6px;
+}
+
+.query-area .spacer {
+  display: block;
+  flex: 1 0 auto;
+}
+
+.query-area > .container {
+  max-height: 10rem;
+}
+
+.tag-item {
+  margin-top: 2px;
+}
+
+.tag-item.hidden {
+  opacity: 0.5;
+}
+
+.tag-item .bp3-switch {
+  margin: 0 -5px;
+}

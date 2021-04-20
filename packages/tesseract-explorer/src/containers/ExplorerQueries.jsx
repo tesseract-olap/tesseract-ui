@@ -5,7 +5,7 @@ import {ExplorerColumn} from "../components/ExplorerColumn";
 import {MemoStoredQuery as StoredQuery} from "../components/StoredQuery";
 import {useTranslation} from "../hooks/translation";
 import {doParseQueryUrl} from "../middleware/actions";
-import {doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
+import {doQueriesRemove, doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectCurrentQueryItem, selectQueryItems} from "../state/queries/selectors";
 import {buildQuery} from "../utils/structs";
 
@@ -23,13 +23,14 @@ import {buildQuery} from "../utils/structs";
 /**
  * @typedef DispatchProps
  * @property {(currentQuery?: TessExpl.Struct.QueryItem) => void} onItemCreate
- * @property {(item: string) => void} onItemSelect
+ * @property {(itemKey: string) => void} onItemDelete
+ * @property {(itemKey: string) => void} onItemSelect
  * @property {() => any} parseQueryUrlHandler
  */
 
 /** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
 const ExplorerQueries = props => {
-  const {onItemSelect, currentItem} = props;
+  const {currentItem} = props;
   const {translate: t} = useTranslation();
 
   return (
@@ -49,13 +50,15 @@ const ExplorerQueries = props => {
         />
       </ButtonGroup>
 
-      {props.items.map(item =>
+      {props.items.map((item, _, list) =>
         <StoredQuery
           active={item === currentItem}
           className="query-item"
           key={item.key}
           item={item}
-          onClick={() => onItemSelect(item.key)}
+          hideDelete={list.length === 1}
+          onSelect={props.onItemSelect}
+          onDelete={props.onItemDelete}
         />
       )}
     </ExplorerColumn>
@@ -75,8 +78,11 @@ const mapDispatch = dispatch => ({
     dispatch(doQueriesUpdate(query));
     dispatch(doQueriesSelect(query.key));
   },
-  onItemSelect(item) {
-    dispatch(doQueriesSelect(item));
+  onItemDelete(itemKey) {
+    dispatch(doQueriesRemove(itemKey));
+  },
+  onItemSelect(itemKey) {
+    dispatch(doQueriesSelect(itemKey));
   },
   parseQueryUrlHandler() {
     const string = window.prompt("Enter the URL of the query you want to parse:");

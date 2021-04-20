@@ -53,6 +53,9 @@ const effects = {
 
   /** @type {(state: TessExpl.State.QueriesState, payload: string) => TessExpl.State.QueriesState} */
   [QUERIES_REMOVE]: (state, queryItemKey) => {
+    const amount = Object.keys(state.itemMap).length;
+    if (amount < 2) return state;
+
     const itemMap = omitRecord(state.itemMap, queryItemKey);
     const current = itemMap[state.current] ? state.current : Object.keys(itemMap)[0];
     return {current, itemMap};

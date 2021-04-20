@@ -5,8 +5,6 @@ import ViewPortList from "react-viewport-list";
 import {useTranslation} from "../hooks/translation";
 import {keyBy, safeRegExp} from "../utils/transform";
 
-import "../style/TransferInput.scss";
-
 /**
  * @template {TessExpl.Struct.IQueryItem} T
  * @typedef OwnProps

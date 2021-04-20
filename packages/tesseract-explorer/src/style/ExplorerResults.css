@@ -1,0 +1,136 @@
+.explorer-results-content {
+  padding: 1px;
+  overflow: auto;
+}
+
+.result-panel {
+  height: 100%;
+  width: 100%;
+}
+
+.data-raw {
+  padding: 0.75rem;
+  display: grid;
+  overflow: auto;
+  grid-template-columns: 2fr 3fr;
+  grid-template-rows: auto auto 1fr;
+  gap: 0.75rem;
+}
+
+.data-raw .bp3-label {
+  font-weight: bold;
+}
+
+.data-raw > div {
+  min-width: 0;
+}
+
+.data-raw .sourceurl {
+  grid-column: span 2;
+}
+
+.data-raw .code-block {
+  margin: 0;
+  overflow: auto;
+}
+
+.rro--parent {
+  font-family: "Roboto Mono", "Consolas", Monaco, "Courier New", Courier,
+    monospace;
+  overflow: hidden;
+  padding-left: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rro--object-constructor {
+  font-style: italic;
+}
+.rro--name {
+  font-weight: bold;
+}
+.rro--type-number > .rro--value {
+  color: #00a;
+}
+.rro--type-string > .rro--value {
+  color: #0a0;
+}
+.rro--type-boolean > .rro--value {
+  color: #a00;
+}
+
+.data-matrix {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.data-matrix .toolbar {
+  flex: 0 0 260px;
+  padding: 0.75rem;
+}
+
+.data-matrix .preview {
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+.data-chart {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.data-chart .editor {
+  flex: 0 0 540px;
+  display: flex;
+  padding: 0.5rem;
+  flex-flow: column nowrap;
+}
+
+.data-chart .editor .params {
+  flex: 0 0 0;
+  display: flex;
+  flex-flow: row nowrap;
+  margin-bottom: 1rem;
+}
+
+.data-chart .editor .params .inline-group {
+  flex: 1 0 100px;
+  margin: 0 1rem 0 0;
+}
+
+.data-chart .editor .params + section {
+  flex: 1 0 50%;
+}
+
+.data-chart .preview {
+  align-items: center;
+  display: flex;
+  flex: 1 0 0;
+  justify-content: center;
+  max-height: 100%;
+  min-width: 0;
+  padding: 0.5rem;
+}
+
+.data-chart .preview .animated-cube {
+  font-size: 4rem;
+}
+
+.data-chart .preview .viz {
+  height: 90%;
+  transform: rotateZ(360deg);
+}
+
+.data-chart .preview .viz > svg {
+  display: block;
+  max-width: 100%;
+}
+
+.bp3-table-container .column-number {
+  font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console",
+    "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",
+    "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier,
+    monospace;
+  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
+  text-align: right;
+}

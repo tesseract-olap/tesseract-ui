@@ -1,4 +1,4 @@
-import "./style.scss";
+import "./style.css";
 export {default as DebugView} from "./components/ResultRaw";
 export {default as TableView} from "./components/ResultTable";
 export {default as PivotView} from "./components/ResultPivot";

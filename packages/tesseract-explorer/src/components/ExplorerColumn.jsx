@@ -18,7 +18,7 @@ export const ExplorerColumn = props => {
 
   if (!isOpen) {
     return (
-      <div className={classNames("explorer-column closed", props.className)}>
+      <div className={classNames("explorer-column closed bp3-elevation-0", props.className)}>
         <div className="titlebar">
           <h2 className="token" onClick={toggleHandler}>
             {props.title}
@@ -29,7 +29,7 @@ export const ExplorerColumn = props => {
   }
 
   return (
-    <div className={classNames("explorer-column", props.className)}>
+    <div className={classNames("explorer-column bp3-elevation-0", props.className)}>
       <div className="titlebar">
         <h2 className="token" onClick={toggleHandler}>
           {props.title}

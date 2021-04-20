@@ -20,7 +20,7 @@ export const QueryArea = props => {
   const {tooltip, warning} = props;
   return (
     <details className={classNames("query-area", props.className)} open={props.open}>
-      <summary className="details-title">
+      <summary className="details-title bp3-elevation-0">
         <Icon className="icon-chevron" icon="chevron-right" />
         <span className="title">{props.title}</span>
         {tooltip && <IconTooltip tooltipText={tooltip} icon="info-sign" />}
@@ -31,7 +31,9 @@ export const QueryArea = props => {
           {warning && <Button disabled intent={Intent.WARNING} icon="warning-sign" />}
         </ButtonGroup>
       </summary>
-      <ScrollArea isShadow={false}>{props.children}</ScrollArea>
+      <ScrollArea isShadow={false}>
+        <div className="p-3">{props.children}</div>
+      </ScrollArea>
     </details>
   );
 };

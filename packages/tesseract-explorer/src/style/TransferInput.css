@@ -4,13 +4,12 @@
   grid-template-columns: 216px 216px;
   grid-column-gap: 0.5rem;
   grid-row-gap: 0.5rem;
-
-  .item-filter {
-    grid-column: span 2;
-  }
-  .item-list {
-    overflow: auto;
-    min-height: 130px;
-    max-height: 300px;
-  }
+}
+.input-transfer .item-filter {
+  grid-column: span 2;
+}
+.input-transfer .item-list {
+  overflow: auto;
+  min-height: 130px;
+  max-height: 300px;
 }

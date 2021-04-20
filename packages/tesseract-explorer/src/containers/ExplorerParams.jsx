@@ -28,7 +28,7 @@ export const ExplorerParams = props => {
 
   return (
     <ExplorerColumn className={props.className} title={t("params.column_title")}>
-      <ButtonGroup className="cube-locale" fill vertical>
+      <ButtonGroup className="cube-locale p-3" fill vertical>
         <SelectLocale />
         <SelectCube />
       </ButtonGroup>
@@ -41,7 +41,7 @@ export const ExplorerParams = props => {
       {props.enableTopk && <QueryTopk />}
       <QueryBooleans />
 
-      <ButtonGroup className="query-actions" fill>
+      <ButtonGroup className="query-actions p-3" fill>
         <ButtonExecuteQuery />
       </ButtonGroup>
 
