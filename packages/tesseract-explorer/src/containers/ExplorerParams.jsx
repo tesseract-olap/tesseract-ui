@@ -41,11 +41,10 @@ export const ExplorerParams = props => {
       {props.enableTopk && <QueryTopk />}
       <QueryBooleans />
 
-      <ButtonGroup className="query-actions p-3" fill>
+      <div className="actions">
         <ButtonExecuteQuery />
-      </ButtonGroup>
-
-      <DownloadOptions />
+        <DownloadOptions />
+      </div>
     </ExplorerColumn>
   );
 };

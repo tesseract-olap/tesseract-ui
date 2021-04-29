@@ -1,4 +1,4 @@
-import {Button, Classes, Intent} from "@blueprintjs/core";
+import {Button, ButtonGroup, Classes, Intent} from "@blueprintjs/core";
 import React, {Fragment} from "react";
 import {connect} from "react-redux";
 import {ButtonTooltip} from "../components/Tooltips";
@@ -23,26 +23,22 @@ import {selectServerEndpoint, selectServerSoftware} from "../state/server/select
 export const ButtonExecuteQuery = props => {
   const {translate: t} = useTranslation();
 
-  const execButton = <Button
-    fill={true}
-    icon="database"
-    intent={Intent.PRIMARY}
-    text={t("params.action_execute")}
-    onClick={props.executeQueryHandler}
-  />;
-
-  if (props.software !== "tesseract-olap") return execButton;
-
   return (
-    <Fragment>
-      {execButton}
-      <ButtonTooltip
+    <ButtonGroup className="query-actions p-3" fill>
+      <Button
+        fill={true}
+        icon="database"
+        intent={Intent.PRIMARY}
+        text={t("params.action_execute")}
+        onClick={props.executeQueryHandler}
+      />
+      {props.software === "tesseract-olap" && <ButtonTooltip
         className={Classes.FIXED}
         icon="exchange"
         tooltipText={t("params.current_endpoint", {label: props.endpoint})}
         onClick={props.updateEndpointHandler}
-      />
-    </Fragment>
+      />}
+    </ButtonGroup>
   );
 };
 
