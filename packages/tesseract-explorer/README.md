@@ -90,7 +90,7 @@ The keys of the object will be used as the name of each tab, and the values are 
 
 ```ts
 interface ViewProps {
-  cube: OlapClient.AdaptedCube;
+  cube: OlapClient.PlainCube;
   result: TessExpl.Struct.QueryResult;
   params: TessExpl.Struct.QueryParams;
 }

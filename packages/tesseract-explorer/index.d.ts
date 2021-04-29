@@ -21,16 +21,24 @@ declare namespace TessExpl {
 
   interface ExplorerProps {
     /**
+     * A reference to the server with the data.
+     * Can be setup as a string with the URL of the server, or a
+     * [AxiosRequestConfig](https://github.com/axios/axios#request-config)
+     * for more complex handling of authorization/authentication.
+     */
+    src: OlapClnt.ServerConfig;
+
+    /**
      * A classname to add to the app wrapper node.
      */
     className?: string;
 
     /**
-     * The URL for the data server.
-     * Can be setup as a string, or a [AxiosRequestConfig](https://github.com/axios/axios#request-config)
-     * for more complex handling of authorization/authentication.
+     * Enables multiple query mode.
+     * This adds a column where the user can quickly switch between queries,
+     * like tabs in a browser.
      */
-    src: string | AxiosRequestConfig;
+    multiquery?: boolean;
 
     /**
      * Defines an index of formatter functions available to the measures shown
@@ -62,7 +70,7 @@ declare namespace TessExpl {
 
   interface ViewProps {
     className?: string;
-    cube: OlapClnt.AdaptedCube;
+    cube: OlapClnt.PlainCube;
     params: Struct.QueryParams;
     result: Struct.QueryResult;
   }
@@ -89,7 +97,7 @@ declare namespace TessExpl {
     }
 
     interface ServerState {
-      cubeMap: Record<string, OlapClnt.AdaptedCube>;
+      cubeMap: Record<string, OlapClnt.PlainCube>;
       endpoint: string;
       localeOptions: string[];
       online: boolean | undefined;

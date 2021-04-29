@@ -21,8 +21,8 @@ import ExplorerResults from "./ExplorerResults";
 
 /**
  * @typedef DispatchProps
- * @property {(src: string | import("axios").AxiosRequestConfig) => any} setupClient
- * @property {(locale: string[]) => any} updateLocaleList
+ * @property {(src: OlapClient.ServerConfig) => void} setupClient
+ * @property {(locale: string[]) => void} updateLocaleList
  */
 
 /** @type {React.FC<Required<TessExpl.ExplorerProps> & StateProps & DispatchProps>} */

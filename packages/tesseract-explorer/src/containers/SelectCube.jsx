@@ -12,7 +12,7 @@ import {shallowEqualForProps} from "../utils/validation";
 const SelectLevel = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
 
 /** @type {React.FC<import("../components/SelectWithButtons").OwnProps<OlapClient.PlainCube>>} */
-const SelectAdaptedCube = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
+const SelectPlainCube = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
 
 /**
  * @typedef OwnProps
@@ -70,7 +70,7 @@ export const SelectCube = props => {
   }, [cubeItems, selectedItem]);
 
   const selectCube = selectedItem
-    ? <SelectAdaptedCube
+    ? <SelectPlainCube
       className="select-cube"
       getLabel={item => item.caption || item.name}
       hidden={cubeItems.length < 2}

@@ -10,7 +10,8 @@ export const initialState = {
 };
 
 /** @type {import("redux").Reducer<TessExpl.State.ExplorerState>} */
-export function explorerReducer(state = initialState, action) {
+export function explorerReducer(state, action) {
+  state = state || initialState;
   return {
     explorerServer: serverReducer(state.explorerServer, action),
     explorerLoading: loadingReducer(state.explorerLoading, action),
