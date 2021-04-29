@@ -15,7 +15,7 @@ const validate = require("./validate");
 const LINE = "-----------------------------------------------------------";
 
 cli
-  .command("<directory>", "Create a tesseract-ui boilerplate in the defined directory.")
+  .command("[directory]", "Create a tesseract-ui boilerplate in the defined directory.")
   .option("-e, --env <machine>", "Sets the type of machine where this instance will run.")
   .option("-s, --server <url>", "Sets the URL for the tesseract server.")
   .option("-n, --nginx", "If the environment is production, outputs an example nginx config for the static directory.")
@@ -33,10 +33,11 @@ cli.parse();
  * @param {string} options.server
  * @param {boolean} options.nginx
  */
-async function cliAction(targetFolder, options) {
+async function cliAction(targetFolder = ".", options) {
   console.log(`${pkg.name} v${pkg.version}`);
 
   const targetPath = path.resolve(targetFolder);
+  const targetName = path.basename(targetPath);
   utils.makeDirectory(targetPath);
 
   console.log(`${LINE}
@@ -70,7 +71,7 @@ ${LINE}`);
   console.log(LINE);
   console.log("Creating files and applying configuration...");
   create({
-    name: utils.slugify(targetFolder),
+    name: utils.slugify(targetName) || "demo",
     serverUrl: options.server,
     targetPath
   });

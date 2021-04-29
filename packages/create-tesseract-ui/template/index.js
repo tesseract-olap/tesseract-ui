@@ -17,7 +17,7 @@ const enhancers = composeEnhancers(
   applyMiddleware(olapMiddleware, permalinkMiddleware)
 );
 
-const store = createStore(explorerReducer, null, enhancers);
+const store = createStore(explorerReducer, undefined, enhancers);
 
 const App = props =>
   createElement(Provider, {store},

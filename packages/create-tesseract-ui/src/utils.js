@@ -70,7 +70,9 @@ function writeFile(fileName, targetPath, contents) {
 function slugify(string) {
   return `${string}`.trim().toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s/g, "-");
+    .replace(/[^\w-]/g, "")
+    .replace(/_/g, "-")
+    .replace(/^[^a-z]+|[^a-z]+$/g, "");
 }
 
 module.exports = {
