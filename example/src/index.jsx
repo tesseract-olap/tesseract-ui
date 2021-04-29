@@ -35,11 +35,9 @@ ReactDOM.render(
   <Provider store={store}>
     <Explorer
       src="/olap/"
-      title="Tesseract UI BETA"
+      formatters={{Sheep: n => `🐑 ${n.toFixed()}`}}
+      multiquery
       panels={PANELS}
-      formatters={{
-        Sheep: n => `🐑 ${n.toFixed()}`
-      }}
     />
   </Provider>,
   document.getElementById("app")

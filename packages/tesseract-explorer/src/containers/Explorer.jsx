@@ -39,17 +39,12 @@ const ExplorerComponent = props => {
       <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
         <div className={classNames("explorer-wrapper", props.className)}>
           <LoadingScreen className="explorer-loading" />
-          {props.isLoaded
+          {props.multiquery && props.isLoaded
             ? <ExplorerQueries className="explorer-queries" />
             : <div/>
           }
           {props.isLoaded
-            ? <ExplorerParams
-              className="explorer-params"
-              enableGrowth={props.enableGrowth}
-              enableRca={props.enableRca}
-              enableTopk={props.enableTopk}
-            />
+            ? <ExplorerParams className="explorer-params" />
             : <div/>
           }
           <ExplorerResults className="explorer-results" panels={props.panels} />
