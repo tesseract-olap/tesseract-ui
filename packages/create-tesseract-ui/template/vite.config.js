@@ -21,7 +21,7 @@ const config = {
   clearScreen: false,
   define: {
     'process.env': {
-      '__SERVER_URL__': inProduction ? serverUrl : "/tesseract/",
+      '__SERVER_URL__': inProduction ? serverUrl : "/olap/",
     },
   },
   plugins: [

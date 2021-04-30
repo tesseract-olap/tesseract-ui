@@ -11,7 +11,7 @@
     "@blueprintjs/icons": "~3.26.0",
     "@blueprintjs/select": "~3.15.0",
     "@blueprintjs/table": "~3.8.0",
-    "@datawheel/tesseract-explorer": "^1.0.0-alpha.10",
+    "@datawheel/tesseract-explorer": "next",
     "normalize.css": "^8.0.1",
     "react-dom": "^17",
     "react-redux": "~7.2.0",
