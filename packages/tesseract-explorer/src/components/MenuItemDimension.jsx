@@ -1,6 +1,6 @@
 import {MenuItem} from "@blueprintjs/core";
 import React, {memo} from "react";
-import HierarchyMenuItem from "./MenuItemHierarchy";
+import {MemoHierarchyMenuItem as HierarchyMenuItem} from "./MenuItemHierarchy";
 
 /**
  * @typedef OwnProps
@@ -10,7 +10,7 @@ import HierarchyMenuItem from "./MenuItemHierarchy";
  */
 
 /** @type {React.FC<OwnProps>} */
-const DimensionMenuItem = props => {
+export const DimensionMenuItem = props => {
   const {dimension} = props;
   const {hierarchies} = dimension;
 
@@ -25,22 +25,21 @@ const DimensionMenuItem = props => {
       />
     );
   }
-  else {
-    return (
-      <MenuItem key={dimension.uri} icon="layers" text={dimension.name}>
-        {hierarchies.map(hie =>
-          <HierarchyMenuItem
-            childItem
-            dimension={dimension}
-            hierarchy={hie}
-            key={hie.uri}
-            onItemSelect={props.onItemSelect}
-            selectedItems={props.selectedItems}
-          />
-        )}
-      </MenuItem>
-    );
-  }
+
+  return (
+    <MenuItem key={dimension.uri} icon="layers" text={dimension.name}>
+      {hierarchies.map(hie =>
+        <HierarchyMenuItem
+          childItem
+          dimension={dimension}
+          hierarchy={hie}
+          key={hie.uri}
+          onItemSelect={props.onItemSelect}
+          selectedItems={props.selectedItems}
+        />
+      )}
+    </MenuItem>
+  );
 };
 
-export default memo(DimensionMenuItem);
+export const MemoDimensionMenuItem = memo(DimensionMenuItem);

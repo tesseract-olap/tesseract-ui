@@ -1,11 +1,11 @@
 import {FormGroup, Popover, PopoverInteractionKind, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React from "react";
-import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {useTranslation} from "../hooks/translation";
 import {summaryGrowth} from "../utils/format";
 import {joinName} from "../utils/transform";
 import {isGrowthItem} from "../utils/validation";
+import {MemoSelectMeasure as SelectMeasure} from "./SelectMeasure";
 import {SelectTimeLevel} from "./SelectTimeLevel";
 
 /**

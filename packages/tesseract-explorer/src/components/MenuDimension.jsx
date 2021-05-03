@@ -1,8 +1,8 @@
 import {Menu} from "@blueprintjs/core";
 import React from "react";
-import {connect} from "react-redux";
+import {useSelector} from "react-redux";
 import {selectOlapDimensionItems} from "../state/selectors";
-import DimensionMenuItem from "./MenuItemDimension";
+import {MemoDimensionMenuItem as DimensionMenuItem} from "./MenuItemDimension";
 
 /**
  * @typedef OwnProps
@@ -10,27 +10,20 @@ import DimensionMenuItem from "./MenuItemDimension";
  * @property {(level: OlapClient.PlainLevel, hierarchy: OlapClient.PlainHierarchy, dimension: OlapClient.PlainDimension) => any} onItemSelect
  */
 
-/**
- * @typedef StateProps
- * @property {OlapClient.PlainDimension[]} dimensions
- */
+/** @type {React.FC<OwnProps>} */
+export const DimensionMenu = props => {
+  const dimensions = useSelector(selectOlapDimensionItems) || [];
 
-/** @type {React.FC<OwnProps & StateProps>} */
-const DimensionMenu = props =>
-  <Menu className="menu-dimension">
-    {props.dimensions.map(dim =>
-      <DimensionMenuItem
-        dimension={dim}
-        key={dim.uri}
-        onItemSelect={props.onItemSelect}
-        selectedItems={props.selectedItems}
-      />
-    )}
-  </Menu>;
-
-/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
-const mapState = state => ({
-  dimensions: selectOlapDimensionItems(state) || []
-});
-
-export default connect(mapState)(DimensionMenu);
+  return (
+    <Menu className="menu-dimension">
+      {dimensions.map(dim =>
+        <DimensionMenuItem
+          dimension={dim}
+          key={dim.uri}
+          onItemSelect={props.onItemSelect}
+          selectedItems={props.selectedItems}
+        />
+      )}
+    </Menu>
+  );
+};

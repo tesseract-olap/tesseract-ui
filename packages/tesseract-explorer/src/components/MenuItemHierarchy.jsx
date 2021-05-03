@@ -1,7 +1,7 @@
 import {MenuItem} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {abbreviateFullName} from "../utils/format";
-import LevelMenuItem from "./MenuItemLevel";
+import {MemoLevelMenuItem as LevelMenuItem} from "./MenuItemLevel";
 
 /**
  * @typedef OwnProps
@@ -13,7 +13,7 @@ import LevelMenuItem from "./MenuItemLevel";
  */
 
 /** @type {React.FC<OwnProps>} */
-const HierarchyMenuItem = props => {
+export const HierarchyMenuItem = props => {
   const {hierarchy} = props;
   const {levels} = hierarchy;
   const name = props.childItem
@@ -32,24 +32,23 @@ const HierarchyMenuItem = props => {
       />
     );
   }
-  else {
-    const {dimension, onItemSelect, selectedItems} = props;
-    return (
-      <MenuItem key={hierarchy.uri} icon="layers" text={name}>
-        {levels.map(lvl =>
-          <LevelMenuItem
-            childItem
-            dimension={dimension}
-            hierarchy={hierarchy}
-            key={lvl.uri}
-            level={lvl}
-            onItemSelect={onItemSelect}
-            selectedItems={selectedItems}
-          />
-        )}
-      </MenuItem>
-    );
-  }
+
+  const {dimension, onItemSelect, selectedItems} = props;
+  return (
+    <MenuItem key={hierarchy.uri} icon="layers" text={name}>
+      {levels.map(lvl =>
+        <LevelMenuItem
+          childItem
+          dimension={dimension}
+          hierarchy={hierarchy}
+          key={lvl.uri}
+          level={lvl}
+          onItemSelect={onItemSelect}
+          selectedItems={selectedItems}
+        />
+      )}
+    </MenuItem>
+  );
 };
 
-export default memo(HierarchyMenuItem);
+export const MemoHierarchyMenuItem = memo(HierarchyMenuItem);

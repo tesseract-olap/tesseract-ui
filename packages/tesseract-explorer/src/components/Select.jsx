@@ -32,6 +32,7 @@ export const primitiveItemRenderer = (item, itemProps) => {
  * @property {boolean} [filterable]
  * @property {import("@blueprintjs/core").IconName | import("@blueprintjs/core").MaybeElement} [icon]
  * @property {import("@blueprintjs/select").ItemListPredicate<any>} [itemListPredicate]
+ * @property {import("@blueprintjs/select").ItemListRenderer<any>} [itemListRenderer]
  * @property {import("@blueprintjs/select").ItemRenderer<any>} [itemRenderer]
  * @property {any[]} items
  * @property {boolean} [loading]
@@ -49,6 +50,7 @@ export const SelectPrimitive = props => {
     <Select
       className={classNames("select-primitive", props.className)}
       itemListPredicate={props.itemListPredicate || primitiveItemListPredicate}
+      itemListRenderer={props.itemListRenderer}
       itemRenderer={props.itemRenderer || primitiveItemRenderer}
       items={props.items}
       filterable={props.filterable ?? props.items.length > 6}
@@ -90,6 +92,7 @@ SelectPrimitive.defaultProps = {
  * @property {(item: T) => string} getLabel
  * @property {import("@blueprintjs/core").IconName | import("@blueprintjs/core").MaybeElement} [icon]
  * @property {import("@blueprintjs/select").ItemListPredicate<T>} [itemListPredicate]
+ * @property {import("@blueprintjs/select").ItemListRenderer<T>} [itemListRenderer]
  * @property {import("@blueprintjs/select").ItemRenderer<T>} [itemRenderer]
  * @property {T[]} items
  * @property {boolean} [loading]
@@ -118,6 +121,7 @@ export const SelectObject = props => {
         const tester = safeRegExp(query, "i");
         return items.filter(item => tester.test(getLabel(item)));
       }}
+      itemListRenderer={props.itemListRenderer}
       itemRenderer={(item, itemProps) => {
         const {modifiers} = itemProps;
         const label = getLabel(item);

@@ -1,12 +1,12 @@
 import {ControlGroup, FormGroup, HTMLSelect, NumericInput, Popover, PopoverInteractionKind, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React from "react";
-import SelectMeasure from "../containers/ConnectedSelectMeasure";
 import {orderOptions} from "../enums";
 import {useTranslation} from "../hooks/translation";
 import {summaryTopk} from "../utils/format";
 import {stringifyName} from "../utils/transform";
 import SelectLevel from "./SelectLevel";
+import {MemoSelectMeasure as SelectMeasure} from "./SelectMeasure";
 
 /**
  * @typedef OwnProps

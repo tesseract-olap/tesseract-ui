@@ -1,13 +1,11 @@
 import {NonIdealState, Tab, Tabs} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {Suspense, useState} from "react";
-import {connect} from "react-redux";
-import {AnimatedCube} from "../components/AnimatedCube";
+import {useSelector} from "react-redux";
+import {AnimatedCube} from "./AnimatedCube";
 import {useTranslation} from "../hooks/translation";
 import {selectLoadingState} from "../state/loading/selectors";
-import {selectCurrentQueryParams} from "../state/params/selectors";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
-import {selectCurrentQueryResult} from "../state/results/selectors";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server/selectors";
 
@@ -17,22 +15,19 @@ import {selectServerState} from "../state/server/selectors";
  * @property {Record<string, React.FunctionComponent | React.ComponentClass>} panels
  */
 
-/**
- * @typedef StateProps
- * @property {OlapClient.PlainCube} cube
- * @property {boolean} isDirtyQuery
- * @property {boolean} isLoading
- * @property {boolean | undefined} isServerOnline
- * @property {string} serverUrl
- * @property {TessExpl.Struct.QueryParams} params
- * @property {TessExpl.Struct.QueryResult} result
- */
-
-/** @type {React.FC<OwnProps & StateProps>} */
-const ExplorerResults = props => {
+/** @type {React.FC<OwnProps>} */
+export const ExplorerResults = props => {
   const {panels} = props;
-  const {data, error} = props.result;
   const [currentTab, setCurrentTab] = useState(Object.keys(panels)[0]);
+
+  const serverStatus = useSelector(selectServerState);
+  const {loading: isLoading} = useSelector(selectLoadingState);
+  const cube = useSelector(selectOlapCube);
+  const queryItem = useSelector(selectCurrentQueryItem);
+
+  const {online: isServerOnline, url: serverUrl} = serverStatus;
+  const {isDirty: isDirtyQuery, params, result} = queryItem;
+  const {data, error} = result;
 
   const {translate: t} = useTranslation();
 
@@ -51,7 +46,7 @@ const ExplorerResults = props => {
     );
   }
 
-  if (props.isServerOnline === false) {
+  if (isServerOnline === false) {
     if (typeof window === "object" && window.navigator.onLine === false) {
       return <NonIdealState
         className="explorer-error"
@@ -67,13 +62,13 @@ const ExplorerResults = props => {
       description={
         <span>
           {t("results.error_serveroffline_detail")}
-          <a href={props.serverUrl} target="_blank" rel="noopener noreferrer">{props.serverUrl}</a>.
+          <a href={serverUrl} target="_blank" rel="noopener noreferrer">{serverUrl}</a>.
         </span>
       }
     />;
   }
 
-  if (props.isLoading || props.isDirtyQuery) {
+  if (isLoading || isDirtyQuery) {
     return (
       <NonIdealState
         className={classNames("initial-view loading", props.className)}
@@ -108,22 +103,9 @@ const ExplorerResults = props => {
       </Tabs>
       <div className={`wrapper ${props.className}-content`}>
         <Suspense fallback={<AnimatedCube />}>
-          <CurrentComponent className="result-panel" cube={props.cube} params={props.params} result={props.result} />
+          <CurrentComponent className="result-panel" cube={cube} params={params} result={result} />
         </Suspense>
       </div>
     </div>
   );
 };
-
-/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
-const mapState = state => ({
-  isDirtyQuery: selectCurrentQueryItem(state).isDirty,
-  isLoading: selectLoadingState(state).loading,
-  isServerOnline: selectServerState(state).online,
-  serverUrl: selectServerState(state).url,
-  cube: selectOlapCube(state),
-  params: selectCurrentQueryParams(state),
-  result: selectCurrentQueryResult(state)
-});
-
-export default connect(mapState)(ExplorerResults);

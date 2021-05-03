@@ -14,7 +14,7 @@ import {levelRefToArray, stringifyName} from "../utils/transform";
  */
 
 /** @type {React.FC<OwnProps>} */
-const LevelMenuItem = props => {
+export const LevelMenuItem = props => {
   const {level} = props;
   const name = props.childItem ? level.name : abbreviateFullName(levelRefToArray(level));
 
@@ -29,4 +29,4 @@ const LevelMenuItem = props => {
   );
 };
 
-export default memo(LevelMenuItem);
+export const MemoLevelMenuItem = memo(LevelMenuItem);

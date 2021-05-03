@@ -4,7 +4,7 @@ import React from "react";
 /**
  * @typedef OwnProps
  * @property {TessExpl.Struct.MeasureItem} item
- * @property {(event: React.FormEvent<HTMLInputElement>) => void} [onToggle]
+ * @property {(item: TessExpl.Struct.MeasureItem) => void} onToggle
  */
 
 /** @type {React.FC<OwnProps>} */
@@ -15,7 +15,7 @@ function TagMeasure(props) {
       className="item-measure"
       label={item.measure}
       checked={item.active}
-      onChange={props.onToggle}
+      onChange={() => props.onToggle(item)}
     />
   );
 }

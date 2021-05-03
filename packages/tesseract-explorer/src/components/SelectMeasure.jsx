@@ -2,7 +2,9 @@ import {Alignment, Button, MenuItem} from "@blueprintjs/core";
 import {Select} from "@blueprintjs/select";
 import classNames from "classnames";
 import React, {memo} from "react";
+import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
+import {selectOlapMeasureItems} from "../state/selectors";
 import {safeRegExp} from "../utils/transform";
 import {shallowEqualExceptFns} from "../utils/validation";
 
@@ -11,7 +13,6 @@ import {shallowEqualExceptFns} from "../utils/validation";
  * @property {string} [className]
  * @property {boolean} [fill]
  * @property {import("@blueprintjs/core").IconName | false} [icon]
- * @property {OlapClient.PlainMeasure[]} items
  * @property {BlueprintSelect.ItemListPredicate<OlapClient.PlainMeasure>} [itemListPredicate]
  * @property {BlueprintSelect.ItemRenderer<OlapClient.PlainMeasure>} [itemRenderer]
  * @property {(item: OlapClient.PlainMeasure) => void} onItemSelect
@@ -20,9 +21,8 @@ import {shallowEqualExceptFns} from "../utils/validation";
  * @property {boolean} [usePortal]
  */
 
-/** @type {Required<Pick<OwnProps, "icon" | "itemListPredicate" | "itemRenderer">>} */
+/** @type {Required<Pick<OwnProps, "itemListPredicate" | "itemRenderer">>} */
 const defaultProps = {
-  icon: "timeline-bar-chart",
   itemListPredicate(query, items) {
     const tester = safeRegExp(query, "i");
     return items.filter(item => tester.test(item.caption || item.name));
@@ -41,18 +41,20 @@ const defaultProps = {
 };
 
 /** @type {React.FC<OwnProps>} */
-const SelectMeasure = props => {
+export const SelectMeasure = props => {
   const {fill, usePortal} = props;
 
   const {translate: t} = useTranslation();
 
+  const items = useSelector(selectOlapMeasureItems);
+
   return (
     <Select
       className={classNames("select-measure", props.className)}
-      filterable={props.items.length > 6}
+      filterable={items.length > 6}
       itemListPredicate={props.itemListPredicate || defaultProps.itemListPredicate}
       itemRenderer={props.itemRenderer || defaultProps.itemRenderer}
-      items={props.items}
+      items={items}
       onItemSelect={props.onItemSelect}
       popoverProps={{fill, minimal: true, usePortal, portalClassName: "select-measure-overlay"}}
     >
@@ -60,7 +62,7 @@ const SelectMeasure = props => {
         alignText={Alignment.LEFT}
         className={props.className}
         fill={fill}
-        icon={props.icon || defaultProps.icon}
+        icon={props.icon}
         rightIcon="double-caret-vertical"
         text={props.selectedItem || t("selectmeasure_placeholder")}
       />
@@ -70,4 +72,4 @@ const SelectMeasure = props => {
 
 SelectMeasure.defaultProps = defaultProps;
 
-export default memo(SelectMeasure, shallowEqualExceptFns);
+export const MemoSelectMeasure = memo(SelectMeasure, shallowEqualExceptFns);

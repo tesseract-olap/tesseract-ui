@@ -1,17 +1,17 @@
 import React, {Fragment, memo, useEffect, useMemo, useState} from "react";
-import {connect} from "react-redux";
-import {SelectWithButtons} from "../components/SelectWithButtons";
+import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {doCubeSet} from "../middleware/actions";
 import {selectOlapCube} from "../state/selectors";
 import {selectOlapCubeItems} from "../state/server/selectors";
 import {groupBy} from "../utils/transform";
 import {shallowEqualForProps} from "../utils/validation";
+import {SelectWithButtons} from "./SelectWithButtons";
 
-/** @type {React.FC<import("../components/SelectWithButtons").OwnProps<string>>} */
+/** @type {React.FC<import("./SelectWithButtons").OwnProps<string>>} */
 const SelectLevel = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
 
-/** @type {React.FC<import("../components/SelectWithButtons").OwnProps<OlapClient.PlainCube>>} */
+/** @type {React.FC<import("./SelectWithButtons").OwnProps<OlapClient.PlainCube>>} */
 const SelectPlainCube = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
 
 /**
@@ -19,22 +19,14 @@ const SelectPlainCube = memo(SelectWithButtons, shallowEqualForProps("items", "s
  * @property {string} [className]
  */
 
-/**
- * @typedef StateProps
- * @property {OlapClient.PlainCube[]} items
- * @property {OlapClient.PlainCube | undefined} selectedItem
- */
-
-/**
- * @typedef DispatchProps
- * @property {(cube: OlapClient.PlainCube) => void} onItemSelect
- */
-
-/** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
-export const SelectCube = props => {
-  const {items, selectedItem} = props;
+/** @type {React.FC<OwnProps>} */
+export const SelectCube = () => {
+  const dispatch = useDispatch();
 
   const {translate: t} = useTranslation();
+
+  const items = useSelector(selectOlapCubeItems);
+  const selectedItem = useSelector(selectOlapCube);
 
   const {
     level: level1,
@@ -57,15 +49,22 @@ export const SelectCube = props => {
     values: level3Values
   } = useLevel(level2Values, selectedItem, item => item.annotations.table);
 
+  /* eslint-disable indent, operator-linebreak */
   const cubeItems =
     level3Values.length > 0 ? level3Values :
     level2Values.length > 0 ? level2Values :
     level1Values.length > 0 ? level1Values :
     /* else */                items;
+  /* eslint-enable indent, operator-linebreak */
+
+  /** @type {(cube: import("@datawheel/olap-client").PlainCube) => void} */
+  const onItemSelect = cube => {
+    dispatch(doCubeSet(cube.name));
+  };
 
   useEffect(() => {
     if (selectedItem && cubeItems.length > 0 && !cubeItems.includes(selectedItem)) {
-      props.onItemSelect(cubeItems[0]);
+      onItemSelect(cubeItems[0]);
     }
   }, [cubeItems, selectedItem]);
 
@@ -75,7 +74,7 @@ export const SelectCube = props => {
       getLabel={item => item.caption || item.name}
       hidden={cubeItems.length < 2}
       items={cubeItems}
-      onItemSelect={props.onItemSelect}
+      onItemSelect={onItemSelect}
       selectedItem={selectedItem}
       text={t("params.label_cube", {
         name: selectedItem.name,
@@ -111,21 +110,6 @@ export const SelectCube = props => {
     </Fragment>
   );
 };
-
-/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
-const mapState = state => ({
-  items: selectOlapCubeItems(state),
-  selectedItem: selectOlapCube(state)
-});
-
-/** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
-const mapDispatch = dispatch => ({
-  onItemSelect(cube) {
-    dispatch(doCubeSet(cube.name));
-  }
-});
-
-export const ConnectedSelectCube = connect(mapState, mapDispatch)(SelectCube);
 
 /**
  * @template T

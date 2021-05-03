@@ -1,33 +1,24 @@
 import {Button, InputGroup, Intent, Popover, PopoverInteractionKind, Position} from "@blueprintjs/core";
 import React, {useMemo, useState} from "react";
-import {connect} from "react-redux";
-import {QueryArea} from "../components/QueryArea";
-import TagMeasure from "../components/TagMeasure";
+import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {doMeasureClear, doMeasureToggle} from "../state/params/actions";
+import {doMeasureToggle} from "../state/params/actions";
 import {selectMeasureItems} from "../state/params/selectors";
 import {safeRegExp} from "../utils/transform";
 import {activeItemCounter} from "../utils/validation";
+import {LayoutParamsArea} from "./LayoutParamsArea";
+import TagMeasure from "./TagMeasure";
 
 /**
  * @typedef OwnProps
  * @property {string} [className]
  */
 
-/**
- * @typedef StateProps
- * @property {TessExpl.Struct.MeasureItem[]} items
- */
+/** @type {React.FC<OwnProps>} */
+export const AreaMeasures = props => {
+  const dispatch = useDispatch();
 
-/**
- * @typedef DispatchProps
- * @property {() => void} clearHandler
- * @property {(item: TessExpl.Struct.MeasureItem) => void} toggleHandler
- */
-
-/** @type {React.FC<OwnProps & StateProps & DispatchProps>} */
-const QueryMeasures = props => {
-  const {items} = props;
+  const items = useSelector(selectMeasureItems);
 
   const [filter, setFilter] = useState("");
 
@@ -40,6 +31,11 @@ const QueryMeasures = props => {
     }
     return items;
   }, [items, filter]);
+
+  /** @type {(item: TessExpl.Struct.MeasureItem) => void} */
+  const toggleHandler = item => {
+    dispatch(doMeasureToggle({...item, active: !item.active}));
+  };
 
   const resetFilter = () => setFilter("");
   const toolbar =
@@ -70,7 +66,7 @@ const QueryMeasures = props => {
     </Popover>;
 
   return (
-    <QueryArea
+    <LayoutParamsArea
       className={props.className}
       open={true}
       title={t("params.title_area_measures", {n: `${items.reduce(activeItemCounter, 0)}`})}
@@ -78,29 +74,8 @@ const QueryMeasures = props => {
       tooltip={t("params.tooltip_area_measures")}
     >
       {filteredItems.map(item =>
-        <TagMeasure
-          item={item}
-          key={item.key}
-          onToggle={() => props.toggleHandler(item)}
-        />
+        <TagMeasure item={item} key={item.key} onToggle={toggleHandler} />
       )}
-    </QueryArea>
+    </LayoutParamsArea>
   );
 };
-
-/** @type {TessExpl.State.MapStateFn<StateProps, OwnProps>} */
-const mapState = state => ({
-  items: selectMeasureItems(state)
-});
-
-/** @type {TessExpl.State.MapDispatchFn<DispatchProps, OwnProps>} */
-const mapDispatch = dispatch => ({
-  clearHandler() {
-    dispatch(doMeasureClear());
-  },
-  toggleHandler(item) {
-    dispatch(doMeasureToggle({...item, active: !item.active}));
-  }
-});
-
-export default connect(mapState, mapDispatch)(QueryMeasures);

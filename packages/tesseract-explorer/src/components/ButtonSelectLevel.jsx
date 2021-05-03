@@ -2,7 +2,7 @@ import {Button, Popover} from "@blueprintjs/core";
 import React, {memo} from "react";
 import {stringifyName} from "../utils/transform";
 import {shallowEqualExceptFns} from "../utils/validation";
-import MenuDimensions from "./MenuDimension";
+import {DimensionMenu} from "./MenuDimension";
 
 /**
  * @typedef {BlueprintCore.IButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>} ButtonProps
@@ -20,10 +20,22 @@ import MenuDimensions from "./MenuDimension";
  */
 
 /** @type {React.FC<ButtonProps & OwnProps>} */
-const ButtonSelectLevel = ({selectedItems, onItemSelect, usePortal, ...props}) =>
-  <Popover autoFocus={false} boundary="viewport" fill={props.fill} usePortal={usePortal}>
-    <Button {...props} />
-    <MenuDimensions selectedItems={selectedItems.map(stringifyName)} onItemSelect={onItemSelect}/>
-  </Popover>;
+export const ButtonSelectLevel = props => {
+  const {selectedItems, onItemSelect, usePortal, ...buttonProps} = props;
+  return (
+    <Popover
+      autoFocus={false}
+      boundary="viewport"
+      fill={props.fill}
+      usePortal={usePortal}
+    >
+      <Button {...buttonProps} />
+      <DimensionMenu
+        selectedItems={selectedItems.map(stringifyName)}
+        onItemSelect={onItemSelect}
+      />
+    </Popover>
+  );
+};
 
-export default memo(ButtonSelectLevel, shallowEqualExceptFns);
+export const MemoButtonSelectLevel = memo(ButtonSelectLevel, shallowEqualExceptFns);

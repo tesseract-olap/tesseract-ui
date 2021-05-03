@@ -10,7 +10,7 @@ import ReactShadowScroll from "react-shadow-scroll";
  */
 
 /** @type {React.FC<OwnProps>} */
-export const ExplorerColumn = props => {
+export const LayoutColumn = props => {
   const {defaultOpen: initialOpenState = true} = props;
   const [isOpen, setOpen] = useState(initialOpenState);
 
