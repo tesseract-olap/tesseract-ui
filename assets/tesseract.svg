@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <path fill="#FCD34D" d="M128 128v128l111 -64v-128l-111 64z" />
+  <path fill="#FBBF24" d="M128 128l111 -64l-111 -64l-111 64l111 64z" />
+  <path fill="#F59E0B" d="M128 128l-111 -64v128l111 64v-128z" />
+  <path fill="#FCD34D" d="M128 128v-64l-55 32v64l55 -32z"/>
+  <path fill="#FBBF24" d="M128 128l-55 32l55 32l55 -32l-55 -32z" />
+  <path fill="#F59E0B" d="M128 128l55 32v-64l-55 -32v64z"/>
+</svg>
+
+

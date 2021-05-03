@@ -7,22 +7,14 @@
   text-overflow: ellipsis;
 }
 
-.query-area {
-  position: relative;
-}
-
 .query-area .details-title {
-  align-items: center;
-  display: flex;
-  flex-flow: row nowrap;
-  margin: 1px 0;
-  padding: 0;
   padding-left: 30px;
   min-height: 30px;
   list-style: none;
 }
 
-.query-area .details-title::-webkit-details-marker {
+.query-area .details-title::-webkit-details-marker,
+.query-area .details-title::marker {
   display: none;
 }
 
@@ -35,22 +27,6 @@
 }
 .query-area[open] .icon-chevron {
   transform: rotate(90deg);
-}
-
-.query-area .title {
-  display: block;
-  flex: 0 0 auto;
-  line-height: 1.1em;
-  padding-right: 6px;
-}
-
-.query-area .spacer {
-  display: block;
-  flex: 1 0 auto;
-}
-
-.query-area > .container {
-  max-height: 10rem;
 }
 
 .tag-item {

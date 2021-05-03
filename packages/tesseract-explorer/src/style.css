@@ -1,4 +1,3 @@
-@import "./style/variables";
 @import "./style/layout";
 
 @import "./style/CubeAnimation";
@@ -17,7 +16,6 @@
 
 /* WRAPPER */
 .explorer-wrapper {
-  background: --app-background-color;
   height: 100%;
   width: 100%;
   min-width: 320px;
@@ -26,10 +24,6 @@
   grid-template-columns: fit-content(30px) fit-content(30px) minmax(0, 1fr);
   grid-column-gap: 0;
   grid-row-gap: 0;
-}
-
-.explorer-wrapper.bp3-dark {
-  background-color: --dark-app-background-color;
 }
 
 /* LOADING */
@@ -42,8 +36,6 @@
 
 /* COLUMNS */
 .explorer-column {
-  display: flex;
-  flex-flow: column nowrap;
   height: 100%;
   min-height: 100px;
 }

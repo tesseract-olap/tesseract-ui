@@ -1,52 +1,38 @@
 @keyframes color-shift {
   0%,
   100% {
-    background: var(--anicube-color1);
+    fill: var(--anicube-color1);
   }
   33% {
-    background: var(--anicube-color2);
+    fill: var(--anicube-color2);
   }
   66% {
-    background: var(--anicube-color3);
+    fill: var(--anicube-color3);
   }
 }
 
 .animated-cube {
-  position: relative;
-  height: 2em;
-  width: 1.8em;
+  height: 5em;
+
+  --anicube-color1: #5c7080;
+  --anicube-color2: #738694;
+  --anicube-color3: #8a9ba8;
+  --anicube-play-state: running;
 }
 
-.animated-cube .cube {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-}
-
-.animated-cube .cube:nth-child(2) {
-  transform: rotate(180deg) scale(0.5);
-}
-
-.animated-cube span {
-  transform-origin: 0 0;
-  position: absolute;
-  height: 2em;
-  width: 2em;
+.animated-cube path {
   animation: color-shift 2.4s infinite;
   animation-play-state: var(--anicube-play-state);
 }
 
-.animated-cube span:nth-child(1) {
-  transform: rotate(210deg) skewX(-30deg) scaleY(0.864);
-  background: var(--anicube-color3);
+.animated-cube .a {
+  fill: var(--anicube-color3);
 }
-.animated-cube span:nth-child(2) {
-  transform: rotate(90deg) skewX(-30deg) scaleY(0.864);
-  background: var(--anicube-color1);
-  animation-delay: -1.6s;
+.animated-cube .b {
+  fill: var(--anicube-color1);
+  animation-delay: 0.8s;
 }
-.animated-cube span:nth-child(3) {
-  transform: rotate(-30deg) skewX(-30deg) scaleY(0.864);
-  background: var(--anicube-color2);
-  animation-delay: -0.8s;
+.animated-cube .c {
+  fill: var(--anicube-color2);
+  animation-delay: 1.6s;
 }
