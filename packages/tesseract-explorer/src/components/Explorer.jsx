@@ -6,6 +6,7 @@ import {TranslationProvider} from "../hooks/translation";
 import {doClientSetup} from "../middleware/actions";
 import {updateLocaleList} from "../state/server/actions";
 import {selectServerState} from "../state/server/selectors";
+import {AnimatedCube} from "./AnimatedCube";
 import {ExplorerParams} from "./ExplorerParams";
 import {ExplorerQueries} from "./ExplorerQueries";
 import {ExplorerResults} from "./ExplorerResults";
@@ -14,19 +15,20 @@ import ResultPivot from "./ResultPivot";
 import ResultRaw from "./ResultRaw";
 import ResultTable from "./ResultTable";
 
-/** @type {Required<Pick<TessExpl.ExplorerProps, "locale" | "uiLocale" | "panels">>} */
+/** @type {Required<Pick<TessExpl.ExplorerProps, "locale" | "panels" | "transientIcon" | "uiLocale">>} */
 const defaultProps = {
   locale: ["en"],
-  uiLocale: "en",
   panels: {
     "Data table": ResultTable,
     "Pivot table": ResultPivot,
     "Raw response": ResultRaw
-  }
+  },
+  transientIcon: <AnimatedCube />,
+  uiLocale: "en"
 };
 
 /** @type {React.FC<TessExpl.ExplorerProps>} */
-const ExplorerComponent = props => {
+export const ExplorerComponent = props => {
   const dispatch = useDispatch();
 
   const serverState = useSelector(selectServerState);
@@ -51,7 +53,11 @@ const ExplorerComponent = props => {
             ? <ExplorerParams className="explorer-params" />
             : <div/>
           }
-          <ExplorerResults className="explorer-results" panels={props.panels} />
+          <ExplorerResults
+            className="explorer-results"
+            panels={props.panels || defaultProps.panels}
+            transientIcon={props.transientIcon ?? defaultProps.transientIcon}
+          />
         </div>
       </TranslationProvider>
     </SettingsProvider>

@@ -1,9 +1,9 @@
+import { IconName } from "@blueprintjs/core";
 import * as OlapClnt from "@datawheel/olap-client";
-import {TranslationProviderProps} from "@datawheel/use-translation";
-import {AxiosRequestConfig} from "axios";
-import {default as React} from "react";
-import {MapDispatchToProps, MapStateToProps} from "react-redux";
-import {default as Redux} from "redux";
+import { TranslationProviderProps } from "@datawheel/use-translation";
+import { default as React } from "react";
+import { MapDispatchToProps, MapStateToProps } from "react-redux";
+import { default as Redux } from "redux";
 
 export = TessExpl;
 
@@ -61,6 +61,11 @@ declare namespace TessExpl {
      * The Translation labels to use in the UI.
      */
     translations?: TranslationProviderProps["translations"];
+
+    /**
+     * Defines an element to show when the app is in an indeterminate state.
+     */
+    transientIcon?: IconName | React.ReactElement | React.ReactFragment | false;
 
     /**
      * The default locale to use in the Explorer component UI.

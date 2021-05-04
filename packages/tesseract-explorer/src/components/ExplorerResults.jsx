@@ -1,8 +1,7 @@
-import {NonIdealState, Tab, Tabs} from "@blueprintjs/core";
+import {Icon, NonIdealState, Tab, Tabs} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {Suspense, useState} from "react";
 import {useSelector} from "react-redux";
-import {AnimatedCube} from "./AnimatedCube";
 import {useTranslation} from "../hooks/translation";
 import {selectLoadingState} from "../state/loading/selectors";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
@@ -12,12 +11,13 @@ import {selectServerState} from "../state/server/selectors";
 /**
  * @typedef OwnProps
  * @property {string} [className]
+ * @property {BlueprintCore.IconName | React.ReactElement | React.ReactFragment | false} transientIcon
  * @property {Record<string, React.FunctionComponent | React.ComponentClass>} panels
  */
 
 /** @type {React.FC<OwnProps>} */
 export const ExplorerResults = props => {
-  const {panels} = props;
+  const {panels, transientIcon} = props;
   const [currentTab, setCurrentTab] = useState(Object.keys(panels)[0]);
 
   const serverStatus = useSelector(selectServerState);
@@ -72,7 +72,7 @@ export const ExplorerResults = props => {
     return (
       <NonIdealState
         className={classNames("initial-view loading", props.className)}
-        icon={<AnimatedCube />}
+        icon={transientIcon}
       />
     );
   }
@@ -102,7 +102,7 @@ export const ExplorerResults = props => {
         <h2 className="token">{t("results.count_rows", {n: data.length})}</h2>
       </Tabs>
       <div className={`wrapper ${props.className}-content`}>
-        <Suspense fallback={<AnimatedCube />}>
+        <Suspense fallback={typeof transientIcon === "string" ? <Icon name={transientIcon} /> : transientIcon}>
           <CurrentComponent className="result-panel" cube={cube} params={params} result={result} />
         </Suspense>
       </div>
