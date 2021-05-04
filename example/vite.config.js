@@ -1,10 +1,16 @@
 import path from "path";
 import reactRefresh from "@vitejs/plugin-react-refresh";
 
+const {OLAPPROXY_TARGET = "http://localhost:7777"} = process.env;
+
 const basePath = path.resolve(__dirname, "..");
+
+const target = new URL(OLAPPROXY_TARGET);
+target.pathname = `${target.pathname}/`.replace(/\/{2,}/g, "/");
 
 /** @type {import("vite").UserConfig} */
 const config = {
+  clearScreen: false,
   root: "./src",
   define: {
     'process.env': {}
@@ -26,8 +32,8 @@ const config = {
       "/olap/": {
         changeOrigin: true,
         secure: false,
-        target: 'http://localhost:7777',
-        rewrite: (path) => path.replace(/^\/olap/, '')
+        target: target.origin,
+        rewrite: (path) => path.replace(/^\/olap\//, target.pathname)
       }
     }
   }
