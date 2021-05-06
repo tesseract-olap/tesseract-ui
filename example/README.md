@@ -22,3 +22,9 @@ export OLAPPROXY_TARGET="https://target.server/api/tesseract/"
 ```
 
 If the environment variable is not set, the configuration file assumes there's a tesseract-olap server in the local system, running with default settings, so setups the target of the proxy to `http://localhost:7777`.
+
+If the target server needs [Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#basic_authentication_scheme) keys, you can set them using the `OLAPPROXY_AUTH` environment variable. The value of this variable must be the username, a colon `:`, and the password:
+
+```bash
+export OLAPPROXY_AUTH="username:password"
+```

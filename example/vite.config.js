@@ -1,7 +1,10 @@
 import path from "path";
 import reactRefresh from "@vitejs/plugin-react-refresh";
 
-const {OLAPPROXY_TARGET = "http://localhost:7777"} = process.env;
+const {
+  OLAPPROXY_AUTH,
+  OLAPPROXY_TARGET = "http://localhost:7777"
+} = process.env;
 
 const basePath = path.resolve(__dirname, "..");
 
@@ -10,7 +13,6 @@ target.pathname = `${target.pathname}/`.replace(/\/{2,}/g, "/");
 
 /** @type {import("vite").UserConfig} */
 const config = {
-  clearScreen: false,
   root: "./src",
   define: {
     'process.env': {}
@@ -30,6 +32,7 @@ const config = {
   server: {
     proxy: {
       "/olap/": {
+        auth: OLAPPROXY_AUTH,
         changeOrigin: true,
         secure: false,
         target: target.origin,
