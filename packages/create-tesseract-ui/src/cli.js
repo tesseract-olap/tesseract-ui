@@ -119,8 +119,8 @@ ${grey(`server {
   else {
     console.log(`${LINE}
 The tesseract-ui boilerplate is ready to run in development mode.
-Use the command ${yellow("npm start")} to start the server, the app will then
-run on ${green("http://localhost:4000")}
+Use the command ${yellow("npm start")} to start the server.
+After the startup is done, a message will give the URL the app is available.
 To build a production bundle, run ${yellow("npm run build")}
 The bundle will be generated in ${path.join(targetPath, "dist/")}
 `);
