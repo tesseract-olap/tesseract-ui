@@ -4,32 +4,39 @@ import {createElement} from "react";
 /**
  * @typedef TooltipProps
  * @property {string | JSX.Element} tooltipText
- * @property {import("@blueprintjs/core").Intent} [tooltipIntent]
- * @property {import("@blueprintjs/core").Position} [tooltipPosition]
+ * @property {string} [tooltipClassName]
+ * @property {BlueprintCore.Intent} [tooltipIntent]
+ * @property {BlueprintCore.Position} [tooltipPosition]
  */
 
-/** @type {React.FC<import("@blueprintjs/core").IIconProps & TooltipProps>} */
+/** @type {React.FC<TooltipProps>} */
+export const TooltipWrapper = props => createElement(Tooltip, {
+  autoFocus: false,
+  boundary: "viewport",
+  className: props.tooltipClassName,
+  content: props.tooltipText,
+  intent: props.tooltipIntent,
+  position: props.tooltipPosition
+}, props.children);
+
+/** @type {React.FC<BlueprintCore.IconProps & TooltipProps>} */
 export const IconTooltip = props => {
-  const {tooltipText, tooltipIntent, tooltipPosition, ...iconProps} = props;
-  return createElement(Tooltip, {
-    autoFocus: false,
-    boundary: "viewport",
-    className: "icon-tooltip",
-    content: tooltipText,
-    intent: tooltipIntent,
-    position: tooltipPosition
-  }, createElement(Icon, iconProps));
+  const {tooltipIntent, tooltipPosition, tooltipText, ...restProps} = props;
+  return createElement(TooltipWrapper, {
+    tooltipClassName: "icon-tooltip",
+    tooltipIntent,
+    tooltipPosition,
+    tooltipText
+  }, createElement(Icon, restProps));
 };
 
-/** @type {React.FC<import("@blueprintjs/core").IButtonProps & TooltipProps>} */
+/** @type {React.FC<BlueprintCore.ButtonProps & TooltipProps>} */
 export const ButtonTooltip = props => {
-  const {tooltipText, tooltipIntent, tooltipPosition, ...buttonProps} = props;
-  return createElement(Tooltip, {
-    autoFocus: false,
-    boundary: "viewport",
-    className: "button-tooltip",
-    content: tooltipText,
-    intent: tooltipIntent,
-    position: tooltipPosition
-  }, createElement(Button, buttonProps));
+  const {tooltipIntent, tooltipPosition, tooltipText, ...restProps} = props;
+  return createElement(TooltipWrapper, {
+    tooltipClassName: "button-tooltip",
+    tooltipIntent,
+    tooltipPosition,
+    tooltipText
+  }, createElement(Button, restProps));
 };

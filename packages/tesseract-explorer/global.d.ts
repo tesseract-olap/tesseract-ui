@@ -16,4 +16,9 @@ declare global {
   declare namespace BlueprintSelect {
     export = BpjsSelect;
   }
+
+  interface JSONArrays {
+    headers: string[];
+    data: [string, ...(number | undefined)[]][];
+  }
 }

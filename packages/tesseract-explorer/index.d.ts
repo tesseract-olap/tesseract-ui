@@ -251,6 +251,12 @@ declare namespace TessExpl {
     }
 
     type LevelReference = LevelLike | LevelDescriptor;
+
+    interface FileDescriptor {
+      extension: string;
+      content: string;
+      name: string;
+    }
   }
 
   namespace OlapMiddleware {

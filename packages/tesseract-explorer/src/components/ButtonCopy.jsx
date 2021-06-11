@@ -1,16 +1,16 @@
-import React from "react";
 import {Button} from "@blueprintjs/core";
 import copy from "clipboard-copy";
+import {createElement} from "react";
 
-/**
- * @typedef {import("@blueprintjs/core").IButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>} ButtonProps
- */
+/** @type {React.FC<BlueprintCore.ButtonProps & {copyText: string}>} */
+export const ButtonCopy = props => {
+  const {copyText, ...buttonProps} = props;
 
-/** @type {React.FC<ButtonProps & {copyText: string}>} */
-const ButtonCopy = ({copyText, ...props}) =>
-  <Button {...props} onClick={evt => {
-    evt.stopPropagation();
-    copy(copyText);
-  }} />;
-
-export default ButtonCopy;
+  return createElement(Button, {
+    ...buttonProps,
+    onClick: evt => {
+      evt.stopPropagation();
+      copy(copyText);
+    }
+  });
+};

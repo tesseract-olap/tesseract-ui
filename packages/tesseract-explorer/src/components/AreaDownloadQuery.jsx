@@ -1,39 +1,31 @@
-import {Button, ButtonGroup} from "@blueprintjs/core";
+import {ButtonGroup} from "@blueprintjs/core";
 import React, {useMemo} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {doDownloadQuery} from "../middleware/actions";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
+import {selectServerFormatsEnabled} from "../state/server/selectors";
+import {ButtonDownload} from "./ButtonDownload";
 
 /**
  * @typedef OwnProps
  * @property {string} [className]
- * @property {Record<OlapClient.Format, string>} [formats]
  */
 
-/** @type {Required<Pick<OwnProps, "formats">>} */
-const defaultProps = {
-  formats: {
-    csv: "CSV",
-    jsonrecords: "JSON Records",
-    jsonarrays: "JSON Arrays"
-  }
-};
-
 /** @type {React.FC<OwnProps>} */
-export const AreaDownloadQuery = props => {
+export const AreaDownloadQuery = () => {
   const dispatch = useDispatch();
 
   const {translate: t} = useTranslation();
 
   const queryItem = useSelector(selectCurrentQueryItem);
+  const formats = useSelector(selectServerFormatsEnabled);
 
-  const formats = props.formats || defaultProps.formats;
-  const buttons = useMemo(() => Object.entries(formats).map(format =>
-    <Button
-      key={format[0]}
-      onClick={() => dispatch(doDownloadQuery(format[0]))}
-      text={format[1]}
+  const buttons = useMemo(() => formats.map(format =>
+    <ButtonDownload
+      key={format}
+      provider={() => doDownloadQuery(dispatch, format)}
+      text={t(`formats.${format}`)}
     />
   ), [formats]);
 
@@ -48,5 +40,3 @@ export const AreaDownloadQuery = props => {
     </div>
   );
 };
-
-AreaDownloadQuery.defaultProps = defaultProps;

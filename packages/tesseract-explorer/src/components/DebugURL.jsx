@@ -1,7 +1,7 @@
 import {AnchorButton, ButtonGroup, InputGroup, Intent} from "@blueprintjs/core";
 import React from "react";
 import {useTranslation} from "../hooks/translation";
-import ButtonCopy from "./ButtonCopy";
+import {ButtonCopy} from "./ButtonCopy";
 
 export const DebugURL = props => {
   const {url} = props;

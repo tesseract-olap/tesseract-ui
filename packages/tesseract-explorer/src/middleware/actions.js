@@ -11,14 +11,11 @@ export const PERMALINK_REFRESH = "explorer/PERMALINK/REFRESH";
 export const PERMALINK_UPDATE = "explorer/PERMALINK/UPDATE";
 
 /**
- * @param {TessExpl.Struct.CutItem} cut
- * @returns {Promise<TessExpl.Struct.MemberRecords>}
+ * @param {string} format
+ * @returns {Promise<TessExpl.Struct.FileDescriptor>}
  */
-export const doFetchMembers = (dispatch, cut) =>
-  dispatch({type: CLIENT_LOADMEMBERS, payload: cut});
-
-/** @param {string} format */
-export const doDownloadQuery = format => ({type: CLIENT_DOWNLOAD, payload: format});
+export const doDownloadQuery = (dispatch, format) =>
+  dispatch({type: CLIENT_DOWNLOAD, payload: format});
 
 /**
  * Orders the middleware to take the current parameters and query the

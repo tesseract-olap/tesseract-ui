@@ -25,7 +25,13 @@ export const LOCALE = {
     ASC: "Ascending",
     DESC: "Descending",
   },
-  loading: "Loading...",
+  formats: {
+    csv: "CSV",
+    json: "JSON",
+    jsonarrays: "JSON Arrays",
+    jsonrecords: "JSON Records",
+    xls: "XLS"
+  },
   params: {
     action_execute: "Execute query",
     column_title: "Parameters",

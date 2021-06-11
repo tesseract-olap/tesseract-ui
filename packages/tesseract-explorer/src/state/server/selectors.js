@@ -1,3 +1,4 @@
+import {Format, TesseractDataSource} from "@datawheel/olap-client";
 import ISO6391 from "iso-639-1";
 import {createSelector} from "reselect";
 import {getKeys, getValues} from "../helpers";
@@ -14,9 +15,16 @@ export const selectServerSoftware = createSelector(selectServerState, server => 
 
 export const selectServerEndpoint = createSelector(selectServerState, server => server.endpoint);
 
+export const selectServerFormatsEnabled = createSelector(
+  selectServerSoftware,
+  software => software === TesseractDataSource.softwareName
+    ? [Format.csv, Format.jsonarrays, Format.jsonrecords]
+    : [Format.csv, Format.json, Format.jsonrecords, Format.xls]
+);
+
 export const selectServerBooleansEnabled = createSelector(
-  selectServerState,
-  server => server.software === "tesseract-olap"
+  selectServerSoftware,
+  software => software === TesseractDataSource.softwareName
     ? ["debug", "exclude_default_members", "parents", "sparse"]
     : ["debug", "distinct", "nonempty", "parents", "sparse"]
 );

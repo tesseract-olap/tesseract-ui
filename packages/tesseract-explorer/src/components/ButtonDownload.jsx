@@ -1,47 +1,54 @@
 import {Button} from "@blueprintjs/core";
 import {createElement} from "react";
 
+/**
+ * @template T
+ * @typedef {T | (() => T)} ContentOrGenerator
+ */
+
+/**
+ * @typedef ButtonDownloadProps
+ * @property {ContentOrGenerator<TessExpl.Struct.FileDescriptor | Promise<TessExpl.Struct.FileDescriptor>>} provider
+ */
+
 const mimeTypes = {
   csv: "text/csv",
   json: "application/json",
   tsv: "text/tab-separated-values",
-  txt: "text/plain"
+  txt: "text/plain",
+  xls: "application/vnd.ms-excel"
 };
 
-/**
- * @typedef {import("@blueprintjs/core").IButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>} ButtonProps
- */
-
-/** @type {React.FC<ButtonProps & {fileText: (() => string) | string, fileName: string}>} */
+/** @type {React.FC<BlueprintCore.ButtonProps & ButtonDownloadProps>} */
 export const ButtonDownload = props => {
-  const {fileText, fileName, ...restProps} = props;
+  const {provider, ...buttonProps} = props;
+
   return createElement(Button, {
-    ...restProps,
+    ...buttonProps,
     onClick: evt => {
       evt.stopPropagation();
       evt.preventDefault();
 
-      Promise.resolve()
-        .then(() => typeof fileText === "function" ? fileText() : fileText)
-        .then(content => {
-          const extension = fileName.split(".").pop();
-          const blob = new window.Blob([content], {
-            type: mimeTypes[extension] || "application/octet-stream"
+      const anchor = document.createElement("a");
+
+      const content = typeof provider === "function" ? provider() : provider;
+      Promise.resolve(content)
+        .then(file => {
+          const blob = new window.Blob([file.content], {
+            type: mimeTypes[file.extension] || "application/octet-stream"
           });
+          const blobURL = window.URL.createObjectURL(blob);
 
-          const anchor = document.createElement("a");
-          anchor.href = window.URL.createObjectURL(blob);
-          anchor.download = fileName;
-
-          const clickHandler = () => {
+          anchor.href = blobURL;
+          anchor.download = `${file.name}.${file.extension}`;
+          anchor.addEventListener("click", () => {
             setTimeout(() => {
-              window.URL.revokeObjectURL(anchor.href);
-              anchor.removeEventListener("click", clickHandler);
-            }, 1000);
-          };
-          anchor.addEventListener("click", clickHandler, false);
-
+              window.URL.revokeObjectURL(blobURL);
+            }, 5000);
+          }, false);
           anchor.click();
+        }, error => {
+          console.error("Error downloading content:", error.message);
         });
     }
   });
