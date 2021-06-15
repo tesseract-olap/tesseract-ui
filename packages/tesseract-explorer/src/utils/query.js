@@ -9,7 +9,7 @@ import {isActiveCut, isActiveItem, isGrowthItem, isRcaItem, isTopkItem} from "./
  */
 export function applyQueryParams(query, params) {
   Object.entries(params.booleans).forEach(item => {
-    query.setOption(item[0], item[1]);
+    item[1] != null && query.setOption(item[0], item[1]);
   });
 
   Object.values(params.cuts).forEach(item => {

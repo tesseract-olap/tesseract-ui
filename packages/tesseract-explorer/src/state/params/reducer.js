@@ -170,7 +170,7 @@ export const paramsEffectors = {
     if (!measures) {
       measures = {};
       Object.values(params.measures).forEach(item => {
-        measures[item.measure] = {...item, active: !item.active};
+        measures[item.key] = {...item, active: false};
       });
     }
     return {...params, measures};
@@ -183,7 +183,7 @@ export const paramsEffectors = {
    */
   [QUERY_MEASURES_UPDATE]: (params, payload) => ({
     ...params,
-    measures: {...params.measures, [payload.measure]: payload}
+    measures: {...params.measures, [payload.key]: payload}
   }),
 
   /**

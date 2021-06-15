@@ -64,11 +64,10 @@ const actionMap = {
 
         return Promise.resolve()
           .then(() => dispatch(doPermalinkParse()))
-          .then(() => dispatch({type: CLIENT_HYDRATEQUERY, payload: cubes[0].name}));
-      })
-      .then(() => dispatch(doExecuteQuery()))
-      .catch(error => {
-        console.error("Startup error:", error);
+          .then(() => dispatch({type: CLIENT_HYDRATEQUERY, payload: cubes[0].name}))
+          .then(() => dispatch(doExecuteQuery()));
+      }, error => {
+        console.error("Server resolution error:", error);
         dispatch(
           doServerUpdate({
             online: false,
@@ -77,6 +76,10 @@ const actionMap = {
             version: ""
           })
         );
+        fetchFailure(error);
+      })
+      .catch(error => {
+        console.error("Unexpected error during startup", error);
         fetchFailure(error);
       });
   },

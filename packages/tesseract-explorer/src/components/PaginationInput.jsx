@@ -23,6 +23,7 @@ export const PaginationInput = () => {
       <FormGroup label={t("params.label_pagination_limit")}>
         <NumericInput
           fill={true}
+          min={0}
           onValueChange={limit => dispatch(doPaginationUpdate(limit, offset))}
           value={limit}
         />
@@ -33,6 +34,7 @@ export const PaginationInput = () => {
       <FormGroup label={t("params.label_pagination_offset")}>
         <NumericInput
           fill={true}
+          min={0}
           onValueChange={offset => dispatch(doPaginationUpdate(limit, offset))}
           value={offset}
         />
