@@ -2,11 +2,11 @@ import {Button, Intent} from "@blueprintjs/core";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
+import {doDrilldownCreate} from "../middleware/actions";
 import {doDrilldownClear, doDrilldownRemove, doDrilldownUpdate} from "../state/params/actions";
 import {selectDrilldownItems} from "../state/params/selectors";
-import {buildDrilldown} from "../utils/structs";
 import {activeItemCounter} from "../utils/validation";
-import {MemoButtonSelectLevel as ButtonSelectLevel} from "./ButtonSelectLevel";
+import {ButtonSelectLevel} from "./ButtonSelectLevel";
 import {LayoutParamsArea} from "./LayoutParamsArea";
 import TagDrilldown from "./TagDrilldown";
 
@@ -29,9 +29,8 @@ export const AreaDrilldowns = props => {
   };
 
   /** @type {(level: OlapClient.PlainLevel, hierarchy: OlapClient.PlainHierarchy, dimension: OlapClient.PlainDimension) => any} */
-  const createHandler = (level, hierarchy, dimension) => {
-    const drilldownItem = buildDrilldown({...level, dimType: dimension.dimensionType});
-    dispatch(doDrilldownUpdate(drilldownItem));
+  const createHandler = level => {
+    dispatch(doDrilldownCreate(level));
   };
 
   /** @type {(item: TessExpl.Struct.DrilldownItem) => void} */

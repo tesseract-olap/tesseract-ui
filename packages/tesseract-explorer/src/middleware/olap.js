@@ -1,6 +1,6 @@
 import {Client as OLAPClient, TesseractDataSource} from "@datawheel/olap-client";
 import {requestControl} from "../state/loading/actions";
-import {doCubeUpdate, doLocaleUpdate} from "../state/params/actions";
+import {doCubeUpdate, doDrilldownUpdate, doLocaleUpdate} from "../state/params/actions";
 import {selectCubeName, selectCurrentQueryParams, selectLocale, selectMeasureMap} from "../state/params/selectors";
 import {doQueriesClear, doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectQueryItems} from "../state/queries/selectors";
@@ -8,11 +8,11 @@ import {doCurrentResultUpdate} from "../state/results/actions";
 import {doServerUpdate} from "../state/server/actions";
 import {selectOlapCubeMap, selectServerEndpoint} from "../state/server/selectors";
 import {applyQueryParams, extractQueryParams} from "../utils/query";
-import {buildMeasure, buildQuery} from "../utils/structs";
+import {buildDrilldown, buildMeasure, buildQuery} from "../utils/structs";
 import {keyBy} from "../utils/transform";
 import {isValidQuery} from "../utils/validation";
-import {CLIENT_DOWNLOAD, CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_PARSE, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP, doExecuteQuery, doPermalinkParse, doPermalinkUpdate} from "./actions";
-import {fetchCutMembers, hydrateDrilldownProperties} from "./utils";
+import {CLIENT_COUNTMEMBERS, CLIENT_DOWNLOAD, CLIENT_HYDRATEQUERY, CLIENT_LOADMEMBERS, CLIENT_PARSE, CLIENT_QUERY, CLIENT_SETCUBE, CLIENT_SETLOCALE, CLIENT_SETUP, doExecuteQuery, doPermalinkParse, doPermalinkUpdate} from "./actions";
+import {fetchCutMembers, fetchMaxMemberCount, hydrateDrilldownProperties} from "./utils";
 
 /**
  * Procedure:
@@ -194,6 +194,33 @@ const actionMap = {
   },
 
   /**
+   *
+   * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_COUNTMEMBERS, OlapClient.PlainLevel>} param
+   * @returns
+   */
+  [CLIENT_COUNTMEMBERS]: ({action, client, dispatch, getState}) => {
+    const state = getState();
+    const cubeName = selectCubeName(state);
+
+    const level = action.payload;
+    const drilldownItem = buildDrilldown(level);
+    dispatch(doDrilldownUpdate(drilldownItem));
+
+    return client.getCube(cubeName).then(cube => {
+      const dimension = cube.dimensionsByName[level.dimension];
+      const hierarchy = dimension.hierarchiesByName[level.hierarchy];
+      return client.datasource.fetchMembers(hierarchy.levelsByName[level.name])
+        .then(members => {
+          dispatch(doDrilldownUpdate({
+            ...drilldownItem,
+            dimType: dimension.dimensionType,
+            memberCount: members.length
+          }));
+        });
+    });
+  },
+
+  /**
    * Takes a newly generated CutItem and fills its list of associated members.
    * Returns a copy of the CutItem with its members property filled.
    * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_LOADMEMBERS, TessExpl.Struct.CutItem>} param
@@ -240,42 +267,50 @@ const actionMap = {
    * Executes the current queryState, and store the result in the State
    * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_QUERY, undefined>} param
    */
-  [CLIENT_QUERY]: async({action, client, dispatch, getState}) => {
+  [CLIENT_QUERY]: ({action, client, dispatch, getState}) => {
     const state = getState();
     const params = selectCurrentQueryParams(state);
 
     if (!isValidQuery(params)) return;
 
-    const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
-    fetchRequest();
+    const reqCtrl = requestControl(dispatch, action);
+    reqCtrl.fetchRequest();
 
-    try {
-      const cube = await client.getCube(params.cube);
-      const query = applyQueryParams(cube.query, params);
+    client.getCube(params.cube)
+      .then(cube => {
+        const query = applyQueryParams(cube.query, params);
+        const endpoint = selectServerEndpoint(state);
+        return Promise.all([
+          fetchMaxMemberCount(query).then(maxRows => {
+            if (maxRows > 50000) {
+              reqCtrl.fetchMessage({type: "HEAVY_QUERY", rows: maxRows});
+            }
+          }),
+          client.execQuery(query, endpoint)
+        ]);
+      })
+      .then(result => {
+        const [, aggregation] = result;
+        const query = aggregation.query;
+        dispatch(
+          doCurrentResultUpdate({
+            data: aggregation.data,
+            error: null,
+            headers: aggregation.headers || {},
+            sourceCall: query.toSource(),
+            status: aggregation.status,
+            urlAggregate: query.toString("aggregate"),
+            urlLogicLayer: query.toString("logiclayer")
+          })
+        );
+        dispatch(doPermalinkUpdate());
 
-      const endpoint = selectServerEndpoint(state);
-      const aggregation = await client.execQuery(query, endpoint);
-      dispatch(
-        doCurrentResultUpdate({
-          data: aggregation.data,
-          error: null,
-          headers: aggregation.headers || {},
-          sourceCall: query.toSource(),
-          status: aggregation.status,
-          urlAggregate: query.toString("aggregate"),
-          urlLogicLayer: query.toString("logiclayer")
-        })
-      );
-      dispatch(doPermalinkUpdate());
-
-      fetchSuccess(aggregation);
-    }
-    catch (error) {
-      dispatch(
-        doCurrentResultUpdate({error: error.message})
-      );
-      fetchFailure(error);
-    }
+        reqCtrl.fetchSuccess(aggregation);
+      })
+      .catch(error => {
+        dispatch(doCurrentResultUpdate({error: error.message}));
+        reqCtrl.fetchFailure(error);
+      });
   },
 
   /**

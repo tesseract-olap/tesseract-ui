@@ -80,13 +80,14 @@ export function buildDrilldown(props) {
   const level = `${props.level || props.name}`;
   return {
     active: typeof props.active === "boolean" ? props.active : true,
-    captionProperty: `${props.captionProperty || ""}`,
+    captionProperty: props.captionProperty || "",
     dimension,
     dimType,
     fullName: props.fullName || joinName([dimension, hierarchy, level]),
     hierarchy,
     key: props.key || randomKey(),
     level,
+    memberCount: 0,
     properties: ensureArray(props.properties).map(buildProperty),
     uniqueName: props.uniqueName || level
   };

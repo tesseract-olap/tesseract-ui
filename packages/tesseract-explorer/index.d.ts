@@ -176,6 +176,7 @@ declare namespace TessExpl {
       level: string;
       properties: PropertyItem[];
       uniqueName: string;
+      memberCount: number;
     }
 
     interface FilterItem extends IQueryItem {
