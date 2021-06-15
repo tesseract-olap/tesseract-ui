@@ -8,6 +8,9 @@ export function requestControl(dispatch, {type: trigger, ...action}) {
     fetchRequest: payload => {
       dispatch({type: `${trigger}/FETCH:REQUEST`, action, payload});
     },
+    fetchMessage: payload => {
+      dispatch({type: `${trigger}/FETCH:MESSAGE`, action, payload});
+    },
     fetchSuccess: payload => {
       dispatch({type: `${trigger}/FETCH:SUCCESS`, action, payload});
     },

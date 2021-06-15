@@ -1,6 +1,6 @@
 import {STATUS_FAILURE, STATUS_FETCHING, STATUS_SUCCESS} from "../../enums";
 
-/** @type {LoadingState} */
+/** @type {TessExpl.State.LoadingState} */
 export const loadingInitialState = {
   error: null,
   loading: true,
@@ -8,7 +8,7 @@ export const loadingInitialState = {
   trigger: null
 };
 
-/** @type {import("redux").Reducer<LoadingState>} */
+/** @type {import("redux").Reducer<TessExpl.State.LoadingState>} */
 export function loadingReducer(state = loadingInitialState, action) {
   const type = `${action.type}`;
   const trigger = (action.action || action).type;
@@ -19,6 +19,12 @@ export function loadingReducer(state = loadingInitialState, action) {
       loading: true,
       status: STATUS_FETCHING,
       trigger
+    };
+  }
+  else if (type.endsWith(":MESSAGE")) {
+    return {
+      ...state,
+      message: action.payload
     };
   }
   else if (type.endsWith(":SUCCESS")) {

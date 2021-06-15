@@ -30,8 +30,9 @@
 .explorer-loading .loading-screen .bp3-spinner .bp3-spinner-head {
   stroke: #fff;
 }
-.explorer-loading .loading-screen .bp3-heading {
+.explorer-loading .loading-screen * {
   color: #fff;
+  white-space: pre-line;
 }
 
 /* COLUMNS */

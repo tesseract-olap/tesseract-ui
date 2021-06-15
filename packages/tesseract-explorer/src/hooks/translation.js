@@ -32,6 +32,11 @@ export const LOCALE = {
     jsonrecords: "JSON Records",
     xls: "XLS"
   },
+  loading: {
+    title: "Loading...",
+    message_heavyquery: "The current query might contain a maximum of {rows} rows.\nPlease wait...",
+    message_default: "Please wait...",
+  },
   params: {
     action_execute: "Execute query",
     column_title: "Parameters",
@@ -89,6 +94,8 @@ export const LOCALE = {
     label_ddrow: "Row drilldown",
     label_formatter: "Numeral format",
     label_valmeasure: "Value measure",
+    loading_details: "This might take a while, please wait...",
+    loading_title: "Reestructuring data",
     title_download: "Download matrix",
     title_params: "Matrix params",
     warning_notsummeasure: "The current query contains more than 2 drilldowns, and the aggregation type of the measure is not \"SUM\". The values you're getting might not be meaningful.",

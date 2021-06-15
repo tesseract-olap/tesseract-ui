@@ -283,33 +283,45 @@ const actionMap = {
    * Action payload: The format the user wants the data, from OlapClient options.
    * @param {TessExpl.OlapMiddleware.ActionMapParams<CLIENT_DOWNLOAD, OlapClient.Format>} param
    */
-  [CLIENT_DOWNLOAD]: async({action, client, dispatch, getState}) => {
+  [CLIENT_DOWNLOAD]: ({action, client, dispatch, getState}) => {
     const state = getState();
     const params = selectCurrentQueryParams(state);
 
-    if (!isValidQuery(params)) return;
-
-    const {fetchRequest, fetchSuccess, fetchFailure} = requestControl(dispatch, action);
-    fetchRequest();
-
-    try {
-      const cube = await client.getCube(params.cube);
-      const query = applyQueryParams(cube.query, params);
-      query.setFormat(action.payload);
-
-      const anchor = document.createElement("a");
-      anchor.href = query.toString("logiclayer");
-      anchor.download = `${cube.name}_${new Date().toISOString()}.${action.payload}`;
-      anchor.click();
-
-      fetchSuccess(anchor.href);
+    if (!isValidQuery(params)) {
+      return Promise.reject(new Error("The current query is not valid."));
     }
-    catch (error) {
-      dispatch(
-        doCurrentResultUpdate({error: error.message})
-      );
-      fetchFailure(error);
-    }
+
+    const reqCtrl = requestControl(dispatch, action);
+    reqCtrl.fetchRequest();
+
+    return client.getCube(params.cube)
+      .then(cube => {
+        const format = action.payload;
+        const filename = `${cube.name}_${new Date().toISOString()}`;
+        const query = applyQueryParams(cube.query, params);
+        query.setFormat(format);
+
+        const url = query.toString("logiclayer");
+        return Promise.all([
+          fetchMaxMemberCount(query).then(maxRows => {
+            if (maxRows > 50000) {
+              reqCtrl.fetchMessage({type: "HEAVY_QUERY", rows: maxRows});
+            }
+          }),
+          fetch(url).then(response => response.text())
+        ]).then(result => {
+          reqCtrl.fetchSuccess(filename);
+          return {
+            content: result[1],
+            extension: format.replace(/json\w+/, "json"),
+            name: filename
+          };
+        });
+      })
+      .catch(error => {
+        dispatch(doCurrentResultUpdate({error: error.message}));
+        reqCtrl.fetchFailure(error);
+      });
   }
 };
 

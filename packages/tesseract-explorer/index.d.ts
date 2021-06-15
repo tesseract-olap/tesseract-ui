@@ -92,6 +92,7 @@ declare namespace TessExpl {
     interface LoadingState {
       error: string | null;
       loading: boolean;
+      message?: any;
       status: string;
       trigger: string | null;
     }

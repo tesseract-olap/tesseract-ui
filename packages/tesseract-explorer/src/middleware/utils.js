@@ -1,6 +1,23 @@
+import {Level} from "@datawheel/olap-client";
 import {ensureArray} from "../utils/array";
 import {buildDrilldown, buildMember, buildProperty} from "../utils/structs";
 import {isActiveItem} from "../utils/validation";
+
+/**
+ * Returns the maximum number of member combinations a query can return.
+ * @param {OlapClient.Query} query
+ */
+export function fetchMaxMemberCount(query) {
+  const ds = query.cube.datasource;
+  const memberLengths = query.getParam("drilldowns").map(level =>
+    Level.isLevel(level)
+      ? ds.fetchMembers(level).then(list => list.length)
+      : Promise.resolve(1)
+  );
+  return Promise.all(memberLengths).then(lengths =>
+    lengths.reduce((prev, curr) => prev * curr)
+  );
+}
 
 /**
  * Updates the list of members of a CutItem

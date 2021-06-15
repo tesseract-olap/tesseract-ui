@@ -8,19 +8,27 @@ import {selectLoadingState} from "../state/loading/selectors";
 export const LoadingOverlay = props => {
   const {translate: t} = useTranslation();
 
-  const loadingState = useSelector(selectLoadingState);
+  const {loading: isLoading, message} = useSelector(selectLoadingState);
+
+  /* eslint-disable indent, operator-linebreak */
+  const description =
+    !message                       ? undefined :
+    message.type === "HEAVY_QUERY" ? t("loading.message_heavyquery", message) :
+    /* else */                       t("loading.message_default", message);
+  /* eslint-enable indent, operator-linebreak */
 
   return (
     <Overlay
       canEscapeKeyClose={false}
       canOutsideClickClose={false}
       {...props}
-      isOpen={loadingState.loading}
+      isOpen={isLoading}
     >
       <NonIdealState
         className="loading-screen"
         icon={<Spinner size={Spinner.SIZE_LARGE} />}
-        title={t("loading")}
+        title={t("loading.title")}
+        description={description}
       />
     </Overlay>
   );
