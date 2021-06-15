@@ -18,7 +18,6 @@ const stopBubbling = evt => {
  * @property {string} [tooltip]
  * @property {string} [warning]
  * @property {string} [maxHeight]
- * @property {() => void} [stopBubbling]
  */
 
 /** @type {React.FC<OwnProps>} */
@@ -33,7 +32,7 @@ export const LayoutParamsArea = props => {
         <Tabs.Expander />
         <span
           className={classNames(Classes.BUTTON_GROUP, Classes.MINIMAL)}
-          onClickCapture={stopBubbling}
+          onClick={stopBubbling}
         >
           {props.toolbar}
           {warning && <Divider />}

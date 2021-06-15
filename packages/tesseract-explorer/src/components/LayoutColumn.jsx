@@ -29,7 +29,7 @@ export const LayoutColumn = props => {
   }
 
   return (
-    <div className={classNames("explorer-column bp3-elevation-0", props.className)}>
+    <div className={classNames("explorer-column bp3-elevation-0 flex flex-col flex-nowrap", props.className)}>
       <div className="titlebar">
         <h2 className="token" onClick={toggleHandler}>
           {props.title}

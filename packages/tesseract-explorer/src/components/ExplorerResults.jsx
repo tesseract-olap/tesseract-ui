@@ -91,7 +91,7 @@ export const ExplorerResults = props => {
   const CurrentComponent = panels[currentTab];
 
   return (
-    <div className={classNames("explorer-column", props.className)}>
+    <div className={classNames("explorer-column flex flex-col", props.className)}>
       <Tabs
         className="titlebar"
         onChange={newTab => setCurrentTab(`${newTab}`)}
