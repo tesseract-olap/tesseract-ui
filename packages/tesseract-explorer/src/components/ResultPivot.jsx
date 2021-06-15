@@ -1,146 +1,218 @@
-import {ButtonGroup, Callout, FormGroup, HTMLSelect, Intent} from "@blueprintjs/core";
-import classNames from "classnames";
-import React, {useMemo, useState} from "react";
-import {useFormatter} from "../hooks/formatter";
+import {ButtonGroup, Callout, FormGroup, HTMLSelect, Intent, NonIdealState, Spinner} from "@blueprintjs/core";
+import {Cell, Column, Table} from "@blueprintjs/table";
+import clsx from "classnames";
+import React, {memo, useMemo, useState} from "react";
+import {useFormatParams, usePivottedData} from "../hooks/pivot";
 import {useTranslation} from "../hooks/translation";
-import {csvSerialize} from "../utils/transform";
+import {stringifyMatrix} from "../utils/pivot";
 import {isActiveItem} from "../utils/validation";
 import {ButtonDownload} from "./ButtonDownload";
-import {MemoMatrixPreview as MatrixPreview} from "./MatrixPreview";
 
 /** @type {React.FC<TessExpl.ViewProps>} */
 const ResultPivot = props => {
   const {params, result} = props;
-  const {data} = result;
 
   const {translate: t} = useTranslation();
 
   const initial = useMemo(() => {
     const dd = Object.values(params.drilldowns).filter(isActiveItem);
     const ms = Object.values(params.measures).filter(isActiveItem);
-    const suggestedCol = dd.find(item => item.dimType === "time") || dd[0];
-    const suggestedRow = dd.find(item => item !== suggestedCol);
+    const initialCol = dd.find(item => item.dimType === "time") || dd[0];
+    const initialRow = dd.find(item => item !== initialCol);
     return {
-      pivotColumns: suggestedCol?.level || "",
-      pivotRows: suggestedRow?.level || "",
-      pivotValues: ms[0].measure,
-      levelNames: dd.map(item => ({
-        value: item.level,
-        label: item.uniqueName || item.level
-      })),
-      measureNames: ms.map(item => item.measure)
+      colProperty: initialCol ? initialCol.uniqueName || initialCol.level : "",
+      levelNames: dd.map(item => item.uniqueName || item.level),
+      measureNames: ms.map(item => item.measure),
+      rowProperty: initialRow ? initialRow.uniqueName || initialRow.level : "",
+      valProperty: ms[0].measure
     };
   }, [result]);
+
   const {levelNames, measureNames} = initial;
 
-  const [pivotColumns, setPivotColumns] = useState(initial.pivotColumns);
-  const [pivotRows, setPivotRows] = useState(initial.pivotRows);
-  const [pivotValues, setPivotValues] = useState(initial.pivotValues);
+  const [colProp, setColumnProp] = useState(initial.colProperty);
+  const [rowProp, setRowProp] = useState(initial.rowProperty);
+  const [valProp, setValueProp] = useState(initial.valProperty);
+
+  const fileName = [params.cube, colProp, rowProp, valProp].join("_");
+
+  const pivottedData = usePivottedData(result.data, colProp, rowProp, valProp);
 
   const {
-    getAvailableKeys,
-    getFormatter,
-    getFormatterKey,
+    formatter,
+    formatterKey,
+    formatterKeyOptions,
     setFormat
-  } = useFormatter(props.cube.measures);
+  } = useFormatParams(props.cube.measures, valProp);
 
-  const measureAggType = useMemo(() => {
-    const measure = Object.values(params.measures).find(
-      item => item.measure === pivotValues
-    );
-    return measure ? measure.aggType : "UNKNOWN";
-  }, [pivotValues]);
+  const warnings = useMemo(() => {
+    const measure = Object.values(params.measures)
+      .find(item => item.measure === valProp);
+    const warnings = [];
+    if (levelNames.length > 2 && measure) {
+      warnings.push(
+        measure.aggType !== "SUM"
+          ? <Callout key="notsummeasure" intent={Intent.WARNING}>{t("pivot_view.warning_notsummeasure")}</Callout>
+          : <Callout key="sumdimensions">{t("pivot_view.warning_sumdimensions")}</Callout>
+      );
+    }
+    return warnings;
+  }, [valProp, levelNames]);
 
-  const availableFormatterKeys = getAvailableKeys(pivotValues)
-    .map(key => ({label: getFormatter(key)(12345.678), value: key}));
-  const formatterKey = getFormatterKey(pivotValues) || "undefined";
-  const formatter = getFormatter(formatterKey);
-
-  const warnings = [];
-  if (levelNames.length > 2) {
-    warnings.push(
-      measureAggType !== "SUM"
-        ? <Callout key="notsummeasure" intent={Intent.WARNING}>{t("pivot_view.warning_notsummeasure")}</Callout>
-        : <Callout key="sumdimensions">{t("pivot_view.warning_sumdimensions")}</Callout>
-    );
+  if (levelNames.length < 2) {
+    return <NonIdealState
+      icon="warning-sign"
+      title={t("pivot_view.error_missingparams")}
+    />;
   }
 
-  const fileName = [params.cube, pivotColumns, pivotRows, pivotValues].join("_");
+  let preview;
+  if (!colProp || !rowProp || !valProp) {
+    preview = <NonIdealState
+      icon="warning-sign"
+      title={t("pivot_view.error_missingparams")}
+    />;
+  }
+  else if (colProp === rowProp) {
+    preview = <NonIdealState
+      icon="warning-sign"
+      title={t("pivot_view.error_onedimension")}
+    />;
+  }
+  else if (!pivottedData) {
+    preview = <NonIdealState
+      icon={<Spinner size={100} />}
+      title={t("pivot_view.loading_title")}
+      description={t("pivot_view.loading_details")}
+    />;
+  }
+  else {
+    preview = <MemoMatrixTable
+      key={`${fileName} ${formatterKey}`}
+      data={pivottedData.data}
+      headers={pivottedData.headers}
+      formatter={formatter}
+    />;
+  }
 
   return (
-    <div className={classNames("data-matrix", props.className)}>
-      <div className="toolbar">
-        <h3>{t("pivot_view.title_params")}</h3>
-        <FormGroup label={t("pivot_view.label_ddcolumn")} labelFor="matrix-columns">
-          <HTMLSelect
-            fill={true}
-            id="matrix-columns"
-            onChange={evt => setPivotColumns(evt.target.value)}
-            options={levelNames}
-            value={pivotColumns}
-          />
-        </FormGroup>
-        <FormGroup label={t("pivot_view.label_ddrow")} labelFor="matrix-rows">
-          <HTMLSelect
-            fill={true}
-            id="matrix-rows"
-            onChange={evt => setPivotRows(evt.target.value)}
-            options={levelNames}
-            value={pivotRows}
-          />
-        </FormGroup>
-        <FormGroup label={t("pivot_view.label_valmeasure")} labelFor="matrix-values">
-          <HTMLSelect
-            fill={true}
-            id="matrix-values"
-            onChange={evt => setPivotValues(evt.target.value)}
-            options={measureNames}
-            value={pivotValues}
-          />
-        </FormGroup>
-
-        <FormGroup label={t("pivot_view.label_formatter")} labelFor="matrix-formatters">
-          <HTMLSelect
-            fill={true}
-            id="matrix-formatters"
-            onChange={evt => setFormat(pivotValues, evt.target.value)}
-            options={[{label: t("placeholders.none"), value: "undefined"}].concat(availableFormatterKeys)}
-            value={formatterKey}
-          />
-        </FormGroup>
+    <div className={clsx("data-matrix flex flex-row flex-nowrap", props.className)}>
+      <div className="toolbar flex-grow-0 flex-shrink-0 w-24 p-3">
+        <h3 className="mt-0">{t("pivot_view.title_params")}</h3>
+        <SidebarSelector
+          id="matrix-columns"
+          label={t("pivot_view.label_ddcolumn")}
+          onChange={setColumnProp}
+          options={levelNames}
+          value={colProp}
+        />
+        <SidebarSelector
+          id="matrix-rows"
+          label={t("pivot_view.label_ddrow")}
+          onChange={setRowProp}
+          options={levelNames}
+          value={rowProp}
+        />
+        <SidebarSelector
+          id="matrix-values"
+          label={t("pivot_view.label_valmeasure")}
+          onChange={setValueProp}
+          options={measureNames}
+          value={valProp}
+        />
+        <SidebarSelector
+          id="matrix-formatters"
+          label={t("pivot_view.label_formatter")}
+          onChange={value => setFormat(valProp, value)}
+          options={formatterKeyOptions}
+          value={formatterKey}
+        />
 
         {warnings}
 
-        <h3>{t("pivot_view.title_download")}</h3>
-        <ButtonGroup fill>
+        {pivottedData && <h3>{t("pivot_view.title_download")}</h3>}
+        {pivottedData && <ButtonGroup fill>
           <ButtonDownload
             text="CSV"
-            fileName={`${fileName}.csv`}
-            fileText={() =>
-              csvSerialize(data, pivotColumns, pivotRows, pivotValues, formatter, ",")
-            }
+            provider={() => ({
+              name: fileName,
+              extension: "csv",
+              content: stringifyMatrix(pivottedData, formatter, "csv")
+            })}
           />
           <ButtonDownload
             text="TSV"
-            fileName={`${fileName}.tsv`}
-            fileText={() =>
-              csvSerialize(data, pivotColumns, pivotRows, pivotValues, formatter, "\t")
-            }
+            provider={() => ({
+              name: fileName,
+              extension: "tsv",
+              content: stringifyMatrix(pivottedData, formatter, "tsv")
+            })}
           />
-        </ButtonGroup>
+        </ButtonGroup>}
       </div>
 
-      <MatrixPreview
-        className="preview"
-        data={data}
-        columnProperty={pivotColumns}
-        rowProperty={pivotRows}
-        valueProperty={pivotValues}
-        formatter={formatter}
-        formatterKey={formatterKey}
-      />
+      {preview}
     </div>
   );
 };
+
+/** @type {React.FC<JSONArrays & {formatter: TessExpl.Formatter}>} */
+const MatrixTable = props => {
+  const {data: values, formatter} = props;
+
+  const getDisplayValue = (rowIndex, colIndex) => {
+    const value = values[rowIndex][colIndex];
+    return typeof value === "number"
+      ? ["column-number", formatter(value)]
+      : ["column-string", value || ""];
+  };
+
+  const cellRenderer = (rowIndex, colIndex) => {
+    const value = getDisplayValue(rowIndex, colIndex);
+    return (
+      <Cell className={value[0]} columnIndex={colIndex} rowIndex={rowIndex}>
+        {value[1]}
+      </Cell>
+    );
+  };
+
+  return (
+    <Table
+      className="preview flex-grow flex-shrink-0 min-w-0"
+      enableColumnResizing={true}
+      enableRowResizing={false}
+      getCellClipboardData={(row, col) => getDisplayValue(row, col)[1]}
+      numRows={values.length}
+      rowHeights={Array(values.length).fill(22)}
+    >
+      {props.headers.slice(0, 40).map(header =>
+        <Column cellRenderer={cellRenderer} id={header} key={header} name={header} />
+      )}
+    </Table>
+  );
+};
+
+const MemoMatrixTable = memo(MatrixTable);
+
+/**
+ * @typedef SidebarSelectorProps
+ * @property {string} id
+ * @property {string} label
+ * @property {(value: string) => void} onChange
+ * @property {BlueprintCore.HTMLSelectProps["options"]} options
+ * @property {BlueprintCore.HTMLSelectProps["value"]} value
+ */
+
+/** @type {React.FC<SidebarSelectorProps>} */
+const SidebarSelector = props =>
+  <FormGroup label={props.label} labelFor={props.id}>
+    <HTMLSelect
+      fill={true}
+      id={props.id}
+      onChange={evt => props.onChange(evt.target.value)}
+      options={props.options}
+      value={props.value}
+    />
+  </FormGroup>;
 
 export default ResultPivot;

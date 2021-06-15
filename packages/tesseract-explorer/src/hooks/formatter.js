@@ -2,7 +2,7 @@
 /* eslint-disable lines-around-comment */
 
 import {format, formatAbbreviate} from "d3plus-format";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {useSettings} from "./settings";
 
 export const defaultFormatters = {
@@ -38,38 +38,37 @@ export function useFormatter(measures) {
     setCurrentFormats(record);
   }, [measures]);
 
-  const setFormat = (ref, formatter) => setCurrentFormats({
+  /** @type {(refKey: string, formatter: string) => void} */
+  const setFormat = useCallback((refKey, formatter) => setCurrentFormats({
     ...currentFormats,
-    [ref]: formatter
-  });
-
-  const getAvailableKeys = ref => {
-    const originKey = originKeys.current[ref];
-    return originKey ? [originKey].concat(basicFormatterKeys) : basicFormatterKeys;
-  };
-
-  const getFormatterKey = ref => currentFormats[ref] || originKeys.current[ref];
-
-  const getFormatter = key => {
-    if ((/^[A-Z]{3}$/).test(key)) {
-      return formatters[key] || new Intl.NumberFormat(undefined, {
-        style: "currency",
-        currency: key
-      }).format;
-    }
-    try {
-      return formatters[key] || defaultFormatters[key] || format(key);
-    }
-    catch {
-      console.error(`Formatter not configured: "${key}"`);
-      return defaultFormatters.identity;
-    }
-  };
+    [refKey]: formatter
+  }), [currentFormats]);
 
   return {
-    getAvailableKeys,
-    getFormatter,
-    getFormatterKey,
+    getAvailableKeys(ref) {
+      const originKey = originKeys.current[ref];
+      return originKey ? [originKey].concat(basicFormatterKeys) : basicFormatterKeys;
+    },
+    getFormatter(key) {
+      if ((/^[A-Z]{3}$/).test(key)) {
+        return formatters[key] || (key => {
+          const options = {style: "currency", currency: key};
+          const formatter = new Intl.NumberFormat(undefined, options).format;
+          formatters[key] = formatter;
+          return formatter;
+        })(key);
+      }
+      try {
+        return formatters[key] || defaultFormatters[key] || format(key);
+      }
+      catch {
+        console.error(`Formatter not configured: "${key}"`);
+        return defaultFormatters.identity;
+      }
+    },
+    getFormatterKey(ref) {
+      return currentFormats[ref] || originKeys.current[ref];
+    },
     setFormat,
   };
 }

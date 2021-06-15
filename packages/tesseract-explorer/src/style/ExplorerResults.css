@@ -58,19 +58,8 @@
   color: #a00;
 }
 
-.data-matrix {
-  display: flex;
-  flex-flow: row nowrap;
-}
-
 .data-matrix .toolbar {
-  flex: 0 0 260px;
-  padding: 0.75rem;
-}
-
-.data-matrix .preview {
-  flex: 1 0 0;
-  min-width: 0;
+  flex-basis: 260px;
 }
 
 .data-chart {
