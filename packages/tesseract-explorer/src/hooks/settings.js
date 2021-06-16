@@ -1,6 +1,6 @@
 /* eslint-disable comma-dangle */
 
-import { createContext, createElement, useContext } from "react";
+import {createContext, createElement, useContext, useMemo} from "react";
 
 /**
  * @typedef SettingsContextProps
@@ -23,9 +23,9 @@ const SettingsContext = createContext(undefined);
  * @type {React.FC<SettingsProviderProps>}
  */
 export const SettingsProvider = props => {
-  const value = {
+  const value = useMemo(() => ({
     formatters: props.formatters || {},
-  };
+  }), [props.formatters]);
   return createElement(SettingsContext.Provider, {value}, props.children);
 };
 

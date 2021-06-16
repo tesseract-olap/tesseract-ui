@@ -6,14 +6,25 @@ import {isActiveItem} from "../utils/validation";
 /**
  * Returns the maximum number of member combinations a query can return.
  * @param {OlapClient.Query} query
+ * @param {TessExpl.Struct.QueryParams} params
  */
-export function fetchMaxMemberCount(query) {
+export function fetchMaxMemberCount(query, params) {
   const ds = query.cube.datasource;
+
+  // make a map with the memberCounts already fetched
+  const drills = {undefined: 1};
+  Object.values(params.drilldowns).forEach(dd => {
+    drills[dd.uniqueName] = dd.memberCount;
+  });
+
+  // get the member counts if already stored, else fetch them
   const memberLengths = query.getParam("drilldowns").map(level =>
     Level.isLevel(level)
-      ? ds.fetchMembers(level).then(list => list.length)
+      ? drills[level.uniqueName] || ds.fetchMembers(level).then(list => list.length)
       : Promise.resolve(1)
   );
+
+  // multiply and return
   return Promise.all(memberLengths).then(lengths =>
     lengths.reduce((prev, curr) => prev * curr)
   );

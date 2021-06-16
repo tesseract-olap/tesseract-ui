@@ -1,7 +1,7 @@
 /* eslint-disable comma-dangle */
 import {translationFactory} from "@datawheel/use-translation";
 
-export const LOCALE = {
+export const defaultTranslation = {
   action_copy: "Copy",
   action_download: "Download",
   action_open: "Open",
@@ -137,9 +137,8 @@ export const LOCALE = {
   },
 };
 
-const translation = translationFactory({
-  defaultLocale: "en",
-  defaultTranslation: LOCALE
-});
-
-export const {useTranslation, TranslationConsumer, TranslationProvider} = translation;
+export const {
+  useTranslation,
+  TranslationConsumer,
+  TranslationProvider
+} = translationFactory({defaultLocale: "en", defaultTranslation});

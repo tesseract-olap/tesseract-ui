@@ -212,7 +212,7 @@ const actionMap = {
     return client.getCube(cubeName).then(cube => {
       const dimension = cube.dimensionsByName[level.dimension];
       const hierarchy = dimension.hierarchiesByName[level.hierarchy];
-      return client.datasource.fetchMembers(hierarchy.levelsByName[level.name])
+      return cube.datasource.fetchMembers(hierarchy.levelsByName[level.name])
         .then(members => {
           dispatch(doDrilldownUpdate({
             ...drilldownItem,
@@ -284,16 +284,16 @@ const actionMap = {
         const query = applyQueryParams(cube.query, params);
         const endpoint = selectServerEndpoint(state);
         return Promise.all([
-          fetchMaxMemberCount(query).then(maxRows => {
+          client.execQuery(query, endpoint),
+          fetchMaxMemberCount(query, params).then(maxRows => {
             if (maxRows > 50000) {
               reqCtrl.fetchMessage({type: "HEAVY_QUERY", rows: maxRows});
             }
-          }),
-          client.execQuery(query, endpoint)
+          })
         ]);
       })
       .then(result => {
-        const [, aggregation] = result;
+        const [aggregation] = result;
         const query = aggregation.query;
         dispatch(
           doCurrentResultUpdate({

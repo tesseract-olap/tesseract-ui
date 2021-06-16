@@ -9,25 +9,19 @@ import {useTranslation} from "./translation";
  * @param {string} valueProperty
  */
 export function useFormatParams(measures, valueProperty) {
-  const {
-    getAvailableKeys,
-    getFormatter,
-    getFormatterKey,
-    setFormat
-  } = useFormatter(measures);
-
   const {translate: t} = useTranslation();
+  const fmt = useFormatter(measures);
 
   return useMemo(() => {
-    const formatterKey = getFormatterKey(valueProperty) || "undefined";
+    const formatterKey = fmt.getFormatterKey(valueProperty) || "undefined";
     return {
-      formatter: getFormatter(formatterKey),
+      formatter: fmt.getFormatter(formatterKey),
       formatterKey,
       formatterKeyOptions: [{label: t("placeholders.none"), value: "undefined"}]
-        .concat(getAvailableKeys(valueProperty)
-          .map(key => ({label: getFormatter(key)(12345.6789), value: key}))
+        .concat(fmt.getAvailableKeys(valueProperty)
+          .map(key => ({label: fmt.getFormatter(key)(12345.6789), value: key}))
         ),
-      setFormat
+      setFormat: fmt.setFormat
     };
   }, [valueProperty]);
 }
