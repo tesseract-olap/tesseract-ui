@@ -1,7 +1,7 @@
 import React, {Fragment, memo, useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {doCubeSet} from "../middleware/actions";
+import {willSetCube} from "../middleware/olapActions";
 import {selectOlapCube} from "../state/selectors";
 import {selectOlapCubeItems} from "../state/server/selectors";
 import {groupBy} from "../utils/transform";
@@ -59,7 +59,7 @@ export const SelectCube = () => {
 
   /** @type {(cube: import("@datawheel/olap-client").PlainCube) => void} */
   const onItemSelect = cube => {
-    dispatch(doCubeSet(cube.name));
+    dispatch(willSetCube(cube.name));
   };
 
   useEffect(() => {

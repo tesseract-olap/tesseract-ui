@@ -1,10 +1,12 @@
 import {Button, Intent} from "@blueprintjs/core";
-import React from "react";
+import React, {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {doDrilldownCreate} from "../middleware/actions";
+import {willFetchMembers} from "../middleware/olapActions";
 import {doDrilldownClear, doDrilldownRemove, doDrilldownUpdate} from "../state/params/actions";
 import {selectDrilldownItems} from "../state/params/selectors";
+import {selectOlapDimensionItems} from "../state/selectors";
+import {buildDrilldown} from "../utils/structs";
 import {activeItemCounter} from "../utils/validation";
 import {ButtonSelectLevel} from "./ButtonSelectLevel";
 import {LayoutParamsArea} from "./LayoutParamsArea";
@@ -22,16 +24,28 @@ export const AreaDrilldowns = props => {
   const {translate: t} = useTranslation();
 
   const items = useSelector(selectDrilldownItems);
+  const dimensions = useSelector(selectOlapDimensionItems);
 
   /** @type {() => void} */
-  const clearHandler = () => {
+  const clearHandler = useCallback(() => {
     dispatch(doDrilldownClear());
-  };
+  }, []);
 
-  /** @type {(level: OlapClient.PlainLevel, hierarchy: OlapClient.PlainHierarchy, dimension: OlapClient.PlainDimension) => any} */
-  const createHandler = level => {
-    dispatch(doDrilldownCreate(level));
-  };
+  /** @type {(level: OlapClient.PlainLevel) => void} */
+  const createHandler = useCallback(level => {
+    const drilldownItem = buildDrilldown(level);
+    dispatch(doDrilldownUpdate(drilldownItem));
+    dispatch(willFetchMembers(level))
+      .then(members => {
+        const dimension = dimensions.find(dim => dim.name === level.dimension);
+        if (!dimension) return;
+        dispatch(doDrilldownUpdate({
+          ...drilldownItem,
+          dimType: dimension.dimensionType,
+          memberCount: members.length
+        }));
+      });
+  }, [dimensions]);
 
   /** @type {(item: TessExpl.Struct.DrilldownItem) => void} */
   const removeHandler = item => {

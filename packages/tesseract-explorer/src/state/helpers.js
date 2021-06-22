@@ -1,4 +1,15 @@
 /**
+ * @template {string} T
+ * @template U
+ * @param {T} type
+ * @param {U} [payload]
+ */
+export function action(type, payload) {
+  return {type, payload};
+}
+
+
+/**
  * Creates a shallow copy of the `target` object, and removes its `key` property.
  * @template T
  * @param {T} records

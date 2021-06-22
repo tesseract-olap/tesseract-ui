@@ -1,22 +1,18 @@
+import {action} from "../helpers";
+import {LOADING_SETMESSAGE, LOADING_SETSTATUS} from "./reducer";
+
+
 /**
- * Provides a quick API to dispatch actions that control the loading state of the UI.
- * @param {import("redux").Dispatch} dispatch
- * @param {import("redux").AnyAction} param1
+ * Updates the internal loading state to show or hide the overlay.
+ * @template {"REQUEST" | "SUCCESS" | "FAILURE"} T
+ * @param {T} status
+ * @param {string} [message]
  */
-export function requestControl(dispatch, {type: trigger, ...action}) {
-  return {
-    fetchRequest: payload => {
-      dispatch({type: `${trigger}/FETCH:REQUEST`, action, payload});
-    },
-    fetchMessage: payload => {
-      dispatch({type: `${trigger}/FETCH:MESSAGE`, action, payload});
-    },
-    fetchSuccess: payload => {
-      dispatch({type: `${trigger}/FETCH:SUCCESS`, action, payload});
-    },
-    fetchFailure: error => {
-      console.error(error);
-      dispatch({type: `${trigger}/FETCH:FAILURE`, action, payload: error.message});
-    }
-  };
-}
+export const doSetLoadingState = (status, message) => action(`${LOADING_SETSTATUS}:${status}`, message);
+
+
+/**
+ * Shows a message to the user in the Loading overlay.
+ * @param {{[params: string]: string, type: string}} message
+ */
+export const doSetLoadingMessage = message => action(LOADING_SETMESSAGE, message);

@@ -92,7 +92,10 @@ declare namespace TessExpl {
     interface LoadingState {
       error: string | null;
       loading: boolean;
-      message?: any;
+      message?: {
+        [params: string]: string;
+        type: string;
+      };
       status: string;
       trigger: string | null;
     }
@@ -111,9 +114,6 @@ declare namespace TessExpl {
       url: string;
       version: string;
     }
-
-    type MapStateFn<T, U> = MapStateToProps<T, U, ExplorerState>;
-    type MapDispatchFn<T, U> = MapDispatchToProps<T, U>;
   }
 
   namespace Struct {
@@ -255,24 +255,23 @@ declare namespace TessExpl {
     type LevelReference = LevelLike | LevelDescriptor;
 
     interface FileDescriptor {
+      content: Blob | string;
       extension: string;
-      content: string;
       name: string;
     }
   }
+}
 
-  namespace OlapMiddleware {
-    interface Action<T, U> {
-      type: T;
-      payload: U;
-    }
-
-    interface ActionMapParams<T, U = any> {
-      action: Action<T, U>;
-      client: OlapClnt.Client;
-      dispatch: Redux.Dispatch;
-      getState: () => State.ExplorerState;
-      next: Redux.Dispatch;
-    };
+declare module "redux" {
+  interface Dispatch<A extends Action<string>> {
+    (action: Action<"explorer/CLIENT/DOWNLOADQUERY">): Promise<TessExpl.Struct.FileDescriptor>;
+    (action: Action<"explorer/CLIENT/EXECUTEQUERY">): Promise<void>;
+    (action: Action<"explorer/CLIENT/FETCHMEMBERS">): Promise<OlapClient.PlainMember[]>;
+    (action: Action<"explorer/CLIENT/FILLPARAMS">): Promise<void>;
+    (action: Action<"explorer/CLIENT/PARSEQUERYURL">): Promise<void>;
+    (action: Action<"explorer/CLIENT/RELOADCUBES">): Promise<Record<string, OlapClient.PlainCube>>;
+    (action: Action<"explorer/CLIENT/SELECTCUBE">): Promise<void>;
+    (action: Action<"explorer/CLIENT/SETUPSERVER">): Promise<void>;
+    (action: Action<"explorer/PERMALINK/UPDATE">): Promise<void> | undefined;
   }
 }

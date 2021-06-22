@@ -1,7 +1,3 @@
-export const STATUS_FETCHING = "FETCHING";
-export const STATUS_SUCCESS = "SUCCESS";
-export const STATUS_FAILURE = "FAILURE";
-
 export const SERIAL_BOOLEAN = {
   DEBUG: 1,
   DISTINCT: 2,

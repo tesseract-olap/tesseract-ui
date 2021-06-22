@@ -59,6 +59,34 @@ const ResultPivot = props => {
     return warnings;
   }, [valProp, levelNames]);
 
+  const downloadToolbar = useMemo(() => {
+    if (!pivottedData) return null;
+
+    return (
+      <React.Fragment>
+        <h3>{t("pivot_view.title_download")}</h3>
+        <ButtonGroup fill>
+          <ButtonDownload
+            text="CSV"
+            provider={() => ({
+              name: fileName,
+              extension: "csv",
+              content: stringifyMatrix(pivottedData, formatter, "csv")
+            })}
+          />
+          <ButtonDownload
+            text="TSV"
+            provider={() => ({
+              name: fileName,
+              extension: "tsv",
+              content: stringifyMatrix(pivottedData, formatter, "tsv")
+            })}
+          />
+        </ButtonGroup>
+      </React.Fragment>
+    );
+  }, [pivottedData]);
+
   if (levelNames.length < 2) {
     return <NonIdealState
       icon="warning-sign"
@@ -130,25 +158,7 @@ const ResultPivot = props => {
 
         {warnings}
 
-        {pivottedData && <h3>{t("pivot_view.title_download")}</h3>}
-        {pivottedData && <ButtonGroup fill>
-          <ButtonDownload
-            text="CSV"
-            provider={() => ({
-              name: fileName,
-              extension: "csv",
-              content: stringifyMatrix(pivottedData, formatter, "csv")
-            })}
-          />
-          <ButtonDownload
-            text="TSV"
-            provider={() => ({
-              name: fileName,
-              extension: "tsv",
-              content: stringifyMatrix(pivottedData, formatter, "tsv")
-            })}
-          />
-        </ButtonGroup>}
+        {downloadToolbar}
       </div>
 
       {preview}

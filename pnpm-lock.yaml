@@ -127,7 +127,7 @@ importers:
       classnames: ^2.3.1
       clipboard-copy: ^3.2.0
       d3plus-format: ^1.0.0
-      form-urldecoded: ^1.0.0
+      form-urldecoded: ^1.2.0
       form-urlencoded: ^6.0.4
       iso-639-1: ^2.1.9
       react: ^16.14.0
@@ -146,7 +146,7 @@ importers:
       classnames: 2.3.1
       clipboard-copy: 3.2.0
       d3plus-format: 1.0.0
-      form-urldecoded: 1.0.0
+      form-urldecoded: 1.2.0
       form-urlencoded: 6.0.4
       iso-639-1: 2.1.9
       react-raw-object: 1.0.0_react-dom@16.14.0+react@16.14.0
@@ -3218,6 +3218,10 @@ packages:
 
   /form-urldecoded/1.0.0:
     resolution: {integrity: sha512-Y9ziVB6q0sNgt9J/g61LaDHg1hafknnY04IhMA795zgI+2EcK2uBecaVBaxTeM2mQ/hNnrdyo6Tz4PdaSxtLoQ==}
+    dev: false
+
+  /form-urldecoded/1.2.0:
+    resolution: {integrity: sha512-I9u81N5OQ5rFyDdTDeS9l2HSW1xykxFoS32HQmh/azNW5VHoWiHoISbKdINxj63KpfvzeEEce5/MEPTGxArVqw==}
     dev: false
 
   /form-urlencoded/4.5.1:

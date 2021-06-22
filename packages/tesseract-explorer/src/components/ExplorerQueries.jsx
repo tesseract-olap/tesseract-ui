@@ -1,8 +1,9 @@
 import {Button, ButtonGroup} from "@blueprintjs/core";
-import React from "react";
+import React, {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {doExecuteQuery, doParseQueryUrl} from "../middleware/actions";
+import {willExecuteQuery, willHydrateParams, willParseQueryUrl} from "../middleware/olapActions";
+import {doSetLoadingState} from "../state/loading/actions";
 import {doQueriesRemove, doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectCurrentQueryItem, selectQueryItems} from "../state/queries/selectors";
 import {buildQuery} from "../utils/structs";
@@ -24,33 +25,36 @@ export const ExplorerQueries = props => {
   const {translate: t} = useTranslation();
 
   /** @type {() => void} */
-  const onItemCreate = () => {
+  const onItemCreate = useCallback(() => {
     const query = buildQuery({params: currentQuery?.params});
     dispatch(doQueriesUpdate(query));
     dispatch(doQueriesSelect(query.key));
-  };
+  }, [currentQuery]);
 
   /** @type {(itemKey: string) => void} */
-  const onItemDelete = itemKey => {
+  const onItemDelete = useCallback(itemKey => {
     dispatch(doQueriesRemove(itemKey));
-  };
+  }, []);
 
   /** @type {(itemKey: string) => void} */
-  const onItemSelect = itemKey => {
+  const onItemSelect = useCallback(itemKey => {
     dispatch(doQueriesSelect(itemKey));
-  };
+  }, []);
 
-  const parseQueryUrlHandler = () => {
+  const parseQueryUrlHandler = useCallback(() => {
     const string = window.prompt("Enter the URL of the query you want to parse:");
     if (string) {
+      dispatch(doSetLoadingState("REQUEST"));
       const url = new URL(string);
-      Promise.resolve(url)
-        .then(doParseQueryUrl)
-        .then(dispatch)
-        .then(doExecuteQuery)
-        .then(dispatch);
+      dispatch(willParseQueryUrl(url))
+        .then(() => dispatch(willHydrateParams()))
+        .then(() => dispatch(willExecuteQuery()))
+        .then(
+          () => dispatch(doSetLoadingState("SUCCESS")),
+          error => dispatch(doSetLoadingState("FAILURE", error.message))
+        );
     }
-  };
+  }, []);
 
   return (
     <LayoutColumn

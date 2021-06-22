@@ -68,10 +68,10 @@ export const ExplorerResults = props => {
     />;
   }
 
-  if (isLoading || isDirtyQuery) {
+  if (isDirtyQuery) {
     return (
       <NonIdealState
-        className={classNames("initial-view loading", props.className)}
+        className={classNames("initial-view dirty", props.className)}
         icon={transientIcon}
       />
     );

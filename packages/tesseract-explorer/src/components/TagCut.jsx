@@ -1,8 +1,12 @@
 import {Button, ButtonGroup, Callout, FormGroup, Intent, Popover, PopoverInteractionKind, Spinner, Switch, Tag} from "@blueprintjs/core";
-import classNames from "classnames";
-import React, {useEffect, useState} from "react";
+import clsx from "classnames";
+import React, {useCallback, useEffect, useState} from "react";
+import {useDispatch} from "react-redux";
 import {useTranslation} from "../hooks/translation";
+import {willFetchMembers} from "../middleware/olapActions";
+import {doCutUpdate} from "../state/params/actions";
 import {abbreviateFullName} from "../utils/format";
+import {buildMember} from "../utils/structs";
 import {levelRefToArray} from "../utils/transform";
 import {ButtonTagExtra} from "./ButtonTagExtra";
 import {TransferInput} from "./TransferInput";
@@ -16,14 +20,15 @@ export const MembersTransferInput = TransferInput;
  * @property {TessExpl.Struct.CutItem} item
  * @property {string} locale
  * @property {(item: TessExpl.Struct.CutItem) => any} [onToggle]
- * @property {(item: TessExpl.Struct.CutItem) => Promise<TessExpl.Struct.MemberRecords>} [memberFetcher]
  * @property {(item: TessExpl.Struct.CutItem, members: string[]) => any} [onMembersUpdate]
  * @property {(item: TessExpl.Struct.CutItem) => any} [onRemove]
  */
 
 /** @type {React.FC<OwnProps>} */
 export const TagCut = props => {
-  const {item, memberFetcher, onMembersUpdate, onRemove, onToggle} = props;
+  const dispatch = useDispatch();
+
+  const {item, onMembersUpdate, onRemove, onToggle} = props;
   const label = abbreviateFullName(levelRefToArray(item));
 
   const {translate: t} = useTranslation();
@@ -32,18 +37,29 @@ export const TagCut = props => {
   const [members, setMembers] = useState({});
   const [isLoadingMembers, setLoadingMembers] = useState(true);
 
-  const toggleHandler = () => {
+  const toggleHandler = useCallback(() => {
     onToggle && onToggle(item);
-  };
-  const removeHandler = evt => {
+  }, []);
+
+  const removeHandler = useCallback(evt => {
     evt.stopPropagation();
     onRemove && onRemove(item);
-  };
-  const reloadHandler = () => {
-    memberFetcher && memberFetcher(item)
+  }, []);
+
+  const reloadHandler = useCallback(() => {
+    const activeMembers = item.members;
+    dispatch(willFetchMembers(item))
       .then(members => {
+        const memberRecords = {};
+        let i = members.length;
+        while (i--) {
+          const member = members[i];
+          const active = activeMembers.includes(`${member.key}`);
+          memberRecords[member.key] = buildMember({name: member.caption, key: member.key, active});
+        }
+        !item.active && dispatch(doCutUpdate({...item, active: true}));
         setError("");
-        setMembers(members);
+        setMembers(memberRecords);
         setLoadingMembers(false);
       })
       .catch(err => {
@@ -51,7 +67,7 @@ export const TagCut = props => {
         setMembers({});
         setLoadingMembers(false);
       });
-  };
+  }, []);
 
   useEffect(reloadHandler, [item.key, props.locale]);
 
@@ -93,7 +109,7 @@ export const TagCut = props => {
         popoverClassName="param-popover"
       >
         <Tag
-          className={classNames("tag-item tag-cut error", {hidden: !item.active})}
+          className={clsx("tag-item tag-cut error", {hidden: !item.active})}
           fill={true}
           icon="warning-sign"
           intent={Intent.WARNING}
@@ -133,7 +149,7 @@ export const TagCut = props => {
       popoverClassName="param-popover"
     >
       <Tag
-        className={classNames("tag-item tag-cut", {hidden: !item.active})}
+        className={clsx("tag-item tag-cut", {hidden: !item.active})}
         icon={
           <span onClickCapture={evt => evt.stopPropagation()}>
             <Switch checked={item.active} onChange={toggleHandler} />

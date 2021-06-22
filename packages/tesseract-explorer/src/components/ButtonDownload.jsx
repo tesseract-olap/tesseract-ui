@@ -1,5 +1,5 @@
 import {Button} from "@blueprintjs/core";
-import {createElement} from "react";
+import {createElement, useCallback} from "react";
 
 /**
  * @template T
@@ -23,33 +23,34 @@ const mimeTypes = {
 export const ButtonDownload = props => {
   const {provider, ...buttonProps} = props;
 
-  return createElement(Button, {
-    ...buttonProps,
-    onClick: evt => {
-      evt.stopPropagation();
-      evt.preventDefault();
+  const onClick = useCallback(evt => {
+    evt.stopPropagation();
+    evt.preventDefault();
 
-      const anchor = document.createElement("a");
+    const anchor = document.createElement("a");
 
-      const content = typeof provider === "function" ? provider() : provider;
-      Promise.resolve(content)
-        .then(file => {
-          const blob = new window.Blob([file.content], {
+    const content = typeof provider === "function" ? provider() : provider;
+    Promise.resolve(content)
+      .then(file => {
+        const blob = typeof file.content !== "string"
+          ? file.content
+          : new window.Blob([file.content], {
             type: mimeTypes[file.extension] || "application/octet-stream"
           });
-          const blobURL = window.URL.createObjectURL(blob);
+        const blobURL = window.URL.createObjectURL(blob);
 
-          anchor.href = blobURL;
-          anchor.download = `${file.name}.${file.extension}`;
-          anchor.addEventListener("click", () => {
-            setTimeout(() => {
-              window.URL.revokeObjectURL(blobURL);
-            }, 5000);
-          }, false);
-          anchor.click();
-        }, error => {
-          console.error("Error downloading content:", error.message);
-        });
-    }
-  });
+        anchor.href = blobURL;
+        anchor.download = `${file.name}.${file.extension}`;
+        anchor.addEventListener("click", () => {
+          setTimeout(() => {
+            window.URL.revokeObjectURL(blobURL);
+          }, 5000);
+        }, false);
+        anchor.click();
+      }, error => {
+        console.error("Error downloading content:", error.message);
+      });
+  }, [provider]);
+
+  return createElement(Button, {...buttonProps, onClick});
 };

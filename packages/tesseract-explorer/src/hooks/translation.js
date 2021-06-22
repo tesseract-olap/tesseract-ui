@@ -43,7 +43,7 @@ export const defaultTranslation = {
     count_cuts: "{n} selected",
     current_endpoint: "Current endpoint: {label}",
     error_fetchmembers_detail: "An error ocurred while loading the member list.",
-    error_fetchmembers_title: "Error while loading member list",
+    error_fetchmembers_title: "Error loading member list",
     label_amount: "Amount",
     label_boolean_debug: "Debug response",
     label_boolean_distinct: "Apply DISTINCT to drilldowns",

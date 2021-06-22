@@ -1,11 +1,12 @@
 import {Button, ButtonGroup, Classes, Intent} from "@blueprintjs/core";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {ButtonTooltip} from "./Tooltips";
 import {useTranslation} from "../hooks/translation";
-import {doExecuteQuery} from "../middleware/actions";
+import {willExecuteQuery} from "../middleware/olapActions";
+import {doSetLoadingState} from "../state/loading/actions";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint, selectServerSoftware} from "../state/server/selectors";
+import {ButtonTooltip} from "./Tooltips";
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
@@ -23,7 +24,14 @@ export const ButtonExecuteQuery = () => {
         icon="database"
         intent={Intent.PRIMARY}
         text={t("params.action_execute")}
-        onClick={() => dispatch(doExecuteQuery())}
+        onClick={() => {
+          dispatch(doSetLoadingState("REQUEST"));
+          dispatch(willExecuteQuery()).then(() => {
+            dispatch(doSetLoadingState("SUCCESS"));
+          }, error => {
+            dispatch(doSetLoadingState("FAILURE", error.message));
+          });
+        }}
       />
       {software === "tesseract-olap" && <ButtonTooltip
         className={Classes.FIXED}
