@@ -1,4 +1,4 @@
-import React, {Fragment, memo, useEffect, useMemo, useState} from "react";
+import React, {Fragment, memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {willSetCube} from "../middleware/olapActions";
@@ -28,27 +28,29 @@ export const SelectCube = () => {
   const items = useSelector(selectOlapCubeItems);
   const selectedItem = useSelector(selectOlapCube);
 
+  // Each level limits the available cubes for the next level
   const {
     level: level1,
     setLevel: setLevel1,
     keys: level1Keys,
     values: level1Values
-  } = useLevel(items, selectedItem, item => item.annotations.topic);
+  } = useSyncedSubset(items, selectedItem, item => item.annotations.topic);
 
   const {
     level: level2,
     setLevel: setLevel2,
     keys: level2Keys,
     values: level2Values
-  } = useLevel(level1Values, selectedItem, item => item.annotations.subtopic);
+  } = useSyncedSubset(level1Values, selectedItem, item => item.annotations.subtopic);
 
   const {
     level: level3,
     setLevel: setLevel3,
     keys: level3Keys,
     values: level3Values
-  } = useLevel(level2Values, selectedItem, item => item.annotations.table);
+  } = useSyncedSubset(level2Values, selectedItem, item => item.annotations.table);
 
+  // The list available to the last selector is the one that contains any item.
   /* eslint-disable indent, operator-linebreak */
   const cubeItems =
     level3Values.length > 0 ? level3Values :
@@ -58,10 +60,12 @@ export const SelectCube = () => {
   /* eslint-enable indent, operator-linebreak */
 
   /** @type {(cube: import("@datawheel/olap-client").PlainCube) => void} */
-  const onItemSelect = cube => {
+  const onItemSelect = useCallback(cube => {
     dispatch(willSetCube(cube.name));
-  };
+  }, []);
 
+  // We need to keep the selectedItem in sync if at some point the
+  // user selection leaves it out of the final subset of options
   useEffect(() => {
     if (selectedItem && cubeItems.length > 0 && !cubeItems.includes(selectedItem)) {
       onItemSelect(cubeItems[0]);
@@ -112,13 +116,30 @@ export const SelectCube = () => {
 };
 
 /**
+ * Keeps the state for the selector at that level, and limits the values passed
+ * to the next one depending on this state.
+ *
+ * The returned object contains the following properties:
+ * - `level`: The value selected by the user for this level of filtering.
+ * - `setLevel`: The dispatcher function to change the value of `level`.
+ * - `keys`: An array containing the possible values returned by the accessor
+ * for all the available `items`.
+ * - `values`: The subset of `items`, whose `accessor(item)` matches the `level`
+ * selected by the user.
+ *
+ * Initially `level` is the value obtained from `accessor(currentItem)`.
+ * Afterwards it's recalculated and updated each time `currentItem` changes.
+ * Properties `level` and `setLevel` come from a `useState` hook, and can be
+ * treated as such.
+ * If the accessor function returns `undefined` for all items, both `keys` and
+ * `values` in the returned object will be empty.
+ *
  * @template T
- * @param {T[]} items
- * @param {T | undefined} currentItem
- * @param {(item: T) => string | null | undefined} accessor
- * @returns
+ * @param {T[]} items The list of items to to select from.
+ * @param {T | undefined} currentItem The currently selected item, must belong to the `items` array.
+ * @param {(item: T) => string | null | undefined} accessor A function to select a item's property, whose value will be used a filtering step
  */
-function useLevel(items, currentItem, accessor) {
+function useSyncedSubset(items, currentItem, accessor) {
   const [level, setLevel] = useState(() => currentItem && accessor(currentItem) || "");
 
   useEffect(() => {

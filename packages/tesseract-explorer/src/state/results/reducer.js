@@ -1,4 +1,5 @@
-import {RESULT_UPDATE} from "./actions";
+export const RESULT_UPDATE = "explorer/RESULT/DATA/UPDATE";
+
 
 /** @type {Record<string, (results: TessExpl.Struct.QueryResult, payload: any) => TessExpl.Struct.QueryResult>} */
 export const resultsEffectors = {

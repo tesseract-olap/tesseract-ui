@@ -1,5 +1,4 @@
-export const SERVER_UPDATE = "explorer/SERVER/UPDATE";
-export const ENDPOINT_UPDATE = "explorer/SERVER/ENDPOINT/UPDATE";
+import {ENDPOINT_UPDATE, SERVER_UPDATE} from "./reducer";
 
 /**
  * Updates the application state with the current status of the OLAP server.

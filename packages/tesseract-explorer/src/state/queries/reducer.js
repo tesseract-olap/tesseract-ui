@@ -2,7 +2,13 @@ import {buildQuery} from "../../utils/structs";
 import {omitRecord} from "../helpers";
 import {paramsEffectors} from "../params/reducer";
 import {resultsEffectors} from "../results/reducer";
-import {QUERIES_CLEAR, QUERIES_REMOVE, QUERIES_SELECT, QUERIES_UPDATE} from "./actions";
+
+
+export const QUERIES_CLEAR = "explorer/QUERIES/CLEAR";
+export const QUERIES_REMOVE = "explorer/QUERIES/REMOVE";
+export const QUERIES_SELECT = "explorer/QUERIES/SELECT";
+export const QUERIES_UPDATE = "explorer/QUERIES/UPDATE";
+
 
 /** @type {TessExpl.State.QueriesState} */
 export const queriesInitialState = {
@@ -12,18 +18,20 @@ export const queriesInitialState = {
   }
 };
 
+
 /** @type {import("redux").Reducer<TessExpl.State.QueriesState>} */
 export function queriesReducer(state = queriesInitialState, {type: actionType, payload}) {
   const effector = queriesEffectors[actionType];
-  if (effector) {
+  if (typeof effector === "function") {
     return effector(state, payload);
   }
 
   const currentQuery = state.itemMap[state.current];
+  const currentEffector = queriesEffectors[QUERIES_UPDATE];
 
   const effectorParams = paramsEffectors[actionType];
   if (effectorParams) {
-    return queriesEffectors[QUERIES_UPDATE](state, {
+    return currentEffector(state, {
       ...currentQuery,
       isDirty: true,
       params: effectorParams(currentQuery.params, payload)
@@ -32,7 +40,7 @@ export function queriesReducer(state = queriesInitialState, {type: actionType, p
 
   const effectorResult = resultsEffectors[actionType];
   if (effectorResult) {
-    return queriesEffectors[QUERIES_UPDATE](state, {
+    return currentEffector(state, {
       ...currentQuery,
       isDirty: payload.hasOwnProperty("data") || payload.hasOwnProperty("error")
         ? false
@@ -40,6 +48,7 @@ export function queriesReducer(state = queriesInitialState, {type: actionType, p
       result: effectorResult(currentQuery.result, payload)
     });
   }
+
   return state;
 }
 

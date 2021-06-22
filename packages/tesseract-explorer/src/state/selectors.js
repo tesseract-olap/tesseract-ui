@@ -1,8 +1,6 @@
 import {createSelector} from "reselect";
-import {keyBy} from "../utils/transform";
-import {selectCubeName, selectMeasureMap, selectDrilldownItems} from "./params/selectors";
+import {selectCubeName} from "./params/selectors";
 import {selectOlapCubeMap} from "./server/selectors";
-import {getKeys, getValues} from "./helpers";
 
 /**
  * @returns {OlapClient.PlainCube}
@@ -18,14 +16,6 @@ export const selectOlapCube = createSelector(
 export const selectOlapMeasureItems = createSelector(
   selectOlapCube,
   cube => cube ? cube.measures : []
-);
-
-/**
- * @returns {OlapClient.PlainMeasure[]}
- */
-export const selectOlapMeasureItemsFromParams = createSelector(
-  [selectMeasureMap, selectOlapMeasureItems],
-  (measureMap, measures) => measures.filter(measure => measureMap[measure.name].active)
 );
 
 /**
@@ -45,26 +35,4 @@ export const selectOlapTimeDimension = createSelector(
     dimensions.find(
       d => d.dimensionType === "time" || d.name === "Year" || d.name === "Date"
     )
-);
-
-export const selectOlapLevelMap = createSelector(selectOlapDimensionItems, dimensions => {
-
-  /** @type {Record<string, OlapClient.PlainLevel>} */
-  const levelMap = {};
-  dimensions.forEach(dimension =>
-    dimension.hierarchies.forEach(hierarchy =>
-      keyBy(hierarchy.levels, d => d.name, levelMap)
-    )
-  );
-  return levelMap;
-});
-export const selectOlapLevelKeys = createSelector(selectOlapLevelMap, getKeys);
-export const selectOlapLevelItems = createSelector(selectOlapLevelMap, getValues);
-
-export const selectOlapLevelItemsFromParams = createSelector(
-  [selectDrilldownItems, selectOlapLevelItems],
-  (drilldownItems, levels) => {
-    const drilldownMap = keyBy(drilldownItems, d => d.level);
-    return levels.filter(level => drilldownMap[level.name]?.active);
-  }
 );

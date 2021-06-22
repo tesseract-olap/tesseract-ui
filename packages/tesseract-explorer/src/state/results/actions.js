@@ -1,16 +1,8 @@
-export const RESULT_UPDATE = "explorer/RESULT/DATA/UPDATE";
+import {action} from "../helpers";
+import {RESULT_UPDATE} from "./reducer";
+
 
 /**
  * @param {Partial<TessExpl.Struct.QueryResult>} payload
  */
-export const doCurrentResultUpdate = payload => ({type: RESULT_UPDATE, payload});
-
-/**
- * @param {string} chartType
- */
-export const doChartTypeUpdate = chartType => doCurrentResultUpdate({chartType});
-
-/**
- * @param {string} chartConfig
- */
-export const doChartCodeUpdate = chartConfig => doCurrentResultUpdate({chartConfig});
+export const doCurrentResultUpdate = payload => action(RESULT_UPDATE, payload);

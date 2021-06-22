@@ -188,7 +188,7 @@ const MatrixTable = props => {
 
   return (
     <Table
-      className="preview flex-grow flex-shrink-0 min-w-0"
+      className="preview flex-grow flex-shrink min-w-0"
       enableColumnResizing={true}
       enableRowResizing={false}
       getCellClipboardData={(row, col) => getDisplayValue(row, col)[1]}

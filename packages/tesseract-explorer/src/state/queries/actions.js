@@ -1,7 +1,4 @@
-export const QUERIES_CLEAR = "explorer/QUERIES/CLEAR";
-export const QUERIES_REMOVE = "explorer/QUERIES/REMOVE";
-export const QUERIES_SELECT = "explorer/QUERIES/SELECT";
-export const QUERIES_UPDATE = "explorer/QUERIES/UPDATE";
+import {QUERIES_CLEAR, QUERIES_REMOVE, QUERIES_SELECT, QUERIES_UPDATE} from "./reducer";
 
 /**
  * @param {Record<string, TessExpl.Struct.QueryItem>} payload
