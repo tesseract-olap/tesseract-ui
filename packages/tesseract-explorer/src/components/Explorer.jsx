@@ -14,7 +14,7 @@ import ResultPivot from "./ResultPivot";
 import ResultRaw from "./ResultRaw";
 import ResultTable from "./ResultTable";
 
-/** @type {Required<Pick<TessExpl.ExplorerProps, "locale" | "panels" | "transientIcon" | "uiLocale">>} */
+/** @type {Required<Pick<TessExpl.ExplorerProps, "locale" | "panels" | "transientIcon" | "uiLocale">> & {version: string}} */
 const defaultProps = {
   locale: ["en"],
   panels: {
@@ -23,7 +23,8 @@ const defaultProps = {
     "Raw response": ResultRaw
   },
   transientIcon: <AnimatedCube />,
-  uiLocale: "en"
+  uiLocale: "en",
+  version: __buildVersion
 };
 
 /** @type {React.FC<TessExpl.ExplorerProps>} */

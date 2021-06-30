@@ -4,16 +4,16 @@ import * as OlapClnt from "@datawheel/olap-client";
 import * as TesseractExplorer from "./index";
 
 declare global {
-  declare namespace TessExpl {
+  namespace TessExpl {
     export = TesseractExplorer;
   }
-  declare namespace OlapClient {
+  namespace OlapClient {
     export = OlapClnt;
   }
-  declare namespace BlueprintCore {
+  namespace BlueprintCore {
     export = BpjsCore;
   }
-  declare namespace BlueprintSelect {
+  namespace BlueprintSelect {
     export = BpjsSelect;
   }
 
@@ -21,4 +21,6 @@ declare global {
     headers: string[];
     data: [string, ...(number | undefined)[]][];
   }
+
+  const __buildVersion: string;
 }

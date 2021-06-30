@@ -46,7 +46,8 @@ export default cliArgs => {
       replace({
         preventAssignment: true,
         values: {
-          ENVIRONMENT: JSON.stringify(environment)
+          "process.env.NODE_ENV": JSON.stringify(environment),
+          "__buildVersion": JSON.stringify(pkg.version)
         }
       }),
       resolve({

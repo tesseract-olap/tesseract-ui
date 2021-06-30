@@ -3,9 +3,14 @@
     "allowSyntheticDefaultImports": true,
     "checkJs": true,
     "jsx": "react",
+    "lib": ["dom", "es2018"],
     "moduleResolution": "node",
     "strictNullChecks": true,
     "target": "es2015"
   },
-  "include": ["src", "index.d.ts"]
+  "include": [
+    "./src",
+    "index.d.ts",
+    "global.d.ts"
+  ]
 }

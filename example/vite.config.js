@@ -15,6 +15,7 @@ target.pathname = `${target.pathname}/`.replace(/\/{2,}/g, "/");
 const config = {
   root: "./src",
   define: {
+    '__buildVersion': '"x.y.z"',
     'process.env': {}
   },
   resolve: {

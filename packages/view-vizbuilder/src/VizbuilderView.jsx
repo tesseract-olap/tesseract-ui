@@ -12,7 +12,7 @@ function mapActives(dict, mapFn) {
   return Object.values(dict).filter(item => item.active).map(mapFn);
 }
 
-/** @type {React.FC<import("..").VizbuilderViewProps>} */
+/** @type {React.FC<import("..").VizbuilderViewProps & {version: string}>} */
 export const VizbuilderView = props => {
   const {params, result, formatters = {}} = props;
 
@@ -67,4 +67,8 @@ export const VizbuilderView = props => {
     translations: props.translations,
     userConfig: props.userConfig
   });
+};
+
+VizbuilderView.defaultProps = {
+  version: __buildVersion
 };
