@@ -1,7 +1,7 @@
 import {ButtonGroup, Callout, FormGroup, HTMLSelect, Intent, NonIdealState, Spinner} from "@blueprintjs/core";
 import {Cell, Column, Table} from "@blueprintjs/table";
 import clsx from "classnames";
-import React, {memo, useMemo, useState} from "react";
+import React, {Fragment, memo, useMemo, useState} from "react";
 import {useFormatParams, usePivottedData} from "../hooks/pivot";
 import {useTranslation} from "../hooks/translation";
 import {stringifyMatrix} from "../utils/pivot";
@@ -63,7 +63,7 @@ const ResultPivot = props => {
     if (!pivottedData) return null;
 
     return (
-      <React.Fragment>
+      <Fragment>
         <h3>{t("pivot_view.title_download")}</h3>
         <ButtonGroup fill>
           <ButtonDownload
@@ -83,7 +83,7 @@ const ResultPivot = props => {
             })}
           />
         </ButtonGroup>
-      </React.Fragment>
+      </Fragment>
     );
   }, [pivottedData]);
 

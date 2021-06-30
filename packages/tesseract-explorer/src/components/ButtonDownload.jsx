@@ -1,5 +1,5 @@
 import {Button} from "@blueprintjs/core";
-import {createElement, useCallback} from "react";
+import React, {useCallback} from "react";
 
 /**
  * @template T
@@ -52,5 +52,5 @@ export const ButtonDownload = props => {
       });
   }, [provider]);
 
-  return createElement(Button, {...buttonProps, onClick});
+  return <Button {...buttonProps} onClick={onClick} />;
 };

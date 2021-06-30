@@ -1,5 +1,5 @@
 import {Button, Intent} from "@blueprintjs/core";
-import React from "react";
+import React, {Fragment} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {doRcaClear, doRcaRemove, doRcaSelect, doRcaUpdate} from "../state/params/actions";
@@ -53,12 +53,12 @@ export const AreaRca = props => {
   const firstActiveItem = items.find(item => isActiveItem(item) && isRcaItem(item));
   const title = `${t("params.title_area_rca")}: ${firstActiveItem ? t("params.summary_rca", summaryRca(firstActiveItem)) : t("placeholders.none")}`;
   const toolbar =
-    <React.Fragment>
+    <Fragment>
       {items.length > 0 &&
         <Button icon="trash" intent={Intent.DANGER} onClick={props.clearHandler} />
       }
       <Button icon="new-object" onClick={props.createHandler} />
-    </React.Fragment>;
+    </Fragment>;
 
   return (
     <LayoutParamsArea

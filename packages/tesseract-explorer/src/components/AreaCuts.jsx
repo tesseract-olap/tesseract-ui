@@ -1,5 +1,5 @@
 import {Button, Intent} from "@blueprintjs/core";
-import React, {useCallback} from "react";
+import React, {Fragment, useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {doCutClear, doCutRemove, doCutUpdate} from "../state/params/actions";
@@ -51,7 +51,7 @@ export const AreaCuts = props => {
   }, []);
 
   const toolbar =
-    <React.Fragment>
+    <Fragment>
       {items.length > 0 &&
         <Button icon="trash" intent={Intent.DANGER} onClick={clearHandler} />
       }
@@ -60,7 +60,7 @@ export const AreaCuts = props => {
         onItemSelect={createHandler}
         selectedItems={items}
       />
-    </React.Fragment>;
+    </Fragment>;
 
   return (
     <LayoutParamsArea

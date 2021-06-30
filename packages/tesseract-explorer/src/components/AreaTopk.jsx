@@ -1,5 +1,5 @@
 import {Button, Intent} from "@blueprintjs/core";
-import React from "react";
+import React, {Fragment} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {doTopkClear, doTopkRemove, doTopkSelect, doTopkUpdate} from "../state/params/actions";
@@ -52,12 +52,12 @@ export const AreaTopk = props => {
   const firstActiveItem = items.find(item => isActiveItem(item) && isTopkItem(item));
   const title = `${t("params.title_area_topk")}: ${firstActiveItem ? t("params.summary_topk", summaryTopk(firstActiveItem)) : t("placeholders.none")}`;
   const toolbar =
-    <React.Fragment>
+    <Fragment>
       {items.length > 0 &&
         <Button icon="trash" intent={Intent.DANGER} onClick={clearHandler} />
       }
       <Button icon="new-object" onClick={createHandler} />
-    </React.Fragment>;
+    </Fragment>;
 
   return (
     <LayoutParamsArea

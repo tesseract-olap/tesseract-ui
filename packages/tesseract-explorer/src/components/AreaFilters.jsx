@@ -1,5 +1,5 @@
 import {Button, Intent} from "@blueprintjs/core";
-import React from "react";
+import React, {Fragment} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {doMeasureClear, doMeasureToggle} from "../state/params/actions";
@@ -35,12 +35,12 @@ export const AreaFilters = props => {
   };
 
   const toolbar =
-    <React.Fragment>
+    <Fragment>
       {items.length > 0 &&
         <Button icon="trash" intent={Intent.DANGER} onClick={clearHandler} />
       }
       <Button icon="new-object" onClick={createHandler} />
-    </React.Fragment>;
+    </Fragment>;
 
   return (
     <LayoutParamsArea
