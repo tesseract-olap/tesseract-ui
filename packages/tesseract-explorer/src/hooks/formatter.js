@@ -2,7 +2,7 @@
 /* eslint-disable lines-around-comment */
 
 import {format, formatAbbreviate} from "d3plus-format";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useSettings} from "./settings";
 
 export const defaultFormatters = {
@@ -18,36 +18,48 @@ export const basicFormatterKeys = ["Decimal", "Milliards", "Human"];
 
 /**
  * React Hook to get a list of available formatters and store the user preferences.
+ * Available formatting functions are stored in the `formatters` object, available
+ * from the Settings context. The user choice of formatter for each measure is
+ * stored in the `currentFormats` object.
+ * The resulting object is memoized, so can also be used as dependency.
  * @param {OlapClient.PlainMeasure[]} measures
  * @returns {FormatterHookContext}
  */
 export function useFormatter(measures) {
+  // Get the formatter functions defined by the user
   const {formatters} = useSettings();
 
+  // This will store the user choices of formatter for the available measures
   const [currentFormats, setCurrentFormats] = useState({});
+
+  // This will silently store the original intended formatters by the origin
   const originKeys = useRef({});
 
+  // We need to capture the default formatter intended for any new measure
+  // Since measure arrays come from the server schema, the containing array
+  // can be considered stable to use as dependency. We also want to refresh the
+  // choice if the user changes the cube and there's a measure with the same name.
   useEffect(() => {
+    // Create an array of tuples, containing (measure name, formatter key)
     /** @type {[string, string | undefined][]} */
     const tuplesRefKey = measures.map(item => {
       const {annotations: ann} = item;
       return [item.name, ann.format_template || ann.units_of_measurement];
     });
+    // Convert the tuple array into Record<measure name, formatter key>
     const record = Object.fromEntries(tuplesRefKey);
+    // Save the record, make sure it triggers a render
     originKeys.current = record;
     setCurrentFormats(record);
   }, [measures]);
 
-  /** @type {(refKey: string, formatter: string) => void} */
-  const setFormat = useCallback((refKey, formatter) => setCurrentFormats({
-    ...currentFormats,
-    [refKey]: formatter
-  }), [currentFormats]);
-
-  return {
+  return useMemo(() => ({
     getAvailableKeys(ref) {
       const originKey = originKeys.current[ref];
       return originKey ? [originKey].concat(basicFormatterKeys) : basicFormatterKeys;
+    },
+    getFormatterKey(ref) {
+      return currentFormats[ref] || originKeys.current[ref];
     },
     getFormatter(key) {
       if ((/^[A-Z]{3}$/).test(key)) {
@@ -66,17 +78,20 @@ export function useFormatter(measures) {
         return defaultFormatters.identity;
       }
     },
-    getFormatterKey(ref) {
-      return currentFormats[ref] || originKeys.current[ref];
+    setFormat(ref, formatterKey) {
+      setCurrentFormats({...currentFormats, [ref]: formatterKey});
     },
-    setFormat,
-  };
+  }), [currentFormats, originKeys.current]);
 }
 
 /**
  * @typedef FormatterHookContext
  * @property {(ref: string) => string[]} getAvailableKeys
+ *    Returns a list of keys that determine an available formatter function.
  * @property {(ref: string) => string | undefined} getFormatterKey
+ *    Returns the formatter key currently assigned to a `ref` measure name.
  * @property {(key: string) => TessExpl.Formatter} getFormatter
+ *    Returns the corresponding formatter function for the provided `key`.
  * @property {(ref: string, key: string) => void} setFormat
+ *    Saves the user's choice of formatter `key` (by its name) for a measure name `ref`.
  */

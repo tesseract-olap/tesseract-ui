@@ -23,7 +23,7 @@ export function useFormatParams(measures, valueProperty) {
         ),
       setFormat: fmt.setFormat
     };
-  }, [valueProperty]);
+  }, [valueProperty, fmt]);
 }
 
 /**
