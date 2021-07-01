@@ -89,7 +89,7 @@ export function buildDrilldown(props) {
     level,
     memberCount: 0,
     properties: ensureArray(props.properties).map(buildProperty),
-    uniqueName: props.uniqueName || level
+    uniqueName: props.uniqueName || ""
   };
 }
 

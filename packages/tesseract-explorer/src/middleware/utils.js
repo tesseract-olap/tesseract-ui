@@ -44,13 +44,16 @@ export function hydrateDrilldownProperties(cube, drilldownItem) {
 
   for (const level of cube.levelIterator) {
     if (level.matches(drilldownItem)) {
-      const properties = level.properties.map(property => buildProperty({
-        active: activeProperties.includes(property.name),
-        level: property.level.uniqueName,
-        name: property.name
-      }));
-      const dimType = level.dimension.dimensionType;
-      return buildDrilldown({...drilldownItem, dimType, properties});
+      return buildDrilldown({
+        ...drilldownItem,
+        uniqueName: level.uniqueName,
+        dimType: level.dimension.dimensionType,
+        properties: level.properties.map(property => buildProperty({
+          active: activeProperties.includes(property.name),
+          level: property.level.uniqueName,
+          name: property.name
+        }))
+      });
     }
   }
 
