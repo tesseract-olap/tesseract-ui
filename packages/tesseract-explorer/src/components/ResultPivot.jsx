@@ -85,7 +85,7 @@ const ResultPivot = props => {
         </ButtonGroup>
       </Fragment>
     );
-  }, [pivottedData]);
+  }, [pivottedData, formatter]);
 
   if (levelNames.length < 2) {
     return <NonIdealState

@@ -1,9 +1,8 @@
 import { IconName } from "@blueprintjs/core";
 import * as OlapClnt from "@datawheel/olap-client";
 import { TranslationProviderProps } from "@datawheel/use-translation";
-import { default as React } from "react";
-import { MapDispatchToProps, MapStateToProps } from "react-redux";
-import { default as Redux } from "redux";
+import * as React from "react";
+import * as Redux from "redux";
 
 export = TessExpl;
 
