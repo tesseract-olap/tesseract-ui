@@ -76,7 +76,7 @@ importers:
       '@blueprintjs/select': 3.16.4_react-dom@16.14.0+react@16.14.0
       '@blueprintjs/table': 3.8.33_react-dom@16.14.0+react@16.14.0
       '@datawheel/tesseract-explorer': link:../packages/tesseract-explorer
-      '@datawheel/tesseract-vizbuilder': link:../packages/view-vizbuilder
+      '@datawheel/tesseract-vizbuilder': link:../packages/vizbuilder
       normalize.css: 8.0.1
       react: 16.14.0
       react-dom: 16.14.0_react@16.14.0
@@ -130,8 +130,8 @@ importers:
       form-urldecoded: ^1.2.0
       form-urlencoded: ^6.0.4
       iso-639-1: ^2.1.9
-      react: ^16.14.0
-      react-dom: ^16.14.0
+      react: ^16.13.1
+      react-dom: ^16.13.1
       react-raw-object: ^1.0.0
       react-redux: ^7.2.4
       react-shadow-scroll: ^2.1.0
@@ -163,7 +163,7 @@ importers:
       redux: 4.1.0
       rollup: 2.51.1
 
-  packages/view-vizbuilder:
+  packages/vizbuilder:
     specifiers:
       '@babel/runtime-corejs3': ^7.13.10
       '@datawheel/tesseract-explorer': workspace:^1.0.0-alpha.10
@@ -172,13 +172,13 @@ importers:
       react-dom: ^16.14.0
       rollup: ^2.45.2
     dependencies:
-      '@babel/runtime-corejs3': 7.13.10
+      '@babel/runtime-corejs3': 7.14.0
       '@datawheel/vizbuilder': 0.2.0
     devDependencies:
       '@datawheel/tesseract-explorer': link:../tesseract-explorer
       react: 16.14.0
       react-dom: 16.14.0_react@16.14.0
-      rollup: 2.45.2
+      rollup: 2.51.1
 
 packages:
 
@@ -1345,13 +1345,6 @@ packages:
       '@babel/plugin-transform-react-pure-annotations': 7.12.1_@babel+core@7.13.16
     dev: true
 
-  /@babel/runtime-corejs3/7.13.10:
-    resolution: {integrity: sha512-x/XYVQ1h684pp1mJwOV4CyvqZXqbc8CMsMGUnAbuc82ZCdv1U63w5RSUzgDSXQHG5Rps/kiksH6g2D5BuaKyXg==}
-    dependencies:
-      core-js-pure: 3.10.2
-      regenerator-runtime: 0.13.7
-    dev: false
-
   /@babel/runtime-corejs3/7.14.0:
     resolution: {integrity: sha512-0R0HTZWHLk6G8jIk0FtoX+AatCtKnswS98VhXwGImFc759PJRp4Tru0PQYZofyijTFUr+gT8Mu7sgXVJLQ0ceg==}
     dependencies:
@@ -1521,8 +1514,8 @@ packages:
   /@datawheel/vizbuilder/0.2.0:
     resolution: {integrity: sha512-F5d/4m2czmcWoMWIpA5hXr9xL8/qmPFL5fji+BLxOWxgv9Ks5mYybEoOJ1kFaS0G+KLijNeLeLB6+sTLlAGP9w==}
     dependencies:
-      '@babel/runtime-corejs3': 7.13.10
-      '@datawheel/olap-client': 2.0.0-beta.1
+      '@babel/runtime-corejs3': 7.14.0
+      '@datawheel/olap-client': 2.0.0-beta.3
       classnames: 2.3.1
       d3plus-common: 1.0.3
       d3plus-format: 1.0.0
@@ -2166,11 +2159,6 @@ packages:
       browserslist: 4.16.4
       semver: 7.0.0
     dev: true
-
-  /core-js-pure/3.10.2:
-    resolution: {integrity: sha512-uu18pVHQ21n4mzfuSlCXpucu5VKsck3j2m5fjrBOBqqdgWAxwdCgUuGWj6cDDPN1zLj/qtiqKvBMxWgDeeu49Q==}
-    requiresBuild: true
-    dev: false
 
   /core-js-pure/3.14.0:
     resolution: {integrity: sha512-YVh+LN2FgNU0odThzm61BsdkwrbrchumFq3oztnE9vTKC4KS2fvnPmcx8t6jnqAyOTCTF4ZSiuK8Qhh7SNcL4g==}

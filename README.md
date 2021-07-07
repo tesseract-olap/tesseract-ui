@@ -28,7 +28,7 @@ A `npx` script to audit metainformation annotations on cubes from olap-client co
 
 The core of the project. This React component renders the whole main UI, but can be imported into any React framework.
 
-### [Vizbuilder plugin](./packages/view-vizbuilder/)
+### [Vizbuilder plugin](./packages/vizbuilder/)
 
 <a href="https://www.npmjs.com/package/@datawheel/tesseract-vizbuilder">
   <img src="https://img.shields.io/npm/v/@datawheel/tesseract-vizbuilder.svg" alt="npm package" align="right">
@@ -38,5 +38,5 @@ A view plugin for DataExplorer. Integrates the [`@datawheel/vizbuilder`](https:/
 
 ## License
 
-© 2020 [Datawheel, LLC](https://datawheel.us/)  
+© 2021 [Datawheel, LLC](https://datawheel.us/)  
 This project is made available under the [MIT License](./LICENSE).

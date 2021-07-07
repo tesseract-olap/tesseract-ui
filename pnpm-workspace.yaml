@@ -3,4 +3,4 @@ packages:
   - 'packages/create-tesseract-ui'
   - 'packages/cube-audit'
   - 'packages/tesseract-explorer'
-  - 'packages/view-vizbuilder'
+  - 'packages/vizbuilder'
