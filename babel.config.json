@@ -1,4 +1,11 @@
 {
+  "assumptions":{
+    "noDocumentAll": true,
+    "noClassCalls": true,
+    "noNewArrows": true,
+    "setSpreadProperties": true,
+    "skipForOfIteratorClosing": true
+  },
   "babelrcRoots": [
     ".",
     "example",
@@ -15,7 +22,6 @@
   ],
   "presets": [
     ["@babel/preset-env", {
-      "targets": "defaults",
       "useBuiltIns": false
     }],
     ["@babel/preset-react", {}]
