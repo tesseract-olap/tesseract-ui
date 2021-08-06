@@ -103,7 +103,7 @@ export function parseStateFromSearchParams(query) {
   const getKey = i => i.key;
 
   /** @type {Record<string, boolean>} */
-  const booleans = {};
+  const booleans = Object.create(null);
   Object.keys(SERIAL_BOOLEAN).forEach(key => {
     const value = (query.booleans || 0) & SERIAL_BOOLEAN[key];
     if (value > 0) {
@@ -111,11 +111,23 @@ export function parseStateFromSearchParams(query) {
     }
   });
 
+  /** @type {Record<string, TessExpl.Struct.CutItem>} */
+  const cuts = Object.create(null);
+
   return {
     booleans,
     cube: query.cube,
-    cuts: keyBy(ensureArray(query.cuts).map(parseCut), getKey),
-    drilldowns: keyBy(ensureArray(query.drilldowns).map(parseDrilldown), getKey),
+    cuts: ensureArray(query.cuts).reduce((cuts, item) => {
+      const cut = parseCut(item);
+      const matchingCut = cuts[cut.uniqueName];
+      if (matchingCut) {
+        const memberSet = new Set([...matchingCut.members, ...cut.members]);
+        cut.members = [...memberSet].sort();
+      }
+      cuts[cut.uniqueName] = cut;
+      return cuts;
+    }, cuts),
+    drilldowns: keyBy(ensureArray(query.drilldowns).map(parseDrilldown), i => i.uniqueName),
     filters: keyBy(ensureArray(query.filters).map(parseFilter), getKey),
     growth: keyBy(ensureArray(query.growth).map(parseGrowth), getKey),
     locale: query.locale,

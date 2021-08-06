@@ -1,12 +1,12 @@
 /**
  * Ensures the returned value is always an array.
  * @template T
- * @param {T|T[]} [value]
+ * @param {T | T[] | undefined | null} [value]
  * @returns {T[]}
  */
 export function ensureArray(value) {
   /** @type {T[]} */ const target = [];
-  return value == null ? target : target.concat(value);
+  return target.concat(value).filter(item => item != null);
 }
 
 /**
