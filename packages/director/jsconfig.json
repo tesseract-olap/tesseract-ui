@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "checkJs": true,
+    "jsx": "react",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "strictNullChecks": true,
+    "target": "es2018"
+  },
+  "include": [
+    "src/",
+    "electron/"
+  ]
+}

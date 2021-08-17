@@ -1,0 +1,31 @@
+{
+  "name": "@datawheel/tesseract-director",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A tool to build and validate tesseract-olap schemas.",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "tesseract-olap",
+    "schema",
+    "editor"
+  ],
+  "author": "Francisco Abarzúa <francisco@datawheel.us>",
+  "license": "MIT",
+  "dependencies": {
+    "@blueprintjs/core": "^3.44.1",
+    "@blueprintjs/select": "^3.16.1",
+    "@blueprintjs/table": "^3.8.30",
+    "@datawheel/tesseract-explorer": "workspace:*",
+    "@datawheel/tesseract-vizbuilder": "workspace:*",
+    "react": "16",
+    "react-dom": "16",
+    "react-redux": "^7.2.4",
+    "redux": "4"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.0.0-beta.5"
+  }
+}
