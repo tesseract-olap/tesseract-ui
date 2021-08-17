@@ -18,6 +18,7 @@ module.exports = function(values) {
   const packageString = utils.readTemplateFile("package.json");
   const targetPackage = JSON.parse(packageString);
   targetPackage.name = `${name}-explorer`;
+  targetPackage.dependencies["@datawheel/tesseract-explorer"] = values.version;
   utils.writeFile("package.json", targetPath, JSON.stringify(targetPackage, null, 2));
 
   const readme = utils.readTemplateFile("README.md");

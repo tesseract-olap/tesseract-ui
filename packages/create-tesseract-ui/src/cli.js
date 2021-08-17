@@ -18,6 +18,7 @@ cli
   .command("[directory]", "Create a tesseract-ui boilerplate in the defined directory.")
   .option("-e, --env <machine>", "Sets the type of machine where this instance will run.")
   .option("-s, --server <url>", "Sets the URL for the tesseract server.")
+  .option("-t, --target <version>", "Specifies a version of the tesseract-explorer package. If not set, the latest version available will be used.")
   .option("-n, --nginx", "If the environment is production, outputs an example nginx config for the static directory.")
   .action(cliAction);
 
@@ -31,6 +32,7 @@ cli.parse();
  * @param {object} options
  * @param {string} options.env
  * @param {string} options.server
+ * @param {string} options.target
  * @param {boolean} options.nginx
  */
 async function cliAction(targetFolder = ".", options) {
@@ -72,6 +74,7 @@ ${LINE}`);
   console.log("Creating files and applying configuration...");
   create({
     name: utils.slugify(targetName) || "demo",
+    version: options.target || "next",
     serverUrl: options.server,
     targetPath
   });
