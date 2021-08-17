@@ -13,6 +13,7 @@
     "@blueprintjs/table": "^3.8.33",
     "@datawheel/tesseract-explorer": "workspace:*",
     "@datawheel/tesseract-vizbuilder": "workspace:*",
+    "@datawheel/tesseract-workbench": "workspace:*",
     "normalize.css": "^8.0.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",

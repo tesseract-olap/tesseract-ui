@@ -4,3 +4,4 @@ packages:
   - 'packages/cube-audit'
   - 'packages/tesseract-explorer'
   - 'packages/vizbuilder'
+  - 'packages/workbench'

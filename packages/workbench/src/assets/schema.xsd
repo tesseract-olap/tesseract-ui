@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:attribute name="name" type="xs:string"/>
+
+<xs:simpleType name="dimensionType">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="geo"/>
+    <xs:enumeration value="time"/>
+    <xs:enumeration value="std"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="keyType">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="text"/>
+    <xs:enumeration value="nontext"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name="AnnotationElement">
+  <xs:simpleContent>
+    <xs:extension base="xs:string">
+      <xs:attribute ref="name" use="required"/>
+    </xs:extension>
+  </xs:simpleContent>
+</xs:complexType>
+
+<xs:complexType name="CubeElement">
+  <xs:sequence>
+    <xs:element name="Annotation" type="AnnotationElement" maxOccurs="unbounded"/>
+    <xs:element name="Table" type="TableElement"/>
+    <xs:element name="DimensionUsage" type="DimensionUsageElement" maxOccurs="unbounded"/>
+    <xs:element name="Dimension" type="DimensionElement" maxOccurs="unbounded"/>
+  </xs:sequence>
+
+  <xs:attribute ref="name" use="required"/>
+</xs:complexType>
+
+<xs:complexType name="DimensionElement">
+  <xs:sequence>
+    <xs:element name="Hierarchy" type="HierarchyElement" maxOccurs="unbounded"/>
+  </xs:sequence>
+  
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute name="default_hierarchy" type="xs:string" />
+  <xs:attribute name="foreign_key" type="xs:string" />
+  <xs:attribute name="type" type="dimensionType" default="std" />
+</xs:complexType>
+
+<xs:complexType name="DimensionUsageElement">
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute name="foreign_key" type="xs:string" use="required"/>
+  <xs:attribute name="source" type="xs:string" use="required"/>
+</xs:complexType>
+
+<xs:complexType name="HierarchyElement">
+  <xs:sequence>
+    <xs:choice>
+      <xs:element name="Table" type="TableElement"/>
+      <xs:element name="InlineTable" type="InlineTableElement"/>
+    </xs:choice>
+    <xs:element name="Level" type="LevelElement" maxOccurs="unbounded"/>
+  </xs:sequence>
+  
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute name="primary_key" type="xs:string"/>
+</xs:complexType>
+
+<xs:complexType name="InlineTableElement">
+  <xs:sequence>
+    <xs:element name="ColumnDef" type="InlineTableColumnElement" maxOccurs="unbounded"/>
+    <xs:element name="Row" type="InlineTableRowElement" maxOccurs="unbounded"/>
+  </xs:sequence>
+
+  <xs:attribute name="alias" type="xs:string" use="required"/>
+</xs:complexType>
+
+<xs:complexType name="InlineTableColumnElement">
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute name="key_type" type="keyType" use="required"/>
+</xs:complexType>
+
+<xs:complexType name="InlineTableRowElement">
+  <xs:sequence>
+    <xs:element name="Value" type="InlineTableValueElement" maxOccurs="unbounded"/>
+  </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="InlineTableValueElement">
+  <xs:simpleContent>
+    <xs:extension base="xs:string">
+      <xs:attribute name="column" type="xs:string" use="required"/>
+    </xs:extension>
+  </xs:simpleContent>
+</xs:complexType>
+
+<xs:complexType name="LevelElement">
+  <xs:sequence>
+    <xs:element name="Property" type="PropertyElement" minOccurs="0" maxOccurs="unbounded"/>
+  </xs:sequence>
+  
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute name="key_column" type="xs:string" use="required"/>
+  <xs:attribute name="name_column" type="xs:string"/>
+  <xs:attribute name="key_type" type="keyType"/>
+</xs:complexType>
+
+<xs:complexType name="PropertyElement">
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute name="column" type="xs:string" use="required"/>
+  <xs:attribute name="caption_set" type="xs:string"/>
+</xs:complexType>
+
+<xs:complexType name="MeasureElement">
+  <xs:sequence>
+    <xs:element name="Annotation" type="AnnotationElement" maxOccurs="unbounded"/>
+  </xs:sequence>
+
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute name="aggregator" type="xs:string" use="required"/>
+  <xs:attribute name="column" type="xs:string" use="required"/>
+</xs:complexType>
+
+<xs:complexType name="TableElement">
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute name="primary_key" type="xs:string"/>
+</xs:complexType>
+
+<xs:element name="Schema">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="SharedDimension" type="DimensionElement" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="Cube" type="CubeElement" maxOccurs="unbounded"/>
+    </xs:sequence>
+
+    <xs:attribute ref="name" use="required"/>
+  </xs:complexType>
+</xs:element>
+
+</xs:schema> 

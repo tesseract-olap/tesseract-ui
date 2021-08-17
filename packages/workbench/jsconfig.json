@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "checkJs": true,
+    "jsx": "react",
+    "lib": ["dom", "es2019.object"],
+    "module": "commonJS",
+    "moduleResolution": "node",
+    "strictNullChecks": true,
+    "target": "es2015"
+  },
+  "include": [
+    "./src",
+    "index.d.ts",
+    "global.d.ts"
+  ]
+}
