@@ -14,8 +14,10 @@ export function useFormatParams(measures, valueProperty) {
 
   return useMemo(() => {
     const formatterKey = fmt.getFormatterKey(valueProperty) || "undefined";
+    const formatter = fmt.getFormatter(formatterKey);
     return {
-      formatter: fmt.getFormatter(formatterKey),
+      formatExample: formatter(12345.6789),
+      formatter,
       formatterKey,
       formatterKeyOptions: [{label: t("placeholders.none"), value: "undefined"}]
         .concat(fmt.getAvailableKeys(valueProperty)
