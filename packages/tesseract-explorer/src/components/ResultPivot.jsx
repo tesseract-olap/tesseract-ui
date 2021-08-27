@@ -17,24 +17,29 @@ const ResultPivot = props => {
   const {translate: t} = useTranslation();
 
   const initial = useMemo(() => {
-    const dd = filterMap(Object.values(params.drilldowns), item =>
-      isActiveItem(item)
-        ? {label: item.uniqueName || item.level, value: item.level, type: item.dimType}
-        : null
-    );
-    const ms = filterMap(Object.values(params.measures), item =>
+    const ddnOptions = Object.values(params.drilldowns)
+      .filter(isActiveItem)
+      .flatMap(item => [
+        // The actual level
+        {label: item.uniqueName || item.level, value: item.level, type: item.dimType},
+        // plus the active properties
+        ...filterMap(item.properties, prop =>
+          isActiveItem(prop)
+            ? {label: `${prop.name} (${prop.level})`, value: prop.name, type: "prop"}
+            : null
+        )
+      ]);
+
+    const msrOptions = filterMap(Object.values(params.measures), item =>
       isActiveItem(item)
         ? {value: item.measure, type: item.aggType}
         : null
     );
-    const initialCol = dd.find(item => item.type === "time") || dd[0];
-    return {
-      ddnOptions: dd,
-      msrOptions: ms,
-      colProperty: initialCol,
-      rowProperty: dd.find(item => item !== initialCol) || dd[0],
-      valProperty: ms[0]
-    };
+
+    const colProperty = ddnOptions.find(item => item.type === "time") || ddnOptions[0];
+    const rowProperty = ddnOptions.find(item => item !== colProperty) || ddnOptions[0];
+
+    return {ddnOptions, msrOptions, colProperty, rowProperty, valProperty: msrOptions[0]};
   }, [result]);
 
   const [colProp, setColumnProp] = useState(initial.colProperty);
