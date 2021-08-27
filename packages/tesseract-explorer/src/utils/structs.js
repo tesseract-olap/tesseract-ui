@@ -78,18 +78,19 @@ export function buildDrilldown(props) {
   const dimension = `${props.dimension}`;
   const hierarchy = `${props.hierarchy}`;
   const level = `${props.level || props.name}`;
+  const fullName = props.fullName || joinName([dimension, hierarchy, level]);
   return {
     active: typeof props.active === "boolean" ? props.active : true,
     captionProperty: props.captionProperty || "",
     dimension,
     dimType,
-    fullName: props.fullName || joinName([dimension, hierarchy, level]),
+    fullName,
     hierarchy,
     key: props.key || randomKey(),
     level,
     memberCount: 0,
     properties: ensureArray(props.properties).map(buildProperty),
-    uniqueName: props.uniqueName || ""
+    uniqueName: props.uniqueName || fullName || ""
   };
 }
 

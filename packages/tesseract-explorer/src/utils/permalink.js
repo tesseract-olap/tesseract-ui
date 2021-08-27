@@ -102,32 +102,17 @@ function serializeStateToSearchParams(query) {
 export function parseStateFromSearchParams(query) {
   const getKey = i => i.key;
 
-  /** @type {Record<string, boolean>} */
-  const booleans = Object.create(null);
-  Object.keys(SERIAL_BOOLEAN).forEach(key => {
-    const value = (query.booleans || 0) & SERIAL_BOOLEAN[key];
-    if (value > 0) {
-      booleans[key.toLowerCase()] = true;
-    }
-  });
-
   /** @type {Record<string, TessExpl.Struct.CutItem>} */
   const cuts = Object.create(null);
 
+  /** @type {Record<string, TessExpl.Struct.DrilldownItem>} */
+  const drilldowns = Object.create(null);
+
   return {
-    booleans,
+    booleans: parseBooleans(parseInt(query.booleans, 10) || 0),
     cube: query.cube,
-    cuts: ensureArray(query.cuts).reduce((cuts, item) => {
-      const cut = parseCut(item);
-      const matchingCut = cuts[cut.uniqueName];
-      if (matchingCut) {
-        const memberSet = new Set([...matchingCut.members, ...cut.members]);
-        cut.members = [...memberSet].sort();
-      }
-      cuts[cut.uniqueName] = cut;
-      return cuts;
-    }, cuts),
-    drilldowns: keyBy(ensureArray(query.drilldowns).map(parseDrilldown), i => i.uniqueName),
+    cuts: ensureArray(query.cuts).reduce(cutReducer, cuts),
+    drilldowns: ensureArray(query.drilldowns).reduce(drilldownReducer, drilldowns),
     filters: keyBy(ensureArray(query.filters).map(parseFilter), getKey),
     growth: keyBy(ensureArray(query.growth).map(parseGrowth), getKey),
     locale: query.locale,
@@ -141,21 +126,51 @@ export function parseStateFromSearchParams(query) {
   };
 
   /**
+   * @param {Record<string, TessExpl.Struct.CutItem>} cuts
    * @param {string} item
-   * @returns {TessExpl.Struct.CutItem}
    */
-  function parseCut(item) {
+  function cutReducer(cuts, item) {
     const [fullName, ...members] = item.split(",");
-    return buildCut({...parseName(fullName), active: true, members});
+    const cut = buildCut({...parseName(fullName), active: true, members});
+
+    const matchingCut = cuts[cut.uniqueName];
+    if (matchingCut) {
+      const memberSet = new Set([...matchingCut.members, ...cut.members]);
+      cut.members = [...memberSet].sort();
+    }
+    cuts[cut.uniqueName] = cut;
+
+    return cuts;
   }
 
   /**
+   * @param {Record<string, TessExpl.Struct.DrilldownItem>} drilldowns
    * @param {string} item
-   * @returns {TessExpl.Struct.DrilldownItem}
    */
-  function parseDrilldown(item) {
+  function drilldownReducer(drilldowns, item) {
     const {dimension, hierarchy, level} = parseName(item);
-    return buildDrilldown({active: true, dimension, hierarchy, level});
+    const ddn = buildDrilldown({active: true, dimension, hierarchy, level});
+    drilldowns[ddn.uniqueName] = ddn;
+    return drilldowns;
+  }
+
+  /**
+   * @param {number} item
+   * @returns {Record<string, boolean>}
+   */
+  function parseBooleans(item) {
+
+    /** @type {Record<string, boolean>} */
+    const booleans = Object.create(null);
+
+    Object.keys(SERIAL_BOOLEAN).forEach(key => {
+      const value = item & SERIAL_BOOLEAN[key];
+      if (value > 0) {
+        booleans[key.toLowerCase()] = true;
+      }
+    });
+
+    return booleans;
   }
 
   /**
