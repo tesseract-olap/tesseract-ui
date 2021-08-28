@@ -134,6 +134,8 @@ export const defaultTranslation = {
     count_hidden: "{n} item hidden",
     count_hidden_plural: "{n} items hidden",
     search_placeholder: "Filter (regex enabled)",
+    select_all: "Select all",
+    unselect_all: "Unselect all",
   },
 };
 

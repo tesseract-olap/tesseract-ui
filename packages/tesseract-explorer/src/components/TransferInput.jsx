@@ -1,6 +1,6 @@
 import {Button, Classes, InputGroup, Menu, MenuDivider, MenuItem} from "@blueprintjs/core";
 import classNames from "classnames";
-import React, {useMemo, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import ViewPortList from "react-viewport-list";
 import {useTranslation} from "../hooks/translation";
 import {keyBy, safeRegExp} from "../utils/transform";
@@ -19,29 +19,11 @@ import {keyBy, safeRegExp} from "../utils/transform";
  * @type {React.FC<OwnProps<T>>}
  */
 export const TransferInput = props => {
-  const {
-    items,
-    activeItems,
-    onChange,
-    getLabel
-  } = props;
+  const {activeItems, getLabel, items, onChange} = props;
 
   const {translate: t} = useTranslation();
 
   const [filter, setFilter] = useState("");
-
-  const toggleHandler = item => {
-    const index = activeItems.indexOf(item.key);
-    const nextActiveItems = activeItems.slice();
-    if (index > -1) {
-      nextActiveItems.splice(index, 1);
-    }
-    else {
-      nextActiveItems.push(item.key);
-      nextActiveItems.sort();
-    }
-    onChange(nextActiveItems);
-  };
 
   const activeKeys = useMemo(
     () => keyBy(activeItems, key => key),
@@ -74,6 +56,28 @@ export const TransferInput = props => {
     };
   }, [items, activeKeys, filter]);
 
+  const toggleHandler = useCallback(item => {
+    const index = activeItems.indexOf(item.key);
+    const nextActiveItems = activeItems.slice();
+    if (index > -1) {
+      nextActiveItems.splice(index, 1);
+    }
+    else {
+      nextActiveItems.push(item.key);
+      nextActiveItems.sort();
+    }
+    onChange(nextActiveItems);
+  }, [activeItems, onChange]);
+
+  const selectAllHandler = useCallback(() => {
+    const nextActiveItems = Object.keys(items);
+    onChange(nextActiveItems);
+  }, []);
+
+  const unselectAllHandler = useCallback(() => {
+    onChange([]);
+  }, []);
+
   const selectedHidden = activeItems.length - results.selectedCount;
   const unselectedHidden = results.totalCount - activeItems.length - results.unselectedCount;
 
@@ -102,17 +106,31 @@ export const TransferInput = props => {
         value={filter}
       />
       <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-        {unselectedHidden > 0 && <MenuDivider title={t("transfer_input.count_hidden", {n: unselectedHidden})} />}
+        {unselectedHidden > 0 &&
+          <MenuDivider title={t("transfer_input.count_hidden", {n: unselectedHidden})} />
+        }
         <ViewPortList items={results.unselected} itemMinSize={30}>
           {renderItem}
         </ViewPortList>
       </Menu>
       <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-        {selectedHidden > 0 && <MenuDivider title={t("transfer_input.count_hidden", {n: selectedHidden})} />}
+        {selectedHidden > 0 &&
+          <MenuDivider title={t("transfer_input.count_hidden", {n: selectedHidden})} />
+        }
         <ViewPortList items={results.selected} itemMinSize={30}>
           {renderItem}
         </ViewPortList>
       </Menu>
+      <Button
+        rightIcon="double-chevron-right"
+        text={t("transfer_input.select_all")}
+        onClick={selectAllHandler}
+      />
+      <Button
+        icon="double-chevron-left"
+        text={t("transfer_input.unselect_all")}
+        onClick={unselectAllHandler}
+      />
     </div>
   );
 };

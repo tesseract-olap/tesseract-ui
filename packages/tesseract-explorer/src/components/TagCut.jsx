@@ -34,7 +34,7 @@ export const TagCut = props => {
   const {translate: t} = useTranslation();
 
   const [error, setError] = useState("");
-  const [members, setMembers] = useState({});
+  const [members, setMembers] = useState(Object.create(null));
   const [isLoadingMembers, setLoadingMembers] = useState(true);
 
   const toggleHandler = useCallback(() => {
