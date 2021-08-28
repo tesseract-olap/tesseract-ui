@@ -1,6 +1,6 @@
 import formUrlEncode from "form-urlencoded";
 import {SERIAL_BOOLEAN} from "../enums";
-import {ensureArray} from "./array";
+import {ensureArray, filterMap} from "./array";
 import {buildCut, buildDrilldown, buildFilter, buildGrowth, buildMeasure, buildRca, buildTopk} from "./structs";
 import {keyBy, parseName, stringifyName} from "./transform";
 import {isActiveCut, isActiveItem, isGrowthItem, isRcaItem, isTopkItem} from "./validation";
@@ -22,19 +22,33 @@ export function serializePermalink(params) {
  * @returns {TessExpl.Struct.SerializedQuery}
  */
 function serializeStateToSearchParams(query) {
-  const cuts = Object.values(query.cuts).filter(isActiveCut).map(serializeCut);
+  const cuts = filterMap(Object.values(query.cuts), item =>
+    isActiveCut(item) ? serializeCut(item) : null
+  );
 
-  const drilldowns = Object.values(query.drilldowns).filter(isActiveItem).map(stringifyName);
+  const drilldowns = filterMap(Object.values(query.drilldowns), item =>
+    isActiveItem(item) ? serializeDrilldown(item) : null
+  );
 
-  const filters = Object.values(query.filters).filter(isActiveItem).map(serializeFilter);
+  const filters = filterMap(Object.values(query.filters), item =>
+    isActiveItem(item) ? serializeFilter(item) : null
+  );
 
-  const growth = Object.values(query.growth).filter(isGrowthItem).map(serializeGrowth);
+  const growth = filterMap(Object.values(query.growth), item =>
+    isGrowthItem(item) ? serializeGrowth(item) : null
+  );
 
-  const measures = Object.values(query.measures).filter(isActiveItem).map(i => i.measure);
+  const measures = filterMap(Object.values(query.measures), item =>
+    isActiveItem(item) ? item.measure : null
+  );
 
-  const rca = Object.values(query.rca).filter(isRcaItem).map(serializeRca);
+  const rca = filterMap(Object.values(query.rca), item =>
+    isRcaItem(item) ? serializeRca(item) : null
+  );
 
-  const topk = Object.values(query.topk).filter(isTopkItem).map(serializeTopk);
+  const topk = filterMap(Object.values(query.topk), item =>
+    isTopkItem(item) ? serializeTopk(item) : null
+  );
 
   const booleans = Object.keys(query.booleans).reduce((sum, key) => {
     const value = query.booleans[key] && SERIAL_BOOLEAN[key.toUpperCase()];
@@ -60,6 +74,18 @@ function serializeStateToSearchParams(query) {
    */
   function serializeCut(item) {
     return [stringifyName(item)].concat(item.members).join(",");
+  }
+
+  /**
+   * @param {TessExpl.Struct.DrilldownItem} item
+   * @returns {string}
+   */
+  function serializeDrilldown(item) {
+    return [stringifyName(item)].concat(
+      filterMap(item.properties, prop =>
+        isActiveItem(prop) ? prop.name : null
+      )
+    ).join(",");
   }
 
   /**
@@ -148,8 +174,10 @@ export function parseStateFromSearchParams(query) {
    * @param {string} item
    */
   function drilldownReducer(drilldowns, item) {
-    const {dimension, hierarchy, level} = parseName(item);
-    const ddn = buildDrilldown({active: true, dimension, hierarchy, level});
+    const [fullName, ...props] = item.split(",");
+    const nameParts = parseName(fullName);
+    const properties = props.map(name => ({active: true, level: nameParts.level, name}));
+    const ddn = buildDrilldown({...nameParts, active: true, properties});
     drilldowns[ddn.uniqueName] = ddn;
     return drilldowns;
   }
