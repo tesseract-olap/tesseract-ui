@@ -73,6 +73,7 @@ export function extractQueryParams(query) {
   const cube = query.cube;
 
   const booleans = query.getParam("options");
+  // TODO: parse properties too
   const drilldowns = query.getParam("drilldowns").map(buildDrilldown);
   const measures = query.getParam("measures").map(buildMeasure);
   const filters = query.getParam("filters").map(buildFilter);

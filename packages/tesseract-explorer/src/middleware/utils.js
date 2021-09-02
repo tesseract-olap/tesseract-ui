@@ -46,12 +46,13 @@ export function hydrateDrilldownProperties(cube, drilldownItem) {
     if (level.matches(drilldownItem)) {
       return buildDrilldown({
         ...drilldownItem,
+        fullName: level.fullName,
         uniqueName: level.uniqueName,
         dimType: level.dimension.dimensionType,
         properties: level.properties.map(property => buildProperty({
-          active: activeProperties.includes(property.name),
-          level: property.level.uniqueName,
-          name: property.name
+          active: activeProperties.includes(property.uniqueName),
+          level: level.uniqueName,
+          name: property.uniqueName
         }))
       });
     }

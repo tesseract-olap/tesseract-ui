@@ -55,7 +55,7 @@ export function buildCut(props) {
   return {
     active: typeof props.active === "boolean" ? props.active : false,
     dimension,
-    fullName: props.fullName || [dimension, hierarchy, level].join("."),
+    fullName: props.fullName || joinName([dimension, hierarchy, level]),
     hierarchy,
     key: props.key || randomKey(),
     level,
@@ -78,19 +78,18 @@ export function buildDrilldown(props) {
   const dimension = `${props.dimension}`;
   const hierarchy = `${props.hierarchy}`;
   const level = `${props.level || props.name}`;
-  const fullName = props.fullName || joinName([dimension, hierarchy, level]);
   return {
     active: typeof props.active === "boolean" ? props.active : true,
     captionProperty: props.captionProperty || "",
     dimension,
     dimType,
-    fullName,
+    fullName: props.fullName || joinName([dimension, hierarchy, level]),
     hierarchy,
     key: props.key || randomKey(),
     level,
     memberCount: 0,
     properties: ensureArray(props.properties).map(buildProperty),
-    uniqueName: props.uniqueName || fullName || ""
+    uniqueName: props.uniqueName || props.name || props.level
   };
 }
 
