@@ -197,7 +197,7 @@ const MatrixTable = props => {
 
   const getDisplayValue = (rowIndex, colIndex) => {
     const value = values[rowIndex][colIndex];
-    return typeof value === "number"
+    return colIndex > 0 && typeof value === "number"
       ? ["column-number", formatter(value)]
       : ["column-string", value || ""];
   };

@@ -70,7 +70,7 @@ export function serializeTidyToArrays(data, sides, {Array, Map, Set, cc}) {
 
 /**
  * @param {Record<string, any>[]} data
- * @param {Record<"rowProp" | "colProp" | "valProp", string>} sides
+ * @param {{rowProp: string, colProp: string, valProp: string}} sides
  * @returns {Promise<JSONArrays>}
  */
 export function serializeToArray(data, sides) {
