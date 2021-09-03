@@ -135,7 +135,7 @@ export function parseStateFromSearchParams(query) {
   const drilldowns = Object.create(null);
 
   return {
-    booleans: parseBooleans(parseInt(query.booleans, 10) || 0),
+    booleans: parseBooleans(query.booleans || 0),
     cube: query.cube,
     cuts: ensureArray(query.cuts).reduce(cutReducer, cuts),
     drilldowns: ensureArray(query.drilldowns).reduce(drilldownReducer, drilldowns),
@@ -157,14 +157,14 @@ export function parseStateFromSearchParams(query) {
    */
   function cutReducer(cuts, item) {
     const [fullName, ...members] = item.split(",");
-    const cut = buildCut({...parseName(fullName), active: true, members});
+    const cut = buildCut({...parseName(fullName), active: true, members, key: fullName});
 
-    const matchingCut = cuts[cut.uniqueName];
+    const matchingCut = cuts[cut.key];
     if (matchingCut) {
       const memberSet = new Set([...matchingCut.members, ...cut.members]);
       cut.members = [...memberSet].sort();
     }
-    cuts[cut.uniqueName] = cut;
+    cuts[cut.key] = cut;
 
     return cuts;
   }
@@ -177,8 +177,8 @@ export function parseStateFromSearchParams(query) {
     const [fullName, ...props] = item.split(",");
     const nameParts = parseName(fullName);
     const properties = props.map(name => ({active: true, level: nameParts.level, name}));
-    const ddn = buildDrilldown({...nameParts, active: true, properties});
-    drilldowns[ddn.uniqueName] = ddn;
+    const ddn = buildDrilldown({...nameParts, active: true, properties, key: fullName});
+    drilldowns[ddn.key] = ddn;
     return drilldowns;
   }
 
