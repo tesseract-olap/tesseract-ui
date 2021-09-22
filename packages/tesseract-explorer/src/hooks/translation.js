@@ -91,7 +91,9 @@ export const defaultTranslation = {
     error_missingparams: "The current query doesn't have enough parameters. Two different drilldowns and a measure are needed.",
     error_onedimension: "The rows and columns in a pivotted table need 2 different drilldowns.",
     label_ddcolumn: "Column drilldown",
+    label_ddcolumnprop: "Column property",
     label_ddrow: "Row drilldown",
+    label_ddrowprop: "Row property",
     label_formatter: "Numeral format",
     label_valmeasure: "Value measure",
     loading_details: "This might take a while, please wait...",
@@ -99,6 +101,7 @@ export const defaultTranslation = {
     title_download: "Download matrix",
     title_params: "Matrix params",
     warning_notsummeasure: "The current query contains more than 2 drilldowns, and the aggregation type of the measure is not \"SUM\". The values you're getting might not be meaningful.",
+    warning_propertypivot: "Unlike Drilldown Members, Drilldown Properties are not guaranteed to be unique. In this view, data points are aggregated based on the property labels, so please ensure you're not missing information.",
     warning_sumdimensions: "There's more than 2 drilldowns in this query. Remaining values will be summed.",
   },
   placeholders: {

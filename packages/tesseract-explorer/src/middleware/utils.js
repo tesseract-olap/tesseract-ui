@@ -50,9 +50,10 @@ export function hydrateDrilldownProperties(cube, drilldownItem) {
         uniqueName: level.uniqueName,
         dimType: level.dimension.dimensionType,
         properties: level.properties.map(property => buildProperty({
-          active: activeProperties.includes(property.uniqueName),
+          active: activeProperties.includes(property.name),
           level: level.uniqueName,
-          name: property.uniqueName
+          name: property.name,
+          uniqueName: property.uniqueName
         }))
       });
     }

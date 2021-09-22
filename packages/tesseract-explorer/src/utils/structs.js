@@ -164,7 +164,8 @@ export function buildProperty(props) {
     active: typeof props.active === "boolean" ? props.active : false,
     key: props.uri || props.fullName || props.key || randomKey(),
     level: props.level,
-    name: props.name || props.property
+    name: props.name || props.property,
+    uniqueName: props.uniqueName || props.name
   };
 }
 

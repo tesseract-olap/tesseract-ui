@@ -206,6 +206,7 @@ declare namespace TessExpl {
     interface PropertyItem extends IQueryItem {
       level: string;
       name: string;
+      uniqueName: string;
     }
 
     interface RcaItem extends IQueryItem {

@@ -60,17 +60,22 @@ const ResultPivot = props => {
   } = useFormatParams(props.cube.measures, valProp.value);
 
   const warnings = useMemo(() => {
-    const measure = msrOptions.find(item => item === valProp);
     const warnings = [];
-    if (ddnOptions.length > 2 && measure) {
+    if (rowProp.type === "prop" || colProp.type === "prop") {
       warnings.push(
-        measure.type !== "SUM"
+        <Callout key="propertypivot" intent={Intent.WARNING}>{t("pivot_view.warning_propertypivot")}</Callout>
+      );
+    }
+    const drilldownCount = Object.values(params.drilldowns).filter(isActiveItem).length;
+    if (drilldownCount > 2) {
+      warnings.push(
+        valProp.type !== "SUM"
           ? <Callout key="notsummeasure" intent={Intent.WARNING}>{t("pivot_view.warning_notsummeasure")}</Callout>
           : <Callout key="sumdimensions">{t("pivot_view.warning_sumdimensions")}</Callout>
       );
     }
     return warnings;
-  }, [ddnOptions, msrOptions, valProp]);
+  }, [params.drilldowns, rowProp, colProp, valProp]);
 
   const downloadToolbar = useMemo(() => {
     if (!pivottedData) return null;
@@ -141,7 +146,12 @@ const ResultPivot = props => {
       <div className="toolbar flex-grow-0 flex-shrink-0 w-24 p-3">
         <h3 className="mt-0">{t("pivot_view.title_params")}</h3>
 
-        <FormGroup label={t("pivot_view.label_ddcolumn")}>
+        <FormGroup
+          label={colProp.type === "prop"
+            ? t("pivot_view.label_ddcolumnprop")
+            : t("pivot_view.label_ddcolumn")
+          }
+        >
           <SelectObject
             fill={true}
             getLabel={item => item.label}
@@ -151,7 +161,12 @@ const ResultPivot = props => {
           />
         </FormGroup>
 
-        <FormGroup label={t("pivot_view.label_ddrow")}>
+        <FormGroup
+          label={rowProp.type === "prop"
+            ? t("pivot_view.label_ddrowprop")
+            : t("pivot_view.label_ddrow")
+          }
+        >
           <SelectObject
             fill={true}
             getLabel={item => item.label}
@@ -195,6 +210,7 @@ const ResultPivot = props => {
 const MatrixTable = props => {
   const {data: values, formatter} = props;
 
+  /** @type {(rowIndex: number, colIndex: number) => [string, string | number]} */
   const getDisplayValue = (rowIndex, colIndex) => {
     const value = values[rowIndex][colIndex];
     return colIndex > 0 && typeof value === "number"
