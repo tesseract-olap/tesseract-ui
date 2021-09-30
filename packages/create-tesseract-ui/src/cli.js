@@ -8,7 +8,6 @@ const {green, grey, yellow} = require("kleur");
 const path = require("path");
 const prompts = require("prompts");
 
-const create = require("./create");
 const utils = require("./utils");
 const validate = require("./validate");
 
@@ -72,11 +71,10 @@ ${LINE}`);
 
   console.log(LINE);
   console.log("Creating files and applying configuration...");
-  create({
+  createInstance(targetPath, {
     name: utils.slugify(targetName) || "demo",
     version: options.target || "next",
-    serverUrl: options.server,
-    targetPath
+    serverUrl: options.server
   });
 
   console.log(LINE);
@@ -128,4 +126,34 @@ To build a production bundle, run ${yellow("npm run build")}
 The bundle will be generated in ${path.join(targetPath, "dist/")}
 `);
   }
+}
+
+/**
+ * @param {string} targetPath
+ * @param {object} values
+ * @param {string} values.name
+ * @param {string} values.version
+ * @param {string} values.serverUrl
+ */
+function createInstance(targetPath, values) {
+  utils.copyTemplateFile("index.js", targetPath);
+  utils.copyTemplateFile("style.css", targetPath);
+
+  const index = utils.readTemplateFile("index.html");
+  const indexFinal = utils.applyTemplate(index, values);
+  utils.writeFile("index.html", targetPath, indexFinal);
+
+  const viteConfig = utils.readTemplateFile("vite.config.js");
+  const viteConfigFinal = utils.applyTemplate(viteConfig, values);
+  utils.writeFile("vite.config.js", targetPath, viteConfigFinal);
+
+  const packageString = utils.readTemplateFile("package.json");
+  const targetPackage = JSON.parse(packageString);
+  targetPackage.name = `${values.name}-explorer`;
+  targetPackage.dependencies["@datawheel/tesseract-explorer"] = values.version;
+  utils.writeFile("package.json", targetPath, JSON.stringify(targetPackage, null, 2));
+
+  const readme = utils.readTemplateFile("README.md");
+  const readmeFinal = utils.applyTemplate(readme, values);
+  utils.writeFile("README.md", targetPath, readmeFinal);
 }
