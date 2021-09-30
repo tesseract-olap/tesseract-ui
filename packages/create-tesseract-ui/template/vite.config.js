@@ -7,6 +7,7 @@ const serverUrl = `$TEMPLATE_SERVER`;
 const config = {
   base: "",
   build: {
+    minify: "terser",
     rollupOptions: {
       output: {
         manualChunks: {
