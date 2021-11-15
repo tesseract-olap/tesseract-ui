@@ -1,10 +1,11 @@
 import formUrlDecode from "form-urldecoded";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useDispatch} from "react-redux";
 import {willExecuteQuery, willHydrateParams, willParseQueryUrl, willReloadCubes, willSetupClient} from "../middleware/olapActions";
 import {doSetLoadingState} from "../state/loading/actions";
 import {doQueriesClear} from "../state/queries/actions";
 import {updateLocaleList} from "../state/server/actions";
+import {ensureArray} from "../utils/array";
 import {parseStateFromSearchParams} from "../utils/permalink";
 import {decodeUrlFromBase64} from "../utils/string";
 import {buildQuery} from "../utils/structs";
@@ -14,17 +15,25 @@ import {isValidQuery} from "../utils/validation";
  * Keeps in sync the internal datasources with the setup parameters.
  *
  * @param {OlapClient.ServerConfig} serverConfig
- * @param {string[]} locale
+ * @param {string | string[]} locale
  */
 export function useSetup(serverConfig, locale) {
   const dispatch = useDispatch();
 
   const [done, setDone] = useState(false);
 
-  useEffect(() => {
-    dispatch(updateLocaleList(locale));
-  }, [locale.join(",")]);
+  // ensure the locale variable is an array
+  const cleanLocale = useMemo(() => typeof locale === "string"
+    ? locale.split(",").map(item => item.trim())
+    : ensureArray(locale).map(item => item.trim())
+  , [`${locale}`]);
 
+  // Keep the locale list in sync with the server state
+  useEffect(() => {
+    dispatch(updateLocaleList(cleanLocale));
+  }, [cleanLocale]);
+
+  // Initialize the internal state, from permalink, history API, or default.
   useEffect(() => {
     dispatch(doSetLoadingState("REQUEST"));
     setDone(false);

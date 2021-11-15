@@ -107,11 +107,14 @@ function PageComponent(props) {
   return <TesseractExplorer
     src="https://tesseract.server.url/"
     locale={["en", "es"]}
+    // The property also accepts a comma-separated string
+    locale={"es,en"}
   />;
 }
 ```
 
-These will be presented in the UI as a selector with the name of the language, and the parameter will be added to the queries.
+The first item in the list will be used by default when the app loads.
+The options will be presented in the UI as a selector with the name of the language, and the parameter will be added to the queries.
 
 ### UI Localization
 

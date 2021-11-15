@@ -1,7 +1,7 @@
 import legacy from "@vitejs/plugin-legacy";
 
 const inProduction = process.env.NODE_ENV == "production";
-const serverUrl = `$TEMPLATE_SERVER`;
+const serverUrl = `$TEMPLATE_SERVERURL`;
 
 /** @type {import("vite").UserConfig} */
 const config = {
@@ -23,6 +23,7 @@ const config = {
   define: {
     'process.env': {
       '__SERVER_URL__': inProduction ? serverUrl : "/olap/",
+      '__SERVER_LOCALES__': `$TEMPLATE_SERVERLOCALES`,
     },
   },
   plugins: [

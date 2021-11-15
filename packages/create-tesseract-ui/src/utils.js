@@ -34,7 +34,8 @@ function makeDirectory(targetPath) {
 function applyTemplate(string, values) {
   return string
     .replace(/\$TEMPLATE_NAME/g, values.name)
-    .replace(/\$TEMPLATE_SERVER/g, values.serverUrl);
+    .replace(/\$TEMPLATE_SERVERLOCALES/g, values.serverLocales)
+    .replace(/\$TEMPLATE_SERVERURL/g, values.serverUrl);
 }
 
 /**

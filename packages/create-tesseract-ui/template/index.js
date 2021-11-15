@@ -22,12 +22,14 @@ const store = createStore(explorerReducer, undefined, enhancers);
 const App = props =>
   createElement(Provider, {store},
     createElement(Explorer, {
+      locale: props.serverLocale,
       src: props.serverUrl
     })
   );
 
 ReactDOM.render(
   createElement(App, {
+    serverLocale: process.env.__SERVER_LOCALES__,
     serverUrl: process.env.__SERVER_URL__
   }),
   document.getElementById("app")

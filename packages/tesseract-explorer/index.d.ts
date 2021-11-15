@@ -46,8 +46,11 @@ declare namespace TessExpl {
      */
     formatters?: Record<string, Formatter>;
 
-    /** A list of the available locale options */
-    locale?: string[];
+    /**
+     * A list of the available locale options.
+     * A string will be splitted by commas (`,`) to try to interpret a list.
+     */
+    locale?: string | string[];
 
     /**
      * The list of tabs to offer to the user to render the results.
