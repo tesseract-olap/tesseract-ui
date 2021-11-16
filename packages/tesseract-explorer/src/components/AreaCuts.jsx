@@ -8,7 +8,7 @@ import {buildCut} from "../utils/structs";
 import {activeItemCounter} from "../utils/validation";
 import {MemoButtonSelectLevel as ButtonSelectLevel} from "./ButtonSelectLevel";
 import {LayoutParamsArea} from "./LayoutParamsArea";
-import {TagCut} from "./TagCut";
+import {MemoTagCut as TagCut} from "./TagCut";
 
 /**
  * @typedef OwnProps

@@ -157,9 +157,14 @@ export function parseStateFromSearchParams(query) {
    */
   function cutReducer(cuts, item) {
     const [fullName, ...members] = item.split(",");
-    const cut = buildCut({...parseName(fullName), active: true, members, key: fullName});
+    const cut = buildCut({...parseName(fullName), active: true, members});
 
-    const matchingCut = cuts[cut.key];
+    // fullName is normalized into descriptor, so this is better for comparison
+    const matchingCut = Object.values(cuts).find(item =>
+      item.dimension === cut.dimension &&
+      item.hierarchy === cut.hierarchy &&
+      item.level === cut.level
+    );
     if (matchingCut) {
       const memberSet = new Set([...matchingCut.members, ...cut.members]);
       cut.members = [...memberSet].sort();

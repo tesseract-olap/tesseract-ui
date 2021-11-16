@@ -1,6 +1,6 @@
 import {Button, ButtonGroup, Callout, FormGroup, Intent, Popover, PopoverInteractionKind, Spinner, Switch, Tag} from "@blueprintjs/core";
 import clsx from "classnames";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {memo, useCallback, useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {willFetchMembers} from "../middleware/olapActions";
@@ -39,12 +39,12 @@ export const TagCut = props => {
 
   const toggleHandler = useCallback(() => {
     onToggle && onToggle(item);
-  }, []);
+  }, [item.active]);
 
   const removeHandler = useCallback(evt => {
     evt.stopPropagation();
     onRemove && onRemove(item);
-  }, []);
+  }, [item.key]);
 
   const reloadHandler = useCallback(() => {
     const activeMembers = item.members;
@@ -165,3 +165,5 @@ export const TagCut = props => {
     </Popover>
   );
 };
+
+export const MemoTagCut = memo(TagCut);
