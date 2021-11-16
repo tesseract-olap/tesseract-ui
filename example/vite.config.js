@@ -2,7 +2,8 @@ import path from "path";
 import reactRefresh from "@vitejs/plugin-react-refresh";
 
 const {
-  OLAPPROXY_AUTH,
+  OLAPPROXY_BASICAUTH,
+  OLAPPROXY_JWTAUTH,
   OLAPPROXY_TARGET = "http://localhost:7777"
 } = process.env;
 
@@ -10,6 +11,11 @@ const basePath = path.resolve(__dirname, "..");
 
 const target = new URL(OLAPPROXY_TARGET);
 target.pathname = `${target.pathname}/`.replace(/\/{2,}/g, "/");
+
+const headers = {};
+if (OLAPPROXY_JWTAUTH) {
+  headers["x-tesseract-jwt-token"] = OLAPPROXY_JWTAUTH;
+}
 
 /** @type {import("vite").UserConfig} */
 const config = {
@@ -33,10 +39,11 @@ const config = {
   server: {
     proxy: {
       "/olap/": {
-        auth: OLAPPROXY_AUTH,
+        auth: OLAPPROXY_BASICAUTH,
         changeOrigin: true,
         secure: false,
         target: target.origin,
+        headers,
         rewrite: (path) => path.replace(/^\/olap\//, target.pathname)
       }
     }
