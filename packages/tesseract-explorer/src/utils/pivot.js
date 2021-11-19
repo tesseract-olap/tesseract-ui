@@ -1,6 +1,16 @@
 /**
  * @template T
- * @typedef {(initial: string, set: T[]) => [string, ...T[]]} Concatter
+ * @typedef {(initial: string, set: T[]) => [string, ...string[]]} Concatter
+ */
+
+/**
+ * @template T, U
+ * @typedef {(array: T[], mapper: (item: T, index: number, list: T[]) => U) => U[]} Mapper
+ */
+
+/**
+ * @template T, U
+ * @typedef {(array: T[], reducer: (acc: U, item: T, index: number, list: T[]) => U, start: U) => U} Reducer
  */
 
 /**
@@ -15,11 +25,13 @@
  * @param {typeof Array} cls.Array
  * @param {typeof Map} cls.Map
  * @param {typeof Set} cls.Set
- * @param {Concatter<number | undefined>} cls.cc
+ * @param {Concatter<string | number | undefined>} cls.cc
+ * @param {Mapper<string, string>} cls.mp
+ * @param {Reducer<Record<string, number>, number>} cls.rd
  *
  * @returns {JSONArrays}
  */
-export function serializeTidyToArrays(data, sides, {Array, Map, Set, cc}) {
+export function serializeTidyToArrays(data, sides, {Array, Map, Set, cc, mp, rd}) {
   const {valProp} = sides;
   const colProp = getIdProperty(sides.colProp);
   const rowProp = getIdProperty(sides.rowProp);
@@ -53,12 +65,12 @@ export function serializeTidyToArrays(data, sides, {Array, Map, Set, cc}) {
   const sortedCols = Array.from(colMembers).sort();
 
   return {
-    headers: cc(rowProp, sortedCols.map(colId => colDict.get(colId) || colId)),
+    headers: cc(rowProp, mp(sortedCols, colId => colDict.get(colId) || colId)),
     data: Array.from(rowMembers, rowId =>
-      cc(rowDict.get(rowId) || rowId, sortedCols.map(colId => {
+      cc(rowDict.get(rowId) || rowId, mp(sortedCols, colId => {
         const items = getValueReference(colId, rowId);
         if (items.length === 0) return undefined;
-        const value = items.reduce((sum, datum) => sum + datum[valProp], 0);
+        const value = rd(items, (sum, datum) => sum + datum[valProp], 0);
         return isNaN(value) ? undefined : value;
       }))
     )
@@ -98,10 +110,10 @@ export function serializeToArray(data, sides) {
   if (!Blob || !Worker) {
     return new Promise(resolve => {
       const result = serializeTidyToArrays(data, sides, {
-        Array,
-        Set,
-        Map,
-        cc: (initial, set) => [initial, ...set]
+        Array, Set, Map,
+        cc: (initial, set) => [initial, ...set],
+        mp: (array, mapper) => array.map(mapper),
+        rd: (array, reducer, start) => array.reduce(reducer, start)
       });
       resolve(result);
     });
@@ -110,11 +122,17 @@ export function serializeToArray(data, sides) {
   const scriptBody = `
 self.onmessage = function(e) {
   const {data, sides} = e.data;
-  const result = (${serializeTidyToArrays})(data, sides, {Array, Map, Set, cc});
+  const result = (${serializeTidyToArrays})(data, sides, {Array, Map, Set, cc, mp, rd});
   self.postMessage(result);
 };
 function cc(initial, set) {
   return [initial, ...Array.from(set)];
+}
+function mp(array, mapper) {
+  return array.map(mapper);
+}
+function rd(array, reducer, start) {
+  return array.reduce(reducer, start);
 }
 `;
   const blob = new Blob([scriptBody], {type: "text/javascript"});
