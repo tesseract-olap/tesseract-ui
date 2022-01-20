@@ -1,12 +1,13 @@
-import {Button, ButtonGroup, Classes, Intent} from "@blueprintjs/core";
+import {ButtonGroup, Classes, Intent, Position} from "@blueprintjs/core";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {willExecuteQuery} from "../middleware/olapActions";
 import {doSetLoadingState} from "../state/loading/actions";
+import {selectValidQueryStatus} from "../state/params/selectors";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint, selectServerSoftware} from "../state/server/selectors";
-import {ButtonTooltip} from "./Tooltips";
+import {AnchorButtonTooltip, ButtonTooltip} from "./Tooltips";
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
@@ -17,13 +18,21 @@ export const ButtonExecuteQuery = () => {
   const endpoint = useSelector(selectServerEndpoint);
   const software = useSelector(selectServerSoftware);
 
+  const {isValid, error} = useSelector(selectValidQueryStatus);
+
+  const errorText = error && t(error) !== error ? t(error) : "";
+
   return (
     <ButtonGroup className="query-actions p-3" fill>
-      <Button
+      <AnchorButtonTooltip
         fill={true}
+        disabled={!isValid}
         icon="database"
         intent={Intent.PRIMARY}
         text={t("params.action_execute")}
+        tooltipText={errorText}
+        tooltipIntent={Intent.DANGER}
+        tooltipPosition={Position.TOP}
         onClick={() => {
           dispatch(doSetLoadingState("REQUEST"));
           dispatch(willExecuteQuery()).then(() => {

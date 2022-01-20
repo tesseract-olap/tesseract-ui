@@ -1,4 +1,4 @@
-import {Tooltip, Button, Icon} from "@blueprintjs/core";
+import {AnchorButton, Button, Icon, Tooltip} from "@blueprintjs/core";
 import {createElement} from "react";
 
 /**
@@ -34,9 +34,20 @@ export const IconTooltip = props => {
 export const ButtonTooltip = props => {
   const {tooltipIntent, tooltipPosition, tooltipText, ...restProps} = props;
   return createElement(TooltipWrapper, {
-    tooltipClassName: "button-tooltip",
+    tooltipClassName: `button-tooltip ${props.fill ? "button-tooltip-fill" : ""}`,
     tooltipIntent,
     tooltipPosition,
     tooltipText
   }, createElement(Button, restProps));
+};
+
+/** @type {React.FC<BlueprintCore.AnchorButtonProps & TooltipProps>} */
+export const AnchorButtonTooltip = props => {
+  const {tooltipIntent, tooltipPosition, tooltipText, ...restProps} = props;
+  return createElement(TooltipWrapper, {
+    tooltipClassName: `button-tooltip ${props.fill ? "button-tooltip-fill" : ""}`,
+    tooltipIntent,
+    tooltipPosition,
+    tooltipText
+  }, createElement(AnchorButton, restProps));
 };
