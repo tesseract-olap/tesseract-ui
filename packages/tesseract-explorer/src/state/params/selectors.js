@@ -1,5 +1,6 @@
 import ISO6391 from "iso-639-1";
 import {createSelector} from "reselect";
+import {isValidQueryVerbose} from "../../utils/validation";
 import {getKeys, getValues} from "../helpers";
 import {selectCurrentQueryItem} from "../queries/selectors";
 import {selectServerState} from "../server/selectors";
@@ -85,4 +86,9 @@ export const selectPaginationParams = createSelector(
 export const selectSortingParams = createSelector(
   selectCurrentQueryParams,
   params => ({sortKey: params.sortKey || "", sortDir: params.sortDir})
+);
+
+export const selectValidQueryStatus = createSelector(
+  selectCurrentQueryParams,
+  params => isValidQueryVerbose(params)
 );

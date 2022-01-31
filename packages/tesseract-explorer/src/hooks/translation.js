@@ -112,6 +112,9 @@ export const defaultTranslation = {
   queries: {
     action_create: "New query",
     action_parse: "Query from URL",
+    error_not_query: "Please construct a valid query",
+    error_no_drilldowns: "You must add at least one drilldown.",
+    error_no_measures: "You must add at least one measure.",
     column_title: "Queries",
     unset_parameters: "No parameters set",
   },
@@ -139,7 +142,7 @@ export const defaultTranslation = {
     search_placeholder: "Filter (regex enabled)",
     select_all: "Select all",
     unselect_all: "Unselect all",
-  },
+  }
 };
 
 export const {

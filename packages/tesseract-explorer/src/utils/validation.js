@@ -51,15 +51,46 @@ export function isQuery(query) {
 }
 
 /**
- * @param {any} query
- * @returns {query is QueryParams}
+ * List of conditions that make a Query valid.
+ */
+const validQueryConditions = [
+  {
+    condition: isQuery,
+    error: "queries.error_not_query"
+  },
+  {
+    condition: query => Object.values(query.measures).reduce(activeItemCounter, 0) > 0,
+    error: "queries.error_no_measures"
+  },
+  {
+    condition: query => Object.values(query.drilldowns).reduce(activeItemCounter, 0) > 0,
+    error: "queries.error_no_drilldowns"
+  }
+];
+
+/**
+ * Validates whether the provided object is a valid Query object that can be used to make a request.
+ * @param {any} query - query to validate
+ * @returns {boolean}
  */
 export function isValidQuery(query) {
-  return (
-    isQuery(query) &&
-    Object.values(query.drilldowns).reduce(activeItemCounter, 0) > 0 &&
-    Object.values(query.measures).reduce(activeItemCounter, 0) > 0
-  );
+  return validQueryConditions.every(queryCondition => queryCondition.condition(query));
+}
+
+/**
+ * Validates whether the provided object is a valid Query object that can be used to make a request.
+ * Also returns an error message of the first failed condition.
+ * @param {any} query - query to validate
+ * @returns {{isValid: boolean, error: undefined | string}}
+ */
+export function isValidQueryVerbose(query) {
+  let error;
+  const allConditionsPass = validQueryConditions.every(queryCondition => {
+    const passed = queryCondition.condition(query);
+    if (!passed) error = queryCondition.error;
+    return passed;
+  });
+  return {isValid: allConditionsPass, error};
 }
 
 /** @param {TessExpl.Struct.CutItem} item */
