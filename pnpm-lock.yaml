@@ -167,13 +167,13 @@ importers:
     specifiers:
       '@babel/runtime-corejs3': ^7.13.10
       '@datawheel/tesseract-explorer': workspace:^1.0.0-alpha.10
-      '@datawheel/vizbuilder': ^0.2.0
+      '@datawheel/vizbuilder': ^0.2.7
       react: ^16.14.0
       react-dom: ^16.14.0
       rollup: ^2.45.2
     dependencies:
       '@babel/runtime-corejs3': 7.14.0
-      '@datawheel/vizbuilder': 0.2.0
+      '@datawheel/vizbuilder': 0.2.7_react-dom@16.14.0+react@16.14.0
     devDependencies:
       '@datawheel/tesseract-explorer': link:../tesseract-explorer
       react: 16.14.0
@@ -1511,13 +1511,18 @@ packages:
       react: 16.14.0
     dev: false
 
-  /@datawheel/vizbuilder/0.2.0:
-    resolution: {integrity: sha512-F5d/4m2czmcWoMWIpA5hXr9xL8/qmPFL5fji+BLxOWxgv9Ks5mYybEoOJ1kFaS0G+KLijNeLeLB6+sTLlAGP9w==}
+  /@datawheel/vizbuilder/0.2.7_react-dom@16.14.0+react@16.14.0:
+    resolution: {integrity: sha512-ptyrAwrc3eMKmpVYtBvqx+UTY/pWzWlEVuQ/ZmBdS3yc+r1PRNcB9wzrIlgBICw3BTEwldKrlwN/tbXIzGVBkQ==}
+    peerDependencies:
+      react: ^16.12.0
+      react-dom: ^16.12.0
     dependencies:
       '@babel/runtime-corejs3': 7.14.0
       '@datawheel/olap-client': 2.0.0-beta.3
+      '@datawheel/use-translation': 0.1.2_react@16.14.0
       classnames: 2.3.1
       d3plus-common: 1.0.3
+      d3plus-export: 1.0.0
       d3plus-format: 1.0.0
       d3plus-react: 1.0.0_react@16.14.0
       lodash: 4.17.21
