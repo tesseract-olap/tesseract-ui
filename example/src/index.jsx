@@ -13,6 +13,18 @@ import {
   TableView
 } from "@datawheel/tesseract-explorer";
 
+import Vizbuilder from "@datawheel/tesseract-vizbuilder";
+
+const VizbuilderPanel = props =>
+  <Vizbuilder
+    cube={props.cube}
+    result={props.result}
+    params={props.params}
+    allowedChartTypes={["barchart", "barchartyear", "lineplot", "stacked", "treemap", "geomap", "donut"]}
+    downloadFormats={["svg", "png"]}
+    showConfidenceInt={false}
+  />;
+
 const composeEnhancers =
   typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -28,7 +40,8 @@ FocusStyleManager.onlyShowFocusOnTabs();
 const PANELS = {
   "Data Table": TableView,
   "Pivot Table": PivotView,
-  "Raw response": DebugView
+  "Raw response": DebugView,
+  "Vizbuilder": VizbuilderPanel
 };
 
 ReactDOM.render(
