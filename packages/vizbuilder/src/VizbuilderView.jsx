@@ -14,7 +14,7 @@ function mapActives(dict, mapFn) {
 
 /** @type {React.FC<import("..").VizbuilderViewProps & {version: string}>} */
 export const VizbuilderView = props => {
-  const {params, result, formatters = {}} = props;
+  const {params, result, formatters = {}, ...otherProps} = props;
 
   /** @type {VizBldr.QueryResult} */
   const queries = useMemo(() => {
@@ -55,17 +55,9 @@ export const VizbuilderView = props => {
   }, [result.data, params]);
 
   return createElement(Vizbuilder, {
-    allowedChartTypes: props.allowedChartTypes,
     className: "vizbuilder-view",
-    datacap: props.datacap,
-    defaultLocale: props.defaultLocale,
-    measureConfig: props.measureConfig,
-    onPeriodChange: props.onPeriodChange,
     queries,
-    showConfidenceInt: props.showConfidenceInt,
-    topojsonConfig: props.topojsonConfig,
-    translations: props.translations,
-    userConfig: props.userConfig
+    ...otherProps
   });
 };
 
