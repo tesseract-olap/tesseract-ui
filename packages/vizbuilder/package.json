@@ -4,8 +4,23 @@
   "description": "Generates a vizbuilder view for results query in Tesseract Explorer.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.cjs.js"
+    },
+    "./vizbuilder.css": "./dist/vizbuilder.css"
+  },
   "types": "index.d.ts",
   "style": "dist/vizbuilder.css",
+  "readme": "README.md",
+  "files": [
+    "index.d.ts",
+    "dist/index.cjs.js",
+    "dist/index.esm.js",
+    "dist/vizbuilder.css"
+  ],
   "scripts": {
     "build": "rollup --config ../../rollup.config.js --environment NODE_ENV:production",
     "watch": "rollup --config ../../rollup.config.js --environment NODE_ENV:development --watch"
