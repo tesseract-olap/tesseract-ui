@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "example": "pnpm start --filter example",
-    "mono:version": "node scripts/version.js",
+    "mono:publish": "node scripts/publish.js",
+    "mono:release": "node scripts/release.js",
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
