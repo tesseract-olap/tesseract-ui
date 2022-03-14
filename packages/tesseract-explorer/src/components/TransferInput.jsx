@@ -131,12 +131,12 @@ export const TransferInput = props => {
       </Menu>
       <Button
         rightIcon="double-chevron-right"
-        text={filter ? "Select filtered" : t("transfer_input.select_all")}
+        text={filter ? t("transfer_input.select_filtered") : t("transfer_input.select_all")}
         onClick={selectAllHandler}
       />
       <Button
         icon="double-chevron-left"
-        text={filter ? "Unselect filtered" : t("transfer_input.unselect_all")}
+        text={filter ? t("transfer_input.unselect_filtered") : t("transfer_input.unselect_all")}
         onClick={unselectAllHandler}
       />
     </div>
