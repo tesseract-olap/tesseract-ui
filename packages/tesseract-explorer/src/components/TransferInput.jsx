@@ -70,13 +70,21 @@ export const TransferInput = props => {
   }, [activeItems, onChange]);
 
   const selectAllHandler = useCallback(() => {
-    const nextActiveItems = Object.keys(items);
-    onChange(nextActiveItems);
-  }, []);
+    onChange([
+      ...Object.keys(activeKeys), // currently active keys
+      ...(results?.unselected || []).map(d => d.key) // plus currently filtered unselected keys
+    ]);
+  }, [results, activeKeys]);
 
   const unselectAllHandler = useCallback(() => {
-    onChange([]);
-  }, []);
+    if (!results?.selectedCount) {
+      onChange([]);
+      return;
+    }
+    const filteredKeys = new Set((results?.selected || []).map(d => String(d.key)));
+    const newActive = Object.keys(activeKeys).filter(k => !filteredKeys.has(k));
+    onChange(newActive);
+  }, [results, activeKeys]);
 
   const selectedHidden = activeItems.length - results.selectedCount;
   const unselectedHidden = results.totalCount - activeItems.length - results.unselectedCount;
@@ -123,12 +131,12 @@ export const TransferInput = props => {
       </Menu>
       <Button
         rightIcon="double-chevron-right"
-        text={t("transfer_input.select_all")}
+        text={filter ? t("transfer_input.select_filtered") : t("transfer_input.select_all")}
         onClick={selectAllHandler}
       />
       <Button
         icon="double-chevron-left"
-        text={t("transfer_input.unselect_all")}
+        text={filter ? t("transfer_input.unselect_filtered") : t("transfer_input.unselect_all")}
         onClick={unselectAllHandler}
       />
     </div>

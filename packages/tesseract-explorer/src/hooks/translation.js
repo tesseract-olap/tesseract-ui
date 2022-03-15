@@ -142,6 +142,8 @@ export const defaultTranslation = {
     search_placeholder: "Filter (regex enabled)",
     select_all: "Select all",
     unselect_all: "Unselect all",
+    select_filtered: "Select filtered",
+    unselect_filtered: "Unselect filtered",
   }
 };
 
