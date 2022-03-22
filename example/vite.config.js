@@ -30,7 +30,7 @@ const config = {
       replacement: path.resolve(basePath, "./packages/tesseract-explorer/src/index.js")
     }, {
       find: "@datawheel/tesseract-vizbuilder",
-      replacement: path.resolve(basePath, "./packages/view-vizbuilder/src/index.js")
+      replacement: path.resolve(basePath, "./packages/vizbuilder/src/index.js")
     }]
   },
   plugins: [
