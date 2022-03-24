@@ -1,9 +1,9 @@
 import formUrlEncode from "form-urlencoded";
 import {SERIAL_BOOLEAN} from "../enums";
 import {ensureArray, filterMap} from "./array";
-import {buildCut, buildDrilldown, buildFilter, buildGrowth, buildMeasure, buildRca, buildTopk} from "./structs";
+import {buildCut, buildDrilldown, buildFilter, buildMeasure} from "./structs";
 import {keyBy, parseName, stringifyName} from "./transform";
-import {isActiveCut, isActiveItem, isGrowthItem, isRcaItem, isTopkItem} from "./validation";
+import {isActiveCut, isActiveItem} from "./validation";
 
 /**
  * @param {TessExpl.Struct.QueryParams} params
@@ -34,20 +34,8 @@ function serializeStateToSearchParams(query) {
     isActiveItem(item) ? serializeFilter(item) : null
   );
 
-  const growth = filterMap(Object.values(query.growth), item =>
-    isGrowthItem(item) ? serializeGrowth(item) : null
-  );
-
   const measures = filterMap(Object.values(query.measures), item =>
     isActiveItem(item) ? item.measure : null
-  );
-
-  const rca = filterMap(Object.values(query.rca), item =>
-    isRcaItem(item) ? serializeRca(item) : null
-  );
-
-  const topk = filterMap(Object.values(query.topk), item =>
-    isTopkItem(item) ? serializeTopk(item) : null
   );
 
   const booleans = Object.keys(query.booleans).reduce((sum, key) => {
@@ -60,11 +48,8 @@ function serializeStateToSearchParams(query) {
     cuts: cuts.length > 0 ? cuts : undefined,
     drilldowns: drilldowns.length > 0 ? drilldowns : undefined,
     filters: filters.length > 0 ? filters : undefined,
-    growth: growth.length > 0 ? growth : undefined,
     locale: query.locale ? query.locale : undefined,
     measures: measures.length > 0 ? measures : undefined,
-    rca: rca.length > 0 ? rca : undefined,
-    topk: topk.length > 0 ? topk : undefined,
     booleans: booleans > 0 ? booleans : undefined
   };
 
@@ -95,30 +80,6 @@ function serializeStateToSearchParams(query) {
   function serializeFilter(item) {
     return `${item.measure},${item.comparison},${item.interpretedValue}`;
   }
-
-  /**
-   * @param {TessExpl.Struct.GrowthItem} item
-   * @returns {string}
-   */
-  function serializeGrowth(item) {
-    return `${item.level},${item.measure}`;
-  }
-
-  /**
-   * @param {TessExpl.Struct.RcaItem} item
-   * @returns {string}
-   */
-  function serializeRca(item) {
-    return `${item.level1},${item.level2},${item.measure}`;
-  }
-
-  /**
-   * @param {TessExpl.Struct.TopkItem} item
-   * @returns {string}
-   */
-  function serializeTopk(item) {
-    return `${item.amount},${item.level},${item.measure},${item.order}`;
-  }
 }
 
 /**
@@ -140,15 +101,12 @@ export function parseStateFromSearchParams(query) {
     cuts: ensureArray(query.cuts).reduce(cutReducer, cuts),
     drilldowns: ensureArray(query.drilldowns).reduce(drilldownReducer, drilldowns),
     filters: keyBy(ensureArray(query.filters).map(parseFilter), getKey),
-    growth: keyBy(ensureArray(query.growth).map(parseGrowth), getKey),
     locale: query.locale,
     measures: keyBy(ensureArray(query.measures).map(parseMeasure), getKey),
     pagiLimit: undefined,
     pagiOffset: undefined,
-    rca: keyBy(ensureArray(query.rca).map(parseRca), getKey),
     sortDir: "desc",
-    sortKey: undefined,
-    topk: keyBy(ensureArray(query.topk).map(parseTopk), getKey)
+    sortKey: undefined
   };
 
   /**
@@ -223,36 +181,9 @@ export function parseStateFromSearchParams(query) {
 
   /**
    * @param {string} item
-   * @returns {TessExpl.Struct.GrowthItem}
-   */
-  function parseGrowth(item) {
-    const [level, measure] = item.split(",");
-    return buildGrowth({active: true, level, measure});
-  }
-
-  /**
-   * @param {string} item
    * @returns {TessExpl.Struct.MeasureItem}
    */
   function parseMeasure(item) {
     return buildMeasure({active: true, measure: item});
-  }
-
-  /**
-   * @param {string} item
-   * @returns {TessExpl.Struct.RcaItem}
-   */
-  function parseRca(item) {
-    const [level1, level2, measure] = item.split(",");
-    return buildRca({active: true, level1, level2, measure});
-  }
-
-  /**
-   * @param {string} item
-   * @returns {TessExpl.Struct.TopkItem}
-   */
-  function parseTopk(item) {
-    const [amount, level, measure, order] = item.split(",");
-    return buildTopk({active: true, amount, level, measure, order});
   }
 }

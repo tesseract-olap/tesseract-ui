@@ -134,15 +134,12 @@ declare namespace TessExpl {
       cuts: Record<string, CutItem>;
       drilldowns: Record<string, DrilldownItem>;
       filters: Record<string, FilterItem>;
-      growth: Record<string, GrowthItem>;
       locale: string | undefined;
       measures: Record<string, MeasureItem>;
       pagiLimit: number | undefined;
       pagiOffset: number | undefined;
-      rca: Record<string, RcaItem>;
       sortDir: "asc" | "desc";
       sortKey: string | undefined;
-      topk: Record<string, TopkItem>;
     }
 
     interface QueryResult {
@@ -188,11 +185,6 @@ declare namespace TessExpl {
       interpretedValue: number;
     }
 
-    interface GrowthItem extends IQueryItem {
-      level: string;
-      measure: string;
-    }
-
     interface MeasureItem extends IQueryItem {
       aggType: string;
       measure: string;
@@ -212,19 +204,6 @@ declare namespace TessExpl {
       uniqueName: string;
     }
 
-    interface RcaItem extends IQueryItem {
-      level1: string;
-      level2: string;
-      measure: string;
-    }
-
-    interface TopkItem extends IQueryItem {
-      amount: number;
-      level: string;
-      measure: string;
-      order: "asc" | "desc";
-    }
-
     type MemberRecords = Record<string, MemberItem>;
 
     type MeasurableItem = MeasureItem | FilterItem;
@@ -236,11 +215,8 @@ declare namespace TessExpl {
       cuts?: string[];
       drilldowns?: string[];
       filters?: string[];
-      growth?: string[];
       locale?: string;
       measures?: string[];
-      rca?: string[];
-      topk?: string[];
     }
 
     interface LevelLike {

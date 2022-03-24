@@ -36,36 +36,3 @@ export function summaryFilter(filter) {
   if (!isFilterItem(filter)) return "";
   return `${filter.measure} ${filter.comparison} ${filter.interpretedValue}`;
 }
-
-/**
- * @param {TessExpl.Struct.GrowthItem} growth
- */
-export function summaryGrowth(growth) {
-  return {
-    level: abbreviateFullName(growth.level),
-    measure: growth.measure
-  };
-}
-
-/**
- * @param {TessExpl.Struct.RcaItem} rca
- */
-export function summaryRca(rca) {
-  return {
-    level1: abbreviateFullName(rca.level1),
-    level2: abbreviateFullName(rca.level2),
-    measure: rca.measure
-  };
-}
-
-/**
- * @param {TessExpl.Struct.TopkItem} topk
- */
-export function summaryTopk(topk) {
-  return {
-    amount: topk.amount,
-    level: abbreviateFullName(topk.level),
-    measure: topk.measure,
-    order: topk.order
-  };
-}

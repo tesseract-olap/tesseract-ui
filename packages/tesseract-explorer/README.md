@@ -143,10 +143,6 @@ Some translation labels do interpolation of values when used. These are optional
 * `params.label_cube` has the `{name}` and `{caption}` properties of the cube (though `caption` comes from `annotations.caption`)
 * `params.label_locale` has `{code}`, `{name}`, and `{nativeName}`, which would match to `"es"`, `"Spanish"`, and `"Español"`, respectively (and these values come from the options passed to `locale`)
 * `params.label_topic` and `label_subtopic` replace `{label}` with its respective values from the cube annotations
-* `summary_growth`, `summary_rca`, and `summary_topk` allow you to compose a sentence summarizing what each mean:
-  - `summary_growth`: `level`, `measure`
-  - `summary_rca`: `level1`, `level2`, `measure`
-  - `summary_topk`: `amount`, `level`, `measure`, `order`
 * Wherever a number is used, the `{n}` tag contains the value, and you can define a label for the singular and plural forms: `key` for the singular, and `key_plural` for the plural.
 
 ### Additional formatters

@@ -41,10 +41,7 @@ export const VizbuilderView = props => {
         measure: item.measure,
         value: `${item.interpretedValue}`
       })),
-      growth: mapActives(params.growth, item => ({
-        measure: item.measure,
-        level: item.level
-      })),
+      growth: [],
       measures: mapActives(params.measures, item => ({
         formatter: formatters[item.measure],
         measure: item.measure
