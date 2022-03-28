@@ -11,13 +11,14 @@ import {selectServerState} from "../state/server/selectors";
 /**
  * @typedef OwnProps
  * @property {string} [className]
+ * @property {any} [DefaultSplash]
  * @property {BlueprintCore.IconName | React.ReactElement | React.ReactFragment | false} transientIcon
  * @property {Record<string, React.FunctionComponent | React.ComponentClass>} panels
  */
 
 /** @type {React.FC<OwnProps>} */
 export const ExplorerResults = props => {
-  const {panels, transientIcon} = props;
+  const {DefaultSplash, panels, transientIcon} = props;
   const [currentTab, setCurrentTab] = useState(Object.keys(panels)[0]);
 
   const serverStatus = useSelector(selectServerState);
@@ -70,6 +71,7 @@ export const ExplorerResults = props => {
 
   if (isDirtyQuery) {
     return (
+      DefaultSplash && <DefaultSplash/> ||
       <NonIdealState
         className={classNames("initial-view dirty", props.className)}
         icon={transientIcon}
