@@ -33,6 +33,12 @@ declare namespace TessExpl {
     className?: string;
 
     /**
+     * A component that is rendered to display the default "splash screen," the screen
+     * that is shown in the results panel when there is no query or a query has been dirtied.
+     */
+    DefaultSplash?: React.FunctionComponent | React.ComponentClass;
+
+    /**
      * Enables multiple query mode.
      * This adds a column where the user can quickly switch between queries,
      * like tabs in a browser.

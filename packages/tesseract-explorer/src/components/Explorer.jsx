@@ -49,6 +49,7 @@ export const ExplorerComponent = props => {
           <ExplorerResults
             className="explorer-results"
             panels={props.panels || defaultProps.panels}
+            DefaultSplash={props.DefaultSplash}
             transientIcon={props.transientIcon ?? defaultProps.transientIcon}
           />
         </div>
