@@ -50,6 +50,7 @@ ReactDOM.render(
       src="/olap/"
       formatters={{Sheep: n => `🐑 ${n.toFixed()}`}}
       multiquery
+      uiLocale="pt"
       panels={PANELS}
     />
   </Provider>,

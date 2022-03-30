@@ -43,3 +43,14 @@ ${params.chartConfig.replace(
     ""
   )}`;
 }
+
+/**
+ * Retrieves the caption property from a OlapClient entity object.
+ * @param {import("@datawheel/olap-client/types/interfaces/plain").IFullNamed
+ *       & import("@datawheel/olap-client/types/interfaces/plain").IAnnotated} item
+ * @param {string} [locale]
+ */
+export function getCaption(item, locale = "en") {
+  const ann = item.annotations;
+  return ann[`caption_${locale}`] || ann[`caption_${locale.slice(0, 2)}`] || ann.caption || item.caption || item.name;
+}

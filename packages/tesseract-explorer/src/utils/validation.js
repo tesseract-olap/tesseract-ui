@@ -112,30 +112,6 @@ export function isFilterItem(obj) {
 }
 
 /**
- * @param {any} obj
- * @returns {obj is TessExpl.Struct.GrowthItem}
- */
-export function isGrowthItem(obj) {
-  return obj && obj.level && obj.measure;
-}
-
-/**
- * @param {any} obj
- * @returns {obj is TessExpl.Struct.RcaItem}
- */
-export function isRcaItem(obj) {
-  return obj && obj.level1 && obj.level2 && obj.level1 !== obj.level2 && obj.measure;
-}
-
-/**
- * @param {any} obj
- * @returns {obj is TessExpl.Struct.TopkItem}
- */
-export function isTopkItem(obj) {
-  return obj && obj.amount > 0 && obj.level && obj.measure;
-}
-
-/**
  * @type {(sum: number, item: TessExpl.Struct.IQueryItem) => number}
  * @returns {number}
  */

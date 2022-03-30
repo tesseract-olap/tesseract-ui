@@ -85,3 +85,24 @@ export function sortByDate(array, key, descendent = true) {
     : (a, b) => Date.parse(a[key]) - Date.parse(b[key]);
   return array.slice().sort(sorterFunction);
 }
+
+/**
+ * @template T, U
+ * @param {T} one
+ * @param {U} two
+ * @return {[T, U]}
+ */
+export function tuple(one, two) {
+  return [one, two];
+}
+
+/**
+ * @template T, U, V
+ * @param {T} one
+ * @param {U} two
+ * @param {V} three
+ * @returns {[T, U, V]}
+ */
+export function triad(one, two, three) {
+  return [one, two, three];
+}

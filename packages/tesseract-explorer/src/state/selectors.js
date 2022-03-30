@@ -1,4 +1,5 @@
 import {createSelector} from "reselect";
+import {triad, tuple} from "../utils/array";
 import {selectCubeName} from "./params/selectors";
 import {selectOlapCubeMap} from "./server/selectors";
 
@@ -19,11 +20,36 @@ export const selectOlapMeasureItems = createSelector(
 );
 
 /**
+ * @returns {Record<string, OlapClient.PlainMeasure>}
+ */
+export const selectOlapMeasureMap = createSelector(
+  selectOlapCube,
+  cube => Object.fromEntries(cube.measures.map(item => [item.name, item]))
+);
+
+/**
  * @returns {OlapClient.PlainDimension[]}
  */
 export const selectOlapDimensionItems = createSelector(
   selectOlapCube,
   cube => cube ? cube.dimensions : []
+);
+
+/**
+ * @returns {Record<string, [OlapClient.PlainDimension, OlapClient.PlainHierarchy, OlapClient.PlainLevel]>}
+ */
+export const selectLevelTriadMap = createSelector(
+  selectOlapCube,
+  cube => Object.fromEntries(
+    cube.dimensions.flatMap(dim =>
+      dim.hierarchies.flatMap(hie =>
+        hie.levels.map(lvl => {
+          const fullName = [dim.name, hie.name, lvl.name].join(".");
+          return tuple(fullName, triad(dim, hie, lvl));
+        })
+      )
+    )
+  )
 );
 
 /**

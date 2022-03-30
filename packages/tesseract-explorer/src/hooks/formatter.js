@@ -48,7 +48,7 @@ export function useFormatter(measures) {
     });
     // Convert the tuple array into Record<measure name, formatter key>
     const record = Object.fromEntries(tuplesRefKey);
-    // Save the record, make sure it triggers a render
+    // Save the record, then make sure it triggers a render
     originKeys.current = record;
     setCurrentFormats(record);
   }, [measures]);
@@ -87,11 +87,13 @@ export function useFormatter(measures) {
 /**
  * @typedef FormatterHookContext
  * @property {(ref: string) => string[]} getAvailableKeys
- *    Returns a list of keys that determine an available formatter function.
+ *    Returns a list of keys that determine an available formatter function
+ *    for a `ref` measure name.
  * @property {(ref: string) => string | undefined} getFormatterKey
  *    Returns the formatter key currently assigned to a `ref` measure name.
  * @property {(key: string) => TessExpl.Formatter} getFormatter
  *    Returns the corresponding formatter function for the provided `key`.
  * @property {(ref: string, key: string) => void} setFormat
- *    Saves the user's choice of formatter `key` (by its name) for a measure name `ref`.
+ *    Saves the user's choice of formatter `key` (by its name) for a `ref`
+ *    measure name.
  */
