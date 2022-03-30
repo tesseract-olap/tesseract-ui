@@ -6,47 +6,74 @@ import {useFormatParams, usePivottedData} from "../hooks/pivot";
 import {useTranslation} from "../hooks/translation";
 import {filterMap} from "../utils/array";
 import {stringifyMatrix} from "../utils/pivot";
+import {getCaption} from "../utils/string";
 import {isActiveItem} from "../utils/validation";
 import {ButtonDownload} from "./ButtonDownload";
 import {SelectObject} from "./Select";
 
 /** @type {React.FC<TessExpl.ViewProps>} */
-const ResultPivot = props => {
-  const {params, result} = props;
+export const PivotView = props => {
+  const {cube, params, result} = props;
+  const locale = params.locale;
 
   const {translate: t} = useTranslation();
 
-  const initial = useMemo(() => {
-    const ddnOptions = Object.values(params.drilldowns)
-      .filter(isActiveItem)
-      .flatMap(item => [
-        // The actual level
-        {label: item.uniqueName || item.level, value: item.level, type: item.dimType},
-        // plus the active properties
-        ...filterMap(item.properties, prop =>
-          isActiveItem(prop)
-            ? {label: `${prop.name} (${prop.level})`, value: prop.name, type: "prop"}
-            : null
-        )
-      ]);
-
-    const msrOptions = filterMap(Object.values(params.measures), item =>
-      isActiveItem(item)
-        ? {value: item.measure, type: item.aggType}
-        : null
+  const measureOptions = useMemo(() => {
+    const measureMap = Object.fromEntries(
+      cube.measures.map(msr => [msr.name, msr])
     );
 
-    const colProperty = ddnOptions.find(item => item.type === "time") || ddnOptions[0];
-    const rowProperty = ddnOptions.find(item => item !== colProperty) || ddnOptions[0];
+    return Object.values(params.measures).filter(isActiveItem).map(item => {
+      const ref = item.measure;
+      const entity = measureMap[ref];
+      return {value: ref, label: getCaption(entity, locale)};
+    });
+  }, [cube, params.measures, locale]);
 
-    return {ddnOptions, msrOptions, colProperty, rowProperty, valProperty: msrOptions[0]};
-  }, [result]);
+  const drilldownOptions = useMemo(() => {
+    const dimensionMap = Object.fromEntries(
+      cube.dimensions.map(dim => [dim.name, dim])
+    );
+    const levelMap = Object.fromEntries(
+      cube.dimensions.map(dim => [dim.name, Object.fromEntries(
+        dim.hierarchies.map(hie => [hie.name, Object.fromEntries(
+          hie.levels.map(lvl => [lvl.name, lvl])
+        )])
+      )])
+    );
 
-  const [colProp, setColumnProp] = useState(initial.colProperty);
-  const [rowProp, setRowProp] = useState(initial.rowProperty);
-  const [valProp, setValueProp] = useState(initial.valProperty);
+    return Object.values(params.drilldowns).filter(isActiveItem).flatMap(item => {
+      const ref = item.uniqueName;
+      const entity = levelMap[item.dimension][item.hierarchy][item.level];
+      const caption = getCaption(entity, locale);
 
-  const {ddnOptions, msrOptions} = initial;
+      const type = dimensionMap[item.dimension].dimensionType.toString();
+      const propertyMap = Object.fromEntries(
+        entity.properties.map(prop => [prop.name, prop])
+      );
+
+      return [
+        {value: ref, label: caption, type},
+        ...filterMap(item.properties, item => {
+          const entity = propertyMap[item.name];
+          return !item.active ? null : {
+            value: item.uniqueName,
+            label: `${getCaption(entity, locale)} (${caption})`,
+            type: "prop"
+          };
+        })
+      ];
+    });
+  }, [cube, params.drilldowns, locale]);
+
+  const [colProp, setColumnProp] = useState(() =>
+    drilldownOptions.find(item => item.type === "time") || drilldownOptions[0]
+  );
+  const [rowProp, setRowProp] = useState(() =>
+    drilldownOptions.find(item => item !== colProp) || drilldownOptions[0]
+  );
+  const [valProp, setValueProp] = useState(() => measureOptions[0]);
+
   const fileName = [params.cube, colProp.label, rowProp.label, valProp.value].join("_");
 
   const pivottedData = usePivottedData(result.data, colProp.value, rowProp.value, valProp.value);
@@ -105,7 +132,7 @@ const ResultPivot = props => {
     );
   }, [pivottedData, formatter]);
 
-  if (ddnOptions.length < 2) {
+  if (drilldownOptions.length < 2) {
     return <NonIdealState
       icon="warning-sign"
       title={t("pivot_view.error_missingparams")}
@@ -155,7 +182,7 @@ const ResultPivot = props => {
           <SelectObject
             fill={true}
             getLabel={item => item.label}
-            items={ddnOptions}
+            items={drilldownOptions}
             onItemSelect={setColumnProp}
             selectedItem={colProp.label}
           />
@@ -170,7 +197,7 @@ const ResultPivot = props => {
           <SelectObject
             fill={true}
             getLabel={item => item.label}
-            items={ddnOptions}
+            items={drilldownOptions}
             onItemSelect={setRowProp}
             selectedItem={rowProp.label}
           />
@@ -179,10 +206,10 @@ const ResultPivot = props => {
         <FormGroup label={t("pivot_view.label_valmeasure")}>
           <SelectObject
             fill={true}
-            getLabel={item => item.value}
-            items={msrOptions}
+            getLabel={item => item.label}
+            items={measureOptions}
             onItemSelect={setValueProp}
-            selectedItem={valProp.value}
+            selectedItem={valProp.label}
           />
         </FormGroup>
 
@@ -244,6 +271,3 @@ const MatrixTable = props => {
 };
 
 const MemoMatrixTable = memo(MatrixTable);
-
-
-export default ResultPivot;

@@ -18,7 +18,7 @@ import {selectServerState} from "../state/server/selectors";
 /** @type {React.FC<OwnProps>} */
 export const ExplorerResults = props => {
   const {panels, transientIcon} = props;
-  const [currentTab, setCurrentTab] = useState(Object.keys(panels)[0]);
+  const [currentTab, setCurrentTab] = useState(() => Object.keys(panels)[0]);
 
   const serverStatus = useSelector(selectServerState);
   const {loading: isLoading} = useSelector(selectLoadingState);

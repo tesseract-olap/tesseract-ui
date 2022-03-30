@@ -1,10 +1,14 @@
 import {FormGroup, Popover, PopoverInteractionKind, Switch, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {memo, useMemo} from "react";
+import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
+import {selectLocale} from "../state/params/selectors";
+import {selectLevelTriadMap} from "../state/selectors";
 import {filterMap} from "../utils/array";
 import {abbreviateFullName} from "../utils/format";
-import {keyBy, levelRefToArray} from "../utils/transform";
+import {getCaption} from "../utils/string";
+import {keyBy} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
 import {SelectObject} from "./Select";
 import {TransferInput} from "./TransferInput";
@@ -30,6 +34,25 @@ const TagDrilldown = props => {
   const {item, onRemove, onToggle, onCaptionUpdate, onPropertiesUpdate} = props;
   const {translate: t} = useTranslation();
 
+  const locale = useSelector(selectLocale);
+  const levelTriadMap = useSelector(selectLevelTriadMap);
+
+  const activeProperties = filterMap(item.properties, item =>
+    isActiveItem(item) ? item.key : null
+  );
+
+  const label = useMemo(() => {
+    const triad = levelTriadMap[`${item.dimension}.${item.hierarchy}.${item.level}`];
+    const triadCaptions = triad.map(item => getCaption(item, locale.code));
+    return t("params.tag_drilldowns", {
+      abbr: abbreviateFullName(triadCaptions, t("params.tag_drilldowns_abbrjoint")),
+      dimension: triadCaptions[0],
+      hierarchy: triadCaptions[1],
+      level: triadCaptions[2],
+      propCount: activeProperties.length
+    });
+  }, [activeProperties.join("-"), item, locale.code]);
+
   const target =
     <Tag
       className={classNames("tag-item tag-drilldown", {hidden: !item.active})}
@@ -46,7 +69,7 @@ const TagDrilldown = props => {
         onRemove(item);
       }}
     >
-      {abbreviateFullName(levelRefToArray(item))}
+      {label}
     </Tag>;
 
   const propertyRecords = useMemo(
@@ -57,10 +80,6 @@ const TagDrilldown = props => {
   if (item.properties.length === 0) {
     return target;
   }
-
-  const activeProperties = filterMap(item.properties, item =>
-    isActiveItem(item) ? item.key : null
-  );
 
   const captionItems = [{name: t("placeholders.unselected")}].concat(item.properties);
 

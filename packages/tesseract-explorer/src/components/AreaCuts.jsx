@@ -3,10 +3,10 @@ import React, {Fragment, useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {doCutClear, doCutRemove, doCutUpdate} from "../state/params/actions";
-import {selectCutItems, selectLocale} from "../state/params/selectors";
+import {selectCutItems} from "../state/params/selectors";
 import {buildCut} from "../utils/structs";
 import {activeItemCounter} from "../utils/validation";
-import {MemoButtonSelectLevel as ButtonSelectLevel} from "./ButtonSelectLevel";
+import {ButtonSelectLevel} from "./ButtonSelectLevel";
 import {LayoutParamsArea} from "./LayoutParamsArea";
 import {MemoTagCut as TagCut} from "./TagCut";
 
@@ -20,7 +20,6 @@ export const AreaCuts = props => {
   const dispatch = useDispatch();
 
   const items = useSelector(selectCutItems);
-  const locale = useSelector(selectLocale);
 
   const {translate: t} = useTranslation();
 
@@ -74,7 +73,6 @@ export const AreaCuts = props => {
         <TagCut
           item={item}
           key={item.key}
-          locale={locale.code}
           onMembersUpdate={updateMembersHandler}
           onRemove={removeHandler}
           onToggle={toggleHandler}
