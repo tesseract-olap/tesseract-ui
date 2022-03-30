@@ -7,6 +7,7 @@ import {selectQueryItems} from "../state/queries/selectors";
 import {doCurrentResultUpdate} from "../state/results/actions";
 import {doServerUpdate} from "../state/server/actions";
 import {selectOlapCubeMap, selectServerEndpoint} from "../state/server/selectors";
+import {filterMap} from "../utils/array";
 import {applyQueryParams, extractQueryParams} from "../utils/query";
 import {buildMeasure, buildQuery} from "../utils/structs";
 import {keyBy} from "../utils/transform";
@@ -244,7 +245,9 @@ function olapMiddlewareParseQuery({client, dispatch}, action) {
 function olapMiddlewareReloadCubes({client, dispatch}) {
   return client.getCubes()
     .then(cubes => {
-      const plainCubes = cubes.map(c => c.toJSON());
+      const plainCubes = filterMap(cubes, cube =>
+        cube.annotations.hide_in_ui === "true" ? null : cube.toJSON()
+      );
       const cubeMap = keyBy(plainCubes, i => i.name);
       dispatch(doServerUpdate({cubeMap}));
       return cubeMap;
