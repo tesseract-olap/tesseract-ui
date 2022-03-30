@@ -100,9 +100,6 @@ export const doPaginationUpdate = (pagiLimit, pagiOffset) => ({
   payload: {pagiLimit, pagiOffset}
 });
 
-/** Removes a query's selected measures, cuts, and drilldowns */
-// export const doQueryReset = () => ({type: QUERY_RESET});
-
 /**
  * If no parameter is passed, this function clears the list.
  * If a parameter is passed, that parameter replaces the list.

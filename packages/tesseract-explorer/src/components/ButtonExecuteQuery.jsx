@@ -6,14 +6,13 @@ import {willExecuteQuery} from "../middleware/olapActions";
 import {doSetLoadingState} from "../state/loading/actions";
 import {doCutClear, doDrilldownClear, doGrowthClear, doMeasureClear, doRcaClear, doTopkClear} from "../state/params/actions";
 import {selectValidQueryStatus} from "../state/params/selectors";
-import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint, selectServerSoftware} from "../state/server/selectors";
 import {AnchorButtonTooltip, ButtonTooltip} from "./Tooltips";
 
 const clearQuery = dispatch => {
   [doCutClear, doDrilldownClear, doMeasureClear, doRcaClear, doGrowthClear, doTopkClear]
-    .forEach(fn => fn && dispatch(fn()));
+    .forEach(fn => typeof fn === "function" && dispatch(fn()));
 };
 
 /** @type {React.FC<{}>} */
