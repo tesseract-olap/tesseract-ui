@@ -38,6 +38,8 @@ export const defaultTranslation = {
     message_default: "Please wait...",
   },
   params: {
+    action_clear: "Clear query",
+    action_clear_description: "Clear all parameters from your current query",
     action_execute: "Execute query",
     column_title: "Parameters",
     count_cuts: "{n} selected",
