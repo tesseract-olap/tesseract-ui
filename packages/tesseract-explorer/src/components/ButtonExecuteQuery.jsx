@@ -4,16 +4,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {willExecuteQuery} from "../middleware/olapActions";
 import {doSetLoadingState} from "../state/loading/actions";
-import {doCutClear, doDrilldownClear, doGrowthClear, doMeasureClear, doRcaClear, doTopkClear} from "../state/params/actions";
+import {doCutClear, doDrilldownClear, doMeasureClear} from "../state/params/actions";
 import {selectValidQueryStatus} from "../state/params/selectors";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint, selectServerSoftware} from "../state/server/selectors";
 import {AnchorButtonTooltip, ButtonTooltip} from "./Tooltips";
-
-const clearQuery = dispatch => {
-  [doCutClear, doDrilldownClear, doMeasureClear, doRcaClear, doGrowthClear, doTopkClear]
-    .forEach(fn => typeof fn === "function" && dispatch(fn()));
-};
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
@@ -65,7 +60,9 @@ export const ButtonExecuteQuery = () => {
           tooltipIntent={Intent.NONE}
           tooltipPosition={Position.RIGHT}
           onClick={() => {
-            clearQuery(dispatch);
+            dispatch(doCutClear());
+            dispatch(doDrilldownClear());
+            dispatch(doMeasureClear());
           }}
         />
       </ButtonGroup>
