@@ -10,16 +10,16 @@ import {ExplorerParams} from "./ExplorerParams";
 import {ExplorerQueries} from "./ExplorerQueries";
 import {ExplorerResults} from "./ExplorerResults";
 import {LoadingOverlay} from "./LoadingOverlay";
-import ResultPivot from "./ResultPivot";
+import {PivotView} from "./PivotView";
 import ResultRaw from "./ResultRaw";
-import ResultTable from "./ResultTable";
+import {TableView} from "./TableView";
 
 /** @type {Required<Pick<TessExpl.ExplorerProps, "locale" | "panels" | "transientIcon" | "uiLocale">> & {version: string}} */
 const defaultProps = {
   locale: ["en"],
   panels: {
-    "Data table": ResultTable,
-    "Pivot table": ResultPivot,
+    "Data table": TableView,
+    "Pivot table": PivotView,
     "Raw response": ResultRaw
   },
   transientIcon: <AnimatedCube />,
@@ -59,3 +59,4 @@ export const ExplorerComponent = props => {
 };
 
 ExplorerComponent.defaultProps = defaultProps;
+ExplorerComponent.displayName = "TesseractExplorer";

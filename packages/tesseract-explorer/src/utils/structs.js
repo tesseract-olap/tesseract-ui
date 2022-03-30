@@ -19,15 +19,12 @@ export function buildQuery(props) {
       cuts: params.cuts || {},
       drilldowns: params.drilldowns || {},
       filters: params.filters || {},
-      growth: params.growth || {},
       locale: params.locale || "",
       measures: params.measures || {},
       pagiLimit: params.pagiLimit || params.limitAmount || params.limit || 0,
       pagiOffset: params.pagiOffset || params.limitOffset || params.offset || 0,
-      rca: params.rca || {},
       sortDir: params.sortDir || params.sortDirection || params.sortOrder || params.order || "desc",
-      sortKey: params.sortKey || params.sortProperty || "",
-      topk: params.topk || {}
+      sortKey: params.sortKey || params.sortProperty || ""
     },
     result: {
       data: [],
@@ -116,19 +113,6 @@ export function buildFilter(props) {
 
 /**
  * @param {any} props
- * @returns {TessExpl.Struct.GrowthItem}
- */
-export function buildGrowth(props) {
-  return {
-    active: typeof props.active === "boolean" ? props.active : true,
-    key: props.key || randomKey(),
-    level: props.level,
-    measure: props.measure
-  };
-}
-
-/**
- * @param {any} props
  * @returns {TessExpl.Struct.MeasureItem}
  */
 export function buildMeasure(props) {
@@ -166,37 +150,5 @@ export function buildProperty(props) {
     level: props.level,
     name: props.name || props.property,
     uniqueName: props.uniqueName || props.name
-  };
-}
-
-/**
- * @param {any} props
- * @returns {TessExpl.Struct.RcaItem}
- */
-export function buildRca(props) {
-  return {
-    active: typeof props.active === "boolean" ? props.active : false,
-    key: props.key || randomKey(),
-    level1: props.level1,
-    level2: props.level2,
-    measure: props.measure || props.name
-  };
-}
-
-/**
- * @param {any} props
- * @returns {TessExpl.Struct.TopkItem}
- */
-export function buildTopk(props) {
-  return {
-    active: typeof props.active === "boolean" ? props.active : false,
-    key: props.key || randomKey(),
-    amount: Number.parseInt(props.amount, 10) || 1,
-    level: props.level,
-    measure: props.measure,
-    order:
-      typeof props.order === "boolean"
-        ? props.order ? "desc" : "asc"
-        : props.order === "asc" ? "asc" : "desc"
   };
 }

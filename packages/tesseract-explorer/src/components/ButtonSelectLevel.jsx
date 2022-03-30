@@ -1,17 +1,12 @@
 import {Button, Popover} from "@blueprintjs/core";
-import React, {memo} from "react";
+import React from "react";
 import {stringifyName} from "../utils/transform";
-import {shallowEqualExceptFns} from "../utils/validation";
 import {DimensionMenu} from "./MenuDimension";
 
 /**
  * @typedef OwnProps
  * @property {TessExpl.Struct.LevelDescriptor[]} selectedItems
- * @property {(
- *   level: OlapClient.PlainLevel,
- *   hierarchy: OlapClient.PlainHierarchy,
- *   dimension: OlapClient.PlainDimension,
- *   ) => any} onItemSelect
+ * @property {React.ComponentProps<DimensionMenu>["onItemSelect"]} onItemSelect
  * @property {boolean} [usePortal]
  */
 
@@ -34,5 +29,3 @@ export const ButtonSelectLevel = props => {
     />
   );
 };
-
-export const MemoButtonSelectLevel = memo(ButtonSelectLevel, shallowEqualExceptFns);

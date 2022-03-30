@@ -55,24 +55,6 @@ export const selectMeasureMap = createSelector(
 export const selectMeasureKeys = createSelector(selectMeasureMap, getKeys);
 export const selectMeasureItems = createSelector(selectMeasureMap, getValues);
 
-export const selectGrowthMap = createSelector(
-  selectCurrentQueryParams,
-  params => params.growth
-);
-export const selectGrowthKeys = createSelector(selectGrowthMap, getKeys);
-export const selectGrowthItems = createSelector(selectGrowthMap, getValues);
-
-export const selectRcaMap = createSelector(selectCurrentQueryParams, query => query.rca);
-export const selectRcaKeys = createSelector(selectRcaMap, getKeys);
-export const selectRcaItems = createSelector(selectRcaMap, getValues);
-
-export const selectTopkMap = createSelector(
-  selectCurrentQueryParams,
-  query => query.topk
-);
-export const selectTopkKeys = createSelector(selectTopkMap, getKeys);
-export const selectTopkItems = createSelector(selectTopkMap, getValues);
-
 export const selectBooleans = createSelector(
   selectCurrentQueryParams,
   params => params.booleans
