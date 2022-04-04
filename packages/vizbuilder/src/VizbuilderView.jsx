@@ -14,13 +14,14 @@ function mapActives(dict, mapFn) {
 
 /** @type {React.FC<import("..").VizbuilderViewProps & {version: string}>} */
 export const VizbuilderView = props => {
-  const {params, result, formatters = {}, ...otherProps} = props;
+  const {cube, params, result, formatters = {}, ...otherProps} = props;
 
   /** @type {VizBldr.QueryResult} */
-  const queries = useMemo(() => {
-
-    /** @type {VizBldr.QueryParams} */
-    const parameters = {
+  const queries = useMemo(() => ({
+    cube,
+    dataset: result.data,
+    params: {
+      locale: params.locale,
       booleans: params.booleans,
       cuts: mapActives(params.cuts, item => ({
         dimension: item.dimension,
@@ -41,15 +42,12 @@ export const VizbuilderView = props => {
         measure: item.measure,
         value: `${item.interpretedValue}`
       })),
-      growth: [],
       measures: mapActives(params.measures, item => ({
         formatter: formatters[item.measure],
         measure: item.measure
       }))
-    };
-
-    return {cube: props.cube, dataset: result.data, params: parameters};
-  }, [result.data, params]);
+    }
+  }), [cube, result.data, params]);
 
   return createElement(Vizbuilder, {
     className: "vizbuilder-view",
