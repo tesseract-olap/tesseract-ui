@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from "react";
-import {serializeToArray} from "../utils/pivot";
+import PivotWorker from "../utils/pivot.worker.js";
 import {useFormatter} from "./formatter";
 import {useTranslation} from "./translation";
 
@@ -34,14 +34,50 @@ export function useFormatParams(measures, valueProperty) {
  * @param {string} rowProp
  * @param {string} valProp
  * @param {JSONArrays | null} initialState
+ * @returns {[JSONArrays | null, Error | null]}
  */
 export function usePivottedData(data, colProp, rowProp, valProp, initialState = null) {
   const [pivottedData, setPivottedData] = useState(initialState);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    serializeToArray(data, {colProp, rowProp, valProp}).then(setPivottedData);
-    return () => setPivottedData(null);
+    setPivottedData(initialState);
+    setError(null);
+
+    serializeToArray(data, {colProp, rowProp, valProp})
+      .then(setPivottedData, setError);
+
+    return () => {
+      setPivottedData(null);
+      setError(null);
+    };
   }, [data, colProp, rowProp, valProp]);
 
-  return pivottedData;
+  return [pivottedData, error];
+}
+
+/**
+ * @param {Record<string, any>[]} data
+ * @param {{rowProp: string, colProp: string, valProp: string}} sides
+ * @returns {Promise<JSONArrays>}
+ */
+function serializeToArray(data, sides) {
+  return new Promise((resolve, reject) => {
+    const worker = new PivotWorker();
+    worker.onmessage = evt => {
+      resolve(evt.data);
+      worker.terminate();
+    };
+    worker.onerror = error => {
+      reject(error);
+      worker.terminate();
+    };
+
+    try {
+      worker.postMessage({data, sides});
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
 }

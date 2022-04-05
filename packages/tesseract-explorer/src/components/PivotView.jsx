@@ -5,7 +5,6 @@ import React, {Fragment, memo, useMemo, useState} from "react";
 import {useFormatParams, usePivottedData} from "../hooks/pivot";
 import {useTranslation} from "../hooks/translation";
 import {filterMap} from "../utils/array";
-import {stringifyMatrix} from "../utils/pivot";
 import {getCaption} from "../utils/string";
 import {isActiveItem} from "../utils/validation";
 import {ButtonDownload} from "./ButtonDownload";
@@ -76,7 +75,7 @@ export const PivotView = props => {
 
   const fileName = [params.cube, colProp.label, rowProp.label, valProp.value].join("_");
 
-  const pivottedData = usePivottedData(result.data, colProp.value, rowProp.value, valProp.value);
+  const [pivottedData, pivottingError] = usePivottedData(result.data, colProp.value, rowProp.value, valProp.value);
 
   const {
     formatExample,
@@ -150,6 +149,13 @@ export const PivotView = props => {
     preview = <NonIdealState
       icon="warning-sign"
       title={t("pivot_view.error_onedimension")}
+    />;
+  }
+  else if (pivottingError != null) {
+    preview = <NonIdealState
+      icon="error"
+      title={t("pivot_view.error_internal")}
+      description={t("pivot_view.error_internal_detail", {error: pivottingError.message})}
     />;
   }
   else if (!pivottedData) {
@@ -271,3 +277,27 @@ const MatrixTable = props => {
 };
 
 const MemoMatrixTable = memo(MatrixTable);
+
+/**
+ * Outputs a CSV-like string.
+ * @param {JSONArrays} matrix
+ * @param {TessExpl.Formatter} formatter
+ * @param {"csv" | "tsv"} format
+ * @returns {string}
+ */
+function stringifyMatrix(matrix, formatter, format) {
+  const joint = {csv: ",", tsv: "\t"}[format];
+  const safeQuoter = value => {
+    const str = `${value}`.trim();
+    return str.includes(joint) ? JSON.stringify(str) : str;
+  };
+  const safeFormatter = value =>
+    value === undefined ? "" : safeQuoter(formatter(value));
+
+  return [
+    matrix.headers.map(safeQuoter).join(joint),
+    ...matrix.data.map(row =>
+      [safeQuoter(row[0]), ...row.slice(1).map(safeFormatter)].join(joint)
+    )
+  ].join("\n");
+}

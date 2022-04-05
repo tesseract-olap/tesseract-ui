@@ -57,7 +57,7 @@ export default cliArgs => {
       babel({
         babelHelpers: "runtime",
         envName: environment,
-        exclude: "node_modules/**",
+        exclude: ["node_modules/**", "src/**/*.worker.js"],
         rootMode: "upward"
       }),
       styles({

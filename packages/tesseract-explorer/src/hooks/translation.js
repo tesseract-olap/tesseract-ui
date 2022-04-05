@@ -92,6 +92,8 @@ export const defaultTranslation = {
   pivot_view: {
     error_missingparams: "The current query doesn't have enough parameters. Two different drilldowns and a measure are needed.",
     error_onedimension: "The rows and columns in a pivotted table need 2 different drilldowns.",
+    error_internal: "An internal error ocurred in the pivotting tool. We will fix it as soon as possible.",
+    error_internal_detail: "If you need to contact us about this error, please include this message:\n{{error}}",
     label_ddcolumn: "Column drilldown",
     label_ddcolumnprop: "Column property",
     label_ddrow: "Row drilldown",
