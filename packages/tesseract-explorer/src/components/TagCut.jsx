@@ -31,7 +31,9 @@ export const TagCut = props => {
 
   const dispatch = useDispatch();
   const locale = useSelector(selectLocale);
+
   const levelTriadMap = useSelector(selectLevelTriadMap);
+  const triad = levelTriadMap[`${item.dimension}.${item.hierarchy}.${item.level}`];
 
   const [error, setError] = useState("");
   const [members, setMembers] = useState(Object.create(null));
@@ -72,7 +74,6 @@ export const TagCut = props => {
   useEffect(reloadHandler, [item.key, locale.code]);
 
   const label = useMemo(() => {
-    const triad = levelTriadMap[`${item.dimension}.${item.hierarchy}.${item.level}`];
     const triadCaptions = triad.map(item => getCaption(item, locale.code));
     return t("params.tag_drilldowns", {
       abbr: abbreviateFullName(triadCaptions, t("params.tag_drilldowns_abbrjoint")),
@@ -102,6 +103,8 @@ export const TagCut = props => {
 
   const activeCount = item.members.length;
   const uniqueActive = activeCount === 1 && members[item.members[0]];
+  // eslint-disable-next-line eqeqeq
+  const showMemberKey = triad[2].annotations.memberid_in_ui != "false";
 
   return (
     <Popover
@@ -111,6 +114,11 @@ export const TagCut = props => {
           <MembersTransferInput
             activeItems={item.members}
             getLabel={item => item.name}
+            getSecondLabel={showMemberKey
+              // eslint-disable-next-line eqeqeq
+              ? item => item.key != item.name ? item.key : undefined
+              : undefined}
+            itemPredicate={(query, item) => query.test(item.name) || query.test(item.key)}
             items={members}
             onChange={members => onMembersUpdate && onMembersUpdate(item, members)}
           />

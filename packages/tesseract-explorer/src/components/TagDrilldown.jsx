@@ -99,6 +99,7 @@ const TagDrilldown = props => {
           activeItems={activeProperties}
           getLabel={item => item.name}
           items={propertyRecords}
+          itemPredicate={(query, item) => query.test(item.name)}
           onChange={actProps => {
             const properties = item.properties.map(
               prop => ({...prop, active: actProps.includes(prop.key)})

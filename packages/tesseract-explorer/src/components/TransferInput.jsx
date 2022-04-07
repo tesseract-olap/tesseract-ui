@@ -12,6 +12,8 @@ import {keyBy, safeRegExp} from "../utils/transform";
  * @property {T["key"][]} activeItems
  * @property {(items: T["key"][]) => void} onChange
  * @property {(item: T) => string} getLabel
+ * @property {(item: T) => string | undefined} [getSecondLabel]
+ * @property {(query: RegExp, item: T, index: number) => boolean} [itemPredicate]
  */
 
 /**
@@ -20,6 +22,7 @@ import {keyBy, safeRegExp} from "../utils/transform";
  */
 export const TransferInput = props => {
   const {activeItems, getLabel, items, onChange} = props;
+  const sideLabelRenderer = props.getSecondLabel || (() => undefined);
 
   const {translate: t} = useTranslation();
 
@@ -34,14 +37,16 @@ export const TransferInput = props => {
     const selected = [];
     const unselected = [];
     const tester = safeRegExp(filter, "i");
+    // eslint-disable-next-line no-unused-vars
+    const itemPredicate = props.itemPredicate || ((query, item, index) => query.test(item.key));
 
     let index = 0;
     const keys = Object.keys(items);
 
     while (index < keys.length) {
-      const key = keys[index++];
+      const key = keys[index];
       const item = items[key];
-      if (!tester.test(getLabel(item))) continue;
+      if (!itemPredicate(tester, item, index++)) continue;
       activeKeys.hasOwnProperty(key)
         ? selected.push(item)
         : unselected.push(item);
@@ -97,6 +102,7 @@ export const TransferInput = props => {
   const renderItem = item => <MenuItem
     icon={activeKeys.hasOwnProperty(item.key) ? "tick-circle" : undefined}
     key={item.key}
+    labelElement={sideLabelRenderer(item)}
     onClick={toggleHandler.bind(null, item)}
     shouldDismissPopover={false}
     text={getLabel(item)}
