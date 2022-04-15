@@ -1,9 +1,7 @@
 const TARGET = typeof Symbol === "undefined" ? "__target" : Symbol();
 const SCRIPT_TYPE = "application/javascript";
-const BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
-const URL = window.URL || window.webkitURL;
 
-let Worker = window.Worker;
+let Worker = typeof window === "object" ? window.Worker : null;
 
 if (Worker) {
   let testWorker;
@@ -37,6 +35,7 @@ function createSourceObject(str) {
     return URL.createObjectURL(new Blob([str], {type: SCRIPT_TYPE}));
   }
   catch (e) {
+    const BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
     const blob = new BlobBuilder();
     blob.append(str);
     return URL.createObjectURL(blob.getBlob(SCRIPT_TYPE));
