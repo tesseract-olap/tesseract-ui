@@ -72,7 +72,7 @@ export const DimensionMenuItem = props => {
   }
 
   return (
-    <MenuItem key={dimension.uri} icon="layer" text={label}>
+    <MenuItem key={dimension.uri} icon="layers" text={label}>
       {options}
     </MenuItem>
   );

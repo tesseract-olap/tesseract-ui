@@ -32,7 +32,19 @@ export const selectOlapMeasureMap = createSelector(
  */
 export const selectOlapDimensionItems = createSelector(
   selectOlapCube,
-  cube => cube ? cube.dimensions : []
+  cube => cube
+    ? cube.dimensions
+      .map(dim => ({
+        item: dim,
+        count: dim.hierarchies.reduce((acc, hie) => acc + hie.levels.length, 0),
+        alpha: dim.hierarchies.reduce((acc, hie) => acc.concat(hie.name, "-"), "")
+      }))
+      .sort((a, b) =>
+        b.count - a.count ||
+        a.alpha.localeCompare(b.alpha)
+      )
+      .map(i => i.item)
+    : []
 );
 
 /**
