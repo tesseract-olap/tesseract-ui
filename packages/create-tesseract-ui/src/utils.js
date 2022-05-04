@@ -29,7 +29,10 @@ function makeDirectory(targetPath) {
 
 /**
  * @param {string} string
- * @param {Record<string, string>} values
+ * @param {object} values
+ * @param {string} values.name
+ * @param {string} values.serverLocales
+ * @param {string} values.serverUrl
  */
 function applyTemplate(string, values) {
   return string

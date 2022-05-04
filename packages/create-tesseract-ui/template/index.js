@@ -27,6 +27,8 @@ const App = props =>
     })
   );
 
+document.querySelector("p#warning").remove();
+
 ReactDOM.render(
   createElement(App, {
     serverLocale: process.env.__SERVER_LOCALES__,
