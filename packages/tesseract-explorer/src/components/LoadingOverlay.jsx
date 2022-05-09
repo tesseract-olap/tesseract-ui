@@ -1,4 +1,4 @@
-import {NonIdealState, Overlay, Spinner} from "@blueprintjs/core";
+import {NonIdealState, Overlay, Spinner, SpinnerSize} from "@blueprintjs/core";
 import React from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -26,7 +26,7 @@ export const LoadingOverlay = props => {
     >
       <NonIdealState
         className="loading-screen"
-        icon={<Spinner size={Spinner.SIZE_LARGE} />}
+        icon={<Spinner size={SpinnerSize.LARGE} />}
         title={t("loading.title")}
         description={description}
       />

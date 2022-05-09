@@ -19,8 +19,8 @@ export default shimWorker(self => {
     const colProp = getIdProperty(sides.colProp);
     const rowProp = getIdProperty(sides.rowProp);
 
-    const colMembers = new Set();
-    const rowMembers = new Set();
+    /** @type {Set<string>} */ const colMembers = new Set();
+    /** @type {Set<string>} */ const rowMembers = new Set();
 
     /** @type {Map<string, string>} */ const colDict = new Map();
     /** @type {Map<string, string>} */ const rowDict = new Map();
@@ -49,7 +49,7 @@ export default shimWorker(self => {
 
     return {
       headers: [
-        rowProp,
+        sides.rowProp,
         ...sortedCols.map(colId => colDict.get(colId) || colId)
       ],
       data: Array.from(rowMembers, rowId => [

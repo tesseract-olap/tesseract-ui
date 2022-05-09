@@ -25,7 +25,7 @@ export const PivotView = props => {
     return Object.values(params.measures).filter(isActiveItem).map(item => {
       const ref = item.measure;
       const entity = measureMap[ref];
-      return {value: ref, label: getCaption(entity, locale)};
+      return {value: ref, label: getCaption(entity, locale), type: item.aggType};
     });
   }, [cube, params.measures, locale]);
 
@@ -42,7 +42,6 @@ export const PivotView = props => {
     );
 
     return Object.values(params.drilldowns).filter(isActiveItem).flatMap(item => {
-      const ref = item.uniqueName;
       const entity = levelMap[item.dimension][item.hierarchy][item.level];
       const caption = getCaption(entity, locale);
 
@@ -51,17 +50,20 @@ export const PivotView = props => {
         entity.properties.map(prop => [prop.name, prop])
       );
 
-      return [
-        {value: ref, label: caption, type},
-        ...filterMap(item.properties, item => {
+      const levelOptions = [{value: item.level, label: caption, type}];
+      if (`${item.level} ID` in result.data[0]) {
+        levelOptions.push({value: `${item.level} ID`, label: `${caption} ID`, type});
+      }
+      return levelOptions.concat(
+        filterMap(item.properties, item => {
           const entity = propertyMap[item.name];
           return !item.active ? null : {
-            value: item.uniqueName,
+            value: item.name,
             label: `${getCaption(entity, locale)} (${caption})`,
             type: "prop"
           };
         })
-      ];
+      );
     });
   }, [cube, params.drilldowns, locale]);
 

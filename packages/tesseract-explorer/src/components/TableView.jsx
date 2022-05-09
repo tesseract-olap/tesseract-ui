@@ -4,7 +4,7 @@ import clsx from "classnames";
 import React, {useCallback, useMemo, useState} from "react";
 import {useFormatter} from "../hooks/formatter";
 import {useTranslation} from "../hooks/translation";
-import {filterMap, sortByKey, tuple} from "../utils/array";
+import {filterMap, sortByKey} from "../utils/array";
 import {getCaption} from "../utils/string";
 
 /** @type {React.FC<TessExpl.ViewProps>} */

@@ -44,14 +44,15 @@ function createSourceObject(str) {
 
 /**
  * Returns a wrapper around Web Worker code that is constructible.
+ * @param {(self: Worker) => void} fn
  */
 export function shimWorker(fn) {
   return function ShimWorker(forceFallback) {
     const workerInstance = this;
 
     if (Worker && !forceFallback) {
-      const source = fn.toString().replace(/^.+?\{([\s\S]+)\}/, "$1").trim();
-      const objURL = createSourceObject(`var self = this; ${source}`);
+      const source = fn.toString().trim();
+      const objURL = createSourceObject(`(${source})(this);`);
 
       this[TARGET] = new Worker(objURL);
       URL.revokeObjectURL(objURL);
@@ -60,7 +61,7 @@ export function shimWorker(fn) {
 
     const selfShim = {
       postMessage(m) {
-        console.debug("Message from shim worker to main thread:", m);
+        console.debug("Message from shim worker to main:", m);
         if (workerInstance.onmessage) {
           setTimeout(() => {
             workerInstance.onmessage({data: m, target: selfShim});
@@ -74,13 +75,13 @@ export function shimWorker(fn) {
 
     fn.call(selfShim, selfShim);
     this.postMessage = function(m) {
-      console.debug("Message from main thread to shim worker:", m);
+      console.debug("Message from main to shim worker:", m);
       setTimeout(() =>  {
         selfShim.onmessage({data: m, target: workerInstance});
       });
     };
     this.terminate = function() {
-      console.debug("Worker terminated by main thread.");
+      console.debug("Worker terminated by main.");
     };
     this.isThisThread = true;
   };
