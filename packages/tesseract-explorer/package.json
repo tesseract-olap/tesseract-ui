@@ -47,7 +47,6 @@
     "form-urldecoded": "^1.2.0",
     "form-urlencoded": "^6.0.4",
     "iso-639-1": "^2.1.9",
-    "react-raw-object": "^1.0.0",
     "react-shadow-scroll": "^2.1.0",
     "react-viewport-list": "^3.0.2",
     "reselect": "^4.0.0"

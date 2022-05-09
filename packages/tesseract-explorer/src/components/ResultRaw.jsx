@@ -1,7 +1,6 @@
 import {Classes, FormGroup} from "@blueprintjs/core";
 import classNames from "classnames";
-import React, {Fragment} from "react";
-import {RawObject} from "react-raw-object";
+import React, {Fragment, useMemo} from "react";
 import {useTranslation} from "../hooks/translation";
 import {DebugURL} from "./DebugURL";
 
@@ -18,6 +17,13 @@ const ResultRaw = props => {
       {t("debug_view.jssource_suffix")}
     </Fragment>;
 
+  const dlHeaders = useMemo(() => Object.entries(headers).map(entry =>
+    <Fragment key={entry[0]}>
+      <dt style={{fontWeight: "bold"}}>{entry[0]}</dt>
+      <dd style={{color: "#090"}}>{entry[1]}</dd>
+    </Fragment>
+  ), [headers]);
+
   return (
     <div className={classNames("data-raw", props.className)}>
       {urlLogicLayer && <FormGroup className="sourceurl" label={t("debug_view.url_logiclayer")}>
@@ -29,7 +35,7 @@ const ResultRaw = props => {
       </FormGroup>}
 
       <FormGroup className="headers" label={t("debug_view.httpheaders")}>
-        <RawObject object={headers} depthExpanded={1} />
+        <dl>{dlHeaders}</dl>
       </FormGroup>
 
       {sourceCall && <FormGroup className="sourcecall" label={jssourceLabel}>

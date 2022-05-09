@@ -29,33 +29,14 @@
   grid-column: span 2;
 }
 
+.data-raw .headers dl {
+  font-family: "Roboto Mono", "Consolas", Monaco, "Courier New", Courier, monospace;
+  word-break: break-word;
+}
+
 .data-raw .code-block {
   margin: 0;
   overflow: auto;
-}
-
-.rro--parent {
-  font-family: "Roboto Mono", "Consolas", Monaco, "Courier New", Courier,
-    monospace;
-  overflow: hidden;
-  padding-left: 1rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.rro--object-constructor {
-  font-style: italic;
-}
-.rro--name {
-  font-weight: bold;
-}
-.rro--type-number > .rro--value {
-  color: #00a;
-}
-.rro--type-string > .rro--value {
-  color: #0a0;
-}
-.rro--type-boolean > .rro--value {
-  color: #a00;
 }
 
 .data-matrix .toolbar {
