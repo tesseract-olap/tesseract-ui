@@ -14,7 +14,8 @@ export default shimWorker(self => {
    * @param {Record<"rowProp" | "colProp" | "valProp", string>} sides
    * @returns {JSONArrays}
    */
-  function serializeTidyToArrays(data, sides) {
+  // function serializeTidyToArrays(data, sides) {
+  const serializeTidyToArrays = new Function("data", "sides", `
     const {valProp} = sides;
     const colProp = getIdProperty(sides.colProp);
     const rowProp = getIdProperty(sides.rowProp);
@@ -68,7 +69,7 @@ export default shimWorker(self => {
    * @type {(prop: string) => string}
    */
     function getIdProperty(prop) {
-      return {}.hasOwnProperty.call(data[0], `${prop} ID`) ? `${prop} ID` : prop;
+      return {}.hasOwnProperty.call(data[0], prop + ' ID') ? prop + ' ID' : prop;
     }
 
     /**
@@ -85,5 +86,6 @@ export default shimWorker(self => {
       valReference.set(key, defaultValue);
       return defaultValue;
     }
-  }
+  `);
+  // }
 });
