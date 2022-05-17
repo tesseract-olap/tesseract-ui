@@ -2,6 +2,7 @@ import {createSelector} from "reselect";
 import {triad, tuple} from "../utils/array";
 import {selectCubeName} from "./params/selectors";
 import {selectOlapCubeMap} from "./server/selectors";
+import {getOrderValue} from "./helpers";
 
 /**
  * @returns {OlapClient.PlainCube}
@@ -35,11 +36,24 @@ export const selectOlapDimensionItems = createSelector(
   cube => cube
     ? cube.dimensions
       .map(dim => ({
-        item: dim,
-        count: dim.hierarchies.reduce((acc, hie) => acc + hie.levels.length, 0),
-        alpha: dim.hierarchies.reduce((acc, hie) => acc.concat(hie.name, "-"), "")
-      }))
+          item: {
+            ...dim,
+            hierarchies: dim.hierarchies.map(hierarchy => {
+              hierarchy.levels.sort((a, b) =>
+                getOrderValue(a) - getOrderValue(b)
+              );
+              return hierarchy;
+            })
+            .sort((a, b) =>
+              getOrderValue(a) - getOrderValue(b)
+            )
+          },
+          count: dim.hierarchies.reduce((acc, hie) => acc + hie.levels.length, 0),
+          alpha: dim.hierarchies.reduce((acc, hie) => acc.concat(hie.name, "-"), "")
+        }
+      ))
       .sort((a, b) =>
+        getOrderValue(a) - getOrderValue(b) ||
         b.count - a.count ||
         a.alpha.localeCompare(b.alpha)
       )
