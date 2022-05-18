@@ -22,8 +22,6 @@ export const DimensionMenu = props => {
   const dimensions = useSelector(selectOlapDimensionItems) || [];
   const locale = useSelector(selectLocale);
 
-  console.log(dimensions);
-
   const options = useMemo(() => dimensions.map(dim =>
     <DimensionMenuItem
       dimension={dim}

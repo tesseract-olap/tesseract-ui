@@ -53,7 +53,7 @@ export const selectOlapDimensionItems = createSelector(
         }
       ))
       .sort((a, b) =>
-        getOrderValue(a) - getOrderValue(b) ||
+        getOrderValue(a.item) - getOrderValue(b.item) ||
         b.count - a.count ||
         a.alpha.localeCompare(b.alpha)
       )

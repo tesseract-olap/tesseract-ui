@@ -57,7 +57,7 @@ export function getValues(map) {
 /**
  * Parse and convert order value from an schema object
  * (that supports annotations) to an integer value.
- * If null return a big number.
+ * If null return a big number: 99
  * @param {any} schemaObject
  */
 export function getOrderValue(schemaObject) {
