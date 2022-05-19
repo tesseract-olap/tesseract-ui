@@ -46,6 +46,12 @@ You might find a cube that has one or many levels with thousands or millions of 
 | dataset_link | Web address for the dataset (will turn `dataset_name` display into an anchor link). |
 | dataset_description | Description of the dataset (typically a few short sentences). |
 
+### Dimensions, Hierarchies & Levels
+
+| Annotation Name | Description |
+| --- | --- |
+| order | Optional. Allows to sort the elements in the selection menues to add entities. |
+
 ### Measures
 
 | Annotation Name | Description |

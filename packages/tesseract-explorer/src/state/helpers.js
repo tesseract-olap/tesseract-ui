@@ -53,3 +53,14 @@ export function getKeys(map) {
 export function getValues(map) {
   return Object.values(map);
 }
+
+/**
+ * Parse and convert order value from an schema object
+ * (that supports annotations) to an integer value.
+ * If null return a big number: 99
+ * @param {any} schemaObject
+ */
+export function getOrderValue(schemaObject) {
+  const orderValue = schemaObject.annotations?.order;
+  return orderValue && !isNaN(orderValue) ? parseInt(orderValue, 10) : 99
+}
