@@ -38,6 +38,8 @@ export function useSetup(serverConfig, locale) {
     dispatch(doSetLoadingState("REQUEST"));
     setDone(false);
 
+    console.log(serverConfig);
+
     dispatch(willSetupClient(serverConfig))
       .then(() => dispatch(willReloadCubes()))
       .then(cubeMap => {

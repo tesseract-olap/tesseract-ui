@@ -53,6 +53,7 @@ export const defaultTranslation = {
     label_boolean_debug: "Debug response",
     label_boolean_distinct: "Apply DISTINCT to drilldowns",
     label_boolean_exclude_default_members: "Exclude default members",
+    label_boolean_full_results: "Show full results",
     label_boolean_nonempty: "Only return non-empty data",
     label_boolean_parents: "Include parent levels",
     label_boolean_sparse: "Optimize sparse results",

@@ -33,8 +33,10 @@ export const ExplorerComponent = props => {
 
   const serverState = useSelector(selectServerState);
 
+  console.log(serverState);
+
   return (
-    <SettingsProvider formatters={props.formatters}>
+    <SettingsProvider formatters={props.formatters} previewLimit={props.previewLimit}>
       <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
         <div className={clsx("explorer-wrapper", props.className)}>
           <LoadingOverlay className="explorer-loading" />

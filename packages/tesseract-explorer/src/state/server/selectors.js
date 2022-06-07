@@ -25,8 +25,8 @@ export const selectServerFormatsEnabled = createSelector(
 export const selectServerBooleansEnabled = createSelector(
   selectServerSoftware,
   software => software === TesseractDataSource.softwareName
-    ? ["debug", "exclude_default_members", "parents", "sparse"]
-    : ["debug", "distinct", "nonempty", "parents", "sparse"]
+    ? ["debug", "exclude_default_members", "parents", "sparse", "full_results",]
+    : ["debug", "distinct", "nonempty", "parents", "sparse", "full_results",]
 );
 
 export const selectOlapCubeMap = createSelector(

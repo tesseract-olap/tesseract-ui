@@ -4,7 +4,8 @@ export const SERIAL_BOOLEAN = {
   NONEMPTY: 4,
   PARENTS: 8,
   SPARSE: 16,
-  EXCLUDE_DEFAULT_MEMBERS: 32
+  EXCLUDE_DEFAULT_MEMBERS: 32,
+  FULL_RESULTS: 64
 };
 
 export const Comparison = {

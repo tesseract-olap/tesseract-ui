@@ -1,8 +1,9 @@
 import {Checkbox} from "@blueprintjs/core";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
+import {useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {doBooleanToggle} from "../state/params/actions";
+import {doBooleanToggle, doPaginationUpdate} from "../state/params/actions";
 import {selectBooleans} from "../state/params/selectors";
 import {selectServerBooleansEnabled} from "../state/server/selectors";
 import {LayoutParamsArea} from "./LayoutParamsArea";
@@ -19,6 +20,7 @@ export const AreaOptions = props => {
   const dispatch = useDispatch();
 
   const {translate: t} = useTranslation();
+  const {previewLimit} = useSettings();
 
   const booleans = useSelector(selectBooleans);
   const enabledBooleans = useSelector(selectServerBooleansEnabled);
@@ -38,6 +40,10 @@ export const AreaOptions = props => {
           checked={booleans[key] || false}
           onChange={() => {
             dispatch(doBooleanToggle(key));
+            // Update pagination value if full results
+            if (key === "full_results"){
+              dispatch(doPaginationUpdate(!booleans[key]?0:previewLimit, 0));
+            }
           }}
         />
       )}

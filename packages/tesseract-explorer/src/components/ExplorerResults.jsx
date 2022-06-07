@@ -1,12 +1,13 @@
 import {Icon, NonIdealState, Tab, Tabs} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {Suspense, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {selectLoadingState} from "../state/loading/selectors";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server/selectors";
+import {doBooleanToggle} from "../state/params/actions";
 
 /**
  * @typedef OwnProps
@@ -21,6 +22,7 @@ export const ExplorerResults = props => {
   const {DefaultSplash, panels, transientIcon} = props;
   const [currentTab, setCurrentTab] = useState(() => Object.keys(panels)[0]);
 
+  const dispatch = useDispatch();
   const serverStatus = useSelector(selectServerState);
   const {loading: isLoading} = useSelector(selectLoadingState);
   const cube = useSelector(selectOlapCube);
@@ -29,6 +31,8 @@ export const ExplorerResults = props => {
   const {online: isServerOnline, url: serverUrl} = serverStatus;
   const {isDirty: isDirtyQuery, params, result} = queryItem;
   const {data, error} = result;
+
+  const fullResults = Boolean(params.booleans.full_results);
 
   const {translate: t} = useTranslation();
 
@@ -102,6 +106,7 @@ export const ExplorerResults = props => {
         {Object.keys(panels).map(key => <Tab id={key} key={key} title={t(key)} />)}
         <Tabs.Expander />
         <h2 className="token">{t("results.count_rows", {n: data.length})}</h2>
+        <h2 className="token" onClick={() => dispatch(doBooleanToggle("full_results"))}>{fullResults?"Get preview":"Get full"}</h2>
       </Tabs>
       <div className={`wrapper ${props.className}-content`}>
         <Suspense fallback={typeof transientIcon === "string" ? <Icon name={transientIcon} /> : transientIcon}>
