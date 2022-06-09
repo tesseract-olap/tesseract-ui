@@ -169,9 +169,9 @@ The key used to select a formatter comes from the `format_template` annotation, 
 * If any of these are present, numbers are presented in Decimal format.
 
 ## Preview queries feature
-In order to reduce the amount of big queries we implemented the `previewLimit` property. It allows the user ... TO-DO
+In order to reduce the amount of big queries/responses we implemented the `previewLimit` property. Default value is `50`. In this initial version, it allows the user fine tune the query receiving small payloads truncating the amout of records with `limit` value until the user explicity enable the `Full results options`.
 
 ## License
 
-©2018-2021 [Datawheel, LLC](https://datawheel.us/)
+©2018-2022 [Datawheel, LLC](https://datawheel.us/)
 This project is made available under the [MIT License](./LICENSE).

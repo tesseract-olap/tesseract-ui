@@ -17,7 +17,7 @@ import {isValidQuery} from "../utils/validation";
  * @param {OlapClient.ServerConfig} serverConfig
  * @param {string | string[]} locale
  */
-export function useSetup(serverConfig, locale) {
+export function useSetup(serverConfig, locale, previewLimit) {
   const dispatch = useDispatch();
 
   const [done, setDone] = useState(false);
@@ -37,8 +37,6 @@ export function useSetup(serverConfig, locale) {
   useEffect(() => {
     dispatch(doSetLoadingState("REQUEST"));
     setDone(false);
-
-    console.log(serverConfig);
 
     dispatch(willSetupClient(serverConfig))
       .then(() => dispatch(willReloadCubes()))
@@ -64,10 +62,10 @@ export function useSetup(serverConfig, locale) {
 
           // else, search params are a Explorer state permalink
           const locationState = parseStateFromSearchParams(searchObject);
-          query = isValidQuery(locationState) && buildQuery({params: locationState});
+          query = isValidQuery(locationState) && buildQuery({params: {...locationState, pagiLimit: previewLimit}});
         }
         else if (isValidQuery(historyState)) {
-          query = buildQuery({params: historyState});
+          query = buildQuery({params: {...historyState, pagiLimit: previewLimit}});
         }
 
         if (!query || !cubeMap.hasOwnProperty(query.params.cube)) {

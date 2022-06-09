@@ -114,6 +114,14 @@ export const defaultTranslation = {
     unselected: "[Unselected]",
     none: "[None]",
   },
+  previewMode: {
+    btn_get_all: "Get all",
+    btn_get_preview: "Get preview",
+    description_full: "You are looking to all the records available. You can switch to a preview reponse for faster results clicking here:",
+    description_preview: "You are looking a preview response with just the first {{limit}} results.To get the full response click here:",
+    title_full: "All records",
+    title_preview: "Preview records"
+  },
   queries: {
     action_create: "New query",
     action_parse: "Query from URL",

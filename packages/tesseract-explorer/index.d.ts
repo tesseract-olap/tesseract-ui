@@ -81,10 +81,10 @@ declare namespace TessExpl {
     uiLocale?: TranslationProviderProps["defaultLocale"];
 
     /**
-     * The default limit for preview queries. 0 (or null) means that preview feature will be disabled.
-     * Default 0
+     * The default limit for preview queries.
+     * Default 100
      */
-    previewLimit?: Number | 0;
+    previewLimit?: Number | 50;
   }
 
   interface ViewProps {

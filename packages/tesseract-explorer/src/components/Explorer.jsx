@@ -29,14 +29,15 @@ const defaultProps = {
 
 /** @type {React.FC<TessExpl.ExplorerProps>} */
 export const ExplorerComponent = props => {
-  const isSetupDone = useSetup(props.src, props.locale || defaultProps.locale);
+
+  const previewLimit = props.previewLimit || 50;
+
+  const isSetupDone = useSetup(props.src, props.locale || defaultProps.locale, previewLimit);
 
   const serverState = useSelector(selectServerState);
 
-  console.log(serverState);
-
   return (
-    <SettingsProvider formatters={props.formatters} previewLimit={props.previewLimit}>
+    <SettingsProvider formatters={props.formatters} previewLimit={previewLimit}>
       <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
         <div className={clsx("explorer-wrapper", props.className)}>
           <LoadingOverlay className="explorer-loading" />

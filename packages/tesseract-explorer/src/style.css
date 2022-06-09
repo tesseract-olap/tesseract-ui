@@ -94,6 +94,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
 .param-popover .bp3-popover-content {
