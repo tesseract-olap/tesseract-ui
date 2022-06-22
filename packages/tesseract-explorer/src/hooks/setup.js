@@ -16,6 +16,7 @@ import {isValidQuery} from "../utils/validation";
  *
  * @param {OlapClient.ServerConfig} serverConfig
  * @param {string | string[]} locale
+ * @param {number} previewLimit
  */
 export function useSetup(serverConfig, locale, previewLimit) {
   const dispatch = useDispatch();

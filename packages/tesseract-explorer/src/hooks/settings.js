@@ -24,12 +24,12 @@ const {Consumer: ContextConsumer, Provider: ContextProvider} = SettingsContext;
 
 /**
  * A wrapper for the Provider, to handle the changes and API given by the hook.
- * @type {React.FC<`SettingsProviderProps`>}
+ * @type {React.FC<SettingsProviderProps>}
  */
 export const SettingsProvider = props => {
   const value = useMemo(() => ({
     formatters: props.formatters || {},
-    previewLimit: props.previewLimit || 100
+    previewLimit: props.previewLimit || 100,
   }), [props.formatters, props.previewLimit]);
 
   return createElement(ContextProvider, {value}, props.children);

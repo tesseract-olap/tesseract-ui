@@ -1,13 +1,12 @@
 import {Icon, NonIdealState, Tab, Tabs} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {Suspense, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {selectLoadingState} from "../state/loading/selectors";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server/selectors";
-import {LoadAllResultsMessage } from "./LoadAllResultsMessage";
+import {LoadAllResultsMessage} from "./LoadAllResultsMessage";
 
 /**
  * @typedef OwnProps
@@ -22,9 +21,7 @@ export const ExplorerResults = props => {
   const {DefaultSplash, panels, transientIcon} = props;
   const [currentTab, setCurrentTab] = useState(() => Object.keys(panels)[0]);
 
-  const dispatch = useDispatch();
   const serverStatus = useSelector(selectServerState);
-  const {loading: isLoading} = useSelector(selectLoadingState);
   const cube = useSelector(selectOlapCube);
   const queryItem = useSelector(selectCurrentQueryItem);
 

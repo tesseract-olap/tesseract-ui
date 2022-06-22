@@ -1,9 +1,8 @@
 import {Checkbox} from "@blueprintjs/core";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {doBooleanToggle, doPaginationUpdate} from "../state/params/actions";
+import {doBooleanToggle} from "../state/params/actions";
 import {selectBooleans} from "../state/params/selectors";
 import {selectServerBooleansEnabled} from "../state/server/selectors";
 import {LayoutParamsArea} from "./LayoutParamsArea";
