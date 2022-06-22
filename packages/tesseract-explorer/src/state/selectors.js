@@ -36,22 +36,22 @@ export const selectOlapDimensionItems = createSelector(
   cube => cube
     ? cube.dimensions
       .map(dim => ({
-          item: {
-            ...dim,
-            hierarchies: dim.hierarchies.map(hierarchy => {
-              hierarchy.levels.sort((a, b) =>
-                getOrderValue(a) - getOrderValue(b)
-              );
-              return hierarchy;
-            })
+        item: {
+          ...dim,
+          hierarchies: dim.hierarchies.map(hierarchy => {
+            hierarchy.levels.sort((a, b) =>
+              getOrderValue(a) - getOrderValue(b)
+            );
+            return hierarchy;
+          })
             .sort((a, b) =>
               getOrderValue(a) - getOrderValue(b)
             )
-          },
-          count: dim.hierarchies.reduce((acc, hie) => acc + hie.levels.length, 0),
-          alpha: dim.hierarchies.reduce((acc, hie) => acc.concat(hie.name, "-"), "")
-        }
-      ))
+        },
+        count: dim.hierarchies.reduce((acc, hie) => acc + hie.levels.length, 0),
+        alpha: dim.hierarchies.reduce((acc, hie) => acc.concat(hie.name, "-"), "")
+      })
+      )
       .sort((a, b) =>
         getOrderValue(a.item) - getOrderValue(b.item) ||
         b.count - a.count ||

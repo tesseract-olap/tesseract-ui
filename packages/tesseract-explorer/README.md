@@ -134,7 +134,7 @@ function PageComponent(props) {
   This object is also exported by this package so you can check it yourself.
 * `uiLocale`, which is not related to the `locale` property mentioned in the earlier section, must be a string matching one of the keys defined in the `translations` property.
 
-When used, both properties are required.
+When used, both properties are required.  
 The locale keys used not necesarily must be ISO 639 codes; any string can do, but must match on both properties.
 
 Some translation labels do interpolation of values when used. These are optional, but encouraged, and some can have additional values available:
@@ -165,7 +165,7 @@ const formatterIndex = useMemo(() => ({
 The app comes with a limited list of default ones: `Decimal` (1234.567), `Milliards` (1,234.567), `Dollars` ($1,234.57), and `Human` (1.23k).
 The key used to select a formatter comes from the `format_template` annotation, and if not present, the `units_of_measurement` annotation in the measure data.
 * If the measure contains the `format_template` annotation, it is used to create a custom formatter on runtime. [Check the documentation](https://github.com/d3plus/d3plus-format#readme) for details on how to build and customize a template.
-* If the `units_of_measurement` set is an official ISO 4217 currency code (three letters in caps), it will be parsed into a currency formatter using the browser's [`Intl.NumberFormat`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) constructor. Otherwise, the key is looked in the `formatters` property object and in the default formatters list.
+* If the `units_of_measurement` set is an official [ISO 4217 currency alpha code](https://en.wikipedia.org/wiki/ISO_4217#Alpha_codes) (three letters in caps), it will be parsed into a currency formatter using the browser's [`Intl.NumberFormat`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) constructor. Otherwise, the key is looked in the `formatters` property object and in the default formatters list.
 * If any of these are present, numbers are presented in Decimal format.
 
 ## Preview queries feature
