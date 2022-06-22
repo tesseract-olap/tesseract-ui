@@ -7,7 +7,7 @@ import {selectLoadingState} from "../state/loading/selectors";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server/selectors";
-import { LoadAllResults } from "./LoadAllResults";
+import {LoadAllResultsMessage } from "./LoadAllResultsMessage";
 
 /**
  * @typedef OwnProps
@@ -107,8 +107,8 @@ export const ExplorerResults = props => {
       </Tabs>
       <div className={`wrapper ${props.className}-content`}>
         <Suspense fallback={typeof transientIcon === "string" ? <Icon name={transientIcon} /> : transientIcon}>
+          <LoadAllResultsMessage />
           <CurrentComponent className="result-panel" cube={cube} params={params} result={result} />
-          <LoadAllResults />
         </Suspense>
       </div>
     </div>

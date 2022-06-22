@@ -20,7 +20,6 @@ export const AreaOptions = props => {
   const dispatch = useDispatch();
 
   const {translate: t} = useTranslation();
-  const {previewLimit} = useSettings();
 
   const booleans = useSelector(selectBooleans);
   const enabledBooleans = useSelector(selectServerBooleansEnabled);
@@ -40,10 +39,6 @@ export const AreaOptions = props => {
           checked={booleans[key] || false}
           onChange={() => {
             dispatch(doBooleanToggle(key));
-            // Update pagination value if full results
-            if (key === "full_results"){
-              dispatch(doPaginationUpdate(!booleans[key]?0:previewLimit, 0));
-            }
           }}
         />
       )}

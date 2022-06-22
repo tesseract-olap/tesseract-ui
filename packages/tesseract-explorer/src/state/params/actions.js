@@ -1,4 +1,4 @@
-import {QUERY_BOOLEANS_TOGGLE, QUERY_CUBE_UPDATE, QUERY_CUTS_CLEAR, QUERY_CUTS_REMOVE, QUERY_CUTS_UPDATE, QUERY_DRILLDOWNS_CLEAR, QUERY_DRILLDOWNS_REMOVE, QUERY_DRILLDOWNS_UPDATE, QUERY_INYECT, QUERY_LOCALE_UPDATE, QUERY_MEASURES_CLEAR, QUERY_MEASURES_UPDATE, QUERY_PAGINATION_UPDATE, QUERY_SORTING_UPDATE} from "./reducer";
+import {QUERY_BOOLEANS_TOGGLE, QUERY_CUBE_UPDATE, QUERY_CUTS_CLEAR, QUERY_CUTS_REMOVE, QUERY_CUTS_UPDATE, QUERY_DRILLDOWNS_CLEAR, QUERY_DRILLDOWNS_REMOVE, QUERY_DRILLDOWNS_UPDATE, QUERY_INYECT, QUERY_LOCALE_UPDATE, QUERY_MEASURES_CLEAR, QUERY_MEASURES_UPDATE, QUERY_PAGINATION_UPDATE, QUERY_SORTING_UPDATE, QUERY_FULL_RESULTS_PAGINATION_UPDATE} from "./reducer";
 
 /** @param {Partial<TessExpl.Struct.QueryItem>} payload */
 export const doRawInyect = payload => ({type: QUERY_INYECT, payload});
@@ -76,4 +76,13 @@ export const doPaginationUpdate = (pagiLimit, pagiOffset) => ({
 export const doSortingUpdate = (sortKey, sortDir) => ({
   type: QUERY_SORTING_UPDATE,
   payload: {sortKey, sortDir}
+});
+
+/**
+ * @param {number} pagiLimit
+** @param {boolean} fullResults
+ */
+export const doFullResultsPagination = (pagiLimit, fullResults) => ({
+  type: QUERY_FULL_RESULTS_PAGINATION_UPDATE,
+  payload: {pagiLimit, fullResults}
 });

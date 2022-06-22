@@ -8,6 +8,7 @@ import {doCutClear, doDrilldownClear, doMeasureClear} from "../state/params/acti
 import {selectValidQueryStatus} from "../state/params/selectors";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint, selectServerSoftware} from "../state/server/selectors";
+import {LoadAllResultsSwitch} from "./LoadAllResultsSwitch";
 import {AnchorButtonTooltip, ButtonTooltip} from "./Tooltips";
 
 /** @type {React.FC<{}>} */
@@ -50,6 +51,9 @@ export const ButtonExecuteQuery = () => {
           onClick={() => dispatch(doUpdateEndpoint())}
         />}
       </ButtonGroup>
+      <div className="p-3 pt-0 pb-0">
+        <LoadAllResultsSwitch />
+      </div>
       <ButtonGroup className="query-actions p-3 pt-0" fill>
         <AnchorButtonTooltip
           fill={true}
