@@ -4,7 +4,7 @@ import {doCubeUpdate} from "../state/params/actions";
 import {selectCubeName, selectCurrentQueryParams, selectLocale, selectMeasureMap} from "../state/params/selectors";
 import {doQueriesClear, doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectQueryItems} from "../state/queries/selectors";
-import {doCurrentResultUpdate} from "../state/results/actions";
+import {doCurrentQueryResultUpdate} from "../state/results/actions";
 import {doServerUpdate} from "../state/server/actions";
 import {selectOlapCubeMap, selectServerEndpoint} from "../state/server/selectors";
 import {filterMap} from "../utils/array";
@@ -105,7 +105,7 @@ function olapMiddlewareExecuteQuery({client, dispatch, getState}) {
       const [aggregation] = result;
       const query = aggregation.query;
       dispatch(
-        doCurrentResultUpdate({
+        doCurrentQueryResultUpdate({
           data: aggregation.data,
           error: null,
           headers: aggregation.headers || {},
@@ -119,7 +119,7 @@ function olapMiddlewareExecuteQuery({client, dispatch, getState}) {
       return dispatch(willUpdatePermalink());
     })
     .catch(error => {
-      dispatch(doCurrentResultUpdate({error: error.message}));
+      dispatch(doCurrentQueryResultUpdate({error: error.message}));
     });
 }
 

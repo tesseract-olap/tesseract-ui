@@ -25,7 +25,7 @@
   min-width: 320px;
 
   display: grid;
-  grid-template-columns: fit-content(30px) fit-content(30px) minmax(0, 1fr);
+  grid-template-columns: fit-content(30px) fit-content(30px) fit-content(30px) minmax(0, 1fr);
   grid-column-gap: 0;
   grid-row-gap: 0;
 }
@@ -74,6 +74,13 @@
   width: 200px;
 }
 .explorer-queries .wrapper {
+  padding: 0.25rem;
+}
+
+.explorer-joins {
+  width: 200px;
+}
+.explorer-joins .wrapper {
   padding: 0.25rem;
 }
 

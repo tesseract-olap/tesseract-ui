@@ -17,7 +17,7 @@ import {MemoStoredQuery as StoredQuery} from "./StoredQuery";
  */
 
 /** @type {React.FC<OwnProps>} */
-export const ExplorerQueries = props => {
+export const ExplorerJoins = props => {
   const dispatch = useDispatch();
 
   const currentQuery = useSelector(selectCurrentQueryItem);
@@ -60,7 +60,7 @@ export const ExplorerQueries = props => {
   return (
     <LayoutColumn
       className={props.className}
-      title={t("queries.column_title")}
+      title={t("joins.column_title")}
       defaultOpen={items.length > 1}
     >
       <ButtonGroup alignText="left" fill vertical>
@@ -68,13 +68,13 @@ export const ExplorerQueries = props => {
           className="action-create"
           icon="insert"
           onClick={onItemCreate}
-          text={t("queries.action_create")}
+          text={t("joins.action_create")}
         />
         <Button
           className="action-parseurl"
           icon="bring-data"
           onClick={parseQueryUrlHandler}
-          text={t("queries.action_parse")}
+          text={t("joins.action_parse")}
         />
       </ButtonGroup>
 

@@ -122,6 +122,13 @@ export const defaultTranslation = {
     column_title: "Queries",
     unset_parameters: "No parameters set",
   },
+  joins: {
+    action_create: "New join",
+    action_parse: "Add join from URL",
+    error_not_join: "Please construct a valid join",
+    column_title: "Joins",
+    unset_parameters: "No queries set",
+  },
   results: {
     error_execquery_detail: "There was a problem with the last query:",
     error_disconnected_title: "You are not connected to the internet.",

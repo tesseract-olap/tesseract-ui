@@ -94,6 +94,7 @@ declare namespace TessExpl {
     interface ExplorerState {
       explorerLoading: LoadingState;
       explorerQueries: QueriesState;
+      explorerJoins: JoinsState;
       explorerServer: ServerState;
     }
 
@@ -111,6 +112,11 @@ declare namespace TessExpl {
     interface QueriesState {
       current: string;
       itemMap: Record<string, Struct.QueryItem>;
+    }
+
+    interface JoinsState {
+      current: string;
+      itemMap: Record<string, Struct.JoinItem>;
     }
 
     interface ServerState {
@@ -134,7 +140,32 @@ declare namespace TessExpl {
       result: QueryResult;
     }
 
+    interface JoinItem {
+      created: string;
+      isDirty: boolean;
+      key: string;
+      label: string;
+      current: string;
+      itemMap: Record<string, Struct.QueryItem>;
+      params: JoinParams;
+      result: JoinResult;
+    }
+
     interface QueryParams {
+      booleans: Record<string, undefined | boolean>;
+      cube: string;
+      cuts: Record<string, CutItem>;
+      drilldowns: Record<string, DrilldownItem>;
+      filters: Record<string, FilterItem>;
+      locale: string | undefined;
+      measures: Record<string, MeasureItem>;
+      pagiLimit: number | undefined;
+      pagiOffset: number | undefined;
+      sortDir: "asc" | "desc";
+      sortKey: string | undefined;
+    }
+
+    interface JoinParams {
       booleans: Record<string, undefined | boolean>;
       cube: string;
       cuts: Record<string, CutItem>;
@@ -156,6 +187,15 @@ declare namespace TessExpl {
       status: number;
       urlAggregate: string | undefined;
       urlLogicLayer: string | undefined;
+    }
+
+    interface JoinResult {
+      data: Record<string, string | number>[];
+      error: string | null;
+      headers: Record<string, string>;
+      sourceCall: string | undefined;
+      status: number;
+      urlJoin: string | undefined;
     }
 
     interface IQueryItem {

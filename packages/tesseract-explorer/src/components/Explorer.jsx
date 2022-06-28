@@ -6,6 +6,7 @@ import {useSetup} from "../hooks/setup";
 import {TranslationProvider} from "../hooks/translation";
 import {selectServerState} from "../state/server/selectors";
 import {AnimatedCube} from "./AnimatedCube";
+import {ExplorerJoins} from "./ExplorerJoins";
 import {ExplorerParams} from "./ExplorerParams";
 import {ExplorerQueries} from "./ExplorerQueries";
 import {ExplorerResults} from "./ExplorerResults";
@@ -38,6 +39,10 @@ export const ExplorerComponent = props => {
       <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
         <div className={clsx("explorer-wrapper", props.className)}>
           <LoadingOverlay className="explorer-loading" />
+          {isSetupDone && serverState.online && props.multiquery
+            ? <ExplorerJoins className="explorer-joins" />
+            : <div />
+          }
           {isSetupDone && serverState.online && props.multiquery
             ? <ExplorerQueries className="explorer-queries" />
             : <div/>
