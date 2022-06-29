@@ -53,7 +53,7 @@ export const defaultTranslation = {
     label_boolean_debug: "Debug response",
     label_boolean_distinct: "Apply DISTINCT to drilldowns",
     label_boolean_exclude_default_members: "Exclude default members",
-    label_boolean_full_results: "Show full results",
+    label_boolean_full_results: "Show all rows",
     label_boolean_nonempty: "Only return non-empty data",
     label_boolean_parents: "Include parent levels",
     label_boolean_sparse: "Optimize sparse results",
@@ -115,10 +115,10 @@ export const defaultTranslation = {
     none: "[None]",
   },
   previewMode: {
-    btn_get_all: "Get all",
-    btn_get_preview: "Get preview",
-    description_full: "You are looking to all the records available. You can switch to a preview reponse for faster results.",
-    description_preview: "You are looking a preview response with just the first {{limit}} results. Click on the switch to get the full response.",
+    btn_get_all: "Show all rows",
+    btn_get_preview: "Show preview",
+    description_full: "You are currently viewing all available rows. Turn off for faster performance.",
+    description_preview: "You are currently viewing a preview response of the first {{limit}} rows.",
     title_full: "All records",
     title_preview: "Preview records"
   },
