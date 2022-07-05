@@ -3,6 +3,20 @@
   overflow: auto;
 }
 
+.explorer-results-content .load-all-results-msg-callout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.explorer-results-content .load-all-results-msg-callout p {
+  margin: 0;
+}
+
+.explorer-results-content .load-all-results-msg-callout .bp3-switch {
+  margin: 0;
+}
+
 .result-panel {
   height: 100%;
   width: 100%;

@@ -16,12 +16,14 @@ export const LoadAllResultsMessage = () => {
 
   const {previewLimit} = useSettings();
 
+  if (isFullResults) return <></>;
+
   return (
-    <Callout>
+    <Callout className="load-all-results-msg-callout">
       <p>
-        <strong>{isFullResults ? t("previewMode.title_full") : t("previewMode.title_preview")}:</strong>
+        <strong>{t("previewMode.title_preview")}:</strong>
         {" "}
-        {isFullResults ? t("previewMode.description_full") : t("previewMode.description_preview", {limit: previewLimit})}
+        {t("previewMode.description_preview", {limit: previewLimit})}
         {" "}
       </p>
       <LoadAllResultsSwitch noPopover={true} />
