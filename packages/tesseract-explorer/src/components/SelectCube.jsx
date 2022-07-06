@@ -39,8 +39,10 @@ export const SelectCube = () => {
     setLevel: setLevel1,
     keys: level1Keys,
     values: level1Values
-  } = useSyncedSubset(items, selectedItem, item =>
-    getAnnotation(item, "topic", locale)
+  } = useSyncedSubset(
+    items, selectedItem,
+    item => getAnnotation(item, "topic", locale),
+    [locale]
   );
 
   const {
@@ -48,8 +50,10 @@ export const SelectCube = () => {
     setLevel: setLevel2,
     keys: level2Keys,
     values: level2Values
-  } = useSyncedSubset(level1Values, selectedItem, item =>
-    getAnnotation(item, "subtopic", locale)
+  } = useSyncedSubset(
+    level1Values, selectedItem,
+    item => getAnnotation(item, "subtopic", locale),
+    [locale]
   );
 
   const {
@@ -57,8 +61,10 @@ export const SelectCube = () => {
     setLevel: setLevel3,
     keys: level3Keys,
     values: level3Values
-  } = useSyncedSubset(level2Values, selectedItem, item =>
-    getAnnotation(item, "table", locale)
+  } = useSyncedSubset(
+    level2Values, selectedItem,
+    item => getAnnotation(item, "table", locale),
+    [locale]
   );
 
   // The list available to the last selector is the one that contains any item.
@@ -159,20 +165,21 @@ export const SelectCube = () => {
  * @param {T[]} items The list of items to to select from.
  * @param {T | undefined} currentItem The currently selected item, must belong to the `items` array.
  * @param {(item: T) => string | null | undefined} accessor A function to select a item's property, whose value will be used a filtering step
+ * @param {string[]} [dependencies]
  */
-function useSyncedSubset(items, currentItem, accessor) {
+function useSyncedSubset(items, currentItem, accessor, dependencies = []) {
   const [level, setLevel] = useState(() => currentItem && accessor(currentItem) || "");
 
   useEffect(() => {
     currentItem && setLevel(accessor(currentItem) || "");
-  }, [currentItem]);
+  }, [currentItem, ...dependencies]);
 
   const [keys, values] = useMemo(() => {
     const tree = groupBy(items, accessor);
     const keys = [...tree.keys()];
     const values = tree.get(level) || [];
     return [keys, values];
-  }, [items, level]);
+  }, [items, level, ...dependencies]);
 
   return {level, setLevel, keys, values};
 }
