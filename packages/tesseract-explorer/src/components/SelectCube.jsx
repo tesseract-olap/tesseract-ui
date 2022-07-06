@@ -130,12 +130,12 @@ export const SelectCube = () => {
         />
         {selectCube}
       </ButtonGroup>
-      {selectedItem && <MemoCubeSource
-        className="cube-source p-3 py-0"
-        cube={selectedItem}
-      />}
       {selectedItem && <MemoCubeDescription
         className="cube-description p-3 py-0"
+        cube={selectedItem}
+      />}
+      {selectedItem && <MemoCubeSource
+        className="cube-source p-3 py-0"
         cube={selectedItem}
       />}
     </Fragment>

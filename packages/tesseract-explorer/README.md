@@ -21,10 +21,14 @@ This is to prevent conflicts with hooks implemented in React 16.7, and to allow 
 
 ## Usage
 
-This package exports a `React.Component` and a reducer function to add to the redux store. To implement them:
+This package exports a `React.Component`, a required middleware, and a reducer function to add to the redux store. To implement them:
 
 ```js
-import {explorerReducer} from "@datawheel/tesseract-explorer";
+import {
+  explorerReducer, 
+  olapMiddleware, 
+  permalinkMiddleware,
+} from "@datawheel/tesseract-explorer";
 
 function rootReducer(state = initialState, action) {
   return {
@@ -35,6 +39,14 @@ function rootReducer(state = initialState, action) {
     explorer: explorerReducer(state, action)
   }
 }
+
+const enhancers = composeEnhancers(
+  // olapMiddleware is required for DataExplorer to work
+  // permalinkMiddleware is optional, to enable browser location permalink sync
+  applyMiddleware(permalinkMiddleware, olapMiddleware)
+);
+
+const store = createStore(rootReducer, undefined, enhancers);
 ```
 
 Then you can setup the `Explorer` component like this:
@@ -108,7 +120,7 @@ function PageComponent(props) {
     src="https://tesseract.server.url/"
     locale={["en", "es"]}
     // The property also accepts a comma-separated string
-    locale={"es,en"}
+    locale="es,en"
   />;
 }
 ```
@@ -168,10 +180,14 @@ The key used to select a formatter comes from the `format_template` annotation, 
 * If the `units_of_measurement` set is an official [ISO 4217 currency alpha code](https://en.wikipedia.org/wiki/ISO_4217#Alpha_codes) (three letters in caps), it will be parsed into a currency formatter using the browser's [`Intl.NumberFormat`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) constructor. Otherwise, the key is looked in the `formatters` property object and in the default formatters list.
 * If any of these are present, numbers are presented in Decimal format.
 
-## Preview queries feature
+### Cube sources and descriptions
+When a cube contains the `description`, `source_name`, `source_link`, and/or `source_description` annotations, they're shown under the Cube selector in the parameter column.  
+These annotations can also be localized using additional annotations with [the supported locale code](#data-locale) as suffix: `source_name_es` will be used when the locale selector is set to `"es"`; if not present in the cube, `source_name` will be used instead, and if not present, nothing will be shown. Note the locale used here is the _Data Locale_, not the _UI Locale_.
+
+### Preview queries feature
 In order to reduce the amount of big queries/responses we implemented the `previewLimit` property. Default value is `50`. In this initial version, it allows the user fine tune the query receiving small payloads truncating the amout of records with `limit` value until the user explicity enable the `Full results options`.
 
 ## License
 
 ©2018-2022 [Datawheel, LLC](https://datawheel.us/)
-This project is made available under the [MIT License](./LICENSE).
+This project is available under the [MIT License](./LICENSE).
