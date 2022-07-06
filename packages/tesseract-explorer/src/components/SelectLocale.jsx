@@ -1,3 +1,4 @@
+import {ButtonGroup} from "@blueprintjs/core";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -30,24 +31,26 @@ export const SelectLocale = () => {
   }
 
   return (
-    <SelectLocaleOptions
-      className="select-locale"
-      fill={true}
-      getLabel={item => item.label}
-      icon="translate"
-      items={localeOptions}
-      onItemSelect={locale => {
-        if (currentLocale.code !== locale.value) {
-          dispatch(doSetLoadingState("REQUEST"));
-          dispatch(doLocaleUpdate(locale.value));
-          dispatch(willExecuteQuery()).then(() => {
-            dispatch(doSetLoadingState("SUCCESS"));
-          }, error => {
-            dispatch(doSetLoadingState("FAILURE", error.message));
-          });
-        }
-      }}
-      selectedItem={t("params.label_locale", currentLocale)}
-    />
+    <ButtonGroup className="p-3 pb-0" fill>
+      <SelectLocaleOptions
+        className="select-locale"
+        fill={true}
+        getLabel={item => item.label}
+        icon="translate"
+        items={localeOptions}
+        onItemSelect={locale => {
+          if (currentLocale.code !== locale.value) {
+            dispatch(doSetLoadingState("REQUEST"));
+            dispatch(doLocaleUpdate(locale.value));
+            dispatch(willExecuteQuery()).then(() => {
+              dispatch(doSetLoadingState("SUCCESS"));
+            }, error => {
+              dispatch(doSetLoadingState("FAILURE", error.message));
+            });
+          }
+        }}
+        selectedItem={t("params.label_locale", currentLocale)}
+      />
+    </ButtonGroup>
   );
 };

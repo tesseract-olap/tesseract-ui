@@ -3,8 +3,10 @@ import React, {Fragment, memo, useCallback, useEffect, useMemo, useState} from "
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {willSetCube} from "../middleware/olapActions";
+import {selectLocale} from "../state/params/selectors";
 import {selectOlapCube} from "../state/selectors";
 import {selectOlapCubeItems} from "../state/server/selectors";
+import {getAnnotation, getCaption} from "../utils/string";
 import {groupBy} from "../utils/transform";
 import {shallowEqualForProps} from "../utils/validation";
 import {MemoCubeDescription, MemoCubeSource} from "./CubeMetadata";
@@ -26,6 +28,7 @@ export const SelectCube = () => {
   const dispatch = useDispatch();
 
   const {translate: t} = useTranslation();
+  const {code: locale} = useSelector(selectLocale);
 
   const items = useSelector(selectOlapCubeItems);
   const selectedItem = useSelector(selectOlapCube);
@@ -36,21 +39,27 @@ export const SelectCube = () => {
     setLevel: setLevel1,
     keys: level1Keys,
     values: level1Values
-  } = useSyncedSubset(items, selectedItem, item => item.annotations.topic);
+  } = useSyncedSubset(items, selectedItem, item =>
+    getAnnotation(item, "topic", locale)
+  );
 
   const {
     level: level2,
     setLevel: setLevel2,
     keys: level2Keys,
     values: level2Values
-  } = useSyncedSubset(level1Values, selectedItem, item => item.annotations.subtopic);
+  } = useSyncedSubset(level1Values, selectedItem, item =>
+    getAnnotation(item, "subtopic", locale)
+  );
 
   const {
     level: level3,
     setLevel: setLevel3,
     keys: level3Keys,
     values: level3Values
-  } = useSyncedSubset(level2Values, selectedItem, item => item.annotations.table);
+  } = useSyncedSubset(level2Values, selectedItem, item =>
+    getAnnotation(item, "table", locale)
+  );
 
   // The list available to the last selector is the one that contains any item.
   /* eslint-disable indent, operator-linebreak */
@@ -77,14 +86,14 @@ export const SelectCube = () => {
   const selectCube = selectedItem
     ? <SelectPlainCube
       className="select-cube"
-      getLabel={item => item.caption || item.name}
+      getLabel={item => getCaption(item, locale)}
       hidden={cubeItems.length < 2}
       items={cubeItems}
       onItemSelect={onItemSelect}
       selectedItem={selectedItem}
       text={t("params.label_cube", {
         name: selectedItem.name,
-        caption: selectedItem.annotations.caption
+        caption: getCaption(selectedItem, locale)
       })}
     />
     : null;
