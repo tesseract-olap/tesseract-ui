@@ -59,6 +59,10 @@ export const selectBooleans = createSelector(
   selectCurrentQueryParams,
   params => params.booleans
 );
+export const selectIsFullResults = createSelector(
+  selectBooleans,
+  booleans => booleans.full_results
+);
 
 export const selectPaginationParams = createSelector(
   selectCurrentQueryParams,

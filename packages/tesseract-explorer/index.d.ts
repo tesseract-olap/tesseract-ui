@@ -79,6 +79,12 @@ declare namespace TessExpl {
      * The default locale to use in the Explorer component UI.
      */
     uiLocale?: TranslationProviderProps["defaultLocale"];
+
+    /**
+     * The default limit for preview queries.
+     * Default 100
+     */
+    previewLimit?: Number | 50;
   }
 
   interface ViewProps {

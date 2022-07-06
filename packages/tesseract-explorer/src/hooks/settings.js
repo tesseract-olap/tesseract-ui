@@ -5,11 +5,13 @@ import {createContext, createElement, useCallback, useContext, useMemo} from "re
 /**
  * @typedef SettingsContextProps
  * @property {Record<string, (d: number) => string>} formatters
+ * @property {number} previewLimit
  */
 
 /**
  * @typedef SettingsProviderProps
  * @property {Record<string, (d: number) => string>} [formatters]
+ * @property {number} previewLimit
  */
 
 /**
@@ -27,7 +29,8 @@ const {Consumer: ContextConsumer, Provider: ContextProvider} = SettingsContext;
 export const SettingsProvider = props => {
   const value = useMemo(() => ({
     formatters: props.formatters || {},
-  }), [props.formatters]);
+    previewLimit: props.previewLimit || 100,
+  }), [props.formatters, props.previewLimit]);
 
   return createElement(ContextProvider, {value}, props.children);
 };

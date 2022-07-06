@@ -51,6 +51,7 @@ ReactDOM.render(
       formatters={{Sheep: n => `🐑 ${n.toFixed()}`}}
       multiquery
       uiLocale="pt"
+      previewLimit={75}
       locale={['pt','en']}
       panels={PANELS}
     />

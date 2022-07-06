@@ -3,10 +3,10 @@ import classNames from "classnames";
 import React, {Suspense, useState} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {selectLoadingState} from "../state/loading/selectors";
 import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server/selectors";
+import {LoadAllResultsMessage} from "./LoadAllResultsMessage";
 
 /**
  * @typedef OwnProps
@@ -22,7 +22,6 @@ export const ExplorerResults = props => {
   const [currentTab, setCurrentTab] = useState(() => Object.keys(panels)[0]);
 
   const serverStatus = useSelector(selectServerState);
-  const {loading: isLoading} = useSelector(selectLoadingState);
   const cube = useSelector(selectOlapCube);
   const queryItem = useSelector(selectCurrentQueryItem);
 
@@ -105,6 +104,7 @@ export const ExplorerResults = props => {
       </Tabs>
       <div className={`wrapper ${props.className}-content`}>
         <Suspense fallback={typeof transientIcon === "string" ? <Icon name={transientIcon} /> : transientIcon}>
+          <LoadAllResultsMessage />
           <CurrentComponent className="result-panel" cube={cube} params={params} result={result} />
         </Suspense>
       </div>

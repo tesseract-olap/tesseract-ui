@@ -8,6 +8,7 @@ import {isActiveCut, isActiveItem} from "./validation";
  * @param {TessExpl.Struct.QueryParams} params
  */
 export function applyQueryParams(query, params) {
+
   Object.entries(params.booleans).forEach(item => {
     item[1] != null && query.setOption(item[0], item[1]);
   });
@@ -74,6 +75,7 @@ export function extractQueryParams(query) {
       debug: Boolean(booleans.debug),
       distinct: Boolean(booleans.distinct),
       exclude_default_members: Boolean(booleans.exclude_default_members),
+      full_results: Boolean(booleans.full_results),
       nonempty: Boolean(booleans.nonempty),
       parents: Boolean(booleans.parents),
       sparse: Boolean(booleans.sparse)

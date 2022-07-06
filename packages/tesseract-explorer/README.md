@@ -130,7 +130,7 @@ function PageComponent(props) {
 }
 ```
 
-* `translations` must be an object where the keys are the locale codes you intend to make available in the app, and the values are dictionaries that complies with the labels [defined in this file](./src/utils/localization.js).  
+* `translations` must be an object where the keys are the locale codes you intend to make available in the app, and the values are dictionaries that complies with the labels [defined in this file](./src/utils/localization.js).
   This object is also exported by this package so you can check it yourself.
 * `uiLocale`, which is not related to the `locale` property mentioned in the earlier section, must be a string matching one of the keys defined in the `translations` property.
 
@@ -163,12 +163,15 @@ const formatterIndex = useMemo(() => ({
 ```
 
 The app comes with a limited list of default ones: `Decimal` (1234.567), `Milliards` (1,234.567), `Dollars` ($1,234.57), and `Human` (1.23k).
-The key used to select a formatter comes from the `format_template` annotation, and if not present, the `units_of_measurement` annotation in the measure data.  
+The key used to select a formatter comes from the `format_template` annotation, and if not present, the `units_of_measurement` annotation in the measure data.
 * If the measure contains the `format_template` annotation, it is used to create a custom formatter on runtime. [Check the documentation](https://github.com/d3plus/d3plus-format#readme) for details on how to build and customize a template.
-* If the `units_of_measurement` set is an official ISO 4217 currency code (three letters in caps), it will be parsed into a currency formatter using the browser's [`Intl.NumberFormat`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) constructor. Otherwise, the key is looked in the `formatters` property object and in the default formatters list.  
+* If the `units_of_measurement` set is an official [ISO 4217 currency alpha code](https://en.wikipedia.org/wiki/ISO_4217#Alpha_codes) (three letters in caps), it will be parsed into a currency formatter using the browser's [`Intl.NumberFormat`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) constructor. Otherwise, the key is looked in the `formatters` property object and in the default formatters list.
 * If any of these are present, numbers are presented in Decimal format.
+
+## Preview queries feature
+In order to reduce the amount of big queries/responses we implemented the `previewLimit` property. Default value is `50`. In this initial version, it allows the user fine tune the query receiving small payloads truncating the amout of records with `limit` value until the user explicity enable the `Full results options`.
 
 ## License
 
-©2018-2021 [Datawheel, LLC](https://datawheel.us/)  
+©2018-2022 [Datawheel, LLC](https://datawheel.us/)
 This project is made available under the [MIT License](./LICENSE).

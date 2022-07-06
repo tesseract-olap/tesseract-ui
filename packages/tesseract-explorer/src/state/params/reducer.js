@@ -19,6 +19,8 @@ export const QUERY_MEASURES_CLEAR = "explorer/QUERY/MEASURES/CLEAR";
 export const QUERY_MEASURES_UPDATE = "explorer/QUERY/MEASURES/UPDATE";
 export const QUERY_PAGINATION_UPDATE = "explorer/QUERY/PAGINATION/UPDATE";
 export const QUERY_SORTING_UPDATE = "explorer/QUERY/SORTING/UPDATE";
+export const QUERY_FULL_RESULTS_PAGINATION_UPDATE = "explorer/QUERY/FULL_RESULTS/UPDATE";
+
 
 
 export const paramsEffectors = {
@@ -188,5 +190,20 @@ export const paramsEffectors = {
     ...params,
     sortDir: payload.sortDir,
     sortKey: payload.sortKey
-  })
+  }),
+
+  /**
+   * @param {TessExpl.Struct.QueryParams} params
+   * @param {{pagiLimit: number, fullResults: boolean}} payload
+   * @returns {TessExpl.Struct.QueryParams}
+   */
+  [QUERY_FULL_RESULTS_PAGINATION_UPDATE]: (params, payload) => ({
+    ...params,
+    pagiLimit: payload.pagiLimit,
+    booleans: {
+      ...params.booleans,
+      full_results: typeof payload.fullResults === "boolean" ? payload.fullResults : false
+    }
+  }),
+
 };
