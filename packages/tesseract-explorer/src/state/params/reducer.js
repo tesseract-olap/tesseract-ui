@@ -44,7 +44,7 @@ export const paramsEffectors = {
    * @returns {TessExpl.Struct.QueryParams}
    */
   [QUERY_CUBE_UPDATE]: (params, {cube, measures}) => cube !== params.cube
-    ? buildQuery({params: {cube, measures}}).params
+    ? buildQuery({params: {cube, measures, locale: params.locale}}).params
     : Object.keys(measures).length !== Object.keys(params.measures).length
       ? {...params, cube, measures}
       : params,
