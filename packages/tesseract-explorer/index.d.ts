@@ -147,7 +147,7 @@ declare namespace TessExpl {
       drilldowns: Record<string, DrilldownItem>;
       filters: Record<string, FilterItem>;
       locale: string | undefined;
-      measures: Record<string, MeasureItem>;
+      measures: string[];
       pagiLimit: number | undefined;
       pagiOffset: number | undefined;
       sortDir: "asc" | "desc";
@@ -197,11 +197,6 @@ declare namespace TessExpl {
       interpretedValue: number;
     }
 
-    interface MeasureItem extends IQueryItem {
-      aggType: string;
-      measure: string;
-    }
-
     interface MemberItem extends IQueryItem {
       name: string;
     }
@@ -218,7 +213,7 @@ declare namespace TessExpl {
 
     type MemberRecords = Record<string, MemberItem>;
 
-    type MeasurableItem = MeasureItem | FilterItem;
+    type MeasurableItem = FilterItem;
 
     interface SerializedQuery {
       query?: string;

@@ -1,5 +1,5 @@
 import {Measure} from "@datawheel/olap-client";
-import {buildCut, buildDrilldown, buildFilter, buildMeasure} from "./structs";
+import {buildCut, buildDrilldown, buildFilter} from "./structs";
 import {keyBy} from "./transform";
 import {isActiveCut, isActiveItem} from "./validation";
 
@@ -27,8 +27,8 @@ export function applyQueryParams(query, params) {
     });
   });
 
-  Object.values(params.measures).forEach(item => {
-    isActiveItem(item) && query.addMeasure(item.measure);
+  params.measures.forEach(item => {
+    query.addMeasure(item);
   });
 
   params.locale && query.setLocale(params.locale);
@@ -52,7 +52,6 @@ export function extractQueryParams(query) {
   const booleans = query.getParam("options");
   // TODO: parse properties too
   const drilldowns = query.getParam("drilldowns").map(buildDrilldown);
-  const measures = query.getParam("measures").map(buildMeasure);
   const filters = query.getParam("filters").map(buildFilter);
 
   const cutRecord = query.getParam("cuts");
@@ -85,7 +84,7 @@ export function extractQueryParams(query) {
     drilldowns: keyBy(drilldowns, getKey),
     filters: keyBy(filters, getKey),
     locale: query.getParam("locale"),
-    measures: keyBy(measures, getKey),
+    measures: query.getParam("measures").map(item => item.name),
     pagiLimit: pagination.limit,
     pagiOffset: pagination.offset,
     sortDir: sorting.direction === "asc" ? "asc" : "desc",

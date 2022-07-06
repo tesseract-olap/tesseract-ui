@@ -1,7 +1,7 @@
 import formUrlEncode from "form-urlencoded";
 import {SERIAL_BOOLEAN} from "../enums";
 import {ensureArray, filterMap} from "./array";
-import {buildCut, buildDrilldown, buildFilter, buildMeasure} from "./structs";
+import {buildCut, buildDrilldown, buildFilter} from "./structs";
 import {keyBy, parseName, stringifyName} from "./transform";
 import {isActiveCut, isActiveItem} from "./validation";
 
@@ -34,9 +34,7 @@ function serializeStateToSearchParams(query) {
     isActiveItem(item) ? serializeFilter(item) : null
   );
 
-  const measures = filterMap(Object.values(query.measures), item =>
-    isActiveItem(item) ? item.measure : null
-  );
+  const measures = query.measures;
 
   const booleans = Object.keys(query.booleans).reduce((sum, key) => {
     const value = query.booleans[key] && SERIAL_BOOLEAN[key.toUpperCase()];
@@ -102,7 +100,7 @@ export function parseStateFromSearchParams(query) {
     drilldowns: ensureArray(query.drilldowns).reduce(drilldownReducer, drilldowns),
     filters: keyBy(ensureArray(query.filters).map(parseFilter), getKey),
     locale: query.locale,
-    measures: keyBy(ensureArray(query.measures).map(parseMeasure), getKey),
+    measures: ensureArray(query.measures),
     pagiLimit: undefined,
     pagiOffset: undefined,
     sortDir: "desc",
@@ -177,13 +175,5 @@ export function parseStateFromSearchParams(query) {
       interpretedValue: Number.parseFloat(inputtedValue),
       measure
     });
-  }
-
-  /**
-   * @param {string} item
-   * @returns {TessExpl.Struct.MeasureItem}
-   */
-  function parseMeasure(item) {
-    return buildMeasure({active: true, measure: item});
   }
 }

@@ -162,8 +162,7 @@ function entityFinderFactory(cube, params) {
     )])
   );
 
-  const measures = Object.values(params.measures)
-    .map(item => measureMap[item.measure]);
+  const measures = params.measures.map(item => measureMap[item]);
 
   const drilldowns = Object.values(params.drilldowns).flatMap(item => {
     const level = levelMap[item.dimension][item.hierarchy][item.level];

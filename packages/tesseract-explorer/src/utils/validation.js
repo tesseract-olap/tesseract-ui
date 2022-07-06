@@ -45,8 +45,7 @@ export function isQuery(query) {
     query.cube.length > 0 &&
     typeof query.drilldowns === "object" &&
     query.drilldowns !== null &&
-    typeof query.measures === "object" &&
-    query.measures !== null
+    Array.isArray(query.measures)
   );
 }
 
@@ -59,7 +58,7 @@ const validQueryConditions = [
     error: "queries.error_not_query"
   },
   {
-    condition: query => Object.values(query.measures).reduce(activeItemCounter, 0) > 0,
+    condition: query => query.measures.length > 0,
     error: "queries.error_no_measures"
   },
   {
@@ -119,6 +118,8 @@ export function activeItemCounter(sum, item) {
   return sum + (isActiveItem(item) ? 1 : 0);
 }
 
+// TODO: migrate checkDrilldowns and checkCuts to validQueryConditions
+
 /**
  * @param {TessExpl.Struct.QueryParams} query
  */
@@ -142,23 +143,6 @@ export function checkDrilldowns(query) {
   }
 
   return Array.from(issues);
-}
-
-/**
- * @param {TessExpl.Struct.QueryParams} query
- */
-export function checkMeasures(query) {
-  const measures = Object.values(query.measures);
-  const issues = [];
-
-  if (measures.length === 0) return issues;
-
-  const activeMeasures = measures.reduce(activeItemCounter, 0);
-  if (activeMeasures === 0) {
-    issues.push("At least one measure must be selected.");
-  }
-
-  return issues;
 }
 
 /**

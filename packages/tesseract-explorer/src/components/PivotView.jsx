@@ -21,11 +21,9 @@ export const PivotView = props => {
     const measureMap = Object.fromEntries(
       cube.measures.map(msr => [msr.name, msr])
     );
-
-    return Object.values(params.measures).filter(isActiveItem).map(item => {
-      const ref = item.measure;
-      const entity = measureMap[ref];
-      return {value: ref, label: getCaption(entity, locale), type: item.aggType};
+    return params.measures.map(value => {
+      const entity = measureMap[value];
+      return {value, label: getCaption(entity, locale), type: entity.aggregatorType};
     });
   }, [cube, params.measures, locale]);
 

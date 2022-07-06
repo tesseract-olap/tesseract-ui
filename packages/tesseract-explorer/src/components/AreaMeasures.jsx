@@ -1,13 +1,13 @@
-import {Button, InputGroup, Intent, Popover, PopoverInteractionKind, Position} from "@blueprintjs/core";
-import React, {useMemo, useState} from "react";
+import {Button, Checkbox, InputGroup, Intent, Popover, PopoverInteractionKind, Position} from "@blueprintjs/core";
+import React, {useCallback, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {doMeasureToggle} from "../state/params/actions";
-import {selectMeasureItems} from "../state/params/selectors";
+import {selectLocale, selectMeasureItems} from "../state/params/selectors";
+import {selectOlapMeasureItems} from "../state/selectors";
+import {getCaption} from "../utils/string";
 import {safeRegExp} from "../utils/transform";
-import {activeItemCounter} from "../utils/validation";
 import {LayoutParamsArea} from "./LayoutParamsArea";
-import TagMeasure from "./TagMeasure";
 
 /**
  * @typedef OwnProps
@@ -18,7 +18,9 @@ import TagMeasure from "./TagMeasure";
 export const AreaMeasures = props => {
   const dispatch = useDispatch();
 
+  const {code: locale} = useSelector(selectLocale);
   const items = useSelector(selectMeasureItems);
+  const measures = useSelector(selectOlapMeasureItems);
 
   const [filter, setFilter] = useState("");
 
@@ -27,17 +29,12 @@ export const AreaMeasures = props => {
   const filteredItems = useMemo(() => {
     if (filter) {
       const query = safeRegExp(filter, "i");
-      return items.filter(item => query.test(item.measure));
+      return measures.filter(item => query.test(getCaption(item, locale)));
     }
-    return items;
-  }, [items, filter]);
+    return measures;
+  }, [measures, filter]);
 
-  /** @type {(item: TessExpl.Struct.MeasureItem) => void} */
-  const toggleHandler = item => {
-    dispatch(doMeasureToggle({...item, active: !item.active}));
-  };
-
-  const resetFilter = () => setFilter("");
+  const resetFilter = useCallback(() => setFilter(""), []);
   const toolbar =
     <Popover
       autoFocus={true}
@@ -69,12 +66,20 @@ export const AreaMeasures = props => {
     <LayoutParamsArea
       className={props.className}
       open={true}
-      title={t("params.title_area_measures", {n: `${items.reduce(activeItemCounter, 0)}`})}
+      title={t("params.title_area_measures", {n: items.length})}
       toolbar={toolbar}
       tooltip={t("params.tooltip_area_measures")}
     >
       {filteredItems.map(item =>
-        <TagMeasure item={item} key={item.key} onToggle={toggleHandler} />
+        <Checkbox
+          checked={items.includes(item.name)}
+          className="item-measure"
+          key={item.name}
+          label={getCaption(item, locale)}
+          onChange={() => {
+            dispatch(doMeasureToggle(item.name));
+          }}
+        />
       )}
     </LayoutParamsArea>
   );

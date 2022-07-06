@@ -48,12 +48,10 @@ export const selectFilterMap = createSelector(
 export const selectFilterKeys = createSelector(selectFilterMap, getKeys);
 export const selectFilterItems = createSelector(selectFilterMap, getValues);
 
-export const selectMeasureMap = createSelector(
+export const selectMeasureItems = createSelector(
   selectCurrentQueryParams,
   params => params.measures
 );
-export const selectMeasureKeys = createSelector(selectMeasureMap, getKeys);
-export const selectMeasureItems = createSelector(selectMeasureMap, getValues);
 
 export const selectBooleans = createSelector(
   selectCurrentQueryParams,

@@ -26,6 +26,40 @@ export function filterMap(items, callback) {
 }
 
 /**
+ * Adds `item` from array `list`.
+ * @template T
+ * @param {T[]} list
+ * @param {T} item
+ */
+export function itemAdd(list, item) {
+  return list.concat(item);
+}
+
+/**
+ * Removes `item` from array `list`.
+ * @template T
+ * @param {T[]} list
+ * @param {T} item
+ */
+export function itemRemove(list, item) {
+  const index = list.indexOf(item);
+  const newList = list.slice();
+  newList.splice(index, 1);
+  return newList;
+}
+
+/**
+ * Adds or removes `item` from array `list`,
+ * depending on if the item is already present.
+ * @template T
+ * @param {T[]} list
+ * @param {T} item
+ */
+export function itemToggle(list, item) {
+  return list.includes(item) ? itemRemove(list, item) : itemAdd(list, item);
+}
+
+/**
  * @template T
  * @param {T[] | Record<string, T>} items
  * @param {(value: T, key: string) => boolean} filter

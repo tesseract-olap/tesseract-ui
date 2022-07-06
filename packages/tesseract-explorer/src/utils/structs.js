@@ -20,7 +20,7 @@ export function buildQuery(props) {
       drilldowns: params.drilldowns || {},
       filters: params.filters || {},
       locale: params.locale || "",
-      measures: params.measures || {},
+      measures: params.measures || [],
       pagiLimit: params.pagiLimit || params.limitAmount || params.limit || 0,
       pagiOffset: params.pagiOffset || params.limitOffset || params.offset || 0,
       sortDir: params.sortDir || params.sortDirection || params.sortOrder || params.order || "desc",
@@ -108,22 +108,6 @@ export function buildFilter(props) {
         : 0,
     key: props.key || randomKey(),
     measure: `${props.measure || props.name}`
-  };
-}
-
-/**
- * @param {any} props
- * @returns {TessExpl.Struct.MeasureItem}
- */
-export function buildMeasure(props) {
-  if (typeof props.toJSON === "function") {
-    props = props.toJSON();
-  }
-  return {
-    active: typeof props.active === "boolean" ? props.active : true,
-    aggType: props.aggType || props.aggregatorType,
-    key: props.key || props.name || props.measure,
-    measure: props.measure || props.name
   };
 }
 

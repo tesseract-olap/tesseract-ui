@@ -13,8 +13,10 @@ export const doBooleanToggle = (key, value) => ({
 });
 
 /**
+ * Replaces the currently selected cube.
+ * Also allows to set preselected measures.
  * @param {string} cube
- * @param {Record<string, TessExpl.Struct.MeasureItem>} measures
+ * @param {string[]} measures
  */
 export const doCubeUpdate = (cube, measures) => ({
   type: QUERY_CUBE_UPDATE,
@@ -54,10 +56,15 @@ export const doDrilldownUpdate = payload => ({type: QUERY_DRILLDOWNS_UPDATE, pay
 /** @param {string} payload */
 export const doLocaleUpdate = payload => ({type: QUERY_LOCALE_UPDATE, payload});
 
-/** @param {Record<string, TessExpl.Struct.MeasureItem>} [payload] */
-export const doMeasureClear = payload => ({type: QUERY_MEASURES_CLEAR, payload});
+/**
+ * Deselects all measures.
+ */
+export const doMeasureClear = () => ({type: QUERY_MEASURES_CLEAR});
 
-/** @param {TessExpl.Struct.MeasureItem} payload */
+/**
+ * Changes the selection state of a specific measure.
+ * @param {string} payload - Name of the measure to toggle.
+ */
 export const doMeasureToggle = payload => ({type: QUERY_MEASURES_UPDATE, payload});
 
 /**

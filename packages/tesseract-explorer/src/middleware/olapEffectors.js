@@ -1,7 +1,7 @@
 import {Client as OLAPClient, TesseractDataSource} from "@datawheel/olap-client";
 import {doSetLoadingMessage, doSetLoadingState} from "../state/loading/actions";
 import {doCubeUpdate} from "../state/params/actions";
-import {selectCubeName, selectCurrentQueryParams, selectLocale, selectMeasureMap} from "../state/params/selectors";
+import {selectCubeName, selectCurrentQueryParams, selectLocale, selectMeasureItems} from "../state/params/selectors";
 import {doQueriesClear, doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
 import {selectQueryItems} from "../state/queries/selectors";
 import {doCurrentResultUpdate} from "../state/results/actions";
@@ -9,7 +9,7 @@ import {doServerUpdate} from "../state/server/actions";
 import {selectOlapCubeMap, selectServerEndpoint} from "../state/server/selectors";
 import {filterMap} from "../utils/array";
 import {applyQueryParams, extractQueryParams} from "../utils/query";
-import {buildMeasure, buildQuery} from "../utils/structs";
+import {buildQuery} from "../utils/structs";
 import {keyBy} from "../utils/transform";
 import {isValidQuery} from "../utils/validation";
 import {willUpdatePermalink} from "./permalink";
@@ -204,17 +204,9 @@ function olapMiddlewareFillParams({client, dispatch, getState}, action) {
     /* eslint-enable */
 
     return client.getCube(cubeName).then(cube => {
-      const hasMeasures = Object.keys(measureItems).length > 0;
-      const resolvedMeasures = cube.measures.map((measure, index) => {
-        const measureItem = measureItems[measure.name];
-        return buildMeasure({
-          ...measure.toJSON(),
-          ...measureItem,
-          active: hasMeasures ? measureItem?.active ?? false : !index
-        });
-      });
-      const measures = keyBy(resolvedMeasures, i => i.measure);
-
+      const resolvedMeasures = filterMap(cube.measures, measure =>
+        measureItems.includes(measure.name) ? measure.name : null
+      );
       const resolvedDrilldowns = Object.values(params.drilldowns)
         .map(drilldownItem =>
           hydrateDrilldownProperties(cube, drilldownItem)
@@ -228,7 +220,7 @@ function olapMiddlewareFillParams({client, dispatch, getState}, action) {
           ...params,
           cube: cubeName,
           drilldowns,
-          measures
+          measures: resolvedMeasures
         }
       };
     });
@@ -284,30 +276,18 @@ function olapMiddlewareReloadCubes({client, dispatch}) {
  * previous cube, keep its state
  *
  * @param {EffectorAPI} param
- * @param {PayloadAction<CLIENT_SELECTCUBE, string>} action Payload is the name of the next current cube
+ * @param {PayloadAction<CLIENT_SELECTCUBE, string>} action
+ * Payload is the name of the next current cube
  */
 function olapMiddlewareSelectCube({client, dispatch, getState}, action) {
   const state = getState();
-  const currentMeasureMap = selectMeasureMap(state);
-
-  /** @type {Record<string, TessExpl.Struct.MeasureItem>} */
-  const measures = {};
+  const currentMeasures = selectMeasureItems(state);
 
   return client.getCube(action.payload)
     .then(cube => {
-      cube.measures.forEach((measure, index) => {
-        const plainMeasure = measure.toJSON();
-        const measureName = plainMeasure.name;
-        measures[measureName] = buildMeasure({
-          ...plainMeasure,
-          // currentMeasureMap[measureName] can be undefined
-          // @ts-ignore
-          active: !index,
-          ...currentMeasureMap[measureName],
-          uri: plainMeasure.uri
-        });
-      });
-
+      const measures = filterMap(cube.measures, measure =>
+        currentMeasures.includes(measure.name) ? measure.name : null
+      );
       dispatch(doCubeUpdate(cube.name, measures));
     });
 }

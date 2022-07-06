@@ -1,3 +1,4 @@
+import {itemToggle} from "../../utils/array";
 import {buildQuery} from "../../utils/structs";
 import {omitRecord} from "../helpers";
 
@@ -40,12 +41,12 @@ export const paramsEffectors = {
 
   /**
    * @param {TessExpl.Struct.QueryParams} params
-   * @param {{cube: string, measures: Record<string, TessExpl.Struct.MeasureItem>}} payload
+   * @param {{cube: string, measures: string[]}} payload
    * @returns {TessExpl.Struct.QueryParams}
    */
   [QUERY_CUBE_UPDATE]: (params, {cube, measures}) => cube !== params.cube
     ? buildQuery({params: {cube, measures, locale: params.locale}}).params
-    : Object.keys(measures).length !== Object.keys(params.measures).length
+    : measures.length !== params.measures.length
       ? {...params, cube, measures}
       : params,
 
@@ -147,27 +148,18 @@ export const paramsEffectors = {
 
   /**
    * @param {TessExpl.Struct.QueryParams} params
-   * @param {Record<string, TessExpl.Struct.MeasureItem>} measures
    * @returns {TessExpl.Struct.QueryParams}
    */
-  [QUERY_MEASURES_CLEAR]: (params, measures) => {
-    if (!measures) {
-      measures = {};
-      Object.values(params.measures).forEach(item => {
-        measures[item.key] = {...item, active: false};
-      });
-    }
-    return {...params, measures};
-  },
+  [QUERY_MEASURES_CLEAR]: params => ({...params, measures: []}),
 
   /**
    * @param {TessExpl.Struct.QueryParams} params
-   * @param {TessExpl.Struct.MeasureItem} payload
+   * @param {string} payload - Measure name to toggle
    * @returns {TessExpl.Struct.QueryParams}
    */
   [QUERY_MEASURES_UPDATE]: (params, payload) => ({
     ...params,
-    measures: {...params.measures, [payload.key]: payload}
+    measures: itemToggle(params.measures, payload)
   }),
 
   /**
@@ -204,6 +196,6 @@ export const paramsEffectors = {
       ...params.booleans,
       full_results: typeof payload.fullResults === "boolean" ? payload.fullResults : false
     }
-  }),
+  })
 
 };
