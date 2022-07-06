@@ -9,8 +9,6 @@ coverage/
 build/
 dist/
 examples/
-packages/query-builder/
-packages/tesseract-explorer/src/models/
 
 # misc
 .DS_Store

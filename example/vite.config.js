@@ -43,6 +43,7 @@ const config = {
         changeOrigin: true,
         secure: false,
         target: target.origin,
+        followRedirects: true,
         headers,
         rewrite: (path) => path.replace(/^\/olap\//, target.pathname)
       }
