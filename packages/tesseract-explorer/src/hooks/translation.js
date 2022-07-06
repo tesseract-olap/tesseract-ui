@@ -64,6 +64,7 @@ export const defaultTranslation = {
     label_pagination_offset: "Results offset",
     label_sorting_key: "Sort by",
     label_sorting_order: "Order",
+    label_source: "Source",
     label_subtopic: "Subtopic: {{label}}",
     label_table: "Table: {{label}}",
     label_timelevel: "Time level",

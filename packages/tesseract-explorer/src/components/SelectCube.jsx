@@ -1,3 +1,4 @@
+import {ButtonGroup} from "@blueprintjs/core";
 import React, {Fragment, memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -6,6 +7,7 @@ import {selectOlapCube} from "../state/selectors";
 import {selectOlapCubeItems} from "../state/server/selectors";
 import {groupBy} from "../utils/transform";
 import {shallowEqualForProps} from "../utils/validation";
+import {MemoCubeDescription, MemoCubeSource} from "./CubeMetadata";
 import {SelectWithButtons} from "./SelectWithButtons";
 
 /** @type {React.FC<import("./SelectWithButtons").OwnProps<string>>} */
@@ -89,28 +91,38 @@ export const SelectCube = () => {
 
   return (
     <Fragment>
-      <SelectLevel
-        className="select-topic"
-        items={level1Keys}
-        onItemSelect={setLevel1}
-        selectedItem={level1}
-        text={t("params.label_topic", {label: level1})}
-      />
-      <SelectLevel
-        className="select-subtopic"
-        items={level2Keys}
-        onItemSelect={setLevel2}
-        selectedItem={level2}
-        text={t("params.label_subtopic", {label: level2})}
-      />
-      <SelectLevel
-        className="select-table"
-        items={level3Keys}
-        onItemSelect={setLevel3}
-        selectedItem={level3}
-        text={t("params.label_table", {label: level3})}
-      />
-      {selectCube}
+      <ButtonGroup className="cube-locale p-3" fill vertical>
+        <SelectLevel
+          className="select-topic"
+          items={level1Keys}
+          onItemSelect={setLevel1}
+          selectedItem={level1}
+          text={t("params.label_topic", {label: level1})}
+        />
+        <SelectLevel
+          className="select-subtopic"
+          items={level2Keys}
+          onItemSelect={setLevel2}
+          selectedItem={level2}
+          text={t("params.label_subtopic", {label: level2})}
+        />
+        <SelectLevel
+          className="select-table"
+          items={level3Keys}
+          onItemSelect={setLevel3}
+          selectedItem={level3}
+          text={t("params.label_table", {label: level3})}
+        />
+        {selectCube}
+      </ButtonGroup>
+      {selectedItem && <MemoCubeSource
+        className="cube-source p-3 py-0"
+        cube={selectedItem}
+      />}
+      {selectedItem && <MemoCubeDescription
+        className="cube-description p-3 py-0"
+        cube={selectedItem}
+      />}
     </Fragment>
   );
 };

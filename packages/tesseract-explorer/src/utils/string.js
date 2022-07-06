@@ -51,6 +51,17 @@ ${params.chartConfig.replace(
  * @param {string} [locale]
  */
 export function getCaption(item, locale = "en") {
+  return getAnnotation(item, "caption", locale) || item.caption || item.name;
+}
+
+/**
+ *
+ * @param {import("@datawheel/olap-client/types/interfaces/plain").IAnnotated} item
+ * @param {string} key
+ * @param {string} locale
+ * @returns {string | undefined}
+ */
+export function getAnnotation(item, key, locale = "xx") {
   const ann = item.annotations;
-  return ann[`caption_${locale}`] || ann[`caption_${locale.slice(0, 2)}`] || ann.caption || item.caption || item.name;
+  return ann[`${key}_${locale}`] || ann[`${key}_${locale.slice(0, 2)}`] || ann[key];
 }

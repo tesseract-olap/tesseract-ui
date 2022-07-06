@@ -1,4 +1,3 @@
-import {ButtonGroup} from "@blueprintjs/core";
 import React from "react";
 import {useTranslation} from "../hooks/translation";
 import {AreaCuts} from "./AreaCuts";
@@ -22,10 +21,8 @@ export const ExplorerParams = props => {
 
   return (
     <LayoutColumn className={props.className} title={t("params.column_title")}>
-      <ButtonGroup className="cube-locale p-3" fill vertical>
-        <SelectLocale />
-        <SelectCube />
-      </ButtonGroup>
+      <SelectLocale />
+      <SelectCube />
 
       <AreaMeasures />
       <AreaDrilldowns />
