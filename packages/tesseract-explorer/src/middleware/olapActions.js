@@ -1,5 +1,5 @@
 import {action} from "../state/helpers";
-import {CLIENT_SELECTCUBE, CLIENT_DOWNLOADQUERY, CLIENT_EXECUTEQUERY, CLIENT_FETCHMEMBERS, CLIENT_FILLPARAMS, CLIENT_PARSEQUERYURL, CLIENT_RELOADCUBES, CLIENT_SETUPSERVER} from "./olapEffectors";
+import {CLIENT_DOWNLOADQUERY, CLIENT_EXECUTEQUERY, CLIENT_FETCHMEMBERS, CLIENT_FILLPARAMS, CLIENT_PARSEQUERYURL, CLIENT_RELOADCUBES, CLIENT_REQUESTQUERY, CLIENT_SELECTCUBE, CLIENT_SETUPSERVER} from "./olapEffectors";
 
 
 /**
@@ -12,6 +12,11 @@ export const willDownloadQuery = format => action(CLIENT_DOWNLOADQUERY, format);
  * OLAP server for data with them.
  */
 export const willExecuteQuery = () => action(CLIENT_EXECUTEQUERY);
+
+/**
+ * Same effect as willExecuteQuery, but also applies loading overlay to UI.
+ */
+export const willRequestQuery = () => action(CLIENT_REQUESTQUERY);
 
 /**
  * Requests the public schema for the data in the server configured in the store

@@ -1,5 +1,5 @@
 import {Client as OLAPClient, TesseractDataSource} from "@datawheel/olap-client";
-import {doSetLoadingMessage} from "../state/loading/actions";
+import {doSetLoadingMessage, doSetLoadingState} from "../state/loading/actions";
 import {doCubeUpdate} from "../state/params/actions";
 import {selectCubeName, selectCurrentQueryParams, selectLocale, selectMeasureMap} from "../state/params/selectors";
 import {doQueriesClear, doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
@@ -22,6 +22,7 @@ export const CLIENT_FETCHMEMBERS = "explorer/CLIENT/FETCHMEMBERS";
 export const CLIENT_FILLPARAMS = "explorer/CLIENT/FILLPARAMS";
 export const CLIENT_PARSEQUERYURL = "explorer/CLIENT/PARSEQUERYURL";
 export const CLIENT_RELOADCUBES = "explorer/CLIENT/RELOADCUBES";
+export const CLIENT_REQUESTQUERY = "explorer/CLIENT/REQUESTQUERY";
 export const CLIENT_SELECTCUBE = "explorer/CLIENT/SELECTCUBE";
 export const CLIENT_SETUPSERVER = "explorer/CLIENT/SETUPSERVER";
 
@@ -33,6 +34,7 @@ export const olapEffectors = {
   [CLIENT_FILLPARAMS]: olapMiddlewareFillParams,
   [CLIENT_PARSEQUERYURL]: olapMiddlewareParseQuery,
   [CLIENT_RELOADCUBES]: olapMiddlewareReloadCubes,
+  [CLIENT_REQUESTQUERY]: olapMiddlewareRequestQuery,
   [CLIENT_SELECTCUBE]: olapMiddlewareSelectCube,
   [CLIENT_SETUPSERVER]: olapMiddlewareSetupServer
 };
@@ -74,6 +76,27 @@ function olapMiddlewareDownloadQuery({client, dispatch, getState}, action) {
         name: filename
       }));
     });
+}
+
+/**
+ * Executes the full query request procedure, including the calls to activate
+ * the loading overlay.
+ *
+ * @param {EffectorAPI} api
+ */
+function olapMiddlewareRequestQuery(api) {
+  const {dispatch, getState} = api;
+  const state = getState();
+  const params = selectCurrentQueryParams(state);
+
+  if (!isValidQuery(params)) return Promise.resolve();
+
+  dispatch(doSetLoadingState("REQUEST"));
+  return olapMiddlewareExecuteQuery(api).then(() => {
+    dispatch(doSetLoadingState("SUCCESS"));
+  }, error => {
+    dispatch(doSetLoadingState("FAILURE", error.message));
+  });
 }
 
 

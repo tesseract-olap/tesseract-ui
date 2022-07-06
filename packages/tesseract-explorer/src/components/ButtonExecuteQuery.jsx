@@ -2,8 +2,7 @@ import {ButtonGroup, Classes, Intent, Position} from "@blueprintjs/core";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {willExecuteQuery} from "../middleware/olapActions";
-import {doSetLoadingState} from "../state/loading/actions";
+import {willRequestQuery} from "../middleware/olapActions";
 import {doCutClear, doDrilldownClear, doMeasureClear} from "../state/params/actions";
 import {selectValidQueryStatus} from "../state/params/selectors";
 import {doUpdateEndpoint} from "../state/server/actions";
@@ -36,12 +35,7 @@ export const ButtonExecuteQuery = () => {
           tooltipIntent={Intent.DANGER}
           tooltipPosition={Position.RIGHT}
           onClick={() => {
-            dispatch(doSetLoadingState("REQUEST"));
-            dispatch(willExecuteQuery()).then(() => {
-              dispatch(doSetLoadingState("SUCCESS"));
-            }, error => {
-              dispatch(doSetLoadingState("FAILURE", error.message));
-            });
+            dispatch(willRequestQuery());
           }}
         />
         {software === "tesseract-olap" && <ButtonTooltip

@@ -8,7 +8,8 @@ import {LOADING_SETMESSAGE, LOADING_SETSTATUS} from "./reducer";
  * @param {T} status
  * @param {string} [message]
  */
-export const doSetLoadingState = (status, message) => action(`${LOADING_SETSTATUS}:${status}`, message);
+export const doSetLoadingState = (status, message) =>
+  action(`${LOADING_SETSTATUS}:${status}`, message);
 
 
 /**

@@ -1,8 +1,7 @@
 import {Client as OLAPClient} from "@datawheel/olap-client";
-import {doSetLoadingState} from "../state/loading/actions";
-import {paramsEffectors} from "../state/params/reducer";
+import {paramsEffectors, QUERY_LOCALE_UPDATE} from "../state/params/reducer";
 import {selectIsFullResults} from "../state/params/selectors";
-import {willExecuteQuery} from "./olapActions";
+import {willRequestQuery} from "./olapActions";
 import {olapEffectors} from "./olapEffectors";
 
 
@@ -21,13 +20,9 @@ export function olapMiddleware({dispatch, getState}) {
 
     if (action.type in paramsEffectors) {
       const isFullResults = selectIsFullResults(getState());
-      if (!isFullResults) {
-        dispatch(doSetLoadingState("REQUEST"));
-        dispatch(willExecuteQuery()).then(() => {
-          dispatch(doSetLoadingState("SUCCESS"));
-        }, error => {
-          dispatch(doSetLoadingState("FAILURE", error.message));
-        });
+      const isLocaleChange = action.type === QUERY_LOCALE_UPDATE;
+      if (!isFullResults || isLocaleChange) {
+        dispatch(willRequestQuery());
       }
     }
 
