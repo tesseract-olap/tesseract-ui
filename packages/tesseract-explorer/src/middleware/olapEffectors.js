@@ -55,27 +55,48 @@ function olapMiddlewareDownloadQuery({client, dispatch, getState}, action) {
     return Promise.reject(new Error("The current query is not valid."));
   }
 
+  // Change instance default responseType as blob
+  client.datasource.axiosInstance.defaults.responseType = 'blob';
+
   return client.getCube(params.cube)
     .then(cube => {
       const format = action.payload;
       const filename = `${cube.name}_${new Date().toISOString()}`;
       const query = applyQueryParams(cube.query, params);
+      const endpoint = selectServerEndpoint(state);
       query.setFormat(format);
 
-      const url = query.toString("logiclayer");
+      //const url = query.toString("logiclayer");
+      //console.log('download url', url);
+
+/*      client.parseQueryURL(url)
+      .then(query => {
+        console.log('object query', query);
+      })
+      .catch(error => {console.error(error)});
+      */
+      //fetch(url).then(response => response.blob()),
+
       return Promise.all([
-        fetch(url).then(response => response.blob()),
+        client.execQuery(query, endpoint).then(response => {
+          client.datasource.axiosInstance.defaults.responseType = undefined;
+          console.log(response);
+          return response.data;
+        })/*,
         calcMaxMemberCount(query, params).then(maxRows => {
           if (maxRows > 50000) {
             dispatch(doSetLoadingMessage({type: "HEAVY_QUERY", rows: maxRows}));
           }
-        })
-      ]).then(result => ({
-        content: result[0],
-        extension: format.replace(/json\w+/, "json"),
-        name: filename
-      }));
-    });
+        })*/
+      ]).then(result => {
+        console.log(result[0]);
+        return {
+          content: result[0],
+          extension: format.replace(/json\w+/, "json"),
+          name: filename
+        }
+      });
+    }).catch(error => {console.error(error);});
 }
 
 /**

@@ -32,6 +32,7 @@ export const ButtonDownload = props => {
     const content = typeof provider === "function" ? provider() : provider;
     Promise.resolve(content)
       .then(file => {
+        console.log('file->',file);
         const blob = typeof file.content !== "string"
           ? file.content
           : new window.Blob([file.content], {
