@@ -11,6 +11,9 @@ import {isActiveItem} from "../utils/validation";
 export function calcMaxMemberCount(query, params) {
   const ds = query.cube.datasource;
 
+  // Rollback response type to default
+  ds.axiosInstance.defaults.responseType = undefined;
+
   // make a map with the memberCounts already fetched
   const drills = {undefined: 1};
   Object.values(params.drilldowns).forEach(dd => {

@@ -45,7 +45,7 @@ export const olapEffectors = {
  *
  * @param {EffectorAPI} param
  * @param {PayloadAction<CLIENT_DOWNLOADQUERY, OlapClient.Format>} action Payload is the format the user wants the data to be, from OlapClient.Format.
- * @returns {Promise<TessExpl.Struct.FileDescriptor>}
+ * @returns {Promise<any>}
  */
 function olapMiddlewareDownloadQuery({client, dispatch, getState}, action) {
   const state = getState();
@@ -64,39 +64,41 @@ function olapMiddlewareDownloadQuery({client, dispatch, getState}, action) {
       const filename = `${cube.name}_${new Date().toISOString()}`;
       const query = applyQueryParams(cube.query, params);
       const endpoint = selectServerEndpoint(state);
+      console.log(format);
       query.setFormat(format);
 
-      //const url = query.toString("logiclayer");
-      //console.log('download url', url);
-
-/*      client.parseQueryURL(url)
-      .then(query => {
-        console.log('object query', query);
-      })
-      .catch(error => {console.error(error)});
-      */
-      //fetch(url).then(response => response.blob()),
-
       return Promise.all([
-        client.execQuery(query, endpoint).then(response => {
-          client.datasource.axiosInstance.defaults.responseType = undefined;
-          console.log(response);
-          return response.data;
-        })/*,
+        client.execQuery(query, endpoint)
+          .then(response => {
+            // Rollback response type to default
+            client.datasource.axiosInstance.defaults.responseType = undefined;
+            console.log('response',response);
+            return response.data;
+          }).catch(error => {
+            console.error('execQuery error -> ',error);
+          }).finally(() => {
+            // Rollback response type to default
+            client.datasource.axiosInstance.defaults.responseType = undefined;
+          }),
         calcMaxMemberCount(query, params).then(maxRows => {
           if (maxRows > 50000) {
             dispatch(doSetLoadingMessage({type: "HEAVY_QUERY", rows: maxRows}));
           }
-        })*/
+        })
       ]).then(result => {
-        console.log(result[0]);
+        console.log('results',result[0]);
         return {
           content: result[0],
           extension: format.replace(/json\w+/, "json"),
           name: filename
         }
       });
-    }).catch(error => {console.error(error);});
+    }).catch(error => {
+      console.error('Promise all download error -> ',error);
+    }).finally(() => {
+      // Rollback response type to default
+      client.datasource.axiosInstance.defaults.responseType = undefined;
+    });
 }
 
 /**
