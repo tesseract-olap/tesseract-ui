@@ -45,59 +45,40 @@ export const olapEffectors = {
  *
  * @param {EffectorAPI} param
  * @param {PayloadAction<CLIENT_DOWNLOADQUERY, OlapClient.Format>} action Payload is the format the user wants the data to be, from OlapClient.Format.
- * @returns {Promise<any>}
+ * @returns {Promise<TessExpl.Struct.FileDescriptor>}
  */
 function olapMiddlewareDownloadQuery({client, dispatch, getState}, action) {
   const state = getState();
   const params = selectCurrentQueryParams(state);
+  const format = action.payload;
 
   if (!isValidQuery(params)) {
     return Promise.reject(new Error("The current query is not valid."));
   }
 
-  // Change instance default responseType as blob
-  client.datasource.axiosInstance.defaults.responseType = 'blob';
+  const axios = client.datasource.axiosInstance;
 
   return client.getCube(params.cube)
     .then(cube => {
-      const format = action.payload;
       const filename = `${cube.name}_${new Date().toISOString()}`;
-      const query = applyQueryParams(cube.query, params);
-      const endpoint = selectServerEndpoint(state);
-      console.log(format);
-      query.setFormat(format);
+      const query = applyQueryParams(cube.query, params).setFormat(format);
 
       return Promise.all([
-        client.execQuery(query, endpoint)
-          .then(response => {
-            // Rollback response type to default
-            client.datasource.axiosInstance.defaults.responseType = undefined;
-            console.log('response',response);
-            return response.data;
-          }).catch(error => {
-            console.error('execQuery error -> ',error);
-          }).finally(() => {
-            // Rollback response type to default
-            client.datasource.axiosInstance.defaults.responseType = undefined;
-          }),
-        calcMaxMemberCount(query, params).then(maxRows => {
-          if (maxRows > 50000) {
-            dispatch(doSetLoadingMessage({type: "HEAVY_QUERY", rows: maxRows}));
-          }
-        })
+        axios({url: query.toString("logiclayer"), responseType: "blob"})
+          .then(response => response.data),
+        calcMaxMemberCount(query, params)
+          .then(maxRows => {
+            if (maxRows > 50000) {
+              dispatch(doSetLoadingMessage({type: "HEAVY_QUERY", rows: maxRows}));
+            }
+          })
       ]).then(result => {
-        console.log('results',result[0]);
         return {
           content: result[0],
           extension: format.replace(/json\w+/, "json"),
           name: filename
         }
       });
-    }).catch(error => {
-      console.error('Promise all download error -> ',error);
-    }).finally(() => {
-      // Rollback response type to default
-      client.datasource.axiosInstance.defaults.responseType = undefined;
     });
 }
 
