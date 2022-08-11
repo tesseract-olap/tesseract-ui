@@ -50,31 +50,35 @@ export const olapEffectors = {
 function olapMiddlewareDownloadQuery({client, dispatch, getState}, action) {
   const state = getState();
   const params = selectCurrentQueryParams(state);
+  const format = action.payload;
 
   if (!isValidQuery(params)) {
     return Promise.reject(new Error("The current query is not valid."));
   }
 
+  const axios = client.datasource.axiosInstance;
+
   return client.getCube(params.cube)
     .then(cube => {
-      const format = action.payload;
       const filename = `${cube.name}_${new Date().toISOString()}`;
-      const query = applyQueryParams(cube.query, params);
-      query.setFormat(format);
+      const query = applyQueryParams(cube.query, params).setFormat(format);
 
-      const url = query.toString("logiclayer");
       return Promise.all([
-        fetch(url).then(response => response.blob()),
-        calcMaxMemberCount(query, params).then(maxRows => {
-          if (maxRows > 50000) {
-            dispatch(doSetLoadingMessage({type: "HEAVY_QUERY", rows: maxRows}));
-          }
-        })
-      ]).then(result => ({
-        content: result[0],
-        extension: format.replace(/json\w+/, "json"),
-        name: filename
-      }));
+        axios({url: query.toString("logiclayer"), responseType: "blob"})
+          .then(response => response.data),
+        calcMaxMemberCount(query, params)
+          .then(maxRows => {
+            if (maxRows > 50000) {
+              dispatch(doSetLoadingMessage({type: "HEAVY_QUERY", rows: maxRows}));
+            }
+          })
+      ]).then(result => {
+        return {
+          content: result[0],
+          extension: format.replace(/json\w+/, "json"),
+          name: filename
+        }
+      });
     });
 }
 
