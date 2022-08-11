@@ -21,7 +21,7 @@ export const VizbuilderView = props => {
     cube,
     dataset: result.data,
     params: {
-      locale: params.locale,
+      locale: params.locale || "en",
       booleans: params.booleans,
       cuts: mapActives(params.cuts, item => ({
         dimension: item.dimension,
@@ -42,9 +42,9 @@ export const VizbuilderView = props => {
         measure: item.measure,
         value: `${item.interpretedValue}`
       })),
-      measures: mapActives(params.measures, item => ({
-        formatter: formatters[item.measure],
-        measure: item.measure
+      measures: params.measures.map(item => ({
+        formatter: formatters[item],
+        measure: item
       }))
     }
   }), [cube, result.data, params]);
