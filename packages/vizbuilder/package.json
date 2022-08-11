@@ -23,7 +23,8 @@
   ],
   "scripts": {
     "build": "rollup --config ../../rollup.config.js --environment NODE_ENV:production",
-    "watch": "rollup --config ../../rollup.config.js --environment NODE_ENV:development --watch"
+    "watch": "rollup --config ../../rollup.config.js --environment NODE_ENV:development --watch",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "charts",
