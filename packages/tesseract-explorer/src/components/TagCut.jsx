@@ -84,6 +84,18 @@ export const TagCut = props => {
     });
   }, [item.members.join("-"), item, locale.code]);
 
+  /** @type {{label: string; method: import("./TransferInput").ItemPredicateFunction<TessExpl.Struct.MemberItem>}[]} */
+  const itemPredicate = useMemo(() => [{
+    label: t("params.label_cuts_filterby_id"),
+    method: (query, item) => query.test(item.key),
+  },{
+    label: t("params.label_cuts_filterby_name"),
+    method: (query, item) => query.test(item.name),
+  },{
+    label: t("params.label_cuts_filterby_any"),
+    method: (query, item) => query.test(item.key) || query.test(item.name),
+  }], [locale.code]);
+
   if (isLoadingMembers) {
     return <TagCutLoading onRemove={removeHandler}>{label}</TagCutLoading>;
   }
@@ -118,7 +130,7 @@ export const TagCut = props => {
               // eslint-disable-next-line eqeqeq
               ? item => item.key != item.name ? item.key : undefined
               : undefined}
-            itemPredicate={(query, item) => query.test(item.name) || query.test(item.key)}
+            itemPredicate={itemPredicate}
             items={members}
             onChange={members => onMembersUpdate && onMembersUpdate(item, members)}
           />

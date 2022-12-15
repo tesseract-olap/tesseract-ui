@@ -1,4 +1,4 @@
-import {Button, Classes, InputGroup, Menu, MenuDivider, MenuItem} from "@blueprintjs/core";
+import {Button, Classes, InputGroup, Menu, MenuDivider, MenuItem, Tag} from "@blueprintjs/core";
 import classNames from "classnames";
 import React, {useCallback, useMemo, useState} from "react";
 import ViewPortList from "react-viewport-list";
@@ -13,7 +13,7 @@ import {keyBy, safeRegExp} from "../utils/transform";
  * @property {(items: T["key"][]) => void} onChange
  * @property {(item: T) => string} getLabel
  * @property {(item: T) => string | undefined} [getSecondLabel]
- * @property {(query: RegExp, item: T, index: number) => boolean} [itemPredicate]
+ * @property {ItemPredicateFunction<T> | {label: string; method: ItemPredicateFunction<T>}[]} [itemPredicate]
  */
 
 /**
@@ -21,12 +21,13 @@ import {keyBy, safeRegExp} from "../utils/transform";
  * @type {React.FC<OwnProps<T>>}
  */
 export const TransferInput = props => {
-  const {activeItems, getLabel, items, onChange} = props;
+  const {activeItems, getLabel, items, itemPredicate, onChange} = props;
   const sideLabelRenderer = props.getSecondLabel || (() => undefined);
 
   const {translate: t} = useTranslation();
 
   const [filter, setFilter] = useState("");
+  const [itemPredicateIndex, setItemPredicateIndex] = useState(0);
 
   const activeKeys = useMemo(
     () => keyBy(activeItems, key => key),
@@ -36,9 +37,22 @@ export const TransferInput = props => {
   const results = useMemo(() => {
     const selected = [];
     const unselected = [];
-    const tester = safeRegExp(filter, "i");
-    // eslint-disable-next-line no-unused-vars
-    const itemPredicate = props.itemPredicate || ((query, item, index) => query.test(item.key));
+
+    // If the user filters using a comma-separated list of words/numbers,
+    // consider the commas as RegExp `|`
+    const commaSeparated = /^[\s0-9A-Za-z,]+$/;
+    const tester = commaSeparated.test(filter)
+      ? safeRegExp(filter.replace(/,/g, "|"), "i")
+      : safeRegExp(filter, "i");
+
+    // If multiple options were provided, pick according to stored index
+    // Else use unique option directly. Define a fallback if anything went wrong.
+    /** @type {ItemPredicateFunction<T>} */
+    const currentPredicate = (
+      Array.isArray(itemPredicate)
+        ? itemPredicate[itemPredicateIndex].method
+        : itemPredicate
+    ) || ((query, item) => query.test(item.key));
 
     let index = 0;
     const keys = Object.keys(items);
@@ -46,7 +60,7 @@ export const TransferInput = props => {
     while (index < keys.length) {
       const key = keys[index];
       const item = items[key];
-      if (!itemPredicate(tester, item, index++)) continue;
+      if (!currentPredicate(tester, item, index++)) continue;
       activeKeys.hasOwnProperty(key)
         ? selected.push(item)
         : unselected.push(item);
@@ -59,7 +73,7 @@ export const TransferInput = props => {
       unselected: unselected.slice(0, 1000),
       unselectedCount: unselected.length
     };
-  }, [items, activeKeys, filter]);
+  }, [items, activeKeys, filter, itemPredicateIndex]);
 
   const toggleHandler = useCallback(item => {
     const index = activeItems.indexOf(item.key);
@@ -94,9 +108,29 @@ export const TransferInput = props => {
   const selectedHidden = activeItems.length - results.selectedCount;
   const unselectedHidden = results.totalCount - activeItems.length - results.unselectedCount;
 
-  const rightElement = filter.length > 0
-    ? <Button icon="cross" minimal={true} onClick={() => setFilter("")} />
-    : undefined;
+  const rightElement = useMemo(() => {
+    const resetButton = filter.length > 0 ? (
+      <Button minimal icon="cross" onClick={() => setFilter("")} />
+    ) : undefined;
+
+    if (Array.isArray(itemPredicate)) {
+      const currentPredicate = itemPredicate[itemPredicateIndex];
+      const pickNextPredicate = () => {
+        const nextIndex = itemPredicateIndex + 1;
+        setItemPredicateIndex(nextIndex >= itemPredicate.length ? 0 : nextIndex);
+      };
+      return (
+        <div style={{display: "flex"}}>
+          <Tag minimal interactive round icon="search-template" onClick={pickNextPredicate}>
+            {currentPredicate.label}
+          </Tag>
+          {resetButton}
+        </div>
+      );
+    };
+
+    return resetButton;
+  }, [filter.length > 0, itemPredicateIndex]);
 
   /** @type {(item: T, index: number) => JSX.Element} */
   const renderItem = item => <MenuItem
@@ -152,3 +186,8 @@ export const TransferInput = props => {
 TransferInput.defaultProps = {
   getLabel: item => `${item}`
 };
+
+/**
+ * @template {TessExpl.Struct.IQueryItem} T
+ * @typedef {(query: RegExp, item: T, index: number) => boolean} ItemPredicateFunction
+ */
