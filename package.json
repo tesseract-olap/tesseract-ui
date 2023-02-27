@@ -2,16 +2,20 @@
   "name": "@datawheel/tesseract-ui-repo",
   "private": true,
   "scripts": {
-    "example": "pnpm start --filter example",
+    "dev": "turbo run dev",
     "mono:publish": "node scripts/publish.js",
-    "mono:release": "node scripts/release.js",
-    "preinstall": "npx only-allow pnpm"
+    "mono:release": "node scripts/release.js"
   },
+  "workspaces": [
+    "example",
+    "packages/*"
+  ],
   "dependencies": {
     "args": "^5.0.0",
     "chosen": "0.0.2",
     "semver": "^7.3.0",
-    "simple-git": "^2.48.0"
+    "simple-git": "^3.16.1",
+    "turbo": "^1.8.2"
   },
   "devDependencies": {
     "@babel/core": "^7.18.0",
@@ -35,6 +39,10 @@
     "rollup-plugin-terser": "^7.0.0",
     "sass": "^1.53.0"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "packageManager": "npm@8.11.0",
   "eslintConfig": {
     "extends": "@datawheel",
     "ignorePatterns": [

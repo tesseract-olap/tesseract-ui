@@ -1,6 +1,0 @@
-packages:
-  - 'example'
-  - 'packages/create-tesseract-ui'
-  - 'packages/cube-audit'
-  - 'packages/tesseract-explorer'
-  - 'packages/vizbuilder'

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "vite serve"
+    "dev": "vite serve"
   },
   "author": "Datawheel, LLC.",
   "dependencies": {
@@ -11,8 +11,8 @@
     "@blueprintjs/icons": "^3.33.0",
     "@blueprintjs/select": "^3.19.0",
     "@blueprintjs/table": "^3.10.0",
-    "@datawheel/tesseract-explorer": "workspace:*",
-    "@datawheel/tesseract-vizbuilder": "workspace:*",
+    "@datawheel/tesseract-explorer": "^1.0.0-alpha.1",
+    "@datawheel/tesseract-vizbuilder": "^0.1.10",
     "normalize.css": "^8.0.0",
     "prop-types": "^15.8.0",
     "react": "^16.14.0",
