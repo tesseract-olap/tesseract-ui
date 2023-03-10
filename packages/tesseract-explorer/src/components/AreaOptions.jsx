@@ -1,4 +1,4 @@
-import {Checkbox} from "@blueprintjs/core";
+import {Checkbox, Stack} from "@mantine/core";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -15,7 +15,7 @@ import {SortingInput} from "./SortingInput";
  */
 
 /** @type {React.FC<OwnProps>} */
-export const AreaOptions = props => {
+export const AreaOptions = () => {
   const dispatch = useDispatch();
 
   const {translate: t} = useTranslation();
@@ -25,25 +25,26 @@ export const AreaOptions = props => {
 
   return (
     <LayoutParamsArea
-      className={props.className}
-      open={false}
       title={t("params.title_area_options")}
       tooltip={t("params.tooltip_area_options")}
+      value="options"
     >
-      {enabledBooleans.map(key =>
-        <Checkbox
-          key={key}
-          className="item-option"
-          label={t(`params.label_boolean_${key}`)}
-          checked={booleans[key] || false}
-          onChange={() => {
-            dispatch(doBooleanToggle(key));
-          }}
-        />
-      )}
-
-      <SortingInput />
-      <PaginationInput />
+      <Stack spacing="xs">
+        <Stack spacing="xs">
+          {enabledBooleans.map(key =>
+            <Checkbox
+              key={key}
+              label={t(`params.label_boolean_${key}`)}
+              checked={booleans[key] || false}
+              onChange={() => {
+                dispatch(doBooleanToggle(key));
+              }}
+            />
+          )}
+        </Stack>
+        <SortingInput />
+        <PaginationInput />
+      </Stack>
     </LayoutParamsArea>
   );
 };

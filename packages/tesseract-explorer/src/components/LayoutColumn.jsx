@@ -1,9 +1,9 @@
-import classNames from "classnames";
+import {Box, Card, Navbar, ScrollArea, Title, UnstyledButton} from "@mantine/core";
 import React, {useState} from "react";
-import ReactShadowScroll from "react-shadow-scroll";
 
 /**
  * @typedef OwnProps
+ * @property {React.ReactNode} children
  * @property {string} [className]
  * @property {boolean} [defaultOpen]
  * @property {string} title
@@ -18,26 +18,34 @@ export const LayoutColumn = props => {
 
   if (!isOpen) {
     return (
-      <div className={classNames("explorer-column closed bp3-elevation-0", props.className)}>
-        <div className="titlebar">
-          <h2 className="token" onClick={toggleHandler}>
+      <Card px="xs" radius={0} withBorder w="max-content">
+        <UnstyledButton onClick={toggleHandler}>
+          <Title 
+            order={4} 
+            tt="uppercase"
+            sx={{
+              writingMode: "vertical-rl"
+            }}
+          >  
             {props.title}
-          </h2>
-        </div>
-      </div>
+          </Title>
+        </UnstyledButton>
+      </Card>
     );
   }
 
   return (
-    <div className={classNames("explorer-column bp3-elevation-0 flex flex-col flex-nowrap", props.className)}>
-      <div className="titlebar">
-        <h2 className="token" onClick={toggleHandler}>
-          {props.title}
-        </h2>
-      </div>
-      <ReactShadowScroll isShadow={false}>
-        <div className={`wrapper ${props.className}-content`}>{props.children}</div>
-      </ReactShadowScroll>
-    </div>
+    <Navbar px="md" py="xs" w={380} withBorder zIndex={10}>
+      <Navbar.Section>
+        <UnstyledButton onClick={toggleHandler}>
+          <Title order={4} tt="uppercase">  
+            {props.title}
+          </Title>
+        </UnstyledButton>
+      </Navbar.Section>
+      <Navbar.Section component={ScrollArea} grow mx="-md" px="md">
+        <Box>{props.children}</Box>
+      </Navbar.Section>
+    </Navbar>
   );
 };

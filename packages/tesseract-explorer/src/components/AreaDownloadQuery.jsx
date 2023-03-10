@@ -1,4 +1,4 @@
-import {ButtonGroup} from "@blueprintjs/core";
+import {Box, Button, Input} from "@mantine/core";
 import React, {useMemo} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -36,8 +36,9 @@ export const AreaDownloadQuery = () => {
             throw error;
           });
       }}
-      text={t(`formats.${format}`)}
-    />
+    >
+      {t(`formats.${format}`)}
+    </ButtonDownload>
   ), [formats]);
 
   if (queryItem.isDirty || buttons.length === 0) {
@@ -45,9 +46,10 @@ export const AreaDownloadQuery = () => {
   }
 
   return (
-    <div className="download-area p-3">
-      <h4 className="mt-0 mb-3">{t("params.title_downloaddata")}</h4>
-      <ButtonGroup fill>{buttons}</ButtonGroup>
-    </div>
+    <Box>
+      <Input.Wrapper label={t("params.title_downloaddata")}>
+        <Button.Group>{buttons}</Button.Group>
+      </Input.Wrapper>
+    </Box>
   );
 };

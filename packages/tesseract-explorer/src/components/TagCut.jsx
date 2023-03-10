@@ -1,5 +1,5 @@
-import {Button, ButtonGroup, Callout, FormGroup, Intent, Popover, PopoverInteractionKind, Spinner, SpinnerSize, Switch, Tag} from "@blueprintjs/core";
-import clsx from "classnames";
+import {ActionIcon, Alert, Box, Button, Card, CloseButton, Group, HoverCard, Input, Loader, Popover, Stack, Switch, Text, ThemeIcon} from "@mantine/core";
+import {IconAlertTriangle, IconRefresh} from "@tabler/icons-react";
 import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -10,7 +10,6 @@ import {selectLevelTriadMap} from "../state/selectors";
 import {abbreviateFullName} from "../utils/format";
 import {getCaption} from "../utils/string";
 import {buildMember} from "../utils/structs";
-import {ButtonTagExtra} from "./ButtonTagExtra";
 import {TransferInput} from "./TransferInput";
 
 /** @type {React.FC<import("./TransferInput").OwnProps<TessExpl.Struct.MemberItem>>} */
@@ -87,13 +86,13 @@ export const TagCut = props => {
   /** @type {{label: string; method: import("./TransferInput").ItemPredicateFunction<TessExpl.Struct.MemberItem>}[]} */
   const itemPredicate = useMemo(() => [{
     label: t("params.label_cuts_filterby_id"),
-    method: (query, item) => query.test(item.key),
-  },{
+    method: (query, item) => query.test(item.key)
+  }, {
     label: t("params.label_cuts_filterby_name"),
-    method: (query, item) => query.test(item.name),
-  },{
+    method: (query, item) => query.test(item.name)
+  }, {
     label: t("params.label_cuts_filterby_any"),
-    method: (query, item) => query.test(item.key) || query.test(item.name),
+    method: (query, item) => query.test(item.key) || query.test(item.name)
   }], [locale.code]);
 
   if (isLoadingMembers) {
@@ -120,44 +119,48 @@ export const TagCut = props => {
 
   return (
     <Popover
-      boundary="viewport"
-      content={
-        <FormGroup className="submenu-form-group" label={t("params.title_members")}>
-          <MembersTransferInput
-            activeItems={item.members}
-            getLabel={item => item.name}
-            getSecondLabel={showMemberKey
-              // eslint-disable-next-line eqeqeq
-              ? item => item.key != item.name ? item.key : undefined
-              : undefined}
-            itemPredicate={itemPredicate}
-            items={members}
-            onChange={members => onMembersUpdate && onMembersUpdate(item, members)}
-          />
-        </FormGroup>
-      }
-      fill={true}
-      interactionKind={PopoverInteractionKind.CLICK}
-      popoverClassName="param-popover"
+      position="right"
+      shadow="md"
+      withArrow
+      withinPortal
     >
-      <Tag
-        className={clsx("tag-item tag-cut", {hidden: !item.active})}
-        icon={
-          <span onClickCapture={evt => evt.stopPropagation()}>
-            <Switch checked={item.active} onChange={toggleHandler} />
-          </span>
-        }
-        large={true}
-        fill={true}
-        interactive={true}
-        onRemove={removeHandler}
-      >
-        {t("params.tag_cuts", {
-          abbr: label,
-          first_member: uniqueActive ? uniqueActive.name : "",
-          n: activeCount
-        })}
-      </Tag>
+      <Popover.Target>
+        <Card
+          p="xs"
+          withBorder
+        >
+          <Group noWrap position="apart">
+            <Group noWrap spacing="xs">
+              <Switch checked={item.active} onChange={toggleHandler} size="xs" />
+              <Text fz="sm" lineClamp={1}>
+                {t("params.tag_cuts", {
+                  abbr: label,
+                  first_member: uniqueActive ? uniqueActive.name : "",
+                  n: activeCount
+                })}
+              </Text>
+            </Group>
+            <CloseButton onClick={removeHandler} />
+          </Group>
+        </Card>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <Box miw={400}>
+          <Input.Wrapper label={t("params.title_members")}>
+            <MembersTransferInput
+              activeItems={item.members}
+              getLabel={item => item.name}
+              getSecondLabel={showMemberKey
+                // eslint-disable-next-line eqeqeq
+                ? item => item.key != item.name ? item.key : undefined
+                : undefined}
+              itemPredicate={itemPredicate}
+              items={members}
+              onChange={members => onMembersUpdate && onMembersUpdate(item, members)}
+            />
+          </Input.Wrapper>
+        </Box>
+      </Popover.Dropdown>
     </Popover>
   );
 };
@@ -166,23 +169,29 @@ export const MemoTagCut = memo(TagCut);
 
 /**
  * @type {React.FC<{
+ *  children: string,
  *  onRemove: () => void,
  * }>}
  */
 const TagCutLoading = props =>
-  <Tag
-    className="tag-item tag-cut loading"
-    fill={true}
-    icon={<Spinner size={SpinnerSize.SMALL} />}
-    large={true}
-    minimal={true}
-    onRemove={props.onRemove}
+  <Card
+    p="xs"
+    withBorder
   >
-    {props.children}
-  </Tag>;
+    <Group noWrap position="apart">
+      <Group noWrap spacing="xs">
+        <Loader size="sm" />
+        <Text fz="sm" lineClamp={1}>
+          {props.children}
+        </Text>
+      </Group>
+      <CloseButton onClick={props.onRemove} />
+    </Group>
+  </Card>;
 
 /**
  * @type {React.FC<{
+ *  children: string,
  *  item: TessExpl.Struct.CutItem,
  *  error: string,
  *  onReload: () => void,
@@ -193,42 +202,53 @@ const TagCutError = props => {
   const {translate: t} = useTranslation();
 
   return (
-    <Popover
-      boundary="viewport"
-      content={
-        <Callout
-          icon="warning-sign"
-          intent={Intent.WARNING}
+    <HoverCard
+      position="right"
+      shadow="md"
+      withArrow
+      withinPortal
+    >
+      <HoverCard.Target>
+        <Card
+          p="xs"
+          withBorder
+        >
+          <Group noWrap position="apart">
+            <Group noWrap spacing="xs">
+              <ThemeIcon 
+                color="yellow" 
+                // @ts-ignore
+                variant="subtle">
+                <IconAlertTriangle />
+              </ThemeIcon>
+              <Text fz="sm" lineClamp={1}>
+                {props.children}
+              </Text>
+            </Group>
+            <Group spacing="xs">
+              <ActionIcon color="yellow" onClick={props.onReload} variant="subtle">
+                <IconRefresh />
+              </ActionIcon>
+              <CloseButton onClick={props.onRemove} />
+            </Group>
+          </Group>
+        </Card>
+      </HoverCard.Target>
+      <HoverCard.Dropdown>
+        <Alert
+          color="yellow"
+          icon={<IconAlertTriangle size="2rem" />}
           title={t("params.error_fetchmembers_title")}
         >
-          <p>{t("params.error_fetchmembers_detail")}</p>
-          <p style={{whiteSpace: "pre-line"}}>{props.error}</p>
-          <p>
-            <Button text={t("action_reload")} onClick={props.onReload} />
-          </p>
-        </Callout>
-      }
-      fill={true}
-      hoverCloseDelay={500}
-      interactionKind={PopoverInteractionKind.HOVER}
-      popoverClassName="param-popover"
-    >
-      <Tag
-        className={clsx("tag-item tag-cut error", {hidden: !props.item.active})}
-        fill={true}
-        icon="warning-sign"
-        intent={Intent.WARNING}
-        interactive={false}
-        large={true}
-        rightIcon={
-          <ButtonGroup minimal={true}>
-            <ButtonTagExtra icon="refresh" title={t("action_reload")} onClick={props.onReload} />
-          </ButtonGroup>
-        }
-        onRemove={props.onRemove}
-      >
-        {props.children}
-      </Tag>
-    </Popover>
+          <Stack spacing="xs">
+            <Text>{t("params.error_fetchmembers_detail")}</Text>
+            <Text>{props.error}</Text>
+            <Button color="yellow" onClick={props.onReload}>
+              {t("action_reload")}
+            </Button>
+          </Stack>
+        </Alert>
+      </HoverCard.Dropdown>
+    </HoverCard>
   );
 };

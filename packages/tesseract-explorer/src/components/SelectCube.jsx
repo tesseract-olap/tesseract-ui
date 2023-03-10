@@ -1,5 +1,5 @@
-import {ButtonGroup} from "@blueprintjs/core";
-import React, {Fragment, memo, useCallback, useEffect, useMemo, useState} from "react";
+import {Box, Stack} from "@mantine/core";
+import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {willSetCube} from "../middleware/olapActions";
@@ -91,54 +91,49 @@ export const SelectCube = () => {
 
   const selectCube = selectedItem
     ? <SelectPlainCube
-      className="select-cube"
       getLabel={item => getCaption(item, locale)}
       hidden={cubeItems.length < 2}
       items={cubeItems}
+      label={t("params.label_cube")}
       onItemSelect={onItemSelect}
+      searchable
       selectedItem={selectedItem}
-      text={t("params.label_cube", {
-        name: selectedItem.name,
-        caption: getCaption(selectedItem, locale)
-      })}
     />
     : null;
 
   return (
-    <Fragment>
-      <ButtonGroup className="cube-locale p-3" fill vertical>
+    <Box>
+      <Stack spacing={0}>
         <SelectLevel
-          className="select-topic"
+          hidden={level1 === "Hidden"}
           items={level1Keys}
+          label={t("params.label_topic")}
           onItemSelect={setLevel1}
           selectedItem={level1}
-          text={t("params.label_topic", {label: level1})}
         />
         <SelectLevel
-          className="select-subtopic"
+          hidden={level2 === "Hidden"}
           items={level2Keys}
+          label={t("params.label_subtopic")}
           onItemSelect={setLevel2}
           selectedItem={level2}
-          text={t("params.label_subtopic", {label: level2})}
         />
         <SelectLevel
-          className="select-table"
+          hidden={level3 === "Hidden"}
           items={level3Keys}
+          label={t("params.label_table")}
           onItemSelect={setLevel3}
           selectedItem={level3}
-          text={t("params.label_table", {label: level3})}
         />
         {selectCube}
-      </ButtonGroup>
+      </Stack>
       {selectedItem && <MemoCubeDescription
-        className="cube-description p-3 py-0"
         cube={selectedItem}
       />}
       {selectedItem && <MemoCubeSource
-        className="cube-source p-3 py-0"
         cube={selectedItem}
       />}
-    </Fragment>
+    </Box>
   );
 };
 

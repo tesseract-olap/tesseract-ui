@@ -1,3 +1,4 @@
+import {Anchor, Box, Text} from "@mantine/core";
 import React, {memo} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -20,9 +21,9 @@ export const CubeDescription = props => {
   if (!description) return null;
 
   return (
-    <p className={props.className}>
+    <Text>
       {description}
-    </p>
+    </Text>
   );
 };
 
@@ -38,15 +39,15 @@ export const CubeSource = props => {
   if (!srcName && !srcDescription) return null;
 
   return (
-    <p className={props.className}>
-      {srcName && <span className="block">
+    <Box pt="sm">
+      {srcName && <Text fz="xs">
         {`${t("params.label_source")  }: `}
         {srcLink
-          ? <a href={srcLink}>{srcName}</a>
-          : <span>{srcName}</span>}
-      </span>}
-      {srcDescription && <span className="block">{srcDescription}</span>}
-    </p>
+          ? <Anchor href={srcLink} span>{srcName}</Anchor>
+          : <Text span>{srcName}</Text>}
+      </Text>}
+      {srcDescription && <Text fz="xs">{srcDescription}</Text>}
+    </Box>
   );
 };
 

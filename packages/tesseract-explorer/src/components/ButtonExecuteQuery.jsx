@@ -1,5 +1,6 @@
-import {ButtonGroup, Classes, Intent, Position} from "@blueprintjs/core";
-import React from "react";
+import {Box, Button, Group, Stack, Tooltip} from "@mantine/core";
+import {IconCircleMinus, IconDatabase, IconReplace} from "@tabler/icons-react";
+import React, {useMemo} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {willRequestQuery} from "../middleware/olapActions";
@@ -8,7 +9,6 @@ import {selectValidQueryStatus} from "../state/params/selectors";
 import {doUpdateEndpoint} from "../state/server/actions";
 import {selectServerEndpoint, selectServerSoftware} from "../state/server/selectors";
 import {LoadAllResultsSwitch} from "./LoadAllResultsSwitch";
-import {AnchorButtonTooltip, ButtonTooltip} from "./Tooltips";
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
@@ -22,48 +22,80 @@ export const ButtonExecuteQuery = () => {
   const {isValid, error} = useSelector(selectValidQueryStatus);
   const errorText = error && t(error) !== error ? t(error) : "";
 
+  const executeButtonProps = useMemo(() => {
+    if (!isValid) {
+      return {
+        "data-disabled": true
+      }; 
+    }
+    return {};
+  }, [isValid]);
+
   return (
-    <>
-      <ButtonGroup className="query-actions p-3" fill>
-        <AnchorButtonTooltip
-          fill={true}
-          disabled={!isValid}
-          icon="database"
-          intent={Intent.PRIMARY}
-          text={t("params.action_execute")}
-          tooltipText={errorText}
-          tooltipIntent={Intent.DANGER}
-          tooltipPosition={Position.RIGHT}
-          onClick={() => {
-            dispatch(willRequestQuery());
-          }}
-        />
-        {software === "tesseract-olap" && <ButtonTooltip
-          className={Classes.FIXED}
-          icon="exchange"
-          tooltipText={t("params.current_endpoint", {label: endpoint})}
-          onClick={() => dispatch(doUpdateEndpoint())}
-        />}
-      </ButtonGroup>
-      <div className="p-3 pt-0 pb-0">
-        <LoadAllResultsSwitch />
-      </div>
-      <ButtonGroup className="query-actions p-3 pt-0" fill>
-        <AnchorButtonTooltip
-          fill={true}
-          icon="remove"
-          intent={Intent.NONE}
-          text={t("params.action_clear")}
-          tooltipText={t("params.action_clear_description")}
-          tooltipIntent={Intent.NONE}
-          tooltipPosition={Position.RIGHT}
-          onClick={() => {
-            dispatch(doCutClear());
-            dispatch(doDrilldownClear());
-            dispatch(doMeasureClear());
-          }}
-        />
-      </ButtonGroup>
-    </>
+    <Box>
+      <Stack spacing="xs">
+        <Group noWrap spacing="xs">
+          <Tooltip 
+            color="red"
+            disabled={isValid}
+            label={errorText}
+            position="right"
+            withArrow
+            withinPortal
+          >
+            <Button
+              fullWidth
+              leftIcon={<IconDatabase />}
+              onClick={() => {
+                dispatch(willRequestQuery());
+              }}
+              sx={{"&[data-disabled]": {pointerEvents: "all"}}}
+              {...executeButtonProps}
+            >
+              {t("params.action_execute")}
+            </Button>
+          </Tooltip>
+          {software === "tesseract-olap" && <Tooltip 
+            color="gray"
+            label={t("params.current_endpoint", {label: endpoint})}
+            position="right"
+            withArrow
+          >
+            <Button
+              color="gray"
+              onClick={() => dispatch(doUpdateEndpoint())}
+              variant="filled"
+            >
+              <IconReplace />
+            </Button>
+          </Tooltip>}
+        </Group>
+        <Box>
+          <LoadAllResultsSwitch />
+        </Box>
+        <Group noWrap spacing="xs">
+          <Tooltip 
+            color="red"
+            label={t("params.action_clear_description")}
+            position="right"
+            withArrow
+            withinPortal
+          >
+            <Button 
+              color="red"
+              fullWidth
+              leftIcon={<IconCircleMinus />}
+              onClick={() => {
+                dispatch(doCutClear());
+                dispatch(doDrilldownClear());
+                dispatch(doMeasureClear());
+              }}
+            >
+              {t("params.action_clear")}
+            </Button>
+          </Tooltip>
+        </Group>
+      </Stack>
+    </Box>
   );
 };

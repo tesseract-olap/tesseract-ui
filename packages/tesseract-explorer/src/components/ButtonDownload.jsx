@@ -1,4 +1,4 @@
-import {Button} from "@blueprintjs/core";
+import {Button, Text} from "@mantine/core";
 import React, {useCallback} from "react";
 
 /**
@@ -8,6 +8,7 @@ import React, {useCallback} from "react";
 
 /**
  * @typedef ButtonDownloadProps
+ * @property {string} children
  * @property {ContentOrGenerator<TessExpl.Struct.FileDescriptor | Promise<TessExpl.Struct.FileDescriptor>>} provider
  */
 
@@ -52,5 +53,14 @@ export const ButtonDownload = props => {
       });
   }, [provider]);
 
-  return <Button {...buttonProps} onClick={onClick} />;
+  return <Button 
+    {...buttonProps}
+    fullWidth
+    onClick={onClick} 
+    variant="default"
+  >
+    <Text fz="xs">
+      {props.children}
+    </Text>
+  </Button>;
 };

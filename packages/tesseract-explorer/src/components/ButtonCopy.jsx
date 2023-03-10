@@ -1,8 +1,15 @@
-import {Button} from "@blueprintjs/core";
+import {Button} from "@mantine/core";
 import copy from "clipboard-copy";
 import React, {useCallback} from "react";
 
-/** @type {React.FC<BlueprintCore.ButtonProps & {copyText: string}>} */
+/**
+ * @typedef OwnProps
+ * @property {string} children
+ * @property {string} copyText
+ * @property {React.ReactNode} leftIcon
+ */
+
+/** @type {React.FC<OwnProps>} */
 export const ButtonCopy = props => {
   const {copyText, ...buttonProps} = props;
 
@@ -11,5 +18,17 @@ export const ButtonCopy = props => {
     copy(copyText);
   }, [copyText]);
 
-  return <Button {...buttonProps} onClick={onClick} />;
+  return <Button
+    {...buttonProps} 
+    component="a" 
+    onClick={onClick}
+    sx={theme => ({
+      "&:hover": {
+        color: theme.white,
+        textDecoration: "none"
+      }
+    })}
+  >
+    {props.children}
+  </Button>;
 };

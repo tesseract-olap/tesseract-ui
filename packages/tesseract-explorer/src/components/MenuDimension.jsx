@@ -1,4 +1,5 @@
-import {Menu, MenuItem} from "@blueprintjs/core";
+import {Group, Menu, Text, UnstyledButton} from "@mantine/core";
+import {IconChevronRight, IconStack, IconStack2, IconStack3} from "@tabler/icons-react";
 import React, {useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -32,7 +33,7 @@ export const DimensionMenu = props => {
     />
   ), [dimensions, props.selectedItems, props.onItemSelect]);
 
-  return <Menu className="menu-dimension">{options}</Menu>;
+  return <Menu>{options}</Menu>;
 };
 
 
@@ -72,9 +73,30 @@ export const DimensionMenuItem = props => {
   }
 
   return (
-    <MenuItem key={dimension.uri} icon="layers" text={label}>
-      {options}
-    </MenuItem>
+    <Menu
+      key={dimension.uri}
+      position="right" 
+      shadow="md"
+      withArrow
+    >
+      <Menu.Target>
+        <UnstyledButton component="div">
+          <Menu.Item 
+            icon={<IconStack3 />}
+          >
+            <Group noWrap position="apart">
+              <Text>{label}</Text>
+              <IconChevronRight stroke={1.5} size={16} />
+            </Group>
+          </Menu.Item>
+        </UnstyledButton>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu>
+          {options}
+        </Menu>
+      </Menu.Dropdown>
+    </Menu>
   );
 };
 
@@ -125,9 +147,30 @@ export const HierarchyMenuItem = props => {
   }
 
   return (
-    <MenuItem key={hierarchy.uri} icon="layers" text={label}>
-      {options}
-    </MenuItem>
+    <Menu
+      key={hierarchy.uri}
+      position="right" 
+      shadow="md"
+      withArrow
+    >
+      <Menu.Target>
+        <UnstyledButton component="div">
+          <Menu.Item 
+            icon={<IconStack2 />}
+          >
+            <Group noWrap position="apart">
+              <Text>{label}</Text>
+              <IconChevronRight stroke={1.5} size={16} />
+            </Group>
+          </Menu.Item>
+        </UnstyledButton>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu>
+          {options}
+        </Menu>
+      </Menu.Dropdown>
+    </Menu>
   );
 };
 
@@ -165,12 +208,14 @@ export const LevelMenuItem = props => {
   }, [locale, dimension, hierarchy, level, props.isSubMenu]);
 
   return (
-    <MenuItem
+    <Menu.Item
       disabled={props.selectedItems.includes(stringifyName(level))}
-      icon="layer"
+      icon={<IconStack />}
       key={level.uri}
+      miw={200}
       onClick={() => props.onItemSelect(level, hierarchy, dimension)}
-      text={label}
-    />
+    >
+      {label}
+    </Menu.Item>
   );
 };

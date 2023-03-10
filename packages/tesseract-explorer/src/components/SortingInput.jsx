@@ -1,4 +1,4 @@
-import {ControlGroup, FormGroup} from "@blueprintjs/core";
+import {Group, Input} from "@mantine/core";
 import React, {memo, useMemo} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {SelectObject} from "../components/Select";
@@ -37,11 +37,9 @@ export const SortingInput = () => {
   }, [locale]);
 
   return (
-    <FormGroup label={t("params.label_sorting_key")}>
-      <ControlGroup fill={true}>
+    <Input.Wrapper label={t("params.label_sorting_key")}>
+      <Group noWrap spacing="xs">
         <SelectMeasure
-          fill={true}
-          icon={sortKey ? "timeline-bar-chart" : false}
           selectedItem={sortKey}
           onItemSelect={measure => dispatch(doSortingUpdate(measure.name, sortDir))}
         />
@@ -51,7 +49,7 @@ export const SortingInput = () => {
           onItemSelect={direction => dispatch(doSortingUpdate(sortKey, direction.value))}
           selectedItem={sort.directions[sortDir]}
         />
-      </ControlGroup>
-    </FormGroup>
+      </Group>
+    </Input.Wrapper>
   );
 };
