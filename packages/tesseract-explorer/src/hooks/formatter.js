@@ -54,6 +54,7 @@ export function useFormatter(measures) {
   }, [measures]);
 
   return useMemo(() => ({
+    currentFormats,
     getAvailableKeys(ref) {
       const originKey = originKeys.current[ref];
       return originKey ? [originKey].concat(basicFormatterKeys) : basicFormatterKeys;
@@ -86,6 +87,8 @@ export function useFormatter(measures) {
 
 /**
  * @typedef FormatterHookContext
+ * @property {Object} currentFormats
+ *    Returns the current format object.
  * @property {(ref: string) => string[]} getAvailableKeys
  *    Returns a list of keys that determine an available formatter function
  *    for a `ref` measure name.

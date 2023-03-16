@@ -10,6 +10,7 @@ import {createContext, createElement, useCallback, useContext, useMemo} from "re
 
 /**
  * @typedef SettingsProviderProps
+ * @property {React.ReactElement} [children]
  * @property {Record<string, (d: number) => string>} [formatters]
  * @property {number} previewLimit
  */

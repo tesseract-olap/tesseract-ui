@@ -113,6 +113,7 @@ export const defaultTranslation = {
     loading_title: "Reestructuring data",
     title_download: "Download matrix",
     title_params: "Matrix params",
+    warning: "Warning",
     warning_notsummeasure: "The current query contains more than 2 drilldowns, and the aggregation type of the measure is not \"SUM\". The values you're getting might not be meaningful.",
     warning_propertypivot: "Unlike Drilldown Members, Drilldown Properties are not guaranteed to be unique. In this view, data points are aggregated based on the property labels, so please ensure you're not missing information.",
     warning_sumdimensions: "There's more than 2 drilldowns in this query. Remaining values will be summed.",
