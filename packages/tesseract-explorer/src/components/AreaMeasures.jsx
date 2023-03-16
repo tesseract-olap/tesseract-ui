@@ -1,4 +1,4 @@
-import {ActionIcon, Checkbox, CloseButton, Input, Popover, Stack} from "@mantine/core";
+import {Checkbox, CloseButton, Input, Popover, Stack, ThemeIcon} from "@mantine/core";
 import {IconFilter, IconFilterOff, IconSearch} from "@tabler/icons-react";
 import React, {useCallback, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -42,9 +42,9 @@ export const AreaMeasures = () => {
       withinPortal
     >
       <Popover.Target>
-        <ActionIcon color={filter ? "red" : "blue"}>
+        <ThemeIcon color={filter ? "red" : "blue"} variant="light">
           {filter ? <IconFilterOff onClick={resetFilter} /> : <IconFilter />}
-        </ActionIcon>
+        </ThemeIcon>
       </Popover.Target>
       <Popover.Dropdown>
         <Input

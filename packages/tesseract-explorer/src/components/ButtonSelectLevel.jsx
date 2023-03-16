@@ -1,4 +1,4 @@
-import {ActionIcon, Menu} from "@mantine/core";
+import {Menu, ThemeIcon} from "@mantine/core";
 import React from "react";
 import {stringifyName} from "../utils/transform";
 import {DimensionMenu} from "./MenuDimension";
@@ -10,7 +10,7 @@ import {DimensionMenu} from "./MenuDimension";
  * @property {React.ComponentProps<DimensionMenu>["onItemSelect"]} onItemSelect
  */
 
-/** @type {React.FC<BlueprintCore.ButtonProps & OwnProps>} */
+/** @type {React.FC<OwnProps>} */
 export const ButtonSelectLevel = props => {
   const {selectedItems, onItemSelect, ...buttonProps} = props;
   return (
@@ -23,7 +23,7 @@ export const ButtonSelectLevel = props => {
       withinPortal
     >
       <Menu.Target>
-        <ActionIcon {...buttonProps}>{props.children}</ActionIcon>
+        <ThemeIcon {...buttonProps}>{props.children}</ThemeIcon>
       </Menu.Target>
       <Menu.Dropdown>
         <DimensionMenu

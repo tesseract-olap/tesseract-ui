@@ -1,4 +1,4 @@
-import {ActionIcon, Alert, Group} from "@mantine/core";
+import {Alert, Group, ThemeIcon} from "@mantine/core";
 import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -11,12 +11,6 @@ import {ButtonSelectLevel} from "./ButtonSelectLevel";
 import {LayoutParamsArea} from "./LayoutParamsArea";
 import {MemoTagCut as TagCut} from "./TagCut";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<OwnProps>} */
 export const AreaCuts = () => {
   const dispatch = useDispatch();
 
@@ -53,19 +47,19 @@ export const AreaCuts = () => {
   const toolbar =
     <Group noWrap spacing="xs">
       {items.length > 0 &&
-          <ActionIcon
+          <ThemeIcon
             color="red"
             onClick={clearHandler}
-            variant="subtle"
+            variant="light"
           >
             <IconTrashX />
-          </ActionIcon>
+          </ThemeIcon>
       }
       <ButtonSelectLevel
         color="blue"
         onItemSelect={createHandler}
         selectedItems={items}
-        variant="subtle"
+        variant="light"
       >
         <IconCirclePlus />
       </ButtonSelectLevel>
