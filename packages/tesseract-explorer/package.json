@@ -1,29 +1,27 @@
 {
   "name": "@datawheel/tesseract-explorer",
-  "version": "1.0.0-alpha.29",
+  "version": "1.0.0-beta.0",
   "description": "A react component to explore data from a tesseract-olap server.",
-  "main": "./dist/explorer.cjs.js",
-  "module": "./dist/explorer.esm.js",
-  "style": "./dist/explorer.css",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
   "types": "./index.d.ts",
   "readme": "./README.md",
   "exports": {
     ".": {
-      "import": "./dist/explorer.esm.js",
-      "require": "./dist/explorer.cjs.js",
-      "default": "./dist/explorer.cjs.js"
-    },
-    "./style.css": "./dist/explorer.css"
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.cjs.js"
+    }
   },
   "files": [
-    "dist/explorer.css",
-    "dist/explorer.esm.js",
-    "dist/explorer.cjs.js",
+    "dist/index.esm.js",
+    "dist/index.cjs.js",
     "index.d.ts"
   ],
   "scripts": {
-    "build": "rollup --config ../../rollup.config.js --environment NODE_ENV:production",
-    "dev": "rollup --config ../../rollup.config.js --environment NODE_ENV:development --watch"
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepublishOnly": "tsup"
   },
   "author": "Francisco Abarzúa <francisco@datawheel.us>",
   "license": "MIT",
@@ -38,10 +36,8 @@
     "tesseract-ui"
   ],
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.18.0",
     "@datawheel/olap-client": "^2.0.0",
     "@datawheel/use-translation": "^0.1.0",
-    "classnames": "^2.3.0",
     "clipboard-copy": "^3.2.0",
     "d3plus-format": "^1.1.0",
     "form-urldecoded": "^1.2.0",
@@ -51,6 +47,19 @@
     "react-viewport-list": "^3.0.0",
     "reselect": "^4.1.0"
   },
+  "peerDependencies": {
+    "@emotion/react": "^11.0.0",
+    "@mantine/core": "^5.0.0",
+    "@mantine/dates": "^5.0.0",
+    "@mantine/hooks": "^5.0.0",
+    "@mantine/prism": "^5.0.0",
+    "@tabler/icons-react": "^2.7.0",
+    "dayjs": "^1.0.0",
+    "react": "^16.14.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.14.0 || ^17.0.0 || ^18.0.0",
+    "react-redux": "^7.0.0",
+    "redux": "^4.0.0"
+  },
   "devDependencies": {
     "@emotion/react": "^11.10.6",
     "@mantine/core": "^5.10.5",
@@ -59,23 +68,10 @@
     "@mantine/prism": "^5.10.5",
     "@tabler/icons-react": "^2.7.0",
     "dayjs": "^1.11.7",
-    "react": "^16.14.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.14.0 || ^17.0.0 || ^18.0.0",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
     "react-redux": "^7.2.0",
     "redux": "^4.2.0",
-    "rollup": "^2.75.0"
-  },
-  "peerDependencies": {
-    "@emotion/react": "^11.10.6",
-    "@mantine/core": "^5.10.5",
-    "@mantine/dates": "^5.10.5",
-    "@mantine/hooks": "^5.10.5",
-    "@mantine/prism": "^5.10.5",
-    "@tabler/icons-react": "^2.7.0",
-    "dayjs": "^1.11.7",
-    "react": "^16.14.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.14.0 || ^17.0.0 || ^18.0.0",
-    "react-redux": "^7.0.0",
-    "redux": "^4.0.0"
+    "tsup": "^6.6.3"
   }
 }

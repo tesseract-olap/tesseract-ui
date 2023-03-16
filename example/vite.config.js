@@ -1,5 +1,5 @@
 import path from "path";
-import reactRefresh from "@vitejs/plugin-react-refresh";
+import pluginReact from "@vitejs/plugin-react";
 
 const {
   OLAPPROXY_BASICAUTH,
@@ -34,7 +34,7 @@ const config = {
     }]
   },
   plugins: [
-    reactRefresh()
+    pluginReact()
   ],
   server: {
     proxy: {
