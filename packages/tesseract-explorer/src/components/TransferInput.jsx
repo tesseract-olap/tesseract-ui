@@ -157,7 +157,7 @@ export const TransferInput = props => {
     >
       <Group noWrap spacing="xs">
         <Checkbox 
-          checked={activeKeys.hasOwnProperty(item.key)} 
+          defaultChecked={activeKeys.hasOwnProperty(item.key)} 
         />
         <Text 
           fz="sm" 
