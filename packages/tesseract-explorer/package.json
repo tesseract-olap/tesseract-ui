@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "build": "rollup --config ../../rollup.config.js --environment NODE_ENV:production",
-    "watch": "rollup --config ../../rollup.config.js --environment NODE_ENV:development --watch"
+    "dev": "rollup --config ../../rollup.config.js --environment NODE_ENV:development --watch"
   },
   "author": "Francisco Abarzúa <francisco@datawheel.us>",
   "license": "MIT",

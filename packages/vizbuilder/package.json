@@ -47,7 +47,7 @@
     "@datawheel/vizbuilder": "^0.2.9"
   },
   "devDependencies": {
-    "@datawheel/tesseract-explorer": "workspace:^1.0.0-alpha.28",
+    "@datawheel/tesseract-explorer": "^1.0.0-alpha.28",
     "prop-types": "^15.8.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
