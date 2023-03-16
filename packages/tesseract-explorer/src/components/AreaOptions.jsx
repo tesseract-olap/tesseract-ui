@@ -9,12 +9,6 @@ import {LayoutParamsArea} from "./LayoutParamsArea";
 import {PaginationInput} from "./PaginationInput";
 import {SortingInput} from "./SortingInput";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<OwnProps>} */
 export const AreaOptions = () => {
   const dispatch = useDispatch();
 

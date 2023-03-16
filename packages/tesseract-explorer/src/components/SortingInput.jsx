@@ -11,12 +11,6 @@ import {MemoSelectMeasure as SelectMeasure} from "./SelectMeasure";
 /** @type {React.FC<import("../components/Select").SelectObjectProps<{value: string, label: string}>>} */
 const SelectDirection = memo(SelectObject, shallowEqualForProps("items", "selectedItem"));
 
-/**
- * @typedef SortingInputProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<SortingInputProps>} */
 export const SortingInput = () => {
   const dispatch = useDispatch();
 

@@ -10,12 +10,6 @@ import {SelectObject} from "./Select";
 /** @type {React.FC<import("./Select").SelectObjectProps<{label: string, value: string}>>} */
 const SelectLocaleOptions = SelectObject;
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<OwnProps>} */
 export const SelectLocale = () => {
   const dispatch = useDispatch();
 

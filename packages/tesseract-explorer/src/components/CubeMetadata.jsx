@@ -7,7 +7,6 @@ import {getAnnotation} from "../utils/string";
 
 /**
  * @typedef CubeDescriptionProps
- * @property {string} [className]
  * @property {{annotations: any}} cube
  */
 

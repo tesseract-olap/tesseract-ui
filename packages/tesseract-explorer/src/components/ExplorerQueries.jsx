@@ -11,12 +11,6 @@ import {buildQuery} from "../utils/structs";
 import {LayoutColumn} from "./LayoutColumn";
 import {MemoStoredQuery as StoredQuery} from "./StoredQuery";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<OwnProps>} */
 export const ExplorerQueries = () => {
   const dispatch = useDispatch();
 
@@ -84,7 +78,6 @@ export const ExplorerQueries = () => {
         {items.map((item, _, list) =>
           <StoredQuery
             active={item === currentQuery}
-            className="query-item"
             key={item.key}
             item={item}
             hideDelete={list.length === 1}

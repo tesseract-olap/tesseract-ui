@@ -5,12 +5,6 @@ import {useTranslation} from "../hooks/translation";
 import {doPaginationUpdate} from "../state/params/actions";
 import {selectIsFullResults, selectPaginationParams} from "../state/params/selectors";
 
-/**
- * @typedef PaginationInputProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<PaginationInputProps>} */
 export const PaginationInput = () => {
   const dispatch = useDispatch();
 

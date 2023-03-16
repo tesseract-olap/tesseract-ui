@@ -11,12 +11,6 @@ import {LayoutColumn} from "./LayoutColumn";
 import {SelectCube} from "./SelectCube";
 import {SelectLocale} from "./SelectLocale";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<OwnProps>} */
 export const ExplorerParams = () => {
   const {translate: t} = useTranslation();
 

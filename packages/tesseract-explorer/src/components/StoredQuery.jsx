@@ -7,7 +7,6 @@ import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
 /**
  * @typedef OwnProps
  * @property {boolean} active
- * @property {string} [className]
  * @property {boolean} [hideDelete]
  * @property {TessExpl.Struct.QueryItem} item
  * @property {(key: string) => void} [onSelect]
@@ -36,6 +35,7 @@ export const StoredQuery = props => {
       <Button
         fullWidth
         h="auto"
+        mih={35}
         styles={{
           inner: {
             justifyContent: "flex-start"

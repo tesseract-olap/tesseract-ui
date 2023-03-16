@@ -8,12 +8,6 @@ import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectServerFormatsEnabled} from "../state/server/selectors";
 import {ButtonDownload} from "./ButtonDownload";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<OwnProps>} */
 export const AreaDownloadQuery = () => {
   const dispatch = useDispatch();
 

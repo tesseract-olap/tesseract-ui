@@ -18,12 +18,6 @@ const SelectLevel = memo(SelectWithButtons, shallowEqualForProps("items", "selec
 /** @type {React.FC<import("./SelectWithButtons").OwnProps<OlapClient.PlainCube>>} */
 const SelectPlainCube = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<OwnProps>} */
 export const SelectCube = () => {
   const dispatch = useDispatch();
 

@@ -20,7 +20,7 @@ const mimeTypes = {
   xls: "application/vnd.ms-excel"
 };
 
-/** @type {React.FC<BlueprintCore.ButtonProps & ButtonDownloadProps>} */
+/** @type {React.FC<ButtonDownloadProps>} */
 export const ButtonDownload = props => {
   const {provider, ...buttonProps} = props;
 
