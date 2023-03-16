@@ -1,5 +1,4 @@
-import {MantineProvider} from "@mantine/core";
-import clsx from "classnames";
+import {Box, MantineProvider} from "@mantine/core";
 import React from "react";
 import {useSelector} from "react-redux";
 import {SettingsProvider} from "../hooks/settings";
@@ -41,23 +40,27 @@ export const ExplorerComponent = props => {
     <SettingsProvider formatters={props.formatters} previewLimit={previewLimit}>
       <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
         <MantineProvider withGlobalStyles withNormalizeCSS>
-          <div className={clsx("explorer-wrapper", props.className)}>
+          <Box
+            display="flex"
+            h="100vh"
+            maw="100vw"
+            w="100vw"
+          >
             <LoadingOverlay />
             {isSetupDone && serverState.online && props.multiquery
-              ? <ExplorerQueries className="explorer-queries" />
+              ? <ExplorerQueries />
               : <div/>
             }
             {isSetupDone && serverState.online
-              ? <ExplorerParams className="explorer-params" />
+              ? <ExplorerParams />
               : <div/>
             }
             <ExplorerResults
-              className="explorer-results"
               panels={props.panels || defaultProps.panels}
               DefaultSplash={props.DefaultSplash}
               transientIcon={props.transientIcon ?? defaultProps.transientIcon}
             />
-          </div>
+          </Box>
         </MantineProvider>
       </TranslationProvider>
     </SettingsProvider>

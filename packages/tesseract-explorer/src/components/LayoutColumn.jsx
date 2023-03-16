@@ -4,7 +4,6 @@ import React, {useState} from "react";
 /**
  * @typedef OwnProps
  * @property {React.ReactNode} children
- * @property {string} [className]
  * @property {boolean} [defaultOpen]
  * @property {string} title
  */
@@ -18,7 +17,15 @@ export const LayoutColumn = props => {
 
   if (!isOpen) {
     return (
-      <Card px="xs" radius={0} withBorder w="max-content">
+      <Card 
+        px="xs" 
+        radius={0} 
+        sx={{
+          overflow: "visible"
+        }}
+        withBorder 
+        w="max-content"
+      >
         <UnstyledButton onClick={toggleHandler}>
           <Title 
             order={4} 
@@ -43,7 +50,7 @@ export const LayoutColumn = props => {
           </Title>
         </UnstyledButton>
       </Navbar.Section>
-      <Navbar.Section component={ScrollArea} grow mx="-md" px="md">
+      <Navbar.Section component={ScrollArea} grow mx="-md" px="md" w={380}>
         <Box>{props.children}</Box>
       </Navbar.Section>
     </Navbar>

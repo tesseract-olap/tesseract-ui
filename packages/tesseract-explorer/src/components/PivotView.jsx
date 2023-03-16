@@ -1,7 +1,6 @@
-import {ButtonGroup, Callout, FormGroup, Intent, NonIdealState, Spinner} from "@blueprintjs/core";
-import {Cell, Column, Table} from "@blueprintjs/table";
-import clsx from "classnames";
-import React, {Fragment, memo, useMemo, useState} from "react";
+import {Alert, Box, Button, Card, Container, Flex, Input, Loader, Space, Title} from "@mantine/core";
+import {MantineReactTable} from "mantine-react-table";
+import React, {memo, useMemo, useState} from "react";
 import {useFormatParams, usePivottedData} from "../hooks/pivot";
 import {useTranslation} from "../hooks/translation";
 import {filterMap} from "../utils/array";
@@ -9,6 +8,10 @@ import {getCaption} from "../utils/string";
 import {isActiveItem} from "../utils/validation";
 import {ButtonDownload} from "./ButtonDownload";
 import {SelectObject} from "./Select";
+import {NonIdealState} from "./NonIdealState";
+import {IconAlertCircle, IconAlertTriangle} from "@tabler/icons-react";
+import {selectIsFullResults} from "../state/params/selectors";
+import {useSelector} from "react-redux";
 
 /** @type {React.FC<TessExpl.ViewProps>} */
 export const PivotView = props => {
@@ -78,7 +81,6 @@ export const PivotView = props => {
   const [pivottedData, pivottingError] = usePivottedData(result.data, colProp.value, rowProp.value, valProp.value);
 
   const {
-    formatExample,
     formatter,
     formatterKey,
     formatterKeyOptions,
@@ -89,15 +91,30 @@ export const PivotView = props => {
     const warnings = [];
     if (rowProp.type === "prop" || colProp.type === "prop") {
       warnings.push(
-        <Callout key="propertypivot" intent={Intent.WARNING}>{t("pivot_view.warning_propertypivot")}</Callout>
+        <Alert
+          color="yellow"
+          icon={<IconAlertCircle size="2rem" />}
+          key="propertypivot"
+          title={t("pivot_view.warning")}
+        >{t("pivot_view.warning_propertypivot")}</Alert>
       );
     }
     const drilldownCount = Object.values(params.drilldowns).filter(isActiveItem).length;
     if (drilldownCount > 2) {
       warnings.push(
         valProp.type !== "SUM"
-          ? <Callout key="notsummeasure" intent={Intent.WARNING}>{t("pivot_view.warning_notsummeasure")}</Callout>
-          : <Callout key="sumdimensions">{t("pivot_view.warning_sumdimensions")}</Callout>
+          ? <Alert
+            color="yellow"
+            icon={<IconAlertCircle size="2rem" />}
+            key="notsummeasure"
+            title={t("pivot_view.warning")}
+          >{t("pivot_view.warning_notsummeasure")}</Alert>
+          : <Alert
+            color="yellow"
+            icon={<IconAlertCircle size="2rem" />}
+            key="sumdimensions"
+            title={t("pivot_view.warning")}
+          >{t("pivot_view.warning_sumdimensions")}</Alert>
       );
     }
     return warnings;
@@ -107,33 +124,35 @@ export const PivotView = props => {
     if (!pivottedData) return null;
 
     return (
-      <Fragment>
-        <h3>{t("pivot_view.title_download")}</h3>
-        <ButtonGroup fill>
+      <Box>
+        <Title order={5}>{t("pivot_view.title_download")}</Title>
+        <Button.Group>
           <ButtonDownload
-            text="CSV"
             provider={() => ({
               name: fileName,
               extension: "csv",
               content: stringifyMatrix(pivottedData, formatter, "csv")
             })}
-          />
+          >
+            CSV
+          </ButtonDownload>
           <ButtonDownload
-            text="TSV"
             provider={() => ({
               name: fileName,
               extension: "tsv",
               content: stringifyMatrix(pivottedData, formatter, "tsv")
             })}
-          />
-        </ButtonGroup>
-      </Fragment>
+          >
+            TSV
+          </ButtonDownload>
+        </Button.Group>
+      </Box>
     );
   }, [pivottedData, formatter]);
 
   if (drilldownOptions.length < 2) {
     return <NonIdealState
-      icon="warning-sign"
+      icon={<IconAlertTriangle color="orange" size="5rem" />}
       title={t("pivot_view.error_missingparams")}
     />;
   }
@@ -141,26 +160,26 @@ export const PivotView = props => {
   let preview;
   if (!colProp || !rowProp || !valProp) {
     preview = <NonIdealState
-      icon="warning-sign"
+      icon={<IconAlertTriangle color="orange" size="5rem" />}
       title={t("pivot_view.error_missingparams")}
     />;
   }
   else if (colProp === rowProp) {
     preview = <NonIdealState
-      icon="warning-sign"
+      icon={<IconAlertTriangle color="orange" size="5rem" />}
       title={t("pivot_view.error_onedimension")}
     />;
   }
   else if (pivottingError != null) {
     preview = <NonIdealState
-      icon="error"
+      icon={<IconAlertTriangle color="orange" size="5rem" />}
       title={t("pivot_view.error_internal")}
       description={t("pivot_view.error_internal_detail", {error: pivottingError.message})}
     />;
   }
   else if (!pivottedData) {
     preview = <NonIdealState
-      icon={<Spinner size={100} />}
+      icon={<Loader size="xl" />}
       title={t("pivot_view.loading_title")}
       description={t("pivot_view.loading_details")}
     />;
@@ -175,67 +194,88 @@ export const PivotView = props => {
   }
 
   return (
-    <div className={clsx("data-matrix flex flex-row flex-nowrap", props.className)}>
-      <div className="toolbar flex-grow-0 flex-shrink-0 w-24 p-3">
-        <h3 className="mt-0">{t("pivot_view.title_params")}</h3>
-
-        <FormGroup
-          label={colProp.type === "prop"
-            ? t("pivot_view.label_ddcolumnprop")
-            : t("pivot_view.label_ddcolumn")
-          }
+    <Flex 
+      gap={0}
+      h="100%"
+      wrap="nowrap"
+    >
+      <Card miw={300} p="xs" radius={0} withBorder>
+        <Flex
+          direction="column"
+          p="sm"
         >
-          <SelectObject
-            fill={true}
-            getLabel={item => item.label}
-            items={drilldownOptions}
-            onItemSelect={setColumnProp}
-            selectedItem={colProp.label}
-          />
-        </FormGroup>
+          <Title order={5}>{t("pivot_view.title_params")}</Title>
 
-        <FormGroup
-          label={rowProp.type === "prop"
-            ? t("pivot_view.label_ddrowprop")
-            : t("pivot_view.label_ddrow")
-          }
-        >
-          <SelectObject
-            fill={true}
-            getLabel={item => item.label}
-            items={drilldownOptions}
-            onItemSelect={setRowProp}
-            selectedItem={rowProp.label}
-          />
-        </FormGroup>
+          <Input.Wrapper
+            label={colProp.type === "prop"
+              ? t("pivot_view.label_ddcolumnprop")
+              : t("pivot_view.label_ddcolumn")
+            }
+          >
+            <SelectObject
+              getLabel={item => item.label}
+              items={drilldownOptions}
+              onItemSelect={setColumnProp}
+              selectedItem={colProp.label}
+            />
+          </Input.Wrapper>
 
-        <FormGroup label={t("pivot_view.label_valmeasure")}>
-          <SelectObject
-            fill={true}
-            getLabel={item => item.label}
-            items={measureOptions}
-            onItemSelect={setValueProp}
-            selectedItem={valProp.label}
-          />
-        </FormGroup>
+          <Input.Wrapper
+            label={rowProp.type === "prop"
+              ? t("pivot_view.label_ddrowprop")
+              : t("pivot_view.label_ddrow")
+            }
+          >
+            <SelectObject
+              getLabel={item => item.label}
+              items={drilldownOptions}
+              onItemSelect={setRowProp}
+              selectedItem={rowProp.label}
+            />
+          </Input.Wrapper>
 
-        <FormGroup label={t("pivot_view.label_formatter")}>
-          <SelectObject
-            fill={true}
-            getLabel={item => item.label}
-            items={formatterKeyOptions}
-            onItemSelect={item => setFormat(valProp.value, item.value)}
-            selectedItem={formatExample}
-          />
-        </FormGroup>
+          <Input.Wrapper label={t("pivot_view.label_valmeasure")}>
+            <SelectObject
+              getLabel={item => item.label}
+              items={measureOptions}
+              onItemSelect={setValueProp}
+              selectedItem={valProp.label}
+            />
+          </Input.Wrapper>
 
-        {warnings}
+          <Input.Wrapper label={t("pivot_view.label_formatter")}>
+            <SelectObject
+              getKey={item => item.value}
+              getLabel={item => item.label}
+              items={formatterKeyOptions}
+              onItemSelect={item => setFormat(valProp.value, item.value)}
+              selectedItem={formatterKey}
+            />
+          </Input.Wrapper>
 
-        {downloadToolbar}
-      </div>
+          {warnings && <Box>
+            <Space h="sm" />
+            {warnings}
+          </Box>}
 
-      {preview}
-    </div>
+          <Space h="sm" />
+
+          {downloadToolbar}
+        </Flex>
+      </Card>
+      <Container 
+        fluid 
+        m={0} 
+        p={0} 
+        maw="100%" 
+        w="100%"
+        sx={{
+          overflow: "scroll"
+        }}
+      >
+        {preview}
+      </Container>
+    </Flex>
   );
 };
 
@@ -243,36 +283,49 @@ export const PivotView = props => {
 const MatrixTable = props => {
   const {data: values, formatter} = props;
 
-  /** @type {(rowIndex: number, colIndex: number) => [string, string | number]} */
-  const getDisplayValue = (rowIndex, colIndex) => {
-    const value = values[rowIndex][colIndex];
-    return colIndex > 0 && typeof value === "number"
-      ? ["column-number", formatter(value)]
-      : ["column-string", value || ""];
-  };
+  const isFullResults = useSelector(selectIsFullResults);
 
-  const cellRenderer = (rowIndex, colIndex) => {
-    const value = getDisplayValue(rowIndex, colIndex);
-    return (
-      <Cell className={value[0]} columnIndex={colIndex} rowIndex={rowIndex}>
-        {value[1]}
-      </Cell>
-    );
-  };
+  const columns = useMemo(() => props.headers.map((header, colIndex) => ({
+    accesorKey: header,
+    Cell: ({row}) => colIndex > 0 && typeof row.original[colIndex] === "number" ? formatter(row.original[colIndex]) : row.original[colIndex],
+    header
+  })), [props.headers]);
 
   return (
-    <Table
-      className="preview flex-grow flex-shrink min-w-0"
-      enableColumnResizing={true}
-      enableRowResizing={false}
-      getCellClipboardData={(row, col) => getDisplayValue(row, col)[1]}
-      numRows={values.length}
-      rowHeights={Array(values.length).fill(22)}
-    >
-      {props.headers.slice(0, 40).map(header =>
-        <Column cellRenderer={cellRenderer} id={header} key={header} name={header} />
-      )}
-    </Table>
+    <MantineReactTable
+      columns={columns}
+      data={values}
+      enableBottomToolbar={false}
+      enableColumnFilterModes
+      enableColumnResizing
+      enableColumnVirtualization
+      enableTopToolbar={false}
+      enablePagination={false}
+      enableRowNumbers
+      enableRowVirtualization
+      initialState={{
+        density: "xs"
+      }}
+      mantineTableProps={{
+        sx: {
+          "& td": {
+            padding: "7px 10px!important"
+          }
+        },
+        withColumnBorders: true
+      }}
+      mantineTableContainerProps={{ 
+        sx: { 
+          // TODO: Find a better way to calculate the max height of Mantine React Table
+          maxHeight: isFullResults ? "clamp(350px, calc(100vh - 48px), 9999px)" : "clamp(350px, calc(100vh - 48px - 48px), 9999px)"
+        } 
+      }}
+      rowVirtualizerProps={{
+        measureElement() {
+          return 37;
+        }
+      }}
+    />
   );
 };
 

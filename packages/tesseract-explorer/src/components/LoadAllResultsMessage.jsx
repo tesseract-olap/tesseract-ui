@@ -1,4 +1,4 @@
-import {Callout} from "@blueprintjs/core";
+import {Alert, Group, Text} from "@mantine/core";
 import React from "react";
 import {useSelector} from "react-redux";
 import {useSettings} from "../hooks/settings";
@@ -19,14 +19,14 @@ export const LoadAllResultsMessage = () => {
   if (isFullResults) return <></>;
 
   return (
-    <Callout className="load-all-results-msg-callout">
-      <p>
-        <strong>{t("previewMode.title_preview")}:</strong>
-        {" "}
-        {t("previewMode.description_preview", {limit: previewLimit})}
-        {" "}
-      </p>
-      <LoadAllResultsSwitch noPopover={true} />
-    </Callout>
+    <Alert color="yellow" radius={0}>
+      <Group position="apart">
+        <Text>
+          <Text fw={700} span>{t("previewMode.title_preview")}: </Text>
+          <Text span>{t("previewMode.description_preview", {limit: previewLimit})}</Text>
+        </Text>
+        <LoadAllResultsSwitch noPopover={true} />
+      </Group>
+    </Alert>
   );
 };
