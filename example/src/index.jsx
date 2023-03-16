@@ -1,4 +1,3 @@
-import {FocusStyleManager} from "@blueprintjs/core";
 import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from "react-redux";
@@ -34,8 +33,6 @@ const enhancers = composeEnhancers(
 );
 
 const store = createStore(explorerReducer, undefined, enhancers);
-
-FocusStyleManager.onlyShowFocusOnTabs();
 
 const PANELS = {
   "Data Table": TableView,
