@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 
 /**
  * @typedef OwnProps
@@ -9,7 +8,7 @@ import classNames from "classnames";
 /** @type {React.FC<OwnProps>} */
 export const AnimatedCube = props =>
   <svg
-    className={classNames("animated-cube", props.className)}
+    className={`animated-cube ${props.className}`}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 256 256"
   >

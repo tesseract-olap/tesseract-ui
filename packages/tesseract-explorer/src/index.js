@@ -1,4 +1,3 @@
-import "./style.css";
 export {default as DebugView} from "./components/ResultRaw";
 export {TableView} from "./components/TableView";
 export {PivotView} from "./components/PivotView";

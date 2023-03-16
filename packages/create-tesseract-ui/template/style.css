@@ -1,6 +1,0 @@
-@import "normalize.css/normalize.css";
-@import "@datawheel/tesseract-explorer/style.css";
-
-#app {
-  height: 100vh;
-}

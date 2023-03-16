@@ -11,6 +11,7 @@ import {
   PivotView,
   TableView
 } from "@datawheel/tesseract-explorer";
+import "normalize.css";
 
 import Vizbuilder from "@datawheel/tesseract-vizbuilder";
 

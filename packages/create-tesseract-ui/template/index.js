@@ -8,6 +8,7 @@ import {createElement} from "react";
 import ReactDOM from "react-dom";
 import {Provider} from "react-redux";
 import {applyMiddleware, compose, createStore} from "redux";
+import "normalize.css";
 
 const composeEnhancers =
   typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
