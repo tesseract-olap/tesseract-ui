@@ -14,7 +14,7 @@ This project has some peer dependencies, which must be installed by the user man
 
 ```bash
 npm install react@17 react-dom@17 react-redux@7 redux@4
-npm install @emotion/react@11 @@mantine/core@5 @mantine/hooks@5 @mantine/prism@5 @mantine/dates@5 @tabler/icons-react@2 @dayjs
+npm install @emotion/react@11 @mantine/core@5 @mantine/hooks@5 @mantine/prism@5 @mantine/dates@5 @tabler/icons-react@2 @dayjs
 ```
 
 ## Usage
