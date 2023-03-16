@@ -7,10 +7,6 @@
   },
   "author": "Datawheel, LLC.",
   "dependencies": {
-    "@blueprintjs/core": "^3.54.0",
-    "@blueprintjs/icons": "^3.33.0",
-    "@blueprintjs/select": "^3.19.0",
-    "@blueprintjs/table": "^3.10.0",
     "@datawheel/tesseract-explorer": "^1.0.0-alpha.1",
     "@datawheel/tesseract-vizbuilder": "^0.1.10",
     "@emotion/react": "^11.10.6",
@@ -20,8 +16,8 @@
     "@tabler/icons-react": "^2.7.0",
     "normalize.css": "^8.0.0",
     "prop-types": "^15.8.0",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
+    "react": "^16.14.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.14.0 || ^17.0.0 || ^18.0.0",
     "react-redux": "^7.2.0",
     "redux": "^4.2.0"
   },

@@ -7,15 +7,18 @@
     "update": "npm update && npm run build"
   },
   "dependencies": {
-    "@blueprintjs/core": "~3.54.0",
-    "@blueprintjs/icons": "~3.33.0",
-    "@blueprintjs/select": "~3.19.0",
-    "@blueprintjs/table": "~3.10.0",
     "@datawheel/tesseract-explorer": "next",
+    "@emotion/react": "^11.10.6",
+    "@mantine/core": "^5.10.5",
+    "@mantine/dates": "^5.10.5",
+    "@mantine/hooks": "^5.10.5",
+    "@mantine/prism": "^5.10.5",
+    "@tabler/icons-react": "^2.7.0",
+    "dayjs": "^1.11.7",
     "normalize.css": "^8.0.1",
+    "react": "^17 || ^18",
     "react-dom": "^17",
     "react-redux": "~7.2.0",
-    "react": "^17",
     "redux": "~4.1.0"
   },
   "devDependencies": {
@@ -23,4 +26,3 @@
     "vite": "^2.9.0"
   }
 }
-
