@@ -10,12 +10,7 @@ const config = {
     minify: "terser",
     rollupOptions: {
       output: {
-        manualChunks: {
-          blueprintjs: [
-            "@blueprintjs/icons", "@blueprintjs/core",
-            "@blueprintjs/select", "@blueprintjs/table",
-          ],
-        }
+        manualChunks: {}
       }
     }
   },

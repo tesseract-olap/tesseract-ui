@@ -1,4 +1,5 @@
-import {AnchorButton, ButtonGroup, InputGroup, Intent} from "@blueprintjs/core";
+import {Button, Input} from "@mantine/core";
+import {IconClipboard, IconExternalLink, IconWorld} from "@tabler/icons-react";
 import React from "react";
 import {useTranslation} from "../hooks/translation";
 import {ButtonCopy} from "./ButtonCopy";
@@ -9,12 +10,22 @@ export const DebugURL = props => {
   const {translate: t} = useTranslation();
 
   const toolbar =
-    <ButtonGroup>
-      <AnchorButton href={url} icon="share" target="_blank" text={t("action_open")} />
-      <ButtonCopy copyText={url} icon="link" intent={Intent.PRIMARY} text={t("action_copy")} />
-    </ButtonGroup>;
+    <Button.Group>
+      <Button component="a" href={url} leftIcon={<IconExternalLink />} target="_blank" variant="default">
+        {t("action_open")}  
+      </Button>
+      <ButtonCopy copyText={url} leftIcon={<IconClipboard />}>
+        {t("action_copy")}
+      </ButtonCopy>
+    </Button.Group>;
 
   return (
-    <InputGroup leftIcon="globe" readOnly={true} rightElement={toolbar} value={url} />
+    <Input 
+      icon={<IconWorld />} 
+      readOnly 
+      rightSection={toolbar}
+      rightSectionWidth="auto"
+      value={url} 
+    />
   );
 };

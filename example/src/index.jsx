@@ -1,4 +1,3 @@
-import {FocusStyleManager} from "@blueprintjs/core";
 import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from "react-redux";
@@ -12,6 +11,7 @@ import {
   PivotView,
   TableView
 } from "@datawheel/tesseract-explorer";
+import "normalize.css";
 
 import Vizbuilder from "@datawheel/tesseract-vizbuilder";
 
@@ -34,8 +34,6 @@ const enhancers = composeEnhancers(
 );
 
 const store = createStore(explorerReducer, undefined, enhancers);
-
-FocusStyleManager.onlyShowFocusOnTabs();
 
 const PANELS = {
   "Data Table": TableView,

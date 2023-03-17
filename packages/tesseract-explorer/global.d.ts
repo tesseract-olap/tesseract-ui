@@ -1,5 +1,4 @@
-import * as BpjsCore from "@blueprintjs/core";
-import * as BpjsSelect from "@blueprintjs/select";
+import * as MantineCore from "@mantine/core";
 import * as OlapClnt from "@datawheel/olap-client";
 import * as TesseractExplorer from "./index";
 
@@ -10,11 +9,8 @@ declare global {
   namespace OlapClient {
     export = OlapClnt;
   }
-  namespace BlueprintCore {
-    export = BpjsCore;
-  }
-  namespace BlueprintSelect {
-    export = BpjsSelect;
+  namespace MantineCore {
+    export = MtCore;
   }
 
   interface JSONArrays {

@@ -1,13 +1,10 @@
-import path from "path";
-import reactRefresh from "@vitejs/plugin-react-refresh";
+import pluginReact from "@vitejs/plugin-react";
 
 const {
   OLAPPROXY_BASICAUTH,
   OLAPPROXY_JWTAUTH,
   OLAPPROXY_TARGET = "http://localhost:7777"
 } = process.env;
-
-const basePath = path.resolve(__dirname, "..");
 
 const target = new URL(OLAPPROXY_TARGET);
 target.pathname = `${target.pathname}/`.replace(/\/{2,}/g, "/");
@@ -24,17 +21,8 @@ const config = {
     '__buildVersion': '"x.y.z"',
     'process.env': {}
   },
-  resolve: {
-    alias: [{
-      find: "@datawheel/tesseract-explorer",
-      replacement: path.resolve(basePath, "./packages/tesseract-explorer/src/index.js")
-    }, {
-      find: "@datawheel/tesseract-vizbuilder",
-      replacement: path.resolve(basePath, "./packages/vizbuilder/src/index.js")
-    }]
-  },
   plugins: [
-    reactRefresh()
+    pluginReact()
   ],
   server: {
     proxy: {

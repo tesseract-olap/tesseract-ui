@@ -10,14 +10,12 @@ A friendly interface to explore the contents of a tesseract-olap server.
 npm install @datawheel/tesseract-explorer
 ```
 
-This project has some peer dependencies, which must be installed by the used manually:
+This project has some peer dependencies, which must be installed by the user manually:
 
 ```bash
-npm install react@16 react-dom@16 react-redux@7 redux@4
-npm install @blueprintjs/core@3 @blueprintjs/select@3 @blueprintjs/table@3
+npm install react@17 react-dom@17 react-redux@7 redux@4
+npm install @emotion/react@11 @mantine/core@5 @mantine/hooks@5 @mantine/prism@5 @mantine/dates@5 @tabler/icons-react@2 @dayjs
 ```
-
-This is to prevent conflicts with hooks implemented in React 16.7, and to allow compatibility with the minor version of blueprintjs the user chooses.
 
 ## Usage
 
@@ -54,12 +52,7 @@ Then you can setup the `Explorer` component like this:
 ```jsx
 import {Explorer as TesseractExplorer} from "@datawheel/tesseract-explorer";
 
-// You must import blueprint's stylesheets too
 import "normalize.css/normalize.css";
-import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-import "@blueprintjs/core/lib/css/blueprint.css";
-import "@blueprintjs/select/lib/css/blueprint-select.css";
-import "@blueprintjs/table/lib/css/table.css";
 
 // Tesseract Explorer's stylesheets must come after
 import "@datawheel/tesseract-explorer/dist/explorer.css";

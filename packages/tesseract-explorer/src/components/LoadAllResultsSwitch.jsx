@@ -1,4 +1,5 @@
-import {Icon, Popover, PopoverInteractionKind, Switch} from "@blueprintjs/core";
+import {Group, Switch, ThemeIcon, Tooltip} from "@mantine/core";
+import {IconInfoCircleFilled} from "@tabler/icons-react";
 import React, {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useSettings} from "../hooks/settings";
@@ -29,26 +30,28 @@ export const LoadAllResultsSwitch = props => {
   }, [previewLimit, isFullResults]);
 
   return (
-    <Popover
-      boundary="viewport"
-      content={
-        <div className="p-3">
-          {isFullResults ? t("previewMode.description_full") : t("previewMode.description_preview", {limit: previewLimit})}
-        </div>
-      }
-      fill={false}
-      interactionKind={PopoverInteractionKind.HOVER_TARGET_ONLY}
-      popoverClassName="show-full-results-popover"
+    <Tooltip
+      color="blue"
       disabled={noPopover}
+      label={isFullResults ? t("previewMode.description_full") : t("previewMode.description_preview", {limit: previewLimit})}
+      position="right"
+      withArrow
+      withinPortal
     >
-      <Switch inline={true}
-        checked={isFullResults}
-        labelElement={
-          <>
-            {t("params.label_boolean_full_results")}
-            {!noPopover && <Icon className="ml-1" icon="info-sign" />}
-          </>}
-        onChange={onClickLoadAllResults} />
-    </Popover>
+      <Group noWrap spacing="xs" w="max-content">
+        <Switch
+          checked={isFullResults}
+          label={t("params.label_boolean_full_results")}
+          onChange={onClickLoadAllResults} 
+        />
+        {!noPopover && <ThemeIcon 
+          color="blue"
+          // @ts-ignore
+          variant="subtle"
+        >
+          <IconInfoCircleFilled />
+        </ThemeIcon>}
+      </Group>
+    </Tooltip>
   );
 };

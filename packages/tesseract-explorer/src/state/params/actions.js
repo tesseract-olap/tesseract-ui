@@ -68,8 +68,8 @@ export const doMeasureClear = () => ({type: QUERY_MEASURES_CLEAR});
 export const doMeasureToggle = payload => ({type: QUERY_MEASURES_UPDATE, payload});
 
 /**
- * @param {number} pagiLimit
- * @param {number} pagiOffset
+ * @param {number | undefined} pagiLimit
+ * @param {number | undefined} pagiOffset
  */
 export const doPaginationUpdate = (pagiLimit, pagiOffset) => ({
   type: QUERY_PAGINATION_UPDATE,

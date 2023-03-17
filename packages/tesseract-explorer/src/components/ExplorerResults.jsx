@@ -1,5 +1,5 @@
-import {Icon, NonIdealState, Tab, Tabs} from "@blueprintjs/core";
-import classNames from "classnames";
+import {Anchor, Avatar, Box, Flex, Stack, Tabs, Text, Title} from "@mantine/core";
+import {IconAlertTriangle, IconBox, IconWorld} from "@tabler/icons-react";
 import React, {Suspense, useState} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -7,12 +7,12 @@ import {selectCurrentQueryItem} from "../state/queries/selectors";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server/selectors";
 import {LoadAllResultsMessage} from "./LoadAllResultsMessage";
+import {NonIdealState} from "./NonIdealState";
 
 /**
  * @typedef OwnProps
- * @property {string} [className]
  * @property {any} [DefaultSplash]
- * @property {BlueprintCore.IconName | React.ReactElement | React.ReactFragment | false} transientIcon
+ * @property {React.ReactElement | React.ReactFragment | false} transientIcon
  * @property {Record<string, React.FunctionComponent | React.ComponentClass>} panels
  */
 
@@ -34,14 +34,13 @@ export const ExplorerResults = props => {
   if (error) {
     return (
       <NonIdealState
-        className={classNames("initial-view error", props.className)}
         description={
-          <div className="error-description">
-            <p>{t("results.error_execquery_detail")}</p>
-            <p className="error-detail">{error}</p>
-          </div>
+          <Stack align="center" spacing="xs">
+            <Text>{t("results.error_execquery_detail")}</Text>
+            <Text>{error}</Text>
+          </Stack>
         }
-        icon="error"
+        icon={<IconAlertTriangle color="orange" size="5rem" />}
       />
     );
   }
@@ -49,21 +48,19 @@ export const ExplorerResults = props => {
   if (isServerOnline === false) {
     if (typeof window === "object" && window.navigator.onLine === false) {
       return <NonIdealState
-        className="explorer-error"
-        icon="globe-network"
+        icon={<IconWorld color="orange" size="5rem" />}
         title={t("results.error_disconnected_title")}
       />;
     }
 
     return <NonIdealState
-      className="explorer-error"
-      icon="error"
+      icon={<IconAlertTriangle color="orange" size="5rem" />}
       title={t("results.error_serveroffline_title")}
       description={
-        <span>
+        <Text span>
           {t("results.error_serveroffline_detail")}
-          <a href={serverUrl} target="_blank" rel="noopener noreferrer">{serverUrl}</a>.
-        </span>
+          <Anchor href={serverUrl} target="_blank" rel="noopener noreferrer">{serverUrl}</Anchor>.
+        </Text>
       }
     />;
   }
@@ -72,7 +69,6 @@ export const ExplorerResults = props => {
     return (
       DefaultSplash && <DefaultSplash/> ||
       <NonIdealState
-        className={classNames("initial-view dirty", props.className)}
         icon={transientIcon}
       />
     );
@@ -81,8 +77,7 @@ export const ExplorerResults = props => {
   if (data.length === 0) {
     return (
       <NonIdealState
-        className={classNames("initial-view empty", props.className)}
-        icon="square"
+        icon={<IconBox color="orange" size="5rem" />}
         title={t("results.error_emptyresult_title")}
         description={t("results.error_emptyresult_detail")}
       />
@@ -92,22 +87,31 @@ export const ExplorerResults = props => {
   const CurrentComponent = panels[currentTab];
 
   return (
-    <div className={classNames("explorer-column flex flex-col", props.className)}>
+    <Flex
+      direction="column"
+      h="100%"
+      w="100%"
+      sx={{
+        overflow: "hidden"
+      }}
+    >
       <Tabs
-        className="titlebar"
-        onChange={newTab => setCurrentTab(`${newTab}`)}
-        selectedTabId={currentTab}
+        onTabChange={newTab => setCurrentTab(`${newTab}`)}
+        value={currentTab}
       >
-        {Object.keys(panels).map(key => <Tab id={key} key={key} title={t(key)} />)}
-        <Tabs.Expander />
-        <h2 className="token">{t("results.count_rows", {n: data.length})}</h2>
+        <Tabs.List>
+          {Object.keys(panels).map(key => <Tabs.Tab id={key} key={key} value={key}>{t(key)}</Tabs.Tab>)}
+          <Tabs.Tab disabled ml="auto" value="results">
+            <Title order={5}>{t("results.count_rows", {n: data.length})}</Title>
+          </Tabs.Tab>
+        </Tabs.List>
       </Tabs>
-      <div className={`wrapper ${props.className}-content`}>
-        <Suspense fallback={typeof transientIcon === "string" ? <Icon name={transientIcon} /> : transientIcon}>
+      <Box h="100%">
+        <Suspense fallback={typeof transientIcon === "string" ? <Avatar>{transientIcon}</Avatar> : transientIcon}>
           <LoadAllResultsMessage />
-          <CurrentComponent className="result-panel" cube={cube} params={params} result={result} />
+          <CurrentComponent cube={cube} params={params} result={result} />
         </Suspense>
-      </div>
-    </div>
+      </Box>
+    </Flex>
   );
 };

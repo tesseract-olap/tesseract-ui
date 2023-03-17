@@ -1,6 +1,6 @@
-import {Classes, FormGroup} from "@blueprintjs/core";
-import classNames from "classnames";
-import React, {Fragment, useMemo} from "react";
+import {Box, Input, Stack, Text} from "@mantine/core";
+import {Prism} from "@mantine/prism";
+import React, {useMemo} from "react";
 import {useTranslation} from "../hooks/translation";
 import {DebugURL} from "./DebugURL";
 
@@ -11,37 +11,49 @@ const ResultRaw = props => {
   const {translate: t} = useTranslation();
 
   const jssourceLabel =
-    <Fragment>
+    <Box>
       {t("debug_view.jssource_prefix")}
       <a href="https://www.npmjs.com/package/@datawheel/olap-client">olap-client</a>
       {t("debug_view.jssource_suffix")}
-    </Fragment>;
+    </Box>;
 
   const dlHeaders = useMemo(() => Object.entries(headers).map(entry =>
-    <Fragment key={entry[0]}>
-      <dt style={{fontWeight: "bold"}}>{entry[0]}</dt>
-      <dd style={{color: "#090"}}>{entry[1]}</dd>
-    </Fragment>
+    <Box key={entry[0]}>
+      <dt>
+        <Text fw="bold" fz="sm">
+          {entry[0]}
+        </Text>
+      </dt>
+      <dd>
+        <Text c="#5c940d" fz="sm">
+          {entry[1]}  
+        </Text>
+      </dd>
+    </Box>
   ), [headers]);
 
   return (
-    <div className={classNames("data-raw", props.className)}>
-      {urlLogicLayer && <FormGroup className="sourceurl" label={t("debug_view.url_logiclayer")}>
-        <DebugURL url={urlLogicLayer} />
-      </FormGroup>}
+    <Box p="md">
+      <Stack spacing="md">
+        {urlLogicLayer && <Input.Wrapper label={t("debug_view.url_logiclayer")}>
+          <DebugURL url={urlLogicLayer} />
+        </Input.Wrapper>}
 
-      {urlAggregate && <FormGroup className="sourceurl" label={t("debug_view.url_aggregate")}>
-        <DebugURL url={urlAggregate} />
-      </FormGroup>}
+        {urlAggregate && <Input.Wrapper label={t("debug_view.url_aggregate")}>
+          <DebugURL url={urlAggregate} />
+        </Input.Wrapper>}
 
-      <FormGroup className="headers" label={t("debug_view.httpheaders")}>
-        <dl>{dlHeaders}</dl>
-      </FormGroup>
+        {sourceCall && <Input.Wrapper label={jssourceLabel}>
+          <Prism language="javascript">
+            {sourceCall}
+          </Prism>
+        </Input.Wrapper>}
 
-      {sourceCall && <FormGroup className="sourcecall" label={jssourceLabel}>
-        <pre className={classNames(Classes.CODE_BLOCK, "jscall")}>{sourceCall}</pre>
-      </FormGroup>}
-    </div>
+        <Input.Wrapper label={t("debug_view.httpheaders")}>
+          <dl>{dlHeaders}</dl>
+        </Input.Wrapper>
+      </Stack>
+    </Box>
   );
 };
 

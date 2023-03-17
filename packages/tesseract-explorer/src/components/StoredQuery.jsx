@@ -1,13 +1,12 @@
-import {Alignment, Button, ButtonGroup, Icon, Intent} from "@blueprintjs/core";
-import classNames from "classnames";
-import React, {memo} from "react";
+import {Button, Flex, Group, Text} from "@mantine/core";
+import {IconBox, IconList, IconStack, IconTrash} from "@tabler/icons-react";
+import React, {memo, useMemo} from "react";
 import {useTranslation} from "../hooks/translation";
 import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
 
 /**
  * @typedef OwnProps
  * @property {boolean} active
- * @property {string} [className]
  * @property {boolean} [hideDelete]
  * @property {TessExpl.Struct.QueryItem} item
  * @property {(key: string) => void} [onSelect]
@@ -27,36 +26,56 @@ export const StoredQuery = props => {
     .filter(isActiveItem)
     .map(item => item.measure);
 
+  const iconProps = useMemo(() => ({
+    size: 15
+  }), []);
+
   return (
-    <ButtonGroup className={classNames("my-2", props.className)} fill>
+    <Button.Group>
       <Button
-        alignText={params.cube ? Alignment.LEFT : undefined}
-        className="px-2"
-        fill
-        intent={props.active ? Intent.PRIMARY : Intent.NONE}
+        fullWidth
+        h="auto"
+        mih={35}
+        styles={{
+          inner: {
+            justifyContent: "flex-start"
+          }
+        }}
         onClick={() => onSelect && onSelect(props.item.key)}
         tabIndex={0}
+        variant={props.active ? "filled" : "default"}
       >
-        <div className="flex flex-col text-xs">
-          {params.cube && <IconSpan icon="cube" text={params.cube} />}
-          {measureList.length > 0 && <IconSpan icon="th-list" text={measureList.join(", ")} />}
-          {levelList.length > 0 && <IconSpan icon="layers" text={levelList.join(", ")} />}
+        <Flex direction="column">
+          {params.cube && <IconSpan icon={<IconBox {...iconProps} />} text={params.cube} />}
+          {measureList.length > 0 && <IconSpan icon={<IconList {...iconProps} />} text={measureList.join(", ")} />}
+          {levelList.length > 0 && <IconSpan icon={<IconStack {...iconProps} />} text={levelList.join(", ")} />}
           {!params.cube && <span>{t("queries.unset_parameters")}</span>}
-        </div>
+        </Flex>
       </Button>
-
-      {!props.hideDelete && <Button
-        icon="trash"
+      <Button
+        color="red"
+        disabled={props.hideDelete}
+        h="auto"
         onClick={() => onDelete && onDelete(props.item.key)}
-      />}
-    </ButtonGroup>
+        variant="filled"
+      >
+        <IconTrash />
+      </Button>
+    </Button.Group>
   );
 };
 
 const IconSpan = props =>
-  <span className="flex flex-row items-center">
-    {props.icon && <Icon iconSize={12} icon={props.icon} />}
-    <span className="ml-1 flex-grow">{props.text}</span>
-  </span>;
+  <Group noWrap spacing="xs">
+    {props.icon && props.icon}
+    <Text 
+      lineClamp={1}
+      sx={{
+        wordBreak: "break-all"
+      }}
+    >
+      {props.text}
+    </Text>
+  </Group>;
 
 export const MemoStoredQuery = memo(StoredQuery, shallowEqualExceptFns);

@@ -1,31 +1,36 @@
-import {Button, Popover} from "@blueprintjs/core";
+import {Menu, ThemeIcon} from "@mantine/core";
 import React from "react";
 import {stringifyName} from "../utils/transform";
 import {DimensionMenu} from "./MenuDimension";
 
 /**
  * @typedef OwnProps
+ * @property {React.ReactNode} children
  * @property {TessExpl.Struct.LevelDescriptor[]} selectedItems
  * @property {React.ComponentProps<DimensionMenu>["onItemSelect"]} onItemSelect
- * @property {boolean} [usePortal]
  */
 
-/** @type {React.FC<BlueprintCore.ButtonProps & OwnProps>} */
+/** @type {React.FC<OwnProps>} */
 export const ButtonSelectLevel = props => {
-  const {selectedItems, onItemSelect, usePortal, ...buttonProps} = props;
+  const {selectedItems, onItemSelect, ...buttonProps} = props;
   return (
-    <Popover
-      autoFocus={false}
-      boundary="viewport"
-      content={
+    <Menu
+      closeOnClickOutside
+      closeOnEscape
+      position="right" 
+      shadow="md"
+      withArrow
+      withinPortal
+    >
+      <Menu.Target>
+        <ThemeIcon {...buttonProps}>{props.children}</ThemeIcon>
+      </Menu.Target>
+      <Menu.Dropdown>
         <DimensionMenu
           selectedItems={selectedItems.map(stringifyName)}
           onItemSelect={onItemSelect}
         />
-      }
-      fill={props.fill}
-      target={<Button {...buttonProps} />}
-      usePortal={usePortal}
-    />
+      </Menu.Dropdown>
+    </Menu>
   );
 };

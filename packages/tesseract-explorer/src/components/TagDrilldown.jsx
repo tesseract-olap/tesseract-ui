@@ -1,5 +1,4 @@
-import {FormGroup, Popover, PopoverInteractionKind, Switch, Tag} from "@blueprintjs/core";
-import classNames from "classnames";
+import {Box, Card, CloseButton, Group, Input, Popover, Switch, Text} from "@mantine/core";
 import React, {memo, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -54,23 +53,23 @@ const TagDrilldown = props => {
   }, [activeProperties.join("-"), item, locale.code]);
 
   const target =
-    <Tag
-      className={classNames("tag-item tag-drilldown", {hidden: !item.active})}
-      fill={true}
-      icon={
-        <span onClickCapture={evt => evt.stopPropagation()}>
-          <Switch checked={item.active} onChange={() => onToggle(item)} />
-        </span>
-      }
-      interactive={true}
-      large={true}
-      onRemove={evt => {
-        evt.stopPropagation();
-        onRemove(item);
-      }}
+    <Card
+      p="xs"
+      withBorder
     >
-      {label}
-    </Tag>;
+      <Group noWrap position="apart">
+        <Group noWrap spacing="xs">
+          <Switch checked={item.active} onChange={() => onToggle(item)} size="xs" />
+          <Text fz="sm" lineClamp={1}>
+            {label}
+          </Text>
+        </Group>
+        <CloseButton onClick={evt => {
+          evt.stopPropagation();
+          onRemove(item);
+        }} />
+      </Group>
+    </Card>;
 
   const propertyRecords = useMemo(
     () => keyBy(item.properties, item => item.key),
@@ -84,17 +83,16 @@ const TagDrilldown = props => {
   const captionItems = [{name: t("placeholders.unselected")}].concat(item.properties);
 
   const content =
-    <div className="drilldown-submenu">
-      <FormGroup className="submenu-form-group" label={t("params.title_caption")}>
+    <Box miw={400}>
+      <Input.Wrapper label={t("params.title_caption")}>
         <SelectCaption
-          fill={true}
           items={captionItems}
           onItemSelect={caption => onCaptionUpdate(item, caption.level ? caption.name : "")}
           getLabel={item => item.name}
-          selectedItem={item.captionProperty || undefined}
+          selectedItem={item.captionProperty || t("placeholders.unselected")}
         />
-      </FormGroup>
-      <FormGroup className="submenu-form-group" label={t("params.title_properties")}>
+      </Input.Wrapper>
+      <Input.Wrapper label={t("params.title_properties")}>
         <PropertiesTransferInput
           activeItems={activeProperties}
           getLabel={item => item.name}
@@ -107,18 +105,17 @@ const TagDrilldown = props => {
             onPropertiesUpdate(item, properties);
           }}
         />
-      </FormGroup>
-    </div>;
+      </Input.Wrapper>
+    </Box>;
 
   return (
-    <Popover
-      boundary="viewport"
-      content={content}
-      fill={true}
-      interactionKind={PopoverInteractionKind.CLICK}
-      popoverClassName="param-popover"
-    >
-      {target}
+    <Popover position="right" shadow="md" withArrow withinPortal>
+      <Popover.Target>
+        {target}
+      </Popover.Target>
+      <Popover.Dropdown>
+        {content}
+      </Popover.Dropdown>
     </Popover>
   );
 };

@@ -1,4 +1,3 @@
-import { IconName } from "@blueprintjs/core";
 import * as OlapClnt from "@datawheel/olap-client";
 import { TranslationProviderProps } from "@datawheel/use-translation";
 import * as React from "react";
@@ -17,6 +16,8 @@ declare namespace TessExpl {
 
   const olapMiddleware: Redux.Middleware<{}, State.ExplorerState>;
   const permalinkMiddleware: Redux.Middleware<{}, State.ExplorerState>;
+
+  type TranslationDict = typeof import("./dist/index.esm.js").defaultTranslation;
 
   interface ExplorerProps {
     /**
@@ -73,7 +74,7 @@ declare namespace TessExpl {
     /**
      * Defines an element to show when the app is in an indeterminate state.
      */
-    transientIcon?: IconName | React.ReactElement | React.ReactFragment | false;
+    transientIcon?: React.ReactElement | React.ReactFragment | false;
 
     /**
      * The default locale to use in the Explorer component UI.
@@ -84,7 +85,7 @@ declare namespace TessExpl {
      * The default limit for preview queries.
      * Default 100
      */
-    previewLimit?: Number | 50;
+    previewLimit?: number | 50;
   }
 
   interface ViewProps {

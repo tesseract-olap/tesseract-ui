@@ -1,6 +1,6 @@
-import {Button, Classes, InputGroup, Menu, MenuDivider, MenuItem, Tag} from "@blueprintjs/core";
-import classNames from "classnames";
-import React, {useCallback, useMemo, useState} from "react";
+import {Avatar, Badge, Box, Button, Card, Checkbox, CloseButton, Group, Input, ScrollArea, Stack, Text, UnstyledButton} from "@mantine/core";
+import {IconChevronsLeft, IconChevronsRight, IconSearch} from "@tabler/icons-react";
+import React, {useCallback, useMemo, useRef, useState} from "react";
 import ViewPortList from "react-viewport-list";
 import {useTranslation} from "../hooks/translation";
 import {keyBy, safeRegExp} from "../utils/transform";
@@ -23,6 +23,9 @@ import {keyBy, safeRegExp} from "../utils/transform";
 export const TransferInput = props => {
   const {activeItems, getLabel, items, itemPredicate, onChange} = props;
   const sideLabelRenderer = props.getSecondLabel || (() => undefined);
+
+  const unselectedRef = useRef(null);
+  const selectedRef = useRef(null);
 
   const {translate: t} = useTranslation();
 
@@ -109,9 +112,9 @@ export const TransferInput = props => {
   const unselectedHidden = results.totalCount - activeItems.length - results.unselectedCount;
 
   const rightElement = useMemo(() => {
-    const resetButton = filter.length > 0 ? (
-      <Button minimal icon="cross" onClick={() => setFilter("")} />
-    ) : undefined;
+    const resetButton = filter.length > 0 
+      ? <CloseButton mr="xs" onClick={() => setFilter("")} />
+      : undefined;
 
     if (Array.isArray(itemPredicate)) {
       const currentPredicate = itemPredicate[itemPredicateIndex];
@@ -120,66 +123,114 @@ export const TransferInput = props => {
         setItemPredicateIndex(nextIndex >= itemPredicate.length ? 0 : nextIndex);
       };
       return (
-        <div style={{display: "flex"}}>
-          <Tag minimal interactive round icon="search-template" onClick={pickNextPredicate}>
+        <Group mr="xs" noWrap spacing="xs">
+          <Badge
+            leftSection={<Avatar 
+              color="blue" 
+              radius="xl"
+              size="xs"
+            >
+              <IconSearch size={15} />
+            </Avatar>}
+            onClick={pickNextPredicate}
+          >
             {currentPredicate.label}
-          </Tag>
+          </Badge>
           {resetButton}
-        </div>
+        </Group>
       );
-    };
+    }
 
     return resetButton;
   }, [filter.length > 0, itemPredicateIndex]);
 
   /** @type {(item: T, index: number) => JSX.Element} */
-  const renderItem = item => <MenuItem
-    icon={activeKeys.hasOwnProperty(item.key) ? "tick-circle" : undefined}
+  const renderItem = item => <UnstyledButton
     key={item.key}
-    labelElement={sideLabelRenderer(item)}
     onClick={toggleHandler.bind(null, item)}
-    shouldDismissPopover={false}
-    text={getLabel(item)}
-  />;
+    w="100%"
+  >
+    <Group 
+      noWrap
+      position="apart" 
+      spacing="xs"
+    >
+      <Group noWrap spacing="xs">
+        <Checkbox 
+          defaultChecked={activeKeys.hasOwnProperty(item.key)} 
+        />
+        <Text 
+          fz="sm" 
+          lineClamp={1}
+          sx={{
+            wordBreak: "break-all"
+          }}
+        >{getLabel(item)}</Text>
+      </Group>
+      <Text c="gray" fz="xs">{sideLabelRenderer(item)}</Text>
+    </Group>
+  </UnstyledButton>;
 
   return (
-    <div className="input-transfer">
-      <InputGroup
-        className="item-filter"
-        leftIcon="search"
-        onChange={evt => setFilter(evt.target.value)}
-        placeholder={t("transfer_input.search_placeholder")}
-        rightElement={rightElement}
-        type="search"
-        value={filter}
-      />
-      <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-        {unselectedHidden > 0 &&
-          <MenuDivider title={t("transfer_input.count_hidden", {n: unselectedHidden})} />
-        }
-        <ViewPortList items={results.unselected} itemMinSize={30}>
-          {renderItem}
-        </ViewPortList>
-      </Menu>
-      <Menu className={classNames("item-list", Classes.ELEVATION_0)}>
-        {selectedHidden > 0 &&
-          <MenuDivider title={t("transfer_input.count_hidden", {n: selectedHidden})} />
-        }
-        <ViewPortList items={results.selected} itemMinSize={30}>
-          {renderItem}
-        </ViewPortList>
-      </Menu>
-      <Button
-        rightIcon="double-chevron-right"
-        text={filter ? t("transfer_input.select_filtered") : t("transfer_input.select_all")}
-        onClick={selectAllHandler}
-      />
-      <Button
-        icon="double-chevron-left"
-        text={filter ? t("transfer_input.unselect_filtered") : t("transfer_input.unselect_all")}
-        onClick={unselectAllHandler}
-      />
-    </div>
+    <Box w={500}>
+      <Stack spacing="xs">
+        <Input
+          icon={<IconSearch />}
+          onChange={evt => setFilter(evt.target.value)}
+          placeholder={t("transfer_input.search_placeholder")}
+          rightSection={rightElement}
+          rightSectionWidth="auto"
+          value={filter}
+        />
+        <Group grow noWrap spacing="xs">
+          <Input.Wrapper label={t("transfer_input.unselected_items")}>
+            <Stack>
+              <Card p="xs" ref={unselectedRef} withBorder>
+                <ScrollArea h={150} offsetScrollbars type="auto" viewportRef={unselectedRef}>
+                  {unselectedHidden > 0 &&
+                <Text c="gray" fz="sm" pb="sm">{t("transfer_input.count_hidden", {n: unselectedHidden})}</Text>
+                  }
+                  <ViewPortList items={results.unselected} itemMinSize={20} overscan={100} viewportRef={unselectedRef}>
+                    {renderItem}
+                  </ViewPortList>
+                </ScrollArea>
+              </Card>
+              <Button
+                disabled={results.unselected.length === 0}
+                rightIcon={<IconChevronsRight stroke={1.5} size={16} />}
+                onClick={selectAllHandler}
+                variant="outline"
+              >
+                {filter ? t("transfer_input.select_filtered") : t("transfer_input.select_all")}
+              </Button>
+            </Stack>
+          </Input.Wrapper>
+          <Input.Wrapper label={t("transfer_input.selected_items")}>
+            <Stack>
+              <Card p="xs" ref={selectedRef} withBorder>
+                <ScrollArea h={150} offsetScrollbars type="auto" viewportRef={selectedRef}>
+                  {selectedHidden > 0 &&
+                  <Text c="gray" fz="sm" pb="sm">{t("transfer_input.count_hidden", {n: selectedHidden})}</Text>
+                  }
+                  <ViewPortList items={results.selected} itemMinSize={20} overscan={100} viewportRef={selectedRef}>
+                    {renderItem}
+                  </ViewPortList>
+                </ScrollArea>
+              </Card>
+              <Button
+                color="red"
+                disabled={results.selected.length === 0}
+                leftIcon={<IconChevronsLeft stroke={1.5} size={16} />}
+                onClick={unselectAllHandler}
+                variant="outline"
+              >
+                {filter ? t("transfer_input.unselect_filtered") : t("transfer_input.unselect_all")}
+              </Button>
+            </Stack>
+          </Input.Wrapper>
+        </Group>
+      </Stack>
+    </Box>
   );
 };
 

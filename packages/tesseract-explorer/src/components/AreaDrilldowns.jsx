@@ -1,5 +1,6 @@
-import {Button, Intent} from "@blueprintjs/core";
-import React, {Fragment, useCallback} from "react";
+import {Alert, Group, Stack, ThemeIcon} from "@mantine/core";
+import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
+import React, {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {willFetchMembers} from "../middleware/olapActions";
@@ -12,13 +13,8 @@ import {ButtonSelectLevel} from "./ButtonSelectLevel";
 import {LayoutParamsArea} from "./LayoutParamsArea";
 import TagDrilldown from "./TagDrilldown";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<OwnProps>} */
-export const AreaDrilldowns = props => {
+/** @type {React.FC} */
+export const AreaDrilldowns = () => {
   const dispatch = useDispatch();
 
   const {translate: t} = useTranslation();
@@ -68,35 +64,50 @@ export const AreaDrilldowns = props => {
   };
 
   const toolbar =
-    <Fragment>
+    <Group noWrap spacing="xs">
       {items.length > 0 &&
-        <Button icon="trash" intent={Intent.DANGER} onClick={clearHandler} />
+        <ThemeIcon
+          color="red"
+          onClick={clearHandler}
+          variant="light"
+        >
+          <IconTrashX />
+        </ThemeIcon>
       }
       <ButtonSelectLevel
-        icon="new-object"
+        color="blue"
         onItemSelect={createHandler}
         selectedItems={items}
-      />
-    </Fragment>;
+        variant="light"
+      >
+        <IconCirclePlus />
+      </ButtonSelectLevel>
+    </Group>;
 
   return (
     <LayoutParamsArea
-      className={props.className}
-      open={true}
       title={t("params.title_area_drilldowns", {n: `${items.reduce(activeItemCounter, 0)}`})}
       toolbar={toolbar}
       tooltip={t("params.tooltip_area_drilldowns")}
+      value="drilldowns"
     >
-      {items.map(item =>
-        <TagDrilldown
-          key={item.key}
-          item={item}
-          onRemove={removeHandler}
-          onToggle={toggleHandler}
-          onCaptionUpdate={updateCaptionHandler}
-          onPropertiesUpdate={updatePropertiesHandler}
-        />
-      )}
+      <Stack spacing="xs">
+        {items.length === 0 && <Alert
+          color="yellow"
+          icon={<IconAlertCircle size="2rem" />}
+          title={t("params.error_no_dimension_selected_title")}
+        >{t("params.error_no_dimension_selected_detail")}</Alert>}
+        {items.length > 0 && items.map(item =>
+          <TagDrilldown
+            key={item.key}
+            item={item}
+            onRemove={removeHandler}
+            onToggle={toggleHandler}
+            onCaptionUpdate={updateCaptionHandler}
+            onPropertiesUpdate={updatePropertiesHandler}
+          />
+        )}
+      </Stack>
     </LayoutParamsArea>
   );
 };

@@ -1,11 +1,11 @@
-import {NonIdealState, Overlay, Spinner, SpinnerSize} from "@blueprintjs/core";
+import {Flex, Loader, LoadingOverlay as MantineLoadingOverlay, Space, Text, Title} from "@mantine/core";
 import React from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {selectLoadingState} from "../state/loading/selectors";
 
-/** @type {React.FC<Omit<import("@blueprintjs/core").IOverlayProps, "isOpen">>} */
-export const LoadingOverlay = props => {
+/** @type {React.FC} */
+export const LoadingOverlay = () => {
   const {translate: t} = useTranslation();
 
   const {loading: isLoading, message} = useSelector(selectLoadingState);
@@ -17,19 +17,23 @@ export const LoadingOverlay = props => {
     /* else */                       t("loading.message_default", message);
   /* eslint-enable indent, operator-linebreak */
 
-  return (
-    <Overlay
-      canEscapeKeyClose={false}
-      canOutsideClickClose={false}
-      {...props}
-      isOpen={isLoading}
+  const customLoader = 
+    <Flex
+      justify="center"
+      align="center"
+      direction="column"
     >
-      <NonIdealState
-        className="loading-screen"
-        icon={<Spinner size={SpinnerSize.LARGE} />}
-        title={t("loading.title")}
-        description={description}
-      />
-    </Overlay>
+      <Loader size="xl" />
+      <Space h="md" />
+      <Title order={4}>{t("loading.title")}</Title>
+      <Text>{description}</Text>
+    </Flex>
+  ;
+
+  return (
+    <MantineLoadingOverlay
+      loader={customLoader}
+      visible={isLoading}
+    />
   );
 };

@@ -1,10 +1,12 @@
-import {Menu, MenuDivider, MenuItem} from "@blueprintjs/core";
-import {Cell, Column, ColumnHeaderCell, Table} from "@blueprintjs/table";
-import clsx from "classnames";
-import React, {useCallback, useMemo, useState} from "react";
+import {Box, Menu} from "@mantine/core";
+import {IconCircle, IconCircleCheck} from "@tabler/icons-react";
+import {MantineReactTable} from "mantine-react-table";
+import React, {useCallback, useMemo} from "react";
+import {useSelector} from "react-redux";
 import {useFormatter} from "../hooks/formatter";
 import {useTranslation} from "../hooks/translation";
-import {filterMap, sortByKey} from "../utils/array";
+import {selectIsFullResults} from "../state/params/selectors";
+import {filterMap} from "../utils/array";
 import {getCaption} from "../utils/string";
 
 /** @type {React.FC<TessExpl.ViewProps>} */
@@ -13,9 +15,11 @@ export const TableView = props => {
   const data = result.data;
   const locale = params.locale;
 
+  const isFullResults = useSelector(selectIsFullResults);
   const {translate: t} = useTranslation();
 
   const {
+    currentFormats,
     getAvailableKeys,
     getFormatter,
     getFormatterKey,
@@ -43,102 +47,77 @@ export const TableView = props => {
         columnKey.endsWith(" ID") && !entity.name.endsWith(" ID") ||
         columnKey.startsWith("ID ") && !entity.name.startsWith("ID ")
       );
-      const caption = entity
+      const header = entity
         ? getCaption(entity, locale) + (isIdColumn ? " ID" : "")
         : columnKey;
       const isNumeric = entity
         ? entity._type === "measure"
         : isIdColumn && dataType === "number";
 
-      return {columnKey, dataType, entity, caption, formatter, formatterKey, isNumeric};
+      const Cell = ({cell, renderedCellValue}) => isNumeric ? formatter(cell.getValue()) : renderedCellValue;
+
+      return {accessorKey: columnKey, Cell, dataType, entity, header, formatter, formatterKey, isNumeric};
     });
-  }, [cube, data, locale, params]);
+  }, [cube, currentFormats, data, locale, params]);
 
-  const [sortKey, setSortKey] = useState("");
-  const [sortDescending, setSortDescending] = useState(true);
-  const sortedData = useMemo(
-    () => sortByKey(data.slice(), sortKey, sortDescending),
-    [data, sortKey, sortDescending]
-  );
-
-  /**
-   * This handler function returns the cell values when the user copies the
-   * values from the table using `Cmd + C`
-   * @type {(row: number, col: number) => string}
-   */
-  const cellClipboardHandler = useCallback((rowIndex, colIndex) => {
-    const column = columns[colIndex];
-    const value = sortedData[rowIndex][column.columnKey];
-    return column.formatter(value);
-  }, [sortedData, columns]);
-
-  /**
-   * This is the JSX for each column to be rendered.
-   * The rules and interfaces are defined by the `@blueprintjs/table` package.
-   */
-  const jsx = useMemo(() => columns.map(column => {
-    const {dataType, caption, formatter, formatterKey, isNumeric, columnKey} = column;
-
-    const cellRenderer = (rowIndex, colIndex) => {
-      const value = sortedData[rowIndex][columnKey];
-      return (
-        <Cell className={`column-${dataType}`} columnIndex={colIndex} rowIndex={rowIndex}>
-          {formatter(value)}
-        </Cell>
-      );
-    };
-
-    const columnHeaderCellRenderer = colIndex =>
-      <ColumnHeaderCell index={colIndex} name={caption} menuRenderer={menuRenderer} />;
-
-    const menuRenderer = () =>
-      <Menu>
-        <MenuItem
-          icon="sort-asc"
-          onClick={() => [setSortKey(columnKey), setSortDescending(false)]}
-          text={t("table_view.sort_asc")}
-        />
-        <MenuItem
-          icon="sort-desc"
-          onClick={() => [setSortKey(columnKey), setSortDescending(true)]}
-          text={t("table_view.sort_desc")}
-        />
-        {isNumeric && <MenuDivider title={t("table_view.numeral_format")} />}
-        {isNumeric && getAvailableKeys(columnKey).map(key =>
-          <MenuItem
-            key={key}
-            icon={formatterKey === key ? "selection" : "circle"}
-            onClick={() => setFormat(columnKey, key)}
-            text={getFormatter(key)(12345.678)}
-          />
-        )}
-      </Menu>;
-
+  const menuRenderer = useCallback(column => {
+    if (!column?.columnDef?.isNumeric) return null;
     return (
-      <Column
-        cellRenderer={cellRenderer}
-        columnHeaderCellRenderer={columnHeaderCellRenderer}
-        key={columnKey}
-        id={columnKey}
-        name={caption}
-      />
-    );
-  }), [sortedData, columns]);
+      <Box>
+        <Menu.Label>{t("table_view.numeral_format")}</Menu.Label>
+        {column?.columnDef?.isNumeric && getAvailableKeys(column?.columnDef?.accessorKey).map(key =>
+          <Menu.Item
+            key={key}
+            icon={column?.columnDef?.formatterKey === key ? <IconCircleCheck /> : <IconCircle />}
+            onClick={() => setFormat(column?.columnDef?.accessorKey, key)}
+          >
+            {getFormatter(key)(12345.678)}
+          </Menu.Item>
+        )}
+        <Menu.Divider />
+      </Box>);
+  }, []);
 
-  return (
-    <Table
-      className={clsx("data-table", props.className)}
-      enableColumnResizing={true}
-      // enableGhostCells={true}
-      // enableMultipleSelection={false}
-      enableRowResizing={false}
-      getCellClipboardData={cellClipboardHandler}
-      numRows={sortedData.length}
-      rowHeights={sortedData.map(() => 22)}
-    >
-      {jsx}
-    </Table>
-  );
+  return <MantineReactTable
+    columns={columns}
+    data={data}
+    enableBottomToolbar={false}
+    enableColumnFilterModes
+    enableColumnResizing
+    enableDensityToggle={false}
+    enableFilterMatchHighlighting
+    enableGlobalFilter
+    enablePagination={false}
+    enableRowNumbers
+    enableRowVirtualization
+    globalFilterFn="contains"
+    initialState={{
+      density: "xs"
+    }}
+    mantineTableProps={{
+      sx: {
+        "& td": {
+          padding: "7px 10px!important"
+        }
+      },
+      withColumnBorders: true
+    }}
+    mantinePaperProps={{
+      withBorder: false,
+    }}
+    mantineTableContainerProps={{
+      sx: {
+        // TODO: Find a better way to calculate the max height of Mantine React Table
+        maxHeight: isFullResults ? "clamp(350px, calc(100vh - 56px - 48px), 9999px)" : "clamp(350px, calc(100vh - 56px - 48px - 48px), 9999px)"
+      }
+    }}
+    renderColumnActionsMenuItems={({column}) => menuRenderer(column)}
+    rowVirtualizerProps={{
+      measureElement() {
+        return 37;
+      }
+    }}
+  />;
 };
 
 TableView.displayName = "TesseractExplorer:TableView";

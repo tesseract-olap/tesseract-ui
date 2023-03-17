@@ -14,7 +14,7 @@ export function buildQuery(props) {
     label: props.label || "",
     isDirty: true,
     params: {
-      booleans: params.booleans || {},
+      booleans: params.booleans || {full_results: false},
       cube: params.cube || "",
       cuts: params.cuts || {},
       drilldowns: params.drilldowns || {},

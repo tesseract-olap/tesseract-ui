@@ -47,6 +47,10 @@ export const defaultTranslation = {
     dimmenu_dimension: "{{dimension}}",
     dimmenu_hierarchy: "{{abbr}}",
     dimmenu_level: "{{abbr}}",
+    error_no_cut_selected_detail: "You can add data filters based on selected drilldowns.",
+    error_no_cut_selected_title: "No cuts added",
+    error_no_dimension_selected_detail: "You must add at least one drilldown.",
+    error_no_dimension_selected_title: "No drilldowns selected",
     error_fetchmembers_detail: "An error ocurred while loading the member list.",
     error_fetchmembers_title: "Error loading member list",
     label_amount: "Amount",
@@ -57,21 +61,21 @@ export const defaultTranslation = {
     label_boolean_nonempty: "Only return non-empty data",
     label_boolean_parents: "Include parent levels",
     label_boolean_sparse: "Optimize sparse results",
-    label_cube: "Cube:\n{{name}}\n{{caption}}",
+    label_cube: "Cube",
     label_cuts_filterby_id: "IDs",
     label_cuts_filterby_name: "Names",
     label_cuts_filterby_any: "Any",
-    label_locale: "Language: {{nativeName}}",
+    label_locale: "Language",
     label_measure: "Measure",
     label_pagination_limit: "Results limit",
     label_pagination_offset: "Results offset",
     label_sorting_key: "Sort by",
     label_sorting_order: "Order",
     label_source: "Source",
-    label_subtopic: "Subtopic: {{label}}",
-    label_table: "Table: {{label}}",
+    label_subtopic: "Subtopic",
+    label_table: "Table",
     label_timelevel: "Time level",
-    label_topic: "Topic: {{label}}",
+    label_topic: "Topic",
     search_placeholder: "Filter (regex enabled)",
     tag_cuts_plural: "{{abbr}} ({{n}} selected)",
     tag_cuts: "{{abbr}} ({{first_member}})",
@@ -109,6 +113,7 @@ export const defaultTranslation = {
     loading_title: "Reestructuring data",
     title_download: "Download matrix",
     title_params: "Matrix params",
+    warning: "Warning",
     warning_notsummeasure: "The current query contains more than 2 drilldowns, and the aggregation type of the measure is not \"SUM\". The values you're getting might not be meaningful.",
     warning_propertypivot: "Unlike Drilldown Members, Drilldown Properties are not guaranteed to be unique. In this view, data points are aggregated based on the property labels, so please ensure you're not missing information.",
     warning_sumdimensions: "There's more than 2 drilldowns in this query. Remaining values will be summed.",
@@ -161,8 +166,14 @@ export const defaultTranslation = {
     unselect_all: "Unselect all",
     select_filtered: "Select filtered",
     unselect_filtered: "Unselect filtered",
+    selected_items: "Selected items",
+    unselected_items: "Unselected items"
   }
 };
+
+/**
+ * @typedef {typeof defaultTranslation} TranslationDict
+ */
 
 export const {
   useTranslation,

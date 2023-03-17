@@ -1,4 +1,5 @@
-import {Button, ButtonGroup} from "@blueprintjs/core";
+import {Button, Divider, Group, Space, Stack} from "@mantine/core";
+import {IconForms, IconRowInsertBottom} from "@tabler/icons-react";
 import React, {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -10,13 +11,7 @@ import {buildQuery} from "../utils/structs";
 import {LayoutColumn} from "./LayoutColumn";
 import {MemoStoredQuery as StoredQuery} from "./StoredQuery";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<OwnProps>} */
-export const ExplorerQueries = props => {
+export const ExplorerQueries = () => {
   const dispatch = useDispatch();
 
   const currentQuery = useSelector(selectCurrentQueryItem);
@@ -58,36 +53,39 @@ export const ExplorerQueries = props => {
 
   return (
     <LayoutColumn
-      className={props.className}
       title={t("queries.column_title")}
       defaultOpen={items.length > 1}
     >
-      <ButtonGroup alignText="left" fill vertical>
+      <Space h="xs" />
+      <Group noWrap spacing="xs">
         <Button
-          className="action-create"
-          icon="insert"
+          fullWidth
+          leftIcon={<IconRowInsertBottom />}
           onClick={onItemCreate}
-          text={t("queries.action_create")}
-        />
+        >
+          {t("queries.action_create")}
+        </Button>
         <Button
-          className="action-parseurl"
-          icon="bring-data"
+          fullWidth
+          leftIcon={<IconForms />}
           onClick={parseQueryUrlHandler}
-          text={t("queries.action_parse")}
-        />
-      </ButtonGroup>
-
-      {items.map((item, _, list) =>
-        <StoredQuery
-          active={item === currentQuery}
-          className="query-item"
-          key={item.key}
-          item={item}
-          hideDelete={list.length === 1}
-          onSelect={onItemSelect}
-          onDelete={onItemDelete}
-        />
-      )}
+        >
+          {t("queries.action_parse")}
+        </Button>
+      </Group>
+      <Divider my="xs" />
+      <Stack spacing="xs">
+        {items.map((item, _, list) =>
+          <StoredQuery
+            active={item === currentQuery}
+            key={item.key}
+            item={item}
+            hideDelete={list.length === 1}
+            onSelect={onItemSelect}
+            onDelete={onItemDelete}
+          />
+        )}
+      </Stack>
     </LayoutColumn>
   );
 };

@@ -1,4 +1,4 @@
-import clsx from "classnames";
+import {Flex, MantineProvider} from "@mantine/core";
 import React from "react";
 import {useSelector} from "react-redux";
 import {SettingsProvider} from "../hooks/settings";
@@ -39,23 +39,28 @@ export const ExplorerComponent = props => {
   return (
     <SettingsProvider formatters={props.formatters} previewLimit={previewLimit}>
       <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
-        <div className={clsx("explorer-wrapper", props.className)}>
-          <LoadingOverlay className="explorer-loading" />
-          {isSetupDone && serverState.online && props.multiquery
-            ? <ExplorerQueries className="explorer-queries" />
-            : <div/>
-          }
-          {isSetupDone && serverState.online
-            ? <ExplorerParams className="explorer-params" />
-            : <div/>
-          }
-          <ExplorerResults
-            className="explorer-results"
-            panels={props.panels || defaultProps.panels}
-            DefaultSplash={props.DefaultSplash}
-            transientIcon={props.transientIcon ?? defaultProps.transientIcon}
-          />
-        </div>
+        <MantineProvider withGlobalStyles withNormalizeCSS>
+          <Flex
+            h="100vh"
+            w="100vw"
+            gap={0}
+          >
+            <LoadingOverlay />
+            {isSetupDone && serverState.online && props.multiquery
+              ? <ExplorerQueries />
+              : <div/>
+            }
+            {isSetupDone && serverState.online
+              ? <ExplorerParams />
+              : <div/>
+            }
+            <ExplorerResults
+              panels={props.panels || defaultProps.panels}
+              DefaultSplash={props.DefaultSplash}
+              transientIcon={props.transientIcon ?? defaultProps.transientIcon}
+            />
+          </Flex>
+        </MantineProvider>
       </TranslationProvider>
     </SettingsProvider>
   );

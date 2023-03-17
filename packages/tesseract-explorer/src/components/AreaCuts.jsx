@@ -1,5 +1,6 @@
-import {Button, Intent} from "@blueprintjs/core";
-import React, {Fragment, useCallback} from "react";
+import {Alert, Group, ThemeIcon} from "@mantine/core";
+import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
+import React, {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {doCutClear, doCutRemove, doCutUpdate} from "../state/params/actions";
@@ -10,13 +11,7 @@ import {ButtonSelectLevel} from "./ButtonSelectLevel";
 import {LayoutParamsArea} from "./LayoutParamsArea";
 import {MemoTagCut as TagCut} from "./TagCut";
 
-/**
- * @typedef OwnProps
- * @property {string} [className]
- */
-
-/** @type {React.FC<OwnProps>} */
-export const AreaCuts = props => {
+export const AreaCuts = () => {
   const dispatch = useDispatch();
 
   const items = useSelector(selectCutItems);
@@ -50,26 +45,39 @@ export const AreaCuts = props => {
   }, []);
 
   const toolbar =
-    <Fragment>
+    <Group noWrap spacing="xs">
       {items.length > 0 &&
-        <Button icon="trash" intent={Intent.DANGER} onClick={clearHandler} />
+          <ThemeIcon
+            color="red"
+            onClick={clearHandler}
+            variant="light"
+          >
+            <IconTrashX />
+          </ThemeIcon>
       }
       <ButtonSelectLevel
-        icon="new-object"
+        color="blue"
         onItemSelect={createHandler}
         selectedItems={items}
-      />
-    </Fragment>;
+        variant="light"
+      >
+        <IconCirclePlus />
+      </ButtonSelectLevel>
+    </Group>;
 
   return (
     <LayoutParamsArea
-      className={props.className}
-      open={true}
       title={t("params.title_area_cuts", {n: `${items.reduce(activeItemCounter, 0)}`})}
       toolbar={toolbar}
       tooltip={t("params.tooltip_area_cuts")}
+      value="cuts"
     >
-      {items.map(item =>
+      {items.length === 0 && <Alert
+        color="yellow"
+        icon={<IconAlertCircle size="2rem" />}
+        title={t("params.error_no_cut_selected_title")}
+      >{t("params.error_no_cut_selected_detail")}</Alert>}
+      {items.length > 0 && items.map(item =>
         <TagCut
           item={item}
           key={item.key}
