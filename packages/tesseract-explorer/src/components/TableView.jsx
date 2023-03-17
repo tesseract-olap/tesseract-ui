@@ -78,9 +78,9 @@ export const TableView = props => {
       </Box>);
   }, []);
 
-  return <MantineReactTable 
-    columns={columns} 
-    data={data} 
+  return <MantineReactTable
+    columns={columns}
+    data={data}
     enableBottomToolbar={false}
     enableColumnFilterModes
     enableColumnResizing
@@ -102,11 +102,14 @@ export const TableView = props => {
       },
       withColumnBorders: true
     }}
-    mantineTableContainerProps={{ 
-      sx: { 
+    mantinePaperProps={{
+      withBorder: false,
+    }}
+    mantineTableContainerProps={{
+      sx: {
         // TODO: Find a better way to calculate the max height of Mantine React Table
         maxHeight: isFullResults ? "clamp(350px, calc(100vh - 56px - 48px), 9999px)" : "clamp(350px, calc(100vh - 56px - 48px - 48px), 9999px)"
-      } 
+      }
     }}
     renderColumnActionsMenuItems={({column}) => menuRenderer(column)}
     rowVirtualizerProps={{

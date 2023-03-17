@@ -17,6 +17,8 @@ declare namespace TessExpl {
   const olapMiddleware: Redux.Middleware<{}, State.ExplorerState>;
   const permalinkMiddleware: Redux.Middleware<{}, State.ExplorerState>;
 
+  type TranslationDict = typeof import("./dist/index.esm.js").defaultTranslation;
+
   interface ExplorerProps {
     /**
      * A reference to the server with the data.

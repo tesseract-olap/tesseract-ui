@@ -171,6 +171,10 @@ export const defaultTranslation = {
   }
 };
 
+/**
+ * @typedef {typeof defaultTranslation} TranslationDict
+ */
+
 export const {
   useTranslation,
   TranslationConsumer,

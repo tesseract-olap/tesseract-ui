@@ -1,4 +1,4 @@
-import {Box, MantineProvider} from "@mantine/core";
+import {Flex, MantineProvider} from "@mantine/core";
 import React from "react";
 import {useSelector} from "react-redux";
 import {SettingsProvider} from "../hooks/settings";
@@ -40,11 +40,10 @@ export const ExplorerComponent = props => {
     <SettingsProvider formatters={props.formatters} previewLimit={previewLimit}>
       <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
         <MantineProvider withGlobalStyles withNormalizeCSS>
-          <Box
-            display="flex"
+          <Flex
             h="100vh"
-            maw="100vw"
             w="100vw"
+            gap={0}
           >
             <LoadingOverlay />
             {isSetupDone && serverState.online && props.multiquery
@@ -60,7 +59,7 @@ export const ExplorerComponent = props => {
               DefaultSplash={props.DefaultSplash}
               transientIcon={props.transientIcon ?? defaultProps.transientIcon}
             />
-          </Box>
+          </Flex>
         </MantineProvider>
       </TranslationProvider>
     </SettingsProvider>

@@ -1,5 +1,5 @@
-import {Box, Card, Navbar, ScrollArea, Title, UnstyledButton} from "@mantine/core";
-import React, {useState} from "react";
+import { Box, Navbar, Paper, ScrollArea, Title, UnstyledButton } from "@mantine/core";
+import React, { useState } from "react";
 
 /**
  * @typedef OwnProps
@@ -17,27 +17,17 @@ export const LayoutColumn = props => {
 
   if (!isOpen) {
     return (
-      <Card 
-        px="xs" 
-        radius={0} 
-        sx={{
-          overflow: "visible"
-        }}
-        withBorder 
-        w="max-content"
-      >
-        <UnstyledButton onClick={toggleHandler}>
-          <Title 
-            order={4} 
+      <Paper py="sm" px={5} radius={0} w="max-content" withBorder>
+        <UnstyledButton sx={{display: "grid"}} onClick={toggleHandler}>
+          <Title
+            order={4}
             tt="uppercase"
-            sx={{
-              writingMode: "vertical-rl"
-            }}
-          >  
+            sx={{writingMode: "vertical-rl"}}
+          >
             {props.title}
           </Title>
         </UnstyledButton>
-      </Card>
+      </Paper>
     );
   }
 
@@ -45,7 +35,7 @@ export const LayoutColumn = props => {
     <Navbar px="md" py="xs" w={380} withBorder zIndex={10}>
       <Navbar.Section>
         <UnstyledButton onClick={toggleHandler}>
-          <Title order={4} tt="uppercase">  
+          <Title order={4} tt="uppercase">
             {props.title}
           </Title>
         </UnstyledButton>

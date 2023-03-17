@@ -1,4 +1,4 @@
-import {Alert, Box, Button, Card, Container, Flex, Input, Loader, Space, Title} from "@mantine/core";
+import {Alert, Box, Button, Card, Container, Divider, Flex, Input, Loader, Space, Title} from "@mantine/core";
 import {MantineReactTable} from "mantine-react-table";
 import React, {memo, useMemo, useState} from "react";
 import {useFormatParams, usePivottedData} from "../hooks/pivot";
@@ -194,12 +194,12 @@ export const PivotView = props => {
   }
 
   return (
-    <Flex 
+    <Flex
       gap={0}
       h="100%"
       wrap="nowrap"
     >
-      <Card miw={300} p="xs" radius={0} withBorder>
+      <Card miw={300} p="xs" radius={0}>
         <Flex
           direction="column"
           p="sm"
@@ -263,14 +263,15 @@ export const PivotView = props => {
           {downloadToolbar}
         </Flex>
       </Card>
-      <Container 
-        fluid 
-        m={0} 
-        p={0} 
-        maw="100%" 
+      <Divider orientation="vertical" />
+      <Container
+        fluid
+        m={0}
+        p={0}
+        maw="100%"
         w="100%"
         sx={{
-          overflow: "scroll"
+          overflow: "hidden"
         }}
       >
         {preview}
@@ -314,11 +315,14 @@ const MatrixTable = props => {
         },
         withColumnBorders: true
       }}
-      mantineTableContainerProps={{ 
-        sx: { 
+      mantinePaperProps={{
+        withBorder: false,
+      }}
+      mantineTableContainerProps={{
+        sx: {
           // TODO: Find a better way to calculate the max height of Mantine React Table
           maxHeight: isFullResults ? "clamp(350px, calc(100vh - 48px), 9999px)" : "clamp(350px, calc(100vh - 48px - 48px), 9999px)"
-        } 
+        }
       }}
       rowVirtualizerProps={{
         measureElement() {

@@ -64,7 +64,7 @@ export const ExplorerResults = props => {
       }
     />;
   }
-  
+
   if (isDirtyQuery) {
     return (
       DefaultSplash && <DefaultSplash/> ||
@@ -87,12 +87,12 @@ export const ExplorerResults = props => {
   const CurrentComponent = panels[currentTab];
 
   return (
-    <Flex 
+    <Flex
       direction="column"
       h="100%"
       w="100%"
       sx={{
-        overflow: "scroll"
+        overflow: "hidden"
       }}
     >
       <Tabs
