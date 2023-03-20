@@ -17,6 +17,4 @@ declare global {
     headers: string[];
     data: [string, ...(number | undefined)[]][];
   }
-
-  const __buildVersion: string;
 }

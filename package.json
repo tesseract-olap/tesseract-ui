@@ -30,9 +30,6 @@
       "**/dist/*",
       "**/node_modules/*",
       "**/*.config.js"
-    ],
-    "globals": {
-      "__buildVersion": "readonly"
-    }
+    ]
   }
 }

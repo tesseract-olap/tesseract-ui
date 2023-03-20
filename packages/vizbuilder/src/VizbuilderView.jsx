@@ -57,5 +57,5 @@ export const VizbuilderView = props => {
 };
 
 VizbuilderView.defaultProps = {
-  version: __buildVersion
+  version: process.env.buildVersion
 };

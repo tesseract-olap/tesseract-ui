@@ -24,7 +24,7 @@ const defaultProps = {
   },
   transientIcon: <AnimatedCube />,
   uiLocale: "en",
-  version: __buildVersion
+  version: process.env.buildVersion || "dev",
 };
 
 /** @type {React.FC<TessExpl.ExplorerProps>} */

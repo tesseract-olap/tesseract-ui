@@ -1,9 +1,13 @@
 // @ts-check
 import {defineConfig} from "tsup";
+import pkg from "./package.json";
 
 export default defineConfig(options => ({
   clean: !options.watch,
   entry: ["src/index.js"],
+  env: {
+    buildVersion: pkg.version,
+  },
   format: ["cjs", "esm"],
   outExtension({format}) {
     return {js: `.${format}.js`};
