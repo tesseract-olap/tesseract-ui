@@ -86,6 +86,12 @@ declare namespace TessExpl {
      * Default 100
      */
     previewLimit?: number | 50;
+
+    /**
+     * Determines whether Explorer should be rendered within a MantineProvider
+     * Default true
+     */
+    withinMantineProvider?: boolean;
   }
 
   interface ViewProps {

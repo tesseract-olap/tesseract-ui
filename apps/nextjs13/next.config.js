@@ -4,7 +4,7 @@ const nextConfig = {
   swcMinify: true,
   env: {
     buildVersion: "x.y.z",
-    TESSERACT_SOURCE: process.env.TESSERACT_SOURCE,
+    TESSERACT_SOURCE: process.env.OLAPPROXY_TARGET,
   }
 };
 

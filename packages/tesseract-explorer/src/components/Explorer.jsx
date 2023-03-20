@@ -14,7 +14,7 @@ import {PivotView} from "./PivotView";
 import ResultRaw from "./ResultRaw";
 import {TableView} from "./TableView";
 
-/** @type {Required<Pick<TessExpl.ExplorerProps, "locale" | "panels" | "transientIcon" | "uiLocale">> & {version: string}} */
+/** @type {Required<Pick<TessExpl.ExplorerProps, "locale" | "panels" | "transientIcon" | "uiLocale" | "withinMantineProvider">> & {version: string}} */
 const defaultProps = {
   locale: ["en"],
   panels: {
@@ -25,6 +25,7 @@ const defaultProps = {
   transientIcon: <AnimatedCube />,
   uiLocale: "en",
   version: process.env.buildVersion || "dev",
+  withinMantineProvider: true,
 };
 
 /** @type {React.FC<TessExpl.ExplorerProps>} */
@@ -36,34 +37,36 @@ export const ExplorerComponent = props => {
 
   const serverState = useSelector(selectServerState);
 
-  return (
+  const explorer = (
     <SettingsProvider formatters={props.formatters} previewLimit={previewLimit}>
       <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
-        <MantineProvider withGlobalStyles withNormalizeCSS>
-          <Flex
-            h="100vh"
-            w="100vw"
-            gap={0}
-          >
-            <LoadingOverlay />
-            {isSetupDone && serverState.online && props.multiquery
-              ? <ExplorerQueries />
-              : <div/>
-            }
-            {isSetupDone && serverState.online
-              ? <ExplorerParams />
-              : <div/>
-            }
-            <ExplorerResults
-              panels={props.panels || defaultProps.panels}
-              DefaultSplash={props.DefaultSplash}
-              transientIcon={props.transientIcon ?? defaultProps.transientIcon}
-            />
-          </Flex>
-        </MantineProvider>
+        <Flex
+          h="100vh"
+          w="100vw"
+          gap={0}
+        >
+          <LoadingOverlay />
+          {isSetupDone && serverState.online && props.multiquery
+            ? <ExplorerQueries />
+            : <div/>
+          }
+          {isSetupDone && serverState.online
+            ? <ExplorerParams />
+            : <div/>
+          }
+          <ExplorerResults
+            panels={props.panels || defaultProps.panels}
+            DefaultSplash={props.DefaultSplash}
+            transientIcon={props.transientIcon ?? defaultProps.transientIcon}
+          />
+        </Flex>
       </TranslationProvider>
     </SettingsProvider>
   );
+
+  return props.withinMantineProvider
+    ? <MantineProvider>{explorer}</MantineProvider>
+    : explorer
 };
 
 ExplorerComponent.defaultProps = defaultProps;
