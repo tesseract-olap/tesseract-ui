@@ -1,0 +1,25 @@
+{
+  "name": "demo-vitejs",
+  "private": true,
+  "scripts": {
+    "dev": "vite serve"
+  },
+  "dependencies": {
+    "@datawheel/tesseract-explorer": "*",
+    "@datawheel/tesseract-vizbuilder": "*",
+    "@emotion/react": "^11.0.0",
+    "@mantine/core": "^5.10.0",
+    "@mantine/hooks": "^5.10.0",
+    "@mantine/prism": "^5.10.0",
+    "@tabler/icons-react": "^2.7.0",
+    "dayjs": "^1.11.7",
+    "normalize.css": "^8.0.0",
+    "prop-types": "^15.8.0",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "react-redux": "^7.2.0",
+    "redux": "^4.2.0",
+    "@vitejs/plugin-react": "^3.1.0",
+    "vite": "^4.0.0"
+  }
+}

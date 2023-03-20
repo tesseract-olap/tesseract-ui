@@ -18,7 +18,7 @@ if (OLAPPROXY_JWTAUTH) {
 const config = {
   root: "./src",
   define: {
-    '__buildVersion': '"x.y.z"',
+    'process.env.buildVersion': '"x.y.z"',
     'process.env': {}
   },
   plugins: [

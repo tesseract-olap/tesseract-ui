@@ -7,7 +7,7 @@
     "mono:release": "node scripts/release.js"
   },
   "workspaces": [
-    "example",
+    "apps/*",
     "packages/*"
   ],
   "dependencies": {

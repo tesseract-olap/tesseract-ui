@@ -1,17 +1,26 @@
-# Example app for the tesseract-ui monorepo
+# ViteJS demo for the tesseract-ui monorepo
 
 This folder contains a minimal implementation for the components of the  tesseract-ui monorepo. It's intended to help with the development of the associated react components.
 
 ## Usage
 
-As [`pnpm`](https://pnpm.io/) is the recommended package manager to use in this monorepo, installing the dependencies of any package will install them for every package in the monorepo, including this example app.
+Installing the dependencies of this monorepo should also install the dependencies for this app.
 
 ```bash
-[./tesseract-ui] $ pnpm install
-[./tesseract-ui] $ pnpm run example
+[./tesseract-ui] $ npm install
 ```
 
-Alternatively, you can use the start script (`pnpm start`) from the `package.json` file in this folder.
+You can run the `dev` script at the root of the monorepo to run all demo apps at the same time, while it also monitors and recompiles upon changes in the dependencies.
+
+```bash
+[./tesseract-ui] $ npm run dev
+```
+
+Alternatively, if you just want to run this demo app, you can use the `dev` script on this folder
+
+```bash
+[./tesseract-ui/apps/vitejs/] $ npm run dev
+```
 
 ## OLAP server proxy
 
