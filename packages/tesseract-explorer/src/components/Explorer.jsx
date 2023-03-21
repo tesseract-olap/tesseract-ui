@@ -42,7 +42,7 @@ export const ExplorerComponent = props => {
       <TranslationProvider defaultLocale={props.uiLocale} translations={props.translations}>
         <Flex
           h="100vh"
-          w="100vw"
+          w="100%"
           gap={0}
         >
           <LoadingOverlay />
