@@ -38,10 +38,11 @@ export const SortingInput = () => {
           onItemSelect={measure => dispatch(doSortingUpdate(measure.name, sortDir))}
         />
         <SelectDirection
+          getKey={item => item.value}
           getLabel={item => item.label}
           items={sort.options}
           onItemSelect={direction => dispatch(doSortingUpdate(sortKey, direction.value))}
-          selectedItem={sort.directions[sortDir]}
+          selectedItem={sortDir}
         />
       </Group>
     </Input.Wrapper>

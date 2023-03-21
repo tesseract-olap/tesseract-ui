@@ -35,7 +35,6 @@ export const SelectMeasure = props => {
 
   return (
     <Select
-      allowDeselect
       data={items}
       onChange={value => props.onItemSelect(objectItems[value])}
       placeholder={t("selectmeasure_placeholder")}
