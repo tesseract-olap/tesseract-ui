@@ -1,4 +1,5 @@
-import {ActionIcon, Alert, Box, Button, Card, CloseButton, Group, HoverCard, Input, Loader, Popover, Stack, Switch, Text, ThemeIcon} from "@mantine/core";
+import {ActionIcon, Alert, Box, Button, Card, CloseButton, Group, HoverCard, Input, Loader, Popover, Stack, Switch, Text, ThemeIcon, useMantineTheme} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import {IconAlertTriangle, IconRefresh} from "@tabler/icons-react";
 import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -30,6 +31,8 @@ export const TagCut = props => {
 
   const dispatch = useDispatch();
   const locale = useSelector(selectLocale);
+  const theme = useMantineTheme();
+  const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`);
 
   const levelTriadMap = useSelector(selectLevelTriadMap);
   const triad = levelTriadMap[`${item.dimension}.${item.hierarchy}.${item.level}`];
@@ -119,7 +122,7 @@ export const TagCut = props => {
 
   return (
     <Popover
-      position="right"
+      position={isMediumScreen ? "bottom" : "right"}
       shadow="md"
       withArrow
       withinPortal
@@ -145,7 +148,15 @@ export const TagCut = props => {
         </Card>
       </Popover.Target>
       <Popover.Dropdown>
-        <Box miw={400}>
+        <Box 
+          miw={400}
+          sx={(theme) => ({
+            [theme.fn.smallerThan("md")]: {
+              minWidth: "unset",
+              maxWidth: 250
+            }
+          })}
+        >
           <Input.Wrapper label={t("params.title_members")}>
             <MembersTransferInput
               activeItems={item.members}

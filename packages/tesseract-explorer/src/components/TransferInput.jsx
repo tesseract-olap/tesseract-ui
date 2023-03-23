@@ -172,7 +172,15 @@ export const TransferInput = props => {
   </UnstyledButton>;
 
   return (
-    <Box w={500}>
+    <Box
+      w={500}
+      sx={(theme) => ({
+        [theme.fn.smallerThan("md")]: {
+          maxWidth: "100%",
+          width: "100%"
+        }
+      })}
+    >
       <Stack spacing="xs">
         <Input
           icon={<IconSearch />}
@@ -182,8 +190,25 @@ export const TransferInput = props => {
           rightSectionWidth="auto"
           value={filter}
         />
-        <Group grow noWrap spacing="xs">
-          <Input.Wrapper label={t("transfer_input.unselected_items")}>
+        <Group 
+          grow 
+          noWrap 
+          spacing="xs"
+          sx={(theme) => ({
+            [theme.fn.smallerThan("md")]: {
+              flexDirection: "column"
+            }
+          })}
+        >
+          <Input.Wrapper 
+            label={t("transfer_input.unselected_items")}
+            sx={(theme) => ({
+              [theme.fn.smallerThan("md")]: {
+                maxWidth: "100%",
+                width: "100%"
+              }
+            })}
+          >
             <Stack>
               <Card p="xs" ref={unselectedRef} withBorder>
                 <ScrollArea h={150} offsetScrollbars type="auto" viewportRef={unselectedRef}>
@@ -197,6 +222,7 @@ export const TransferInput = props => {
               </Card>
               <Button
                 disabled={results.unselected.length === 0}
+                fullWidth
                 rightIcon={<IconChevronsRight stroke={1.5} size={16} />}
                 onClick={selectAllHandler}
                 variant="outline"
@@ -205,7 +231,15 @@ export const TransferInput = props => {
               </Button>
             </Stack>
           </Input.Wrapper>
-          <Input.Wrapper label={t("transfer_input.selected_items")}>
+          <Input.Wrapper 
+            label={t("transfer_input.selected_items")}
+            sx={(theme) => ({
+              [theme.fn.smallerThan("md")]: {
+                maxWidth: "100%",
+                width: "100%"
+              }
+            })}
+          >
             <Stack>
               <Card p="xs" ref={selectedRef} withBorder>
                 <ScrollArea h={150} offsetScrollbars type="auto" viewportRef={selectedRef}>
@@ -219,6 +253,7 @@ export const TransferInput = props => {
               </Card>
               <Button
                 color="red"
+                fullWidth
                 disabled={results.selected.length === 0}
                 leftIcon={<IconChevronsLeft stroke={1.5} size={16} />}
                 onClick={unselectAllHandler}
