@@ -19,6 +19,7 @@ export const AreaOptions = () => {
 
   return (
     <LayoutParamsArea
+      id="options"
       title={t("params.title_area_options")}
       tooltip={t("params.tooltip_area_options")}
       value="options"
