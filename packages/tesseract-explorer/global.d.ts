@@ -1,5 +1,6 @@
 import * as MantineCore from "@mantine/core";
 import * as OlapClnt from "@datawheel/olap-client";
+import * as MantineReactTable from "mantine-react-table";
 import * as TesseractExplorer from "./index";
 
 declare global {
@@ -11,6 +12,9 @@ declare global {
   }
   namespace MantineCore {
     export = MtCore;
+  }
+  namespace MantineReactTable {
+    export = MtRtTable;
   }
 
   interface JSONArrays {
