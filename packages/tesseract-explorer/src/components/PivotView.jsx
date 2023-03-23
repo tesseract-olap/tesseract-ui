@@ -15,7 +15,7 @@ import {useSelector} from "react-redux";
 
 /** @type {React.FC<TessExpl.ViewProps>} */
 export const PivotView = props => {
-  const {cube, params, result} = props;
+  const {cube, params, result, ...mantineReactTableProps} = props;
   const locale = params.locale;
 
   const {translate: t} = useTranslation();
@@ -94,8 +94,14 @@ export const PivotView = props => {
         <Alert
           color="yellow"
           icon={<IconAlertCircle size="2rem" />}
+          maw={500}
           key="propertypivot"
           title={t("pivot_view.warning")}
+          sx={(theme) => ({
+            [theme.fn.smallerThan("lg")]: {
+              maxWidth: "100%"
+            }
+          })}
         >{t("pivot_view.warning_propertypivot")}</Alert>
       );
     }
@@ -107,13 +113,25 @@ export const PivotView = props => {
             color="yellow"
             icon={<IconAlertCircle size="2rem" />}
             key="notsummeasure"
+            maw={500}
             title={t("pivot_view.warning")}
+            sx={(theme) => ({
+              [theme.fn.smallerThan("lg")]: {
+                maxWidth: "100%"
+              }
+            })}
           >{t("pivot_view.warning_notsummeasure")}</Alert>
           : <Alert
             color="yellow"
             icon={<IconAlertCircle size="2rem" />}
             key="sumdimensions"
+            maw={500}
             title={t("pivot_view.warning")}
+            sx={(theme) => ({
+              [theme.fn.smallerThan("lg")]: {
+                maxWidth: "100%"
+              }
+            })}
           >{t("pivot_view.warning_sumdimensions")}</Alert>
       );
     }
@@ -190,6 +208,7 @@ export const PivotView = props => {
       data={pivottedData.data}
       headers={pivottedData.headers}
       formatter={formatter}
+      {...mantineReactTableProps}
     />;
   }
 
@@ -197,9 +216,15 @@ export const PivotView = props => {
     <Flex
       gap={0}
       h="100%"
+      id="query-results-pivot-view"
       wrap="nowrap"
+      sx={(theme) => ({
+        [theme.fn.smallerThan("lg")]: {
+          flexDirection: "column"
+        }
+      })}
     >
-      <Card miw={300} p="xs" radius={0}>
+      <Card id="query-results-pivot-view-params" miw={300} p="xs" radius={0}>
         <Flex
           direction="column"
           p="sm"
@@ -266,6 +291,7 @@ export const PivotView = props => {
       <Divider orientation="vertical" />
       <Container
         fluid
+        id="query-results-pivot-view-table"
         m={0}
         p={0}
         maw="100%"
@@ -282,7 +308,7 @@ export const PivotView = props => {
 
 /** @type {React.FC<JSONArrays & {formatter: TessExpl.Formatter}>} */
 const MatrixTable = props => {
-  const {data: values, formatter} = props;
+  const {data: values, formatter, ...mantineReactTableProps} = props;
 
   const isFullResults = useSelector(selectIsFullResults);
 
@@ -317,6 +343,11 @@ const MatrixTable = props => {
       }}
       mantinePaperProps={{
         withBorder: false,
+        sx: (theme) => ({
+          [theme.fn.smallerThan("lg")]: {
+            padding: theme.spacing.sm
+          }
+        })
       }}
       mantineTableContainerProps={{
         sx: {
@@ -329,6 +360,7 @@ const MatrixTable = props => {
           return 37;
         }
       }}
+      {...mantineReactTableProps}
     />
   );
 };
