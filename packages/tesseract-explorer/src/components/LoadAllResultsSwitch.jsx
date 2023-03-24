@@ -33,8 +33,13 @@ export const LoadAllResultsSwitch = props => {
     <Tooltip
       color="blue"
       disabled={noPopover}
+      events={{
+        hover: true,
+        focus: false,
+        touch: true
+      }}
       label={isFullResults ? t("previewMode.description_full") : t("previewMode.description_preview", {limit: previewLimit})}
-      position="right"
+      multiline
       withArrow
       withinPortal
     >

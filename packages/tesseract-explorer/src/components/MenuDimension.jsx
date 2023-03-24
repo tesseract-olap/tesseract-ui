@@ -1,4 +1,5 @@
-import {Group, Menu, Text, UnstyledButton} from "@mantine/core";
+import {Group, Menu, Text, UnstyledButton, useMantineTheme} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import {IconChevronRight, IconStack, IconStack2, IconStack3} from "@tabler/icons-react";
 import React, {useMemo} from "react";
 import {useSelector} from "react-redux";
@@ -15,6 +16,7 @@ import {stringifyName} from "../utils/transform";
 
 /**
  * @type {React.FC<{
+ *  isMediumScreen?: boolean;
  *  onItemSelect: LvlHieDimCallback;
  *  selectedItems: string[];
  * }>}
@@ -27,6 +29,7 @@ export const DimensionMenu = props => {
     <DimensionMenuItem
       dimension={dim}
       locale={locale.code}
+      isMediumScreen={props.isMediumScreen}
       key={dim.uri}
       onItemSelect={props.onItemSelect}
       selectedItems={props.selectedItems}
@@ -40,6 +43,7 @@ export const DimensionMenu = props => {
 /**
  * @type {React.FC<{
  *  dimension: OlapClient.PlainDimension;
+ *  isMediumScreen?: boolean;
  *  locale: string;
  *  onItemSelect: LvlHieDimCallback;
  *  selectedItems: string[];
@@ -60,6 +64,7 @@ export const DimensionMenuItem = props => {
     <HierarchyMenuItem
       dimension={dimension}
       hierarchy={hie}
+      isMediumScreen={props.isMediumScreen}
       isSubMenu={isChildSubMenu}
       key={hie.uri}
       locale={locale}
@@ -75,7 +80,7 @@ export const DimensionMenuItem = props => {
   return (
     <Menu
       key={dimension.uri}
-      position="right" 
+      position={props.isMediumScreen ? "bottom" : "right"}
       shadow="md"
       withArrow
     >
@@ -83,6 +88,11 @@ export const DimensionMenuItem = props => {
         <UnstyledButton component="div">
           <Menu.Item 
             icon={<IconStack3 />}
+            sx={(theme) => ({
+              [theme.fn.smallerThan("md")]: {
+                maxWidth: 200
+              }
+            })}
           >
             <Group noWrap position="apart">
               <Text>{label}</Text>
@@ -104,6 +114,7 @@ export const DimensionMenuItem = props => {
  * @type {React.FC<{
  *  dimension: OlapClient.PlainDimension;
  *  hierarchy: OlapClient.PlainHierarchy;
+ *  isMediumScreen?: boolean;
  *  isSubMenu?: boolean;
  *  locale: string;
  *  onItemSelect: LvlHieDimCallback;
@@ -149,7 +160,7 @@ export const HierarchyMenuItem = props => {
   return (
     <Menu
       key={hierarchy.uri}
-      position="right" 
+      position={props.isMediumScreen ? "bottom" : "right"}
       shadow="md"
       withArrow
     >
@@ -157,6 +168,11 @@ export const HierarchyMenuItem = props => {
         <UnstyledButton component="div">
           <Menu.Item 
             icon={<IconStack2 />}
+            sx={(theme) => ({
+              [theme.fn.smallerThan("md")]: {
+                maxWidth: 200
+              }
+            })}
           >
             <Group noWrap position="apart">
               <Text>{label}</Text>
@@ -214,6 +230,11 @@ export const LevelMenuItem = props => {
       key={level.uri}
       miw={200}
       onClick={() => props.onItemSelect(level, hierarchy, dimension)}
+      sx={(theme) => ({
+        [theme.fn.smallerThan("md")]: {
+          maxWidth: 200
+        }
+      })}
     >
       {label}
     </Menu.Item>

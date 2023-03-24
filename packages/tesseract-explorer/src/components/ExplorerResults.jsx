@@ -89,6 +89,7 @@ export const ExplorerResults = props => {
   return (
     <Flex
       direction="column"
+      id="query-results"
       h="100%"
       w="100%"
       sx={{
@@ -96,6 +97,7 @@ export const ExplorerResults = props => {
       }}
     >
       <Tabs
+        id="query-results-tabs"
         onTabChange={newTab => setCurrentTab(`${newTab}`)}
         value={currentTab}
       >

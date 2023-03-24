@@ -44,6 +44,12 @@ export const ExplorerComponent = props => {
           h="100vh"
           w="100%"
           gap={0}
+          sx={(theme) => ({
+            [theme.fn.smallerThan("md")]: {
+              flexDirection: "column",
+              height: "100%"
+            }
+          })}
         >
           <LoadingOverlay />
           {isSetupDone && serverState.online && props.multiquery
@@ -65,7 +71,7 @@ export const ExplorerComponent = props => {
   );
 
   return props.withinMantineProvider
-    ? <MantineProvider>{explorer}</MantineProvider>
+    ? <MantineProvider withNormalizeCSS>{explorer}</MantineProvider>
     : explorer
 };
 

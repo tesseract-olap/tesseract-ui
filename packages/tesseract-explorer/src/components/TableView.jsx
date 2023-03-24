@@ -11,7 +11,7 @@ import {getCaption} from "../utils/string";
 
 /** @type {React.FC<TessExpl.ViewProps>} */
 export const TableView = props => {
-  const {cube, params, result} = props;
+  const {cube, params, result, ...mantineReactTableProps} = props;
   const data = result.data;
   const locale = params.locale;
 
@@ -78,46 +78,64 @@ export const TableView = props => {
       </Box>);
   }, []);
 
-  return <MantineReactTable
-    columns={columns}
-    data={data}
-    enableBottomToolbar={false}
-    enableColumnFilterModes
-    enableColumnResizing
-    enableDensityToggle={false}
-    enableFilterMatchHighlighting
-    enableGlobalFilter
-    enablePagination={false}
-    enableRowNumbers
-    enableRowVirtualization
-    globalFilterFn="contains"
-    initialState={{
-      density: "xs"
-    }}
-    mantineTableProps={{
-      sx: {
-        "& td": {
-          padding: "7px 10px!important"
+  return (
+    <MantineReactTable
+      columns={columns}
+      data={data}
+      enableBottomToolbar={false}
+      enableColumnFilterModes
+      enableColumnResizing
+      enableDensityToggle={false}
+      enableFilterMatchHighlighting
+      enableGlobalFilter
+      enablePagination={false}
+      enableRowNumbers
+      enableRowVirtualization
+      globalFilterFn="contains"
+      initialState={{
+        density: "xs"
+      }}
+      mantineTableProps={{
+        sx: {
+          "& td": {
+            padding: "7px 10px!important"
+          }
+        },
+        withColumnBorders: true
+      }}
+      mantinePaperProps={{
+        id: "query-results-table-view",
+        withBorder: false,
+        sx: (theme) => ({
+          [theme.fn.smallerThan("md")]: {
+            padding: theme.spacing.sm
+          }
+        })
+      }}
+      mantineTableContainerProps={{
+        id: "query-results-table-view-table",
+        sx: {
+          // TODO: Find a better way to calculate the max height of Mantine React Table
+          maxHeight: isFullResults ? "clamp(350px, calc(100vh - 56px - 48px), 9999px)" : "clamp(350px, calc(100vh - 56px - 48px - 48px), 9999px)"
         }
-      },
-      withColumnBorders: true
-    }}
-    mantinePaperProps={{
-      withBorder: false,
-    }}
-    mantineTableContainerProps={{
-      sx: {
-        // TODO: Find a better way to calculate the max height of Mantine React Table
-        maxHeight: isFullResults ? "clamp(350px, calc(100vh - 56px - 48px), 9999px)" : "clamp(350px, calc(100vh - 56px - 48px - 48px), 9999px)"
-      }
-    }}
-    renderColumnActionsMenuItems={({column}) => menuRenderer(column)}
-    rowVirtualizerProps={{
-      measureElement() {
-        return 37;
-      }
-    }}
-  />;
+      }}
+      mantineTopToolbarProps={{
+        id: "query-results-table-view-toolbar",
+        sx: (theme) => ({
+          [theme.fn.smallerThan("md")]: {
+            padding: 0
+          }
+        })
+      }}
+      renderColumnActionsMenuItems={({column}) => menuRenderer(column)}
+      rowVirtualizerProps={{
+        measureElement() {
+          return 37;
+        }
+      }}
+      {...mantineReactTableProps}
+    />
+  );
 };
 
 TableView.displayName = "TesseractExplorer:TableView";

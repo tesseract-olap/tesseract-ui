@@ -1,4 +1,5 @@
-import {Menu, ThemeIcon} from "@mantine/core";
+import {Menu, ThemeIcon, useMantineTheme} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import React from "react";
 import {stringifyName} from "../utils/transform";
 import {DimensionMenu} from "./MenuDimension";
@@ -13,11 +14,15 @@ import {DimensionMenu} from "./MenuDimension";
 /** @type {React.FC<OwnProps>} */
 export const ButtonSelectLevel = props => {
   const {selectedItems, onItemSelect, ...buttonProps} = props;
+
+  const theme = useMantineTheme();
+  const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`);
+
   return (
     <Menu
       closeOnClickOutside
       closeOnEscape
-      position="right" 
+      position={isMediumScreen ? "left" : "right"}
       shadow="md"
       withArrow
       withinPortal
@@ -27,6 +32,7 @@ export const ButtonSelectLevel = props => {
       </Menu.Target>
       <Menu.Dropdown>
         <DimensionMenu
+          isMediumScreen={isMediumScreen}
           selectedItems={selectedItems.map(stringifyName)}
           onItemSelect={onItemSelect}
         />

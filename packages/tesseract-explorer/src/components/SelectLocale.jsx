@@ -24,7 +24,7 @@ export const SelectLocale = () => {
   }
 
   return (
-    <Box>
+    <Box id="select-locale">
       <Input.Wrapper label={t("params.label_locale")}>
         <SelectLocaleOptions
           getLabel={item => item.label}

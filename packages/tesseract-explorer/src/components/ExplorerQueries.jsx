@@ -53,11 +53,12 @@ export const ExplorerQueries = () => {
 
   return (
     <LayoutColumn
+      id="explorer-queries"
       title={t("queries.column_title")}
       defaultOpen={items.length > 1}
     >
       <Space h="xs" />
-      <Group noWrap spacing="xs">
+      <Group id="button-group-queries-actions" noWrap spacing="xs">
         <Button
           fullWidth
           leftIcon={<IconRowInsertBottom />}
@@ -74,7 +75,7 @@ export const ExplorerQueries = () => {
         </Button>
       </Group>
       <Divider my="xs" />
-      <Stack spacing="xs">
+      <Stack id="button-group-stored-queries" spacing="xs">
         {items.map((item, _, list) =>
           <StoredQuery
             active={item === currentQuery}

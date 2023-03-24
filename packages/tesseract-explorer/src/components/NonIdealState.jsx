@@ -11,7 +11,15 @@ import React from "react";
  */
 
 /** @type {React.FC<OwnProps>} */
-export const NonIdealState = props => <Center h="100%" w="100%">
+export const NonIdealState = props => <Center 
+  h="100%" 
+  w="100%"
+  sx={(theme) => ({
+    [theme.fn.smallerThan("md")]: {
+      minHeight: "100vh"
+    }
+  })}
+>
   <Stack align="center" spacing="xs">
     {props.icon && props.icon}
     {props.title && <Title order={5}>{props.title}</Title>}

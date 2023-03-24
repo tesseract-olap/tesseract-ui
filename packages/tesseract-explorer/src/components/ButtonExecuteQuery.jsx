@@ -32,19 +32,25 @@ export const ButtonExecuteQuery = () => {
   }, [isValid]);
 
   return (
-    <Box>
+    <Box id="button-group-execute-query">
       <Stack spacing="xs">
         <Group noWrap spacing="xs">
           <Tooltip 
             color="red"
             disabled={isValid}
+            events={{
+              hover: true,
+              focus: false,
+              touch: true
+            }}
             label={errorText}
-            position="right"
+            multiline
             withArrow
             withinPortal
           >
             <Button
               fullWidth
+              id="button-execute-query"
               leftIcon={<IconDatabase />}
               onClick={() => {
                 dispatch(willRequestQuery());
@@ -57,12 +63,18 @@ export const ButtonExecuteQuery = () => {
           </Tooltip>
           {software === "tesseract-olap" && <Tooltip 
             color="gray"
+            events={{
+              hover: true,
+              focus: false,
+              touch: true
+            }}
             label={t("params.current_endpoint", {label: endpoint})}
-            position="right"
+            multiline
             withArrow
           >
             <Button
               color="gray"
+              id="button-change-endpoint"
               onClick={() => dispatch(doUpdateEndpoint())}
               variant="filled"
             >
@@ -70,19 +82,25 @@ export const ButtonExecuteQuery = () => {
             </Button>
           </Tooltip>}
         </Group>
-        <Box>
+        <Box id="switch-params-load-all-results">
           <LoadAllResultsSwitch />
         </Box>
         <Group noWrap spacing="xs">
           <Tooltip 
             color="red"
+            events={{
+              hover: true,
+              focus: false,
+              touch: true
+            }}
             label={t("params.action_clear_description")}
-            position="right"
+            multiline
             withArrow
             withinPortal
           >
             <Button 
               color="red"
+              id="button-clear-params"
               fullWidth
               leftIcon={<IconCircleMinus />}
               onClick={() => {

@@ -33,7 +33,7 @@ const ResultRaw = props => {
   ), [headers]);
 
   return (
-    <Box p="md">
+    <Box id="query-results-debug-view" p="md">
       <Stack spacing="md">
         {urlLogicLayer && <Input.Wrapper label={t("debug_view.url_logiclayer")}>
           <DebugURL url={urlLogicLayer} />

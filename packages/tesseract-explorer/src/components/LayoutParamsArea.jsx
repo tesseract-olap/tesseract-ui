@@ -10,6 +10,7 @@ const stopBubbling = evt => {
 /**
  * @typedef OwnProps
  * @property {React.ReactNode} children
+ * @property {string} id
  * @property {string} title
  * @property {React.ReactNode} [toolbar]
  * @property {string} [tooltip]
@@ -22,7 +23,7 @@ const stopBubbling = evt => {
 export const LayoutParamsArea = props => {
   const {tooltip, warning} = props;
   return (
-    <Accordion.Item value={props.value}>
+    <Accordion.Item id={`layout-param-area-${props.id}`} value={props.value}>
       <Accordion.Control px="xs">
         <Group noWrap position="apart">
           <Group noWrap spacing="xs">
@@ -30,7 +31,16 @@ export const LayoutParamsArea = props => {
               {props.title}
             </Text>
             {tooltip && 
-              <Tooltip label={tooltip} withinPortal>
+              <Tooltip
+                events={{
+                  hover: true,
+                  focus: false,
+                  touch: true
+                }}
+                label={tooltip} 
+                multiline
+                withinPortal
+              >
                 <ActionIcon color="blue">
                   <IconInfoCircleFilled />
                 </ActionIcon>
