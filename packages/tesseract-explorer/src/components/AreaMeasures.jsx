@@ -64,6 +64,7 @@ export const AreaMeasures = () => {
 
   return (
     <LayoutParamsArea
+      id="measures"
       title={t("params.title_area_measures", {n: items.length})}
       toolbar={toolbar}
       tooltip={t("params.tooltip_area_measures")}

@@ -67,6 +67,7 @@ export const AreaCuts = () => {
 
   return (
     <LayoutParamsArea
+      id="cuts"
       title={t("params.title_area_cuts", {n: `${items.reduce(activeItemCounter, 0)}`})}
       toolbar={toolbar}
       tooltip={t("params.tooltip_area_cuts")}

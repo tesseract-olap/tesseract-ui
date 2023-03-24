@@ -1,4 +1,5 @@
-import {Box, Card, CloseButton, Group, Input, Popover, Switch, Text} from "@mantine/core";
+import {Box, Card, CloseButton, Group, Input, Popover, Switch, Text, useMantineTheme} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import React, {memo, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
@@ -35,6 +36,8 @@ const TagDrilldown = props => {
 
   const locale = useSelector(selectLocale);
   const levelTriadMap = useSelector(selectLevelTriadMap);
+  const theme = useMantineTheme();
+  const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`);
 
   const activeProperties = filterMap(item.properties, item =>
     isActiveItem(item) ? item.key : null
@@ -83,7 +86,15 @@ const TagDrilldown = props => {
   const captionItems = [{name: t("placeholders.unselected")}].concat(item.properties);
 
   const content =
-    <Box miw={400}>
+    <Box 
+      miw={400}
+      sx={(theme) => ({
+        [theme.fn.smallerThan("md")]: {
+          minWidth: "unset",
+          maxWidth: 250
+        }
+      })}
+    >
       <Input.Wrapper label={t("params.title_caption")}>
         <SelectCaption
           items={captionItems}
@@ -109,7 +120,7 @@ const TagDrilldown = props => {
     </Box>;
 
   return (
-    <Popover position="right" shadow="md" withArrow withinPortal>
+    <Popover position={isMediumScreen ? "bottom" : "right"} shadow="md" withArrow withinPortal>
       <Popover.Target>
         {target}
       </Popover.Target>

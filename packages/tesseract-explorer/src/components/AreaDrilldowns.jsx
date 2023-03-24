@@ -86,6 +86,7 @@ export const AreaDrilldowns = () => {
 
   return (
     <LayoutParamsArea
+      id="drilldowns"
       title={t("params.title_area_drilldowns", {n: `${items.reduce(activeItemCounter, 0)}`})}
       toolbar={toolbar}
       tooltip={t("params.tooltip_area_drilldowns")}

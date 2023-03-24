@@ -34,6 +34,10 @@ export const LoadingOverlay = () => {
     <MantineLoadingOverlay
       loader={customLoader}
       visible={isLoading}
+      sx={{
+        position: "fixed",
+        top: 0
+      }}
     />
   );
 };

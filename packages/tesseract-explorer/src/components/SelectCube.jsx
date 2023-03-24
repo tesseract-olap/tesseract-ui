@@ -96,7 +96,7 @@ export const SelectCube = () => {
     : null;
 
   return (
-    <Box>
+    <Box id="select-cube">
       <Stack spacing={0}>
         <SelectLevel
           hidden={level1 === "Hidden"}

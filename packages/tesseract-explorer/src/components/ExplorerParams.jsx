@@ -1,4 +1,4 @@
-import {Accordion, Divider, Space} from "@mantine/core";
+import {Accordion, Space} from "@mantine/core";
 import React from "react";
 import {useTranslation} from "../hooks/translation";
 import {AreaCuts} from "./AreaCuts";
@@ -15,7 +15,7 @@ export const ExplorerParams = () => {
   const {translate: t} = useTranslation();
 
   return (
-    <LayoutColumn title={t("params.column_title")}>
+    <LayoutColumn id="explorer-params" title={t("params.column_title")}>
       <SelectLocale />
       <SelectCube />
       <Space h="md" />
@@ -36,7 +36,6 @@ export const ExplorerParams = () => {
       </Accordion>
       <Space h="md" />
       <ButtonExecuteQuery />
-      <Divider my="md" />
       <AreaDownloadQuery />
     </LayoutColumn>
   );

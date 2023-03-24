@@ -19,7 +19,7 @@ export const LoadAllResultsMessage = () => {
   if (isFullResults) return <></>;
 
   return (
-    <Alert color="yellow" radius={0}>
+    <Alert color="yellow" id="alert-load-all-results" radius={0}>
       <Group position="apart">
         <Text>
           <Text fw={700} span>{t("previewMode.title_preview")}: </Text>
