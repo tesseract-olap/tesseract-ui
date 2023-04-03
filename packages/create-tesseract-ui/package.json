@@ -8,11 +8,6 @@
     "./index.js",
     "./template/*"
   ],
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "prepublishOnly": "tsup"
-  },
   "author": "Francisco Abarzúa <francisco@datawheel.us>",
   "license": "MIT",
   "repository": {
@@ -27,8 +22,7 @@
     "prompts": "~2.4.0"
   },
   "devDependencies": {
-    "@types/node": "^14.0.0",
-    "tsup": "^6.7.0"
+    "@types/node": "^14.0.0"
   },
   "keywords": [
     "create",
