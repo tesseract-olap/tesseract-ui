@@ -68,10 +68,20 @@
     "@mantine/prism": "^5.10.5",
     "@tabler/icons-react": "^2.7.0",
     "dayjs": "^1.11.7",
+    "eslint": "^8.0.0",
+    "eslint-config-tesseract-ui": "*",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-redux": "^7.2.0",
     "redux": "^4.2.0",
     "tsup": "^6.6.3"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true
+    },
+    "globals": {
+      "process": "readonly"
+    }
   }
 }

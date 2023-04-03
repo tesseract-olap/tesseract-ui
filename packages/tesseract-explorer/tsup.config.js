@@ -6,7 +6,7 @@ export default defineConfig(options => ({
   clean: !options.watch,
   entry: ["src/index.js"],
   env: {
-    buildVersion: pkg.version,
+    BUILD_VERSION: pkg.version,
   },
   format: ["cjs", "esm"],
   outExtension({format}) {

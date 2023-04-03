@@ -11,11 +11,8 @@
     "packages/*"
   ],
   "dependencies": {
-    "@datawheel/eslint-config": "^1.0.0",
     "args": "^5.0.0",
     "chosen": "0.0.2",
-    "eslint-plugin-react": "^7.30.0",
-    "eslint": "^7.32.0",
     "semver": "^7.3.0",
     "simple-git": "^3.16.1",
     "turbo": "^1.8.2"
@@ -23,13 +20,5 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "packageManager": "npm@8.11.0",
-  "eslintConfig": {
-    "extends": "@datawheel",
-    "ignorePatterns": [
-      "**/dist/*",
-      "**/node_modules/*",
-      "**/*.config.js"
-    ]
-  }
+  "packageManager": "npm@8.11.0"
 }

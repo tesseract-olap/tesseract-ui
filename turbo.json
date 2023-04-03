@@ -1,10 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["BUILD_VERSION"],
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
+    "lint": {},
     "dev": {
       "cache": false
     }

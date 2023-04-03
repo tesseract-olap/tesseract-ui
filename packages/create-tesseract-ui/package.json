@@ -29,5 +29,10 @@
     "init",
     "tesseract-olap",
     "tesseract-ui"
-  ]
+  ],
+  "eslintConfig": {
+    "env": {
+      "node": true
+    }
+  }
 }
