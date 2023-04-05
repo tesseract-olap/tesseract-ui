@@ -69,7 +69,7 @@ async function cliAction(targetPath, options) {
     name: utils.slugify(targetName) || "demo",
     serverLocales: options.locales,
     serverUrl: options.server,
-    version: options.target || "next"
+    version: options.target
   });
 
   console.log(LINE);
@@ -178,7 +178,11 @@ async function normalizeOptions(directory, options) {
     {onCancel: () => process.exit()}
   );
 
-  return [directoryPath, {...options, ...missingOptions}];
+  return [directoryPath, {
+    ...options,
+    ...missingOptions,
+    target: options.target || "latest"
+  }];
 }
 
 /**
