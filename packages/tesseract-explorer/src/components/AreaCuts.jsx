@@ -1,10 +1,10 @@
 import {Alert, Group, ThemeIcon} from "@mantine/core";
 import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {doCutClear, doCutRemove, doCutUpdate} from "../state/params/actions";
-import {selectCutItems} from "../state/params/selectors";
+import {selectCutItems} from "../state/queries";
+import {useSelector} from "../state/store";
 import {buildCut} from "../utils/structs";
 import {activeItemCounter} from "../utils/validation";
 import {ButtonSelectLevel} from "./ButtonSelectLevel";
@@ -12,36 +12,36 @@ import {LayoutParamsArea} from "./LayoutParamsArea";
 import {MemoTagCut as TagCut} from "./TagCut";
 
 export const AreaCuts = () => {
-  const dispatch = useDispatch();
+  const actions = useActions();
 
   const items = useSelector(selectCutItems);
 
   const {translate: t} = useTranslation();
 
   const clearHandler = useCallback(() => {
-    dispatch(doCutClear());
+    actions.resetCuts({});
   }, []);
 
-  /** @type {(level: OlapClient.PlainLevel) => void} */
+  /** @type {(level: import("@datawheel/olap-client").PlainLevel) => void} */
   const createHandler = useCallback(level => {
     const cutItem = buildCut(level);
     cutItem.active = false;
-    dispatch(doCutUpdate(cutItem));
+    actions.updateCut(cutItem);
   }, []);
 
-  /** @type {(item: TessExpl.Struct.CutItem) => void} */
+  /** @type {(item: import("../utils/structs").CutItem) => void} */
   const removeHandler = useCallback(item => {
-    dispatch(doCutRemove(item.key));
+    actions.removeCut(item.key);
   }, []);
 
-  /** @type {(item: TessExpl.Struct.CutItem) => void} */
+  /** @type {(item: import("../utils/structs").CutItem) => void} */
   const toggleHandler = useCallback(item => {
-    dispatch(doCutUpdate({...item, active: !item.active}));
+    actions.updateCut({...item, active: !item.active});
   }, []);
 
-  /** @type {(item: TessExpl.Struct.CutItem, members: string[]) => void} */
+  /** @type {(item: import("../utils/structs").CutItem, members: string[]) => void} */
   const updateMembersHandler = useCallback((item, members) => {
-    dispatch(doCutUpdate({...item, members}));
+    actions.updateCut({...item, members});
   }, []);
 
   const toolbar =

@@ -15,6 +15,7 @@ export const defaultTranslation = {
     NEQ: "Not equal to",
   },
   debug_view: {
+    tab_label: "Debugger",
     httpheaders: "Response headers",
     jssource_prefix: "Javascript source for ",
     jssource_suffix: "",
@@ -99,6 +100,7 @@ export const defaultTranslation = {
     tooltip_area_options: "",
   },
   pivot_view: {
+    tab_label: "Pivot Data",
     error_missingparams: "The current query doesn't have enough parameters. Two different drilldowns and a measure are needed.",
     error_onedimension: "The rows and columns in a pivotted table need 2 different drilldowns.",
     error_internal: "An internal error ocurred in the pivotting tool. We will fix it as soon as possible.",
@@ -154,6 +156,7 @@ export const defaultTranslation = {
   selectmeasure_placeholder: "Measure...",
   selecttimelevel_placeholder: "Time level...",
   table_view: {
+    tab_label: "Data Table",
     numeral_format: "Numeral format",
     sort_asc: "Sort Asc",
     sort_desc: "Sort Desc",

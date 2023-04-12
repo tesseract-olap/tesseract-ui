@@ -1,5 +1,5 @@
-import { Box, Divider, Navbar, Paper, ScrollArea, Title, UnstyledButton } from "@mantine/core";
-import React, { useState } from "react";
+import {Box, Divider, Navbar, Paper, ScrollArea, Title, UnstyledButton} from "@mantine/core";
+import React, {useState} from "react";
 
 /**
  * @typedef OwnProps
@@ -25,7 +25,7 @@ export const LayoutColumn = props => {
         radius={0} 
         w="max-content" 
         withBorder
-        sx={(theme) => ({
+        sx={theme => ({
           [theme.fn.smallerThan("md")]: {
             padding: `${theme.spacing.sm}px ${theme.spacing.md}px`,
             width: "100%"
@@ -36,7 +36,7 @@ export const LayoutColumn = props => {
           <Title
             order={4}
             tt="uppercase"
-            sx={(theme) => ({
+            sx={theme => ({
               writingMode: "vertical-rl",
               [theme.fn.smallerThan("md")]: {
                 writingMode: "horizontal-tb"
@@ -58,7 +58,7 @@ export const LayoutColumn = props => {
       w={380} 
       withBorder
       zIndex={10}
-      sx={(theme) => ({
+      sx={theme => ({
         [theme.fn.smallerThan("md")]: {
           height: "100%",
           width: "100%"
@@ -78,7 +78,7 @@ export const LayoutColumn = props => {
         mx="-md" 
         px="md" 
         w={380}
-        sx={(theme) => ({
+        sx={theme => ({
           [theme.fn.smallerThan("md")]: {
             margin: 0,
             padding: `${theme.spacing.sm}px 0px`,

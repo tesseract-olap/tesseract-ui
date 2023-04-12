@@ -33,8 +33,8 @@ export function useFormatParams(measures, valueProperty) {
  * @param {string} colProp
  * @param {string} rowProp
  * @param {string} valProp
- * @param {JSONArrays | null} initialState
- * @returns {[JSONArrays | null, Error | null]}
+ * @param {import("../utils/types").JSONArrays | null} initialState
+ * @returns {[import("../utils/types").JSONArrays | null, Error | null]}
  */
 export function usePivottedData(data, colProp, rowProp, valProp, initialState = null) {
   const [pivottedData, setPivottedData] = useState(initialState);
@@ -59,7 +59,7 @@ export function usePivottedData(data, colProp, rowProp, valProp, initialState = 
 /**
  * @param {Record<string, any>[]} data
  * @param {{rowProp: string, colProp: string, valProp: string}} sides
- * @returns {Promise<JSONArrays>}
+ * @returns {Promise<import("../utils/types.js").JSONArrays>}
  */
 function serializeToArray(data, sides) {
   return new Promise((resolve, reject) => {

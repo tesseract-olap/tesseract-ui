@@ -13,52 +13,72 @@ npm install @datawheel/tesseract-explorer
 This project has some peer dependencies, which must be installed by the user manually:
 
 ```bash
-npm install react@17 react-dom@17 react-redux@7 redux@4
-npm install @emotion/react@11 @mantine/core@5 @mantine/hooks@5 @mantine/prism@5 @mantine/dates@5 @tabler/icons-react@2 dayjs
+# The project is compatible with React ^16.12, 17, and 18
+npm install react@17 react-dom@17 @emotion/react@11
+npm install @mantine/core@5 @mantine/hooks@5 @mantine/prism@5 @mantine/dates@5
 ```
 
 ## Usage
 
-This package exports a `React.Component`, a required middleware, and a reducer function to add to the redux store. To implement them:
+The main functionality is provided by the `TesseractExplorer` component exported by this package. This component uses Redux to handle its state, and it can be used standalone (by setting the `withinReduxProvider` property to `true`) or sharing it with an app-wide store (by implementing the `explorerReducer` and `explorerMiddleware` on it).
+
+### Standalone example
 
 ```js
-import {
-  explorerReducer, 
-  olapMiddleware, 
-  permalinkMiddleware,
-} from "@datawheel/tesseract-explorer";
-
-function rootReducer(state = initialState, action) {
-  return {
-    yourKey: yourReducer(state, action),
-    // you can either merge the Explorer state in your root app state
-    ...explorerReducer(state, action),
-    // or set it in with the "explorer" key
-    explorer: explorerReducer(state, action)
-  }
+function PageComponent(props) {
+  return (
+    <TesseractExplorer 
+      src="https://tesseract.server.url/" 
+      withinReduxProvider
+    />;
+  )
 }
-
-const enhancers = composeEnhancers(
-  // olapMiddleware is required for DataExplorer to work
-  // permalinkMiddleware is optional, to enable browser location permalink sync
-  applyMiddleware(permalinkMiddleware, olapMiddleware)
-);
-
-const store = createStore(rootReducer, undefined, enhancers);
 ```
 
-Then you can setup the `Explorer` component like this:
+### Shared state example
 
-```jsx
-import {Explorer as TesseractExplorer} from "@datawheel/tesseract-explorer";
+In a shared Redux store, it is required to use `redux-thunk`. This module comes packaged in Redux Toolkit, so it's not necessary to install it if you are using it.
 
-import "normalize.css/normalize.css";
+```js
+// app/store.js
+import {explorerReducer, explorerThunkExtraArg} from "@datawheel/tesseract-explorer";
+import {configureStore} from "@reduxjs/toolkit";
 
-// Tesseract Explorer's stylesheets must come after
-import "@datawheel/tesseract-explorer/dist/explorer.css";
+export const store = configureStore({
+  reducer(state, action) {
+    return {
+      otherKey: otherReducer(state, action),
+      // you must merge the Explorer state in your root app state
+      ...explorerReducer(state, action),
+    }
+  },
+  middleware(getDefaultMiddleware) {
+    return getDefaultMiddleware({
+      // if you're not using Redux Tookit, you have to
+      // add `redux-thunk` and configure the extra argument
+      thunk: {
+        extraArgument: {
+          otherExtraArg: otherValue,
+          ...explorerThunkExtraArg(),
+        }
+      },
+    });
+  }
+});
+
+// app/pages/explorer.js
+import {TesseractExplorer} from "@datawheel/tesseract-explorer";
+import {Provider as ReduxProvider} from "react-redux";
+import {store} from "app/store.js";
 
 function PageComponent(props) {
-  return <TesseractExplorer src="https://tesseract.server.url/" />;
+  return (
+    <ReduxProvider store={store}>
+      <TesseractExplorer
+        src="https://tesseract.server.url/"
+      />;
+    </ReduxProvider>
+  );
 }
 ```
 
@@ -78,9 +98,11 @@ import {DebugView, TableView, PivotView} from "@datawheel/tesseract-explorer";
 To remove a view or change their order, you can pass a `panels` property to the `Explorer` component:
 
 ```jsx
-const PANELS = {
-  "Results Table": TableView,
-  "Pivot Data": PivotView
+// The `label` value is passed through the translation dict, so can be localized
+const PANELS = [
+  {key: "table", label: "table_view.tab_label", component: TableView},
+  {key: "pivot", label: "pivot_view.tab_label", component: PivotView},
+  {key: "debug", label: "debug_view.tab_label", component: DebugView}
 };
 
 function PageComponent(props) {
@@ -91,13 +113,13 @@ function PageComponent(props) {
 }
 ```
 
-The keys of the object will be used as the name of each tab, and the values are the raw react components. The components are then activated and passed the following properties:
+Note the components are passed as ComponentType instead of ReactElement. Once selected, the component is activated, and given the following properties:
 
 ```ts
 interface ViewProps {
   cube: OlapClient.PlainCube;
-  result: TessExpl.Struct.QueryResult;
-  params: TessExpl.Struct.QueryParams;
+  result: QueryResult;
+  params: QueryParams;
 }
 ```
 

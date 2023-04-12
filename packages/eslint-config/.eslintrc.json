@@ -27,8 +27,9 @@
   },
 
   "rules": {
-    "@typescript-eslint/no-unused-vars": 1,
     "@typescript-eslint/no-extra-parens": 1,
+    "@typescript-eslint/no-redeclare": 1,
+    "@typescript-eslint/no-unused-vars": 1,
     "array-bracket-spacing": 2,
     "arrow-body-style": 2,
     "arrow-parens": [2, "as-needed"],
@@ -102,7 +103,7 @@
     "no-negated-in-lhs": 2,
     "no-obj-calls": 2,
     "no-octal": 2,
-    "no-redeclare": 2,
+    "no-redeclare": 0,
     "no-regex-spaces": 2,
     "no-sparse-arrays": 2,
     "no-undef": 2,

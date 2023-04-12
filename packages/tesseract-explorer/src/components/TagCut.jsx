@@ -1,35 +1,35 @@
 import {ActionIcon, Alert, Box, Button, Card, CloseButton, Group, HoverCard, Input, Loader, Popover, Stack, Switch, Text, ThemeIcon, useMantineTheme} from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import {useMediaQuery} from "@mantine/hooks";
 import {IconAlertTriangle, IconRefresh} from "@tabler/icons-react";
 import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
+import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {willFetchMembers} from "../middleware/olapActions";
-import {doCutUpdate} from "../state/params/actions";
-import {selectLocale} from "../state/params/selectors";
+import {selectLocale} from "../state/queries";
 import {selectLevelTriadMap} from "../state/selectors";
 import {abbreviateFullName} from "../utils/format";
 import {getCaption} from "../utils/string";
 import {buildMember} from "../utils/structs";
 import {TransferInput} from "./TransferInput";
 
-/** @type {React.FC<import("./TransferInput").OwnProps<TessExpl.Struct.MemberItem>>} */
+/** @type {React.FC<import("./TransferInput").OwnProps<import("../utils/structs").MemberItem>>} */
 // @ts-ignore
 export const MembersTransferInput = TransferInput;
 
 /**
  * @type {React.FC<{
- *  item: TessExpl.Struct.CutItem,
- *  onMembersUpdate?: (item: TessExpl.Struct.CutItem, members: string[]) => any,
- *  onRemove?: (item: TessExpl.Struct.CutItem) => any,
- *  onToggle?: (item: TessExpl.Struct.CutItem) => any,
+ *  item: import("../utils/structs").CutItem,
+ *  onMembersUpdate?: (item: import("../utils/structs").CutItem, members: string[]) => any,
+ *  onRemove?: (item: import("../utils/structs").CutItem) => any,
+ *  onToggle?: (item: import("../utils/structs").CutItem) => any,
  * }>}
  */
 export const TagCut = props => {
   const {item, onMembersUpdate, onRemove, onToggle} = props;
   const {translate: t} = useTranslation();
 
-  const dispatch = useDispatch();
+  const actions = useActions();
+
   const locale = useSelector(selectLocale);
   const theme = useMantineTheme();
   const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`);
@@ -52,7 +52,7 @@ export const TagCut = props => {
 
   const reloadHandler = useCallback(() => {
     const activeMembers = item.members;
-    dispatch(willFetchMembers(item))
+    actions.willFetchMembers(item)
       .then(members => {
         const memberRecords = {};
         let i = members.length;
@@ -61,7 +61,7 @@ export const TagCut = props => {
           const active = activeMembers.includes(`${member.key}`);
           memberRecords[member.key] = buildMember({name: member.caption, key: member.key, active});
         }
-        !item.active && dispatch(doCutUpdate({...item, active: true}));
+        !item.active && actions.updateCut({...item, active: true});
         setError("");
         setMembers(memberRecords);
         setLoadingMembers(false);
@@ -86,7 +86,7 @@ export const TagCut = props => {
     });
   }, [item.members.join("-"), item, locale.code]);
 
-  /** @type {{label: string; method: import("./TransferInput").ItemPredicateFunction<TessExpl.Struct.MemberItem>}[]} */
+  /** @type {{label: string; method: import("./TransferInput").ItemPredicateFunction<import("../utils/structs").MemberItem>}[]} */
   const itemPredicate = useMemo(() => [{
     label: t("params.label_cuts_filterby_id"),
     method: (query, item) => query.test(item.key)
@@ -148,9 +148,9 @@ export const TagCut = props => {
         </Card>
       </Popover.Target>
       <Popover.Dropdown>
-        <Box 
+        <Box
           miw={400}
-          sx={(theme) => ({
+          sx={theme => ({
             [theme.fn.smallerThan("md")]: {
               minWidth: "unset",
               maxWidth: 250
@@ -203,7 +203,7 @@ const TagCutLoading = props =>
 /**
  * @type {React.FC<{
  *  children: string,
- *  item: TessExpl.Struct.CutItem,
+ *  item: import("../utils/structs").CutItem,
  *  error: string,
  *  onReload: () => void,
  *  onRemove: () => void,
@@ -226,8 +226,8 @@ const TagCutError = props => {
         >
           <Group noWrap position="apart">
             <Group noWrap spacing="xs">
-              <ThemeIcon 
-                color="yellow" 
+              <ThemeIcon
+                color="yellow"
                 // @ts-ignore
                 variant="subtle">
                 <IconAlertTriangle />

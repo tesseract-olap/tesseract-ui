@@ -1,11 +1,11 @@
 import {Group, Switch, ThemeIcon, Tooltip} from "@mantine/core";
 import {IconInfoCircleFilled} from "@tabler/icons-react";
-import React, {useCallback} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {useSettings} from "../hooks/settings";
+import React, {useCallback, useEffect} from "react";
+import {useSelector} from "react-redux";
+import {useActions, useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {doFullResultsPagination} from "../state/params/actions";
-import {selectIsFullResults} from "../state/params/selectors";
+import {selectIsPreviewMode} from "../state/queries";
+import { selectSerializedParams } from "../state/selectors";
 
 /**
  * @typedef LoadAllResultsSwitchProps
@@ -13,21 +13,25 @@ import {selectIsFullResults} from "../state/params/selectors";
  */
 
 /** @type {React.FC<LoadAllResultsSwitchProps>} */
-export const LoadAllResultsSwitch = props => {
-  const dispatch = useDispatch();
+export const PreviewModeSwitch = props => {
+  const actions = useActions();
 
   const {translate: t} = useTranslation();
 
-  const isFullResults = useSelector(selectIsFullResults);
+  const isPreviewMode = useSelector(selectIsPreviewMode);
+  const serialParams = useSelector(selectSerializedParams);
 
   const {previewLimit} = useSettings();
 
   const noPopover = props.noPopover ? true : false;
 
+  useEffect(() => {
+    isPreviewMode && actions.willRequestQuery();
+  }, [isPreviewMode, serialParams]);
+
   const onClickLoadAllResults = useCallback(() => {
-    // Update limit and full results
-    dispatch(doFullResultsPagination(!isFullResults ? 0 : previewLimit, !isFullResults));
-  }, [previewLimit, isFullResults]);
+    actions.updatePreviewLimit(isPreviewMode ? 0 : previewLimit);
+  }, [previewLimit, isPreviewMode]);
 
   return (
     <Tooltip
@@ -38,18 +42,20 @@ export const LoadAllResultsSwitch = props => {
         focus: false,
         touch: true
       }}
-      label={isFullResults ? t("previewMode.description_full") : t("previewMode.description_preview", {limit: previewLimit})}
+      label={isPreviewMode
+        ? t("previewMode.description_preview", {limit: previewLimit})
+        : t("previewMode.description_full")}
       multiline
       withArrow
       withinPortal
     >
       <Group noWrap spacing="xs" w="max-content">
         <Switch
-          checked={isFullResults}
+          checked={!isPreviewMode}
           label={t("params.label_boolean_full_results")}
-          onChange={onClickLoadAllResults} 
+          onChange={onClickLoadAllResults}
         />
-        {!noPopover && <ThemeIcon 
+        {!noPopover && <ThemeIcon
           color="blue"
           // @ts-ignore
           variant="subtle"

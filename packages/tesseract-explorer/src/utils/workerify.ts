@@ -1,4 +1,3 @@
-const TARGET = typeof Symbol === "undefined" ? "__target" : Symbol();
 const SCRIPT_TYPE = "application/javascript";
 
 let Worker = typeof window === "object" ? window.Worker : null;
@@ -44,45 +43,88 @@ function createSourceObject(str) {
 
 /**
  * Returns a wrapper around Web Worker code that is constructible.
- * @param {(self: Worker) => void} fn
  */
-export function shimWorker(fn) {
-  return function ShimWorker(forceFallback) {
-    const workerInstance = this;
+export function shimWorker(fn: (self: Worker) => void) {
+
+  /** */
+  function ShimWorker(forceFallback?: boolean) {
+    const that = this;
 
     if (Worker && !forceFallback) {
       const source = fn.toString().trim();
       const objURL = createSourceObject(`(${source})(this);`);
 
-      this[TARGET] = new Worker(objURL);
+      this._worker = new Worker(objURL);
       URL.revokeObjectURL(objURL);
-      return this[TARGET];
+      return;
     }
 
-    const selfShim = {
+    const threadShim = {
+      onmessage(evt) {},
+      onmessageerror(evt) {},
       postMessage(m) {
         console.debug("Message from shim worker to main:", m);
-        if (workerInstance.onmessage) {
-          setTimeout(() => {
-            workerInstance.onmessage({data: m, target: selfShim});
-          });
-        }
+        setTimeout(() => {
+          that.onmessage({data: m, target: threadShim});
+        });
       },
       terminate() {
         console.debug("Worker terminated by shim worker.");
       }
     };
 
-    fn.call(selfShim, selfShim);
-    this.postMessage = function(m) {
-      console.debug("Message from main to shim worker:", m);
-      setTimeout(() =>  {
-        selfShim.onmessage({data: m, target: workerInstance});
-      });
-    };
-    this.terminate = function() {
-      console.debug("Worker terminated by main.");
-    };
+    fn.call(threadShim, threadShim);
+
+    this.threadShim = threadShim;
     this.isThisThread = true;
+    this.onerror = undefined;
+    this.onmessage = undefined;
+    this.onmessageerror = undefined;
+  }
+
+  Object.defineProperties(ShimWorker.prototype, {
+    onerror: {
+      get() {
+        return this._worker.onerror;
+      },
+      set(fn) {
+        this._worker.onerror = fn;
+      }
+    },
+    onmessage: {
+      get() {
+        return this._worker.onmessage;
+      },
+      set(fn) {
+        this._worker.onmessage = fn;
+      }
+    },
+    onmessageerror: {
+      get() {
+        return this._worker.onmessageerror;
+      },
+      set(fn) {
+        this._worker.onmessageerror = fn;
+      }
+    }
+  });
+
+  ShimWorker.prototype.postMessage = function(msg) {
+    const worker = this._worker;
+    if (worker) return worker.postMessage(msg);
+
+    setTimeout(() =>  {
+      this?.threadShim?.onmessage({data: msg, target: this});
+    });
+    return console.debug("Message from main thread to ShimWorker:", msg);
   };
+
+  ShimWorker.prototype.terminate = function() {
+    const worker = this._worker;
+    if (worker) return worker.terminate();
+
+    return console.debug("ShimWorker terminated by main.");
+  };
+
+  return ShimWorker;
 }

@@ -10,25 +10,28 @@ import {ButtonDownload} from "./ButtonDownload";
 import {SelectObject} from "./Select";
 import {NonIdealState} from "./NonIdealState";
 import {IconAlertCircle, IconAlertTriangle} from "@tabler/icons-react";
-import {selectIsFullResults} from "../state/params/selectors";
 import {useSelector} from "react-redux";
+import {selectIsPreviewMode} from "../state/queries";
+import {selectOlapMeasureMap} from "../state/selectors";
 
-/** @type {React.FC<TessExpl.ViewProps>} */
+/** @type {React.FC<import("./ExplorerResults").ViewProps>} */
 export const PivotView = props => {
   const {cube, params, result, ...mantineReactTableProps} = props;
   const locale = params.locale;
 
   const {translate: t} = useTranslation();
 
-  const measureOptions = useMemo(() => {
-    const measureMap = Object.fromEntries(
-      cube.measures.map(msr => [msr.name, msr])
-    );
-    return params.measures.map(value => {
-      const entity = measureMap[value];
-      return {value, label: getCaption(entity, locale), type: entity.aggregatorType};
-    });
-  }, [cube, params.measures, locale]);
+  const measureMap = useSelector(selectOlapMeasureMap);
+
+  const measureOptions = useMemo(() =>
+    filterMap(Object.values(params.measures), item => {
+      const entity = measureMap[item.name];
+      return !isActiveItem(item) ? null : {
+        value: item.name,
+        label: getCaption(entity, locale),
+        type: entity.aggregatorType
+      };
+    }), [cube, params.measures, locale]);
 
   const drilldownOptions = useMemo(() => {
     const dimensionMap = Object.fromEntries(
@@ -58,7 +61,7 @@ export const PivotView = props => {
       return levelOptions.concat(
         filterMap(item.properties, item => {
           const entity = propertyMap[item.name];
-          return !item.active ? null : {
+          return !isActiveItem(item) ? null : {
             value: item.name,
             label: `${getCaption(entity, locale)} (${caption})`,
             type: "prop"
@@ -97,7 +100,7 @@ export const PivotView = props => {
           maw={500}
           key="propertypivot"
           title={t("pivot_view.warning")}
-          sx={(theme) => ({
+          sx={theme => ({
             [theme.fn.smallerThan("lg")]: {
               maxWidth: "100%"
             }
@@ -115,7 +118,7 @@ export const PivotView = props => {
             key="notsummeasure"
             maw={500}
             title={t("pivot_view.warning")}
-            sx={(theme) => ({
+            sx={theme => ({
               [theme.fn.smallerThan("lg")]: {
                 maxWidth: "100%"
               }
@@ -127,7 +130,7 @@ export const PivotView = props => {
             key="sumdimensions"
             maw={500}
             title={t("pivot_view.warning")}
-            sx={(theme) => ({
+            sx={theme => ({
               [theme.fn.smallerThan("lg")]: {
                 maxWidth: "100%"
               }
@@ -218,7 +221,7 @@ export const PivotView = props => {
       h="100%"
       id="query-results-pivot-view"
       wrap="nowrap"
-      sx={(theme) => ({
+      sx={theme => ({
         [theme.fn.smallerThan("lg")]: {
           flexDirection: "column"
         }
@@ -310,7 +313,7 @@ export const PivotView = props => {
 const MatrixTable = props => {
   const {data: values, formatter, ...mantineReactTableProps} = props;
 
-  const isFullResults = useSelector(selectIsFullResults);
+  const isPreviewMode = useSelector(selectIsPreviewMode);
 
   const columns = useMemo(() => props.headers.map((header, colIndex) => ({
     accesorKey: header,
@@ -343,7 +346,7 @@ const MatrixTable = props => {
       }}
       mantinePaperProps={{
         withBorder: false,
-        sx: (theme) => ({
+        sx: theme => ({
           [theme.fn.smallerThan("lg")]: {
             padding: theme.spacing.sm
           }
@@ -352,7 +355,9 @@ const MatrixTable = props => {
       mantineTableContainerProps={{
         sx: {
           // TODO: Find a better way to calculate the max height of Mantine React Table
-          maxHeight: isFullResults ? "clamp(350px, calc(100vh - 48px), 9999px)" : "clamp(350px, calc(100vh - 48px - 48px), 9999px)"
+          maxHeight: isPreviewMode
+            ? "clamp(350px, calc(100vh - 48px - 48px), 9999px)"
+            : "clamp(350px, calc(100vh - 48px), 9999px)"
         }
       }}
       rowVirtualizerProps={{
@@ -370,7 +375,7 @@ const MemoMatrixTable = memo(MatrixTable);
 /**
  * Outputs a CSV-like string.
  * @param {JSONArrays} matrix
- * @param {TessExpl.Formatter} formatter
+ * @param {import("../utils/types").Formatter} formatter
  * @param {"csv" | "tsv"} format
  * @returns {string}
  */

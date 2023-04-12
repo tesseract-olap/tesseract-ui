@@ -1,18 +1,16 @@
 import {Button, Divider, Group, Space, Stack} from "@mantine/core";
 import {IconForms, IconRowInsertBottom} from "@tabler/icons-react";
 import React, {useCallback} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
+import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {willExecuteQuery, willHydrateParams, willParseQueryUrl} from "../middleware/olapActions";
-import {doSetLoadingState} from "../state/loading/actions";
-import {doQueriesRemove, doQueriesSelect, doQueriesUpdate} from "../state/queries/actions";
-import {selectCurrentQueryItem, selectQueryItems} from "../state/queries/selectors";
+import {selectCurrentQueryItem, selectQueryItems} from "../state/queries";
 import {buildQuery} from "../utils/structs";
 import {LayoutColumn} from "./LayoutColumn";
 import {MemoStoredQuery as StoredQuery} from "./StoredQuery";
 
 export const ExplorerQueries = () => {
-  const dispatch = useDispatch();
+  const actions = useActions();
 
   const currentQuery = useSelector(selectCurrentQueryItem);
   const items = useSelector(selectQueryItems);
@@ -22,31 +20,31 @@ export const ExplorerQueries = () => {
   /** @type {() => void} */
   const onItemCreate = useCallback(() => {
     const query = buildQuery({params: currentQuery?.params});
-    dispatch(doQueriesUpdate(query));
-    dispatch(doQueriesSelect(query.key));
+    actions.updateQuery(query);
+    actions.selectQuery(query.key);
   }, [currentQuery]);
 
   /** @type {(itemKey: string) => void} */
   const onItemDelete = useCallback(itemKey => {
-    dispatch(doQueriesRemove(itemKey));
+    actions.removeQuery(itemKey);
   }, []);
 
   /** @type {(itemKey: string) => void} */
   const onItemSelect = useCallback(itemKey => {
-    dispatch(doQueriesSelect(itemKey));
+    actions.selectQuery(itemKey);
   }, []);
 
   const parseQueryUrlHandler = useCallback(() => {
     const string = window.prompt("Enter the URL of the query you want to parse:");
     if (string) {
-      dispatch(doSetLoadingState("REQUEST"));
+      actions.setLoadingState("FETCHING");
       const url = new URL(string);
-      dispatch(willParseQueryUrl(url))
-        .then(() => dispatch(willHydrateParams()))
-        .then(() => dispatch(willExecuteQuery()))
+      actions.willParseQueryUrl(url)
+        .then(() => actions.willHydrateParams())
+        .then(() => actions.willExecuteQuery())
         .then(
-          () => dispatch(doSetLoadingState("SUCCESS")),
-          error => dispatch(doSetLoadingState("FAILURE", error.message))
+          () => actions.setLoadingState("SUCCESS"),
+          error => actions.setLoadingState("FAILURE", error.message)
         );
     }
   }, []);

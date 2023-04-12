@@ -1,11 +1,11 @@
 import {Measure} from "@datawheel/olap-client";
-import {buildCut, buildDrilldown, buildFilter} from "./structs";
+import {buildCut, buildDrilldown, buildFilter, buildMeasure} from "./structs";
 import {keyBy} from "./transform";
 import {isActiveCut, isActiveItem} from "./validation";
 
 /**
- * @param {OlapClient.Query} query
- * @param {TessExpl.Struct.QueryParams} params
+ * @param {import("@datawheel/olap-client").Query} query
+ * @param {import("./structs").QueryParams} params
  */
 export function applyQueryParams(query, params) {
 
@@ -27,8 +27,9 @@ export function applyQueryParams(query, params) {
     });
   });
 
-  params.measures.forEach(item => {
-    query.addMeasure(item);
+  Object.values(params.measures).forEach(item => {
+    if (!isActiveItem(item)) return;
+    query.addMeasure(item.name);
   });
 
   params.locale && query.setLocale(params.locale);
@@ -37,14 +38,19 @@ export function applyQueryParams(query, params) {
     query.setSorting(params.sortKey, params.sortDir === "desc");
   }
 
-  query.setPagination(params.pagiLimit || 0, params.pagiOffset);
+  if (params.previewLimit) {
+    query.setPagination(params.previewLimit, 0);
+  }
+  else {
+    query.setPagination(params.pagiLimit || 0, params.pagiOffset);
+  }
 
   return query;
 }
 
 /**
  * @param {OlapClient.Query} query
- * @returns {TessExpl.Struct.QueryParams}
+ * @returns {import("./structs").QueryParams}
  */
 export function extractQueryParams(query) {
   const cube = query.cube;
@@ -53,6 +59,7 @@ export function extractQueryParams(query) {
   // TODO: parse properties too
   const drilldowns = query.getParam("drilldowns").map(buildDrilldown);
   const filters = query.getParam("filters").map(buildFilter);
+  const measures = query.getParam("measures").map(buildMeasure);
 
   const cutRecord = query.getParam("cuts");
   const cuts = Object.keys(cutRecord).map(cutLevel => {
@@ -74,7 +81,6 @@ export function extractQueryParams(query) {
       debug: Boolean(booleans.debug),
       distinct: Boolean(booleans.distinct),
       exclude_default_members: Boolean(booleans.exclude_default_members),
-      full_results: Boolean(booleans.full_results),
       nonempty: Boolean(booleans.nonempty),
       parents: Boolean(booleans.parents),
       sparse: Boolean(booleans.sparse)
@@ -84,9 +90,10 @@ export function extractQueryParams(query) {
     drilldowns: keyBy(drilldowns, getKey),
     filters: keyBy(filters, getKey),
     locale: query.getParam("locale"),
-    measures: query.getParam("measures").map(item => item.name),
+    measures: keyBy(measures, getKey),
     pagiLimit: pagination.limit,
     pagiOffset: pagination.offset,
+    previewLimit: 0,
     sortDir: sorting.direction === "asc" ? "asc" : "desc",
     sortKey: Measure.isMeasure(sorting.property)
       ? sorting.property.name

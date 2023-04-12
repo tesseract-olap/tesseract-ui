@@ -1,18 +1,16 @@
 import {Box, Button, Group, Stack, Tooltip} from "@mantine/core";
 import {IconCircleMinus, IconDatabase, IconReplace} from "@tabler/icons-react";
-import React, {useMemo} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import React from "react";
+import {useSelector} from "react-redux";
+import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {willRequestQuery} from "../middleware/olapActions";
-import {doCutClear, doDrilldownClear, doMeasureClear} from "../state/params/actions";
-import {selectValidQueryStatus} from "../state/params/selectors";
-import {doUpdateEndpoint} from "../state/server/actions";
-import {selectServerEndpoint, selectServerSoftware} from "../state/server/selectors";
-import {LoadAllResultsSwitch} from "./LoadAllResultsSwitch";
+import {selectValidQueryStatus} from "../state/queries";
+import {selectServerEndpoint, selectServerSoftware} from "../state/server";
+import {PreviewModeSwitch} from "./PreviewModeSwitch";
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
-  const dispatch = useDispatch();
+  const actions = useActions();
 
   const {translate: t} = useTranslation();
 
@@ -20,22 +18,13 @@ export const ButtonExecuteQuery = () => {
   const software = useSelector(selectServerSoftware);
 
   const {isValid, error} = useSelector(selectValidQueryStatus);
-  const errorText = error && t(error) !== error ? t(error) : "";
-
-  const executeButtonProps = useMemo(() => {
-    if (!isValid) {
-      return {
-        "data-disabled": true
-      }; 
-    }
-    return {};
-  }, [isValid]);
+  const errorText = error ? t(error) : "";
 
   return (
     <Box id="button-group-execute-query">
       <Stack spacing="xs">
         <Group noWrap spacing="xs">
-          <Tooltip 
+          <Tooltip
             color="red"
             disabled={isValid}
             events={{
@@ -53,15 +42,16 @@ export const ButtonExecuteQuery = () => {
               id="button-execute-query"
               leftIcon={<IconDatabase />}
               onClick={() => {
-                dispatch(willRequestQuery());
+                actions.willRequestQuery();
               }}
               sx={{"&[data-disabled]": {pointerEvents: "all"}}}
-              {...executeButtonProps}
+              data-disabled={!isValid}
+              // {...executeButtonProps}
             >
               {t("params.action_execute")}
             </Button>
           </Tooltip>
-          {software === "tesseract-olap" && <Tooltip 
+          {software === "tesseract-olap" && <Tooltip
             color="gray"
             events={{
               hover: true,
@@ -75,7 +65,9 @@ export const ButtonExecuteQuery = () => {
             <Button
               color="gray"
               id="button-change-endpoint"
-              onClick={() => dispatch(doUpdateEndpoint())}
+              onClick={() => {
+                actions.updateEndpoint();
+              }}
               variant="filled"
             >
               <IconReplace />
@@ -83,10 +75,10 @@ export const ButtonExecuteQuery = () => {
           </Tooltip>}
         </Group>
         <Box id="switch-params-load-all-results">
-          <LoadAllResultsSwitch />
+          <PreviewModeSwitch />
         </Box>
         <Group noWrap spacing="xs">
-          <Tooltip 
+          <Tooltip
             color="red"
             events={{
               hover: true,
@@ -98,15 +90,13 @@ export const ButtonExecuteQuery = () => {
             withArrow
             withinPortal
           >
-            <Button 
+            <Button
               color="red"
               id="button-clear-params"
               fullWidth
               leftIcon={<IconCircleMinus />}
               onClick={() => {
-                dispatch(doCutClear());
-                dispatch(doDrilldownClear());
-                dispatch(doMeasureClear());
+                actions.resetAllParams({});
               }}
             >
               {t("params.action_clear")}

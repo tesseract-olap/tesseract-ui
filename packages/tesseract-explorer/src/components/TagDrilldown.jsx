@@ -1,9 +1,9 @@
 import {Box, Card, CloseButton, Group, Input, Popover, Switch, Text, useMantineTheme} from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import {useMediaQuery} from "@mantine/hooks";
 import React, {memo, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {selectLocale} from "../state/params/selectors";
+import {selectLocale} from "../state/queries";
 import {selectLevelTriadMap} from "../state/selectors";
 import {filterMap} from "../utils/array";
 import {abbreviateFullName} from "../utils/format";
@@ -86,9 +86,9 @@ const TagDrilldown = props => {
   const captionItems = [{name: t("placeholders.unselected")}].concat(item.properties);
 
   const content =
-    <Box 
+    <Box
       miw={400}
-      sx={(theme) => ({
+      sx={theme => ({
         [theme.fn.smallerThan("md")]: {
           minWidth: "unset",
           maxWidth: 250

@@ -1,17 +1,17 @@
 import {Box, Input} from "@mantine/core";
 import React from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
+import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {doLocaleUpdate} from "../state/params/actions";
-import {selectLocale} from "../state/params/selectors";
-import {selectLocaleOptions} from "../state/server/selectors";
+import {selectLocale} from "../state/queries";
+import {selectLocaleOptions} from "../state/server";
 import {SelectObject} from "./Select";
 
 /** @type {React.FC<import("./Select").SelectObjectProps<{label: string, value: string}>>} */
 const SelectLocaleOptions = SelectObject;
 
 export const SelectLocale = () => {
-  const dispatch = useDispatch();
+  const actions = useActions();
 
   const {translate: t} = useTranslation();
 
@@ -32,7 +32,7 @@ export const SelectLocale = () => {
           items={localeOptions}
           onItemSelect={locale => {
             if (currentLocale.code !== locale.value) {
-              dispatch(doLocaleUpdate(locale.value));
+              actions.updateLocale(locale.value);
             }
           }}
           selectedItem={currentLocale.code}

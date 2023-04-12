@@ -1,25 +1,25 @@
-import {Box, Stack} from "@mantine/core";
-import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {useTranslation} from "../hooks/translation";
-import {willSetCube} from "../middleware/olapActions";
-import {selectLocale} from "../state/params/selectors";
-import {selectOlapCube} from "../state/selectors";
-import {selectOlapCubeItems} from "../state/server/selectors";
-import {getAnnotation, getCaption} from "../utils/string";
-import {groupBy} from "../utils/transform";
-import {shallowEqualForProps} from "../utils/validation";
-import {MemoCubeDescription, MemoCubeSource} from "./CubeMetadata";
-import {SelectWithButtons} from "./SelectWithButtons";
+import { Box, Stack } from "@mantine/core";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { useActions } from "../hooks/settings";
+import { useTranslation } from "../hooks/translation";
+import { selectLocale } from "../state/queries";
+import { selectOlapCube } from "../state/selectors";
+import { selectOlapCubeItems } from "../state/server";
+import { getAnnotation, getCaption } from "../utils/string";
+import { groupBy } from "../utils/transform";
+import { shallowEqualForProps } from "../utils/validation";
+import { MemoCubeDescription, MemoCubeSource } from "./CubeMetadata";
+import { SelectWithButtons } from "./SelectWithButtons";
 
 /** @type {React.FC<import("./SelectWithButtons").OwnProps<string>>} */
 const SelectLevel = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
 
-/** @type {React.FC<import("./SelectWithButtons").OwnProps<OlapClient.PlainCube>>} */
+/** @type {React.FC<import("./SelectWithButtons").OwnProps<import("@datawheel/olap-client").PlainCube>>} */
 const SelectPlainCube = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
 
 export const SelectCube = () => {
-  const dispatch = useDispatch();
+  const actions = useActions();
 
   const {translate: t} = useTranslation();
   const {code: locale} = useSelector(selectLocale);
@@ -72,7 +72,7 @@ export const SelectCube = () => {
 
   /** @type {(cube: import("@datawheel/olap-client").PlainCube) => void} */
   const onItemSelect = useCallback(cube => {
-    dispatch(willSetCube(cube.name));
+    actions.willSetCube(cube.name);
   }, []);
 
   // We need to keep the selectedItem in sync if at some point the
@@ -90,7 +90,6 @@ export const SelectCube = () => {
       items={cubeItems}
       label={t("params.label_cube")}
       onItemSelect={onItemSelect}
-      searchable
       selectedItem={selectedItem}
     />
     : null;

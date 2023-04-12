@@ -35,7 +35,7 @@ export function isNumeric(str) {
 
 /**
  * @param {any} query
- * @returns {query is TessExpl.Struct.QueryParams}
+ * @returns {query is import("./structs").QueryParams}
  */
 export function isQuery(query) {
   return (
@@ -45,7 +45,8 @@ export function isQuery(query) {
     query.cube.length > 0 &&
     typeof query.drilldowns === "object" &&
     query.drilldowns !== null &&
-    Array.isArray(query.measures)
+    typeof query.measures === "object" &&
+    query.measures !== null
   );
 }
 
@@ -58,7 +59,7 @@ const validQueryConditions = [
     error: "queries.error_not_query"
   },
   {
-    condition: query => query.measures.length > 0,
+    condition: query => Object.values(query.measures).reduce(activeItemCounter, 0) > 0,
     error: "queries.error_no_measures"
   },
   {
@@ -92,7 +93,7 @@ export function isValidQueryVerbose(query) {
   return {isValid: allConditionsPass, error};
 }
 
-/** @param {TessExpl.Struct.CutItem} item */
+/** @param {import("./structs").CutItem} item */
 export function isActiveCut(item) {
   return isActiveItem(item) && item.members.length > 0;
 }
@@ -104,7 +105,7 @@ export function isActiveItem(item) {
 
 /**
  * @param {any} obj
- * @returns {obj is TessExpl.Struct.FilterItem}
+ * @returns {obj is import("./structs").FilterItem}
  */
 export function isFilterItem(obj) {
   return obj.measure && obj.comparison && isNumeric(obj.interprettedValue);
@@ -121,7 +122,7 @@ export function activeItemCounter(sum, item) {
 // TODO: migrate checkDrilldowns and checkCuts to validQueryConditions
 
 /**
- * @param {TessExpl.Struct.QueryParams} query
+ * @param {import("./structs").QueryParams} query
  */
 export function checkDrilldowns(query) {
   const drilldowns = Object.values(query.drilldowns);
@@ -146,7 +147,7 @@ export function checkDrilldowns(query) {
 }
 
 /**
- * @param {TessExpl.Struct.QueryParams} query
+ * @param {import("./structs").QueryParams} query
  */
 export function checkCuts(query) {
   const cuts = Object.values(query.cuts);

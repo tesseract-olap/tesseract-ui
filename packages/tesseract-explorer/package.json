@@ -4,7 +4,7 @@
   "description": "A react component to explore data from a tesseract-olap server.",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
-  "types": "./index.d.ts",
+  "types": "./dist/index.d.ts",
   "readme": "./README.md",
   "exports": {
     ".": {
@@ -38,14 +38,17 @@
   "dependencies": {
     "@datawheel/olap-client": "^2.0.0",
     "@datawheel/use-translation": "^0.2.0",
+    "@reduxjs/toolkit": "^1.9.3",
+    "@tabler/icons-react": "^2.7.0",
     "clipboard-copy": "^3.2.0",
     "d3plus-format": "^1.1.0",
+    "dayjs": "^1.0.0",
     "form-urldecoded": "^1.2.0",
     "form-urlencoded": "^6.0.0",
     "iso-639-1": "^2.1.0",
     "mantine-react-table": "^0.9.5",
-    "react-viewport-list": "^3.0.0",
-    "reselect": "^4.1.0"
+    "react-redux": "^7.0.0",
+    "react-viewport-list": "^3.0.0"
   },
   "peerDependencies": {
     "@emotion/react": "^11.0.0",
@@ -53,12 +56,8 @@
     "@mantine/dates": "^5.0.0",
     "@mantine/hooks": "^5.0.0",
     "@mantine/prism": "^5.0.0",
-    "@tabler/icons-react": "^2.7.0",
-    "dayjs": "^1.0.0",
     "react": "^16.14.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.14.0 || ^17.0.0 || ^18.0.0",
-    "react-redux": "^7.0.0",
-    "redux": "^4.0.0"
+    "react-dom": "^16.14.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@emotion/react": "^11.10.6",
@@ -66,14 +65,10 @@
     "@mantine/dates": "^5.10.5",
     "@mantine/hooks": "^5.10.5",
     "@mantine/prism": "^5.10.5",
-    "@tabler/icons-react": "^2.7.0",
-    "dayjs": "^1.11.7",
     "eslint": "^8.0.0",
     "eslint-config-tesseract-ui": "*",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
-    "react-redux": "^7.2.0",
-    "redux": "^4.2.0",
     "tsup": "^6.6.3"
   },
   "eslintConfig": {

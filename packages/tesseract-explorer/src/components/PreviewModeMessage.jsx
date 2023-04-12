@@ -3,20 +3,22 @@ import React from "react";
 import {useSelector} from "react-redux";
 import {useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {selectIsFullResults} from "../state/params/selectors";
-import {LoadAllResultsSwitch} from "./LoadAllResultsSwitch";
+import {selectIsPreviewMode} from "../state/queries";
+import {PreviewModeSwitch} from "./PreviewModeSwitch";
 
-
-/** @type {React.FC<{}>} */
-export const LoadAllResultsMessage = () => {
+/**
+ * Renders a warning message to the user, about the limitations on the result
+ * count for quick iteration purposes.
+ */
+export function PreviewModeMessage() {
 
   const {translate: t} = useTranslation();
 
-  const isFullResults = useSelector(selectIsFullResults);
+  const isPreviewMode = useSelector(selectIsPreviewMode);
 
   const {previewLimit} = useSettings();
 
-  if (isFullResults) return <></>;
+  if (!isPreviewMode) return null;
 
   return (
     <Alert color="yellow" id="alert-load-all-results" radius={0}>
@@ -25,8 +27,8 @@ export const LoadAllResultsMessage = () => {
           <Text fw={700} span>{t("previewMode.title_preview")}: </Text>
           <Text span>{t("previewMode.description_preview", {limit: previewLimit})}</Text>
         </Text>
-        <LoadAllResultsSwitch noPopover={true} />
+        <PreviewModeSwitch noPopover={true} />
       </Group>
     </Alert>
   );
-};
+}

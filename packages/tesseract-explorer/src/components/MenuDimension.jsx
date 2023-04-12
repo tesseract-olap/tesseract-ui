@@ -1,10 +1,9 @@
-import {Group, Menu, Text, UnstyledButton, useMantineTheme} from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import {Group, Menu, Text, UnstyledButton} from "@mantine/core";
 import {IconChevronRight, IconStack, IconStack2, IconStack3} from "@tabler/icons-react";
 import React, {useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {selectLocale} from "../state/params/selectors";
+import {selectLocale} from "../state/queries";
 import {selectOlapDimensionItems} from "../state/selectors";
 import {abbreviateFullName} from "../utils/format";
 import {getCaption} from "../utils/string";
@@ -86,9 +85,9 @@ export const DimensionMenuItem = props => {
     >
       <Menu.Target>
         <UnstyledButton component="div">
-          <Menu.Item 
+          <Menu.Item
             icon={<IconStack3 />}
-            sx={(theme) => ({
+            sx={theme => ({
               [theme.fn.smallerThan("md")]: {
                 maxWidth: 200
               }
@@ -166,9 +165,9 @@ export const HierarchyMenuItem = props => {
     >
       <Menu.Target>
         <UnstyledButton component="div">
-          <Menu.Item 
+          <Menu.Item
             icon={<IconStack2 />}
-            sx={(theme) => ({
+            sx={theme => ({
               [theme.fn.smallerThan("md")]: {
                 maxWidth: 200
               }
@@ -230,7 +229,7 @@ export const LevelMenuItem = props => {
       key={level.uri}
       miw={200}
       onClick={() => props.onItemSelect(level, hierarchy, dimension)}
-      sx={(theme) => ({
+      sx={theme => ({
         [theme.fn.smallerThan("md")]: {
           maxWidth: 200
         }

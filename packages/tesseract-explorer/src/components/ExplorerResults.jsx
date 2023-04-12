@@ -1,32 +1,47 @@
-import {Anchor, Avatar, Box, Flex, Stack, Tabs, Text, Title} from "@mantine/core";
+import {Anchor, Box, Flex, Stack, Tabs, Text, Title} from "@mantine/core";
 import {IconAlertTriangle, IconBox, IconWorld} from "@tabler/icons-react";
 import React, {Suspense, useState} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {selectCurrentQueryItem} from "../state/queries/selectors";
+import {selectCurrentQueryItem} from "../state/queries";
 import {selectOlapCube} from "../state/selectors";
-import {selectServerState} from "../state/server/selectors";
-import {LoadAllResultsMessage} from "./LoadAllResultsMessage";
+import {selectServerState} from "../state/server";
 import {NonIdealState} from "./NonIdealState";
+import {PreviewModeMessage} from "./PreviewModeMessage";
+
+/**
+ * @typedef ViewProps
+ * @property {string} [className]
+ * @property {OlapClient.PlainCube} cube
+ * @property {import("../utils/structs").QueryParams} params
+ * @property {import("../utils/structs").QueryResult} result
+ */
+
+/**
+ * @typedef PanelDescriptor
+ * @property {string} key
+ * @property {string} label
+ * @property {React.ComponentType<ViewProps>} component
+ */
 
 /**
  * @typedef OwnProps
- * @property {any} [DefaultSplash]
- * @property {React.ReactElement | React.ReactFragment | false} transientIcon
- * @property {Record<string, React.FunctionComponent | React.ComponentClass>} panels
+ * @property {React.ReactElement | null} splash
+ * @property {PanelDescriptor[]} panels
  */
 
 /** @type {React.FC<OwnProps>} */
 export const ExplorerResults = props => {
-  const {DefaultSplash, panels, transientIcon} = props;
-  const [currentTab, setCurrentTab] = useState(() => Object.keys(panels)[0]);
+  const {panels} = props;
+  // TODO: move this state to QueryItem, set via actions
+  const [currentTab, setCurrentTab] = useState(0);
 
   const serverStatus = useSelector(selectServerState);
   const cube = useSelector(selectOlapCube);
   const queryItem = useSelector(selectCurrentQueryItem);
 
   const {online: isServerOnline, url: serverUrl} = serverStatus;
-  const {isDirty: isDirtyQuery, params, result} = queryItem;
+  const {params, result} = queryItem;
   const {data, error} = result;
 
   const {translate: t} = useTranslation();
@@ -47,6 +62,7 @@ export const ExplorerResults = props => {
 
   if (isServerOnline === false) {
     if (typeof window === "object" && window.navigator.onLine === false) {
+      // user is browser not connected to internet
       return <NonIdealState
         icon={<IconWorld color="orange" size="5rem" />}
         title={t("results.error_disconnected_title")}
@@ -65,13 +81,8 @@ export const ExplorerResults = props => {
     />;
   }
 
-  if (isDirtyQuery) {
-    return (
-      DefaultSplash && <DefaultSplash/> ||
-      <NonIdealState
-        icon={transientIcon}
-      />
-    );
+  if (queryItem.isDirty) {
+    return props.splash || null;
   }
 
   if (data.length === 0) {
@@ -84,7 +95,8 @@ export const ExplorerResults = props => {
     );
   }
 
-  const CurrentComponent = panels[currentTab];
+  const currentPanel = panels[currentTab];
+  const CurrentComponent = currentPanel.component;
 
   return (
     <Flex
@@ -98,19 +110,26 @@ export const ExplorerResults = props => {
     >
       <Tabs
         id="query-results-tabs"
-        onTabChange={newTab => setCurrentTab(`${newTab}`)}
-        value={currentTab}
+        onTabChange={newTab => {
+          const index = panels.findIndex(panel => panel.key === newTab);
+          setCurrentTab(index);
+        }}
+        value={currentPanel.key}
       >
         <Tabs.List>
-          {Object.keys(panels).map(key => <Tabs.Tab id={key} key={key} value={key}>{t(key)}</Tabs.Tab>)}
-          <Tabs.Tab disabled ml="auto" value="results">
+          {panels.map(panel =>
+            <Tabs.Tab key={panel.key} id={panel.key} value={panel.key}>
+              {t(panel.label)}
+            </Tabs.Tab>
+          )}
+          <Tabs.Tab disabled ml="auto" value="_results">
             <Title order={5}>{t("results.count_rows", {n: data.length})}</Title>
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>
       <Box h="100%">
-        <Suspense fallback={typeof transientIcon === "string" ? <Avatar>{transientIcon}</Avatar> : transientIcon}>
-          <LoadAllResultsMessage />
+        <Suspense fallback={props.splash}>
+          <PreviewModeMessage />
           <CurrentComponent cube={cube} params={params} result={result} />
         </Suspense>
       </Box>

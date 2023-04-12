@@ -174,7 +174,7 @@ export const TransferInput = props => {
   return (
     <Box
       w={500}
-      sx={(theme) => ({
+      sx={theme => ({
         [theme.fn.smallerThan("md")]: {
           maxWidth: "100%",
           width: "100%"
@@ -194,7 +194,7 @@ export const TransferInput = props => {
           grow 
           noWrap 
           spacing="xs"
-          sx={(theme) => ({
+          sx={theme => ({
             [theme.fn.smallerThan("md")]: {
               flexDirection: "column"
             }
@@ -202,7 +202,7 @@ export const TransferInput = props => {
         >
           <Input.Wrapper 
             label={t("transfer_input.unselected_items")}
-            sx={(theme) => ({
+            sx={theme => ({
               [theme.fn.smallerThan("md")]: {
                 maxWidth: "100%",
                 width: "100%"
@@ -233,7 +233,7 @@ export const TransferInput = props => {
           </Input.Wrapper>
           <Input.Wrapper 
             label={t("transfer_input.selected_items")}
-            sx={(theme) => ({
+            sx={theme => ({
               [theme.fn.smallerThan("md")]: {
                 maxWidth: "100%",
                 width: "100%"

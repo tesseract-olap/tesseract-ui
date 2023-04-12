@@ -1,12 +1,12 @@
 import formUrlEncode from "form-urlencoded";
 import {SERIAL_BOOLEAN} from "../enums";
 import {ensureArray, filterMap} from "./array";
-import {buildCut, buildDrilldown, buildFilter} from "./structs";
+import {buildCut, buildDrilldown, buildFilter, buildMeasure} from "./structs";
 import {keyBy, parseName, stringifyName} from "./transform";
 import {isActiveCut, isActiveItem} from "./validation";
 
 /**
- * @param {TessExpl.Struct.QueryParams} params
+ * @param {import("./structs").QueryParams} params
  * @returns {string}
  */
 export function serializePermalink(params) {
@@ -18,7 +18,7 @@ export function serializePermalink(params) {
 }
 
 /**
- * @param {TessExpl.Struct.QueryParams} query
+ * @param {import("./structs").QueryParams} query
  * @returns {TessExpl.Struct.SerializedQuery}
  */
 function serializeStateToSearchParams(query) {
@@ -34,7 +34,9 @@ function serializeStateToSearchParams(query) {
     isActiveItem(item) ? serializeFilter(item) : null
   );
 
-  const measures = query.measures;
+  const measures = filterMap(Object.values(query.measures), item =>
+    isActiveItem(item) ? serializeMeasure(item) : null
+  );
 
   const booleans = Object.keys(query.booleans).reduce((sum, key) => {
     const value = query.booleans[key] && SERIAL_BOOLEAN[key.toUpperCase()];
@@ -52,7 +54,7 @@ function serializeStateToSearchParams(query) {
   };
 
   /**
-   * @param {TessExpl.Struct.CutItem} item
+   * @param {import("./structs").CutItem} item
    * @returns {string}
    */
   function serializeCut(item) {
@@ -60,7 +62,7 @@ function serializeStateToSearchParams(query) {
   }
 
   /**
-   * @param {TessExpl.Struct.DrilldownItem} item
+   * @param {import("./structs").DrilldownItem} item
    * @returns {string}
    */
   function serializeDrilldown(item) {
@@ -72,17 +74,26 @@ function serializeStateToSearchParams(query) {
   }
 
   /**
-   * @param {TessExpl.Struct.FilterItem} item
+   * @param {import("./structs").FilterItem} item
    * @returns {string}
    */
   function serializeFilter(item) {
     return `${item.measure},${item.comparison},${item.interpretedValue}`;
   }
+
+  /**
+   *
+   * @param {import("./structs").MeasureItem} item
+   * @returns
+   */
+  function serializeMeasure(item) {
+    return `${item.key}`;
+  }
 }
 
 /**
  * @param {TessExpl.Struct.SerializedQuery} query
- * @returns {TessExpl.Struct.QueryParams}
+ * @returns {import("./structs").QueryParams}
  */
 export function parseStateFromSearchParams(query) {
   const getKey = i => i.key;
@@ -100,15 +111,16 @@ export function parseStateFromSearchParams(query) {
     drilldowns: ensureArray(query.drilldowns).reduce(drilldownReducer, drilldowns),
     filters: keyBy(ensureArray(query.filters).map(parseFilter), getKey),
     locale: query.locale,
-    measures: ensureArray(query.measures),
+    measures: keyBy(ensureArray(query.measures).map(parseMeasure), getKey),
     pagiLimit: undefined,
     pagiOffset: undefined,
+    previewLimit: 0, // TODO: add to permalink
     sortDir: "desc",
     sortKey: undefined
   };
 
   /**
-   * @param {Record<string, TessExpl.Struct.CutItem>} cuts
+   * @param {Record<string, import("./structs").CutItem>} cuts
    * @param {string} item
    */
   function cutReducer(cuts, item) {
@@ -131,7 +143,7 @@ export function parseStateFromSearchParams(query) {
   }
 
   /**
-   * @param {Record<string, TessExpl.Struct.DrilldownItem>} drilldowns
+   * @param {Record<string, import("./structs").DrilldownItem>} drilldowns
    * @param {string} item
    */
   function drilldownReducer(drilldowns, item) {
@@ -164,7 +176,7 @@ export function parseStateFromSearchParams(query) {
 
   /**
    * @param {string} item
-   * @returns {TessExpl.Struct.FilterItem}
+   * @returns {import("./structs").FilterItem}
    */
   function parseFilter(item) {
     const [measure, comparison, inputtedValue] = item.split(",");
@@ -174,6 +186,18 @@ export function parseStateFromSearchParams(query) {
       inputtedValue,
       interpretedValue: Number.parseFloat(inputtedValue),
       measure
+    });
+  }
+
+  /**
+   * @param {string} item
+   * @returns {import("./structs").MeasureItem}
+   */
+  function parseMeasure(item) {
+    return buildMeasure({
+      active: true,
+      key: item,
+      name: item
     });
   }
 }

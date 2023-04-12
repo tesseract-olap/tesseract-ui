@@ -1,5 +1,4 @@
 import {splitName} from "./transform";
-import {isFilterItem} from "./validation";
 
 /**
  * Simplifies a fullname for UI display.
@@ -26,13 +25,4 @@ export function abbreviateFullName(nameParts, joint = "/") {
   }
 
   return target.join(joint);
-}
-
-/**
- * @param {TessExpl.Struct.FilterItem} filter
- * @returns {string}
- */
-export function summaryFilter(filter) {
-  if (!isFilterItem(filter)) return "";
-  return `${filter.measure} ${filter.comparison} ${filter.interpretedValue}`;
 }

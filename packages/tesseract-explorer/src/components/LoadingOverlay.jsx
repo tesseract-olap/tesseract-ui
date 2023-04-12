@@ -2,7 +2,7 @@ import {Flex, Loader, LoadingOverlay as MantineLoadingOverlay, Space, Text, Titl
 import React from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {selectLoadingState} from "../state/loading/selectors";
+import {selectLoadingState} from "../state/loading";
 
 /** @type {React.FC} */
 export const LoadingOverlay = () => {
@@ -17,7 +17,7 @@ export const LoadingOverlay = () => {
     /* else */                       t("loading.message_default", message);
   /* eslint-enable indent, operator-linebreak */
 
-  const customLoader = 
+  const customLoader =
     <Flex
       justify="center"
       align="center"

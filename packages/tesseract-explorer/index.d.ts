@@ -1,21 +1,8 @@
 import * as OlapClnt from "@datawheel/olap-client";
 import { TranslationProviderProps } from "@datawheel/use-translation";
 import * as React from "react";
-import * as Redux from "redux";
-
-export = TessExpl;
 
 declare namespace TessExpl {
-  const Explorer: React.FC<ExplorerProps>;
-
-  const DebugView: React.FC<ViewProps>;
-  const PivotView: React.FC<ViewProps>;
-  const TableView: React.FC<ViewProps>;
-
-  const explorerReducer: Redux.Reducer<State.ExplorerState>;
-
-  const olapMiddleware: Redux.Middleware<{}, State.ExplorerState>;
-  const permalinkMiddleware: Redux.Middleware<{}, State.ExplorerState>;
 
   type TranslationDict = typeof import("./dist/index.esm.js").defaultTranslation;
 
@@ -26,25 +13,13 @@ declare namespace TessExpl {
      * [AxiosRequestConfig](https://github.com/axios/axios#request-config)
      * for more complex handling of authorization/authentication.
      */
-    src: OlapClnt.ServerConfig;
+    source: import("@datawheel/olap-client").ServerConfig;
 
     /**
-     * A classname to add to the app wrapper node.
+     * A list of the available locale options.
+     * If passed a string, will be splitted by commas (`,`) to try to interpret a list.
      */
-    className?: string;
-
-    /**
-     * A component that is rendered to display the default "splash screen," the screen
-     * that is shown in the results panel when there is no query or a query has been dirtied.
-     */
-    DefaultSplash?: React.FunctionComponent | React.ComponentClass;
-
-    /**
-     * Enables multiple query mode.
-     * This adds a column where the user can quickly switch between queries,
-     * like tabs in a browser.
-     */
-    multiquery?: boolean;
+    dataLocale?: string | string[];
 
     /**
      * Defines an index of formatter functions available to the measures shown
@@ -54,44 +29,66 @@ declare namespace TessExpl {
     formatters?: Record<string, Formatter>;
 
     /**
-     * A list of the available locale options.
-     * A string will be splitted by commas (`,`) to try to interpret a list.
+     * The list of tabs to offer to the user to render the results.
+     * Must be an array of objects with the following properties:
+     * - `key`: a string to distinguish each panel, will be used in the URL params
+     * - `label`: a string used as the title for the panel in the tab bar.
+     * It will be passed through the internal translation function, so can be
+     * localized via the `translations` property or used directly as is.
+     * - `component`: a non-hydrated React Component.
+     * This will be passed the needed properties according to the specification.
+     * Rendering the panel supports the use of `React.lazy` to defer the load of
+     * heavy dependencies.
      */
-    locale?: string | string[];
+    panels?: PanelDescriptor[];
 
     /**
-     * The list of tabs to offer to the user to render the results.
-     * Must be an object whose keys are the label of the tab to show in the UI,
-     * and whose values are non-hydrated React Components.
+     * The default limit for preview queries.
+     * @default 50
      */
-    panels?: Record<string, React.FunctionComponent<ViewProps> | React.ComponentClass<ViewProps>>;
+    previewLimit?: number;
+
+    /**
+     * A component that is rendered to display the default "splash screen";
+     * the screen that is shown in the results panel when there is no query,
+     * or a query has been dirtied.
+     */
+    splash?: React.ComponentType<{translation: TranslationContextProps}>;
 
     /**
      * The Translation labels to use in the UI.
      */
-    translations?: TranslationProviderProps["translations"];
-
-    /**
-     * Defines an element to show when the app is in an indeterminate state.
-     */
-    transientIcon?: React.ReactElement | React.ReactFragment | false;
+    translations?: Record<string, TranslationDict>;
 
     /**
      * The default locale to use in the Explorer component UI.
+     * This value is passed to the Translation utility and controls the language
+     * for the labels throughout the user interface. Must be equal to one of the
+     * keys in the object provided to the `translations` property.
+     * @default "en"
      */
     uiLocale?: TranslationProviderProps["defaultLocale"];
 
     /**
-     * The default limit for preview queries.
-     * Default 100
-     */
-    previewLimit?: number | 50;
-
-    /**
      * Determines whether Explorer should be rendered within a MantineProvider
-     * Default true
+     * @default true
      */
     withinMantineProvider?: boolean;
+
+    /**
+     * Determines whether Explorer should be rendered within a Redux Provider,
+     * encapsulating its state, and making easier to install.
+     * @default false
+     */
+    withinReduxProvider?: boolean,
+
+    /**
+     * Enables multiple queries mode.
+     * This adds a column where the user can quickly switch between queries,
+     * like tabs in a browser.
+     * @default false
+     */
+    withMultiQuery?: boolean;
   }
 
   interface ViewProps {
@@ -103,121 +100,7 @@ declare namespace TessExpl {
 
   type Formatter = (d: number) => string;
 
-  namespace State {
-    interface ExplorerState {
-      explorerLoading: LoadingState;
-      explorerQueries: QueriesState;
-      explorerServer: ServerState;
-    }
-
-    interface LoadingState {
-      error: string | null;
-      loading: boolean;
-      message?: {
-        [params: string]: string;
-        type: string;
-      };
-      status: string;
-      trigger: string | null;
-    }
-
-    interface QueriesState {
-      current: string;
-      itemMap: Record<string, Struct.QueryItem>;
-    }
-
-    interface ServerState {
-      cubeMap: Record<string, OlapClnt.PlainCube>;
-      endpoint: string;
-      localeOptions: string[];
-      online: boolean | undefined;
-      software: string;
-      url: string;
-      version: string;
-    }
-  }
-
   namespace Struct {
-    interface QueryItem {
-      created: string;
-      isDirty: boolean;
-      key: string;
-      label: string;
-      params: QueryParams;
-      result: QueryResult;
-    }
-
-    interface QueryParams {
-      booleans: Record<string, undefined | boolean>;
-      cube: string;
-      cuts: Record<string, CutItem>;
-      drilldowns: Record<string, DrilldownItem>;
-      filters: Record<string, FilterItem>;
-      locale: string | undefined;
-      measures: string[];
-      pagiLimit: number | undefined;
-      pagiOffset: number | undefined;
-      sortDir: "asc" | "desc";
-      sortKey: string | undefined;
-    }
-
-    interface QueryResult {
-      data: Record<string, string | number>[];
-      error: string | null;
-      headers: Record<string, string>;
-      sourceCall: string | undefined;
-      status: number;
-      urlAggregate: string | undefined;
-      urlLogicLayer: string | undefined;
-    }
-
-    interface IQueryItem {
-      active: boolean;
-      readonly key: string;
-    }
-
-    interface CutItem extends IQueryItem {
-      dimension: string;
-      fullName: string;
-      hierarchy: string;
-      level: string;
-      members: string[];
-      uniqueName: string;
-    }
-
-    interface DrilldownItem extends IQueryItem {
-      captionProperty: string;
-      dimension: string;
-      dimType: string;
-      fullName: string;
-      hierarchy: string;
-      level: string;
-      properties: PropertyItem[];
-      uniqueName: string;
-      memberCount: number;
-    }
-
-    interface FilterItem extends IQueryItem {
-      measure: string;
-      comparison: OlapClnt.Comparison;
-      inputtedValue: string;
-      interpretedValue: number;
-    }
-
-    interface MemberItem extends IQueryItem {
-      name: string;
-    }
-
-    interface NamedSetItem extends IQueryItem {
-      namedset?: string;
-    }
-
-    interface PropertyItem extends IQueryItem {
-      level: string;
-      name: string;
-      uniqueName: string;
-    }
-
     type MemberRecords = Record<string, MemberItem>;
 
     type MeasurableItem = FilterItem;
@@ -252,19 +135,5 @@ declare namespace TessExpl {
       extension: string;
       name: string;
     }
-  }
-}
-
-declare module "redux" {
-  interface Dispatch<A extends Action<string>> {
-    (action: Action<"explorer/CLIENT/DOWNLOADQUERY">): Promise<TessExpl.Struct.FileDescriptor>;
-    (action: Action<"explorer/CLIENT/EXECUTEQUERY">): Promise<void>;
-    (action: Action<"explorer/CLIENT/FETCHMEMBERS">): Promise<OlapClient.PlainMember[]>;
-    (action: Action<"explorer/CLIENT/FILLPARAMS">): Promise<void>;
-    (action: Action<"explorer/CLIENT/PARSEQUERYURL">): Promise<void>;
-    (action: Action<"explorer/CLIENT/RELOADCUBES">): Promise<Record<string, OlapClient.PlainCube>>;
-    (action: Action<"explorer/CLIENT/SELECTCUBE">): Promise<void>;
-    (action: Action<"explorer/CLIENT/SETUPSERVER">): Promise<void>;
-    (action: Action<"explorer/PERMALINK/UPDATE">): Promise<void> | undefined;
   }
 }

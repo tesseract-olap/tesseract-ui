@@ -5,6 +5,22 @@ import {format, formatAbbreviate} from "d3plus-format";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useSettings} from "./settings";
 
+/**
+ * @typedef FormatterHookContext
+ * @property {Object} currentFormats
+ *    Returns the current format object.
+ * @property {(ref: string) => string[]} getAvailableKeys
+ *    Returns a list of keys that determine an available formatter function
+ *    for a `ref` measure name.
+ * @property {(ref: string) => string | undefined} getFormatterKey
+ *    Returns the formatter key currently assigned to a `ref` measure name.
+ * @property {(key: string) => import("../utils/types").Formatter} getFormatter
+ *    Returns the corresponding formatter function for the provided `key`.
+ * @property {(ref: string, key: string) => void} setFormat
+ *    Saves the user's choice of formatter `key` (by its name) for a `ref`
+ *    measure name.
+ */
+
 export const defaultFormatters = {
   undefined: n => n,
   identity: n => `${n}`,
@@ -22,7 +38,7 @@ export const basicFormatterKeys = ["Decimal", "Milliards", "Human"];
  * from the Settings context. The user choice of formatter for each measure is
  * stored in the `currentFormats` object.
  * The resulting object is memoized, so can also be used as dependency.
- * @param {OlapClient.PlainMeasure[]} measures
+ * @param {import("@datawheel/olap-client").PlainMeasure[]} measures
  * @returns {FormatterHookContext}
  */
 export function useFormatter(measures) {
@@ -32,7 +48,7 @@ export function useFormatter(measures) {
   // This will store the user choices of formatter for the available measures
   const [currentFormats, setCurrentFormats] = useState({});
 
-  // This will silently store the original intended formatters by the origin
+  // This will silently store the formatters intended by the server schema
   const originKeys = useRef({});
 
   // We need to capture the default formatter intended for any new measure
@@ -57,12 +73,15 @@ export function useFormatter(measures) {
     currentFormats,
     getAvailableKeys(ref) {
       const originKey = originKeys.current[ref];
-      return originKey ? [originKey].concat(basicFormatterKeys) : basicFormatterKeys;
+      return originKey && !basicFormatterKeys.includes(originKey)
+        ? [originKey].concat(basicFormatterKeys)
+        : basicFormatterKeys;
     },
     getFormatterKey(ref) {
       return currentFormats[ref] || originKeys.current[ref];
     },
     getFormatter(key) {
+      // If formatter key is three uppercase letters, assume currency
       if ((/^[A-Z]{3}$/).test(key)) {
         return formatters[key] || (key => {
           const options = {style: "currency", currency: key};
@@ -84,19 +103,3 @@ export function useFormatter(measures) {
     },
   }), [currentFormats, originKeys.current]);
 }
-
-/**
- * @typedef FormatterHookContext
- * @property {Object} currentFormats
- *    Returns the current format object.
- * @property {(ref: string) => string[]} getAvailableKeys
- *    Returns a list of keys that determine an available formatter function
- *    for a `ref` measure name.
- * @property {(ref: string) => string | undefined} getFormatterKey
- *    Returns the formatter key currently assigned to a `ref` measure name.
- * @property {(key: string) => TessExpl.Formatter} getFormatter
- *    Returns the corresponding formatter function for the provided `key`.
- * @property {(ref: string, key: string) => void} setFormat
- *    Saves the user's choice of formatter `key` (by its name) for a `ref`
- *    measure name.
- */

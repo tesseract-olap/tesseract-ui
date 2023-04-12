@@ -2,7 +2,7 @@ import {Vizbuilder} from "@datawheel/vizbuilder";
 import {createElement, useMemo} from "react";
 
 /**
- * @template {TessExpl.Struct.IQueryItem} T
+ * @template {{active: boolean; key: string;}} T
  * @template U
  * @param {Record<string, T>} dict
  * @param {(item: T, index: number, list: T[]) => U} mapFn
@@ -16,7 +16,7 @@ function mapActives(dict, mapFn) {
 export const VizbuilderView = props => {
   const {cube, params, result, formatters = {}, ...otherProps} = props;
 
-  /** @type {VizBldr.QueryResult} */
+  /** @type {import("@datawheel/vizbuilder").QueryResult} */
   const queries = useMemo(() => ({
     cube,
     dataset: result.data,
@@ -42,8 +42,8 @@ export const VizbuilderView = props => {
         measure: item.measure,
         value: `${item.interpretedValue}`
       })),
-      measures: params.measures.map(item => ({
-        formatter: formatters[item],
+      measures: mapActives(params.measures, item => ({
+        formatter: formatters[item.name],
         measure: item
       }))
     }
@@ -57,5 +57,5 @@ export const VizbuilderView = props => {
 };
 
 VizbuilderView.defaultProps = {
-  version: process.env.buildVersion
+  version: process.env.BUILD_VERSION
 };

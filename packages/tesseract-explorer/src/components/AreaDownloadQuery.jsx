@@ -1,15 +1,14 @@
 import {Box, Button, Divider, Input} from "@mantine/core";
 import React, {useMemo} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
+import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {willDownloadQuery} from "../middleware/olapActions";
-import {doSetLoadingState} from "../state/loading/actions";
-import {selectCurrentQueryItem} from "../state/queries/selectors";
-import {selectServerFormatsEnabled} from "../state/server/selectors";
+import {selectCurrentQueryItem} from "../state/queries";
+import {selectServerFormatsEnabled} from "../state/server";
 import {ButtonDownload} from "./ButtonDownload";
 
 export const AreaDownloadQuery = () => {
-  const dispatch = useDispatch();
+  const actions = useActions();
 
   const {translate: t} = useTranslation();
 
@@ -20,13 +19,13 @@ export const AreaDownloadQuery = () => {
     <ButtonDownload
       key={format}
       provider={() => {
-        dispatch(doSetLoadingState("REQUEST"));
-        return dispatch(willDownloadQuery(format))
+        actions.setLoadingState("FETCHING");
+        return actions.willDownloadQuery(format)
           .then(fileDescr => {
-            dispatch(doSetLoadingState("SUCCESS"));
+            actions.setLoadingState("SUCCESS");
             return fileDescr;
           }, error => {
-            dispatch(doSetLoadingState("FAILURE", error.message));
+            actions.setLoadingState("FAILURE", error.message);
             throw error;
           });
       }}

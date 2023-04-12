@@ -9,7 +9,7 @@ import React, {useCallback} from "react";
 /**
  * @typedef ButtonDownloadProps
  * @property {string} children
- * @property {ContentOrGenerator<TessExpl.Struct.FileDescriptor | Promise<TessExpl.Struct.FileDescriptor>>} provider
+ * @property {ContentOrGenerator<import("../utils/types").FileDescriptor | Promise<import("../utils/types").FileDescriptor>>} provider
  */
 
 const mimeTypes = {
@@ -29,34 +29,33 @@ export const ButtonDownload = props => {
     evt.preventDefault();
 
     const anchor = document.createElement("a");
-
     const content = typeof provider === "function" ? provider() : provider;
-    Promise.resolve(content)
-      .then(file => {
-        const blob = typeof file.content !== "string"
-          ? file.content
-          : new window.Blob([file.content], {
-            type: mimeTypes[file.extension] || "application/octet-stream"
-          });
-        const blobURL = window.URL.createObjectURL(blob);
 
-        anchor.href = blobURL;
-        anchor.download = `${file.name}.${file.extension}`;
-        anchor.addEventListener("click", () => {
-          setTimeout(() => {
-            window.URL.revokeObjectURL(blobURL);
-          }, 5000);
-        }, false);
-        anchor.click();
-      }, error => {
-        console.error("Error downloading content:", error.message);
-      });
+    Promise.resolve(content).then(file => {
+      const blob = typeof file.content !== "string"
+        ? file.content
+        : new window.Blob([file.content], {
+          type: mimeTypes[file.extension] || "application/octet-stream"
+        });
+      const blobURL = window.URL.createObjectURL(blob);
+
+      anchor.href = blobURL;
+      anchor.download = `${file.name}.${file.extension}`;
+      anchor.addEventListener("click", () => {
+        setTimeout(() => {
+          window.URL.revokeObjectURL(blobURL);
+        }, 5000);
+      }, false);
+      anchor.click();
+    }, error => {
+      console.error("Error downloading content:", error.message);
+    });
   }, [provider]);
 
-  return <Button 
+  return <Button
     {...buttonProps}
     fullWidth
-    onClick={onClick} 
+    onClick={onClick}
     variant="default"
   >
     <Text fz="xs">

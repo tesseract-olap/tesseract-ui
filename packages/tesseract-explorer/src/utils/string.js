@@ -46,8 +46,7 @@ ${params.chartConfig.replace(
 
 /**
  * Retrieves the caption property from a OlapClient entity object.
- * @param {import("@datawheel/olap-client/types/interfaces/plain").IFullNamed
- *       & import("@datawheel/olap-client/types/interfaces/plain").IAnnotated} item
+ * @param {import("./types").Annotated & {caption?: string; name: string;}} item
  * @param {string} [locale]
  */
 export function getCaption(item, locale = "en") {
@@ -55,8 +54,8 @@ export function getCaption(item, locale = "en") {
 }
 
 /**
- *
- * @param {import("@datawheel/olap-client/types/interfaces/plain").IAnnotated} item
+ * Retrieves the (maybe localized) value of an `Annotated` object.
+ * @param {import("./types").Annotated} item
  * @param {string} key
  * @param {string} locale
  * @returns {string | undefined}
@@ -64,4 +63,16 @@ export function getCaption(item, locale = "en") {
 export function getAnnotation(item, key, locale = "xx") {
   const ann = item.annotations;
   return ann[`${key}_${locale}`] || ann[`${key}_${locale.slice(0, 2)}`] || ann[key];
+}
+
+/**
+ * Parses a string into a integer; if value is not an integer, returns default.
+ * @template T
+ * @param {string | undefined} value
+ * @param {T} elseValue
+ */
+export function parseNumeric(value, elseValue) {
+  return value && Number.isFinite(value) && !Number.isNaN(value)
+    ? Number.parseFloat(value)
+    : elseValue;
 }

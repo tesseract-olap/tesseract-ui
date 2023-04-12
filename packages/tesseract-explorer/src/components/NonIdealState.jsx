@@ -14,7 +14,7 @@ import React from "react";
 export const NonIdealState = props => <Center 
   h="100%" 
   w="100%"
-  sx={(theme) => ({
+  sx={theme => ({
     [theme.fn.smallerThan("md")]: {
       minHeight: "100vh"
     }

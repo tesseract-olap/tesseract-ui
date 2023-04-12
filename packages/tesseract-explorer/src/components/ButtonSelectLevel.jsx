@@ -1,5 +1,5 @@
 import {Menu, ThemeIcon, useMantineTheme} from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import {useMediaQuery} from "@mantine/hooks";
 import React from "react";
 import {stringifyName} from "../utils/transform";
 import {DimensionMenu} from "./MenuDimension";

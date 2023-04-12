@@ -1,14 +1,12 @@
-import {Level} from "@datawheel/olap-client";
+import {Cube, Level, Query} from "@datawheel/olap-client";
 import {filterMap} from "../utils/array";
-import {buildDrilldown, buildProperty} from "../utils/structs";
+import {DrilldownItem, QueryParams, buildDrilldown, buildProperty} from "../utils/structs";
 import {isActiveItem} from "../utils/validation";
 
 /**
  * Returns the maximum number of member combinations a query can return.
- * @param {OlapClient.Query} query
- * @param {TessExpl.Struct.QueryParams} params
  */
-export function calcMaxMemberCount(query, params) {
+export function calcMaxMemberCount(query: Query, params: QueryParams) {
   const ds = query.cube.datasource;
 
   // Rollback response type to default
@@ -35,14 +33,10 @@ export function calcMaxMemberCount(query, params) {
 
 /**
  * Updates the list of properties of a DrilldownItem.
- * @param {OlapClient.Cube} cube
- * @param {TessExpl.Struct.DrilldownItem} drilldownItem
- * @returns {TessExpl.Struct.DrilldownItem}
  */
-export function hydrateDrilldownProperties(cube, drilldownItem) {
-  const activeProperties = filterMap(
-    drilldownItem.properties,
-    prop => isActiveItem(prop) ? prop.name : null
+export function hydrateDrilldownProperties(cube: Cube, drilldownItem: DrilldownItem) {
+  const activeProperties = filterMap(drilldownItem.properties, prop =>
+    isActiveItem(prop) ? prop.name : null
   );
 
   for (const level of cube.levelIterator) {

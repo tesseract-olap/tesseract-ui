@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   env: {
-    buildVersion: "x.y.z",
+    BUILD_VERSION: "x.y.z",
     TESSERACT_SOURCE: process.env.OLAPPROXY_TARGET,
   }
 };

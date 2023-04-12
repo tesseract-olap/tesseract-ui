@@ -2,7 +2,7 @@ import {Anchor, Box, Text} from "@mantine/core";
 import React, {memo} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
-import {selectLocale} from "../state/params/selectors";
+import {selectLocale} from "../state/queries";
 import {getAnnotation} from "../utils/string";
 
 /**

@@ -1,11 +1,10 @@
 import {Alert, Group, Stack, ThemeIcon} from "@mantine/core";
 import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
+import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {willFetchMembers} from "../middleware/olapActions";
-import {doDrilldownClear, doDrilldownRemove, doDrilldownUpdate} from "../state/params/actions";
-import {selectDrilldownItems} from "../state/params/selectors";
+import {selectDrilldownItems} from "../state/queries";
 import {selectOlapDimensionItems} from "../state/selectors";
 import {buildDrilldown} from "../utils/structs";
 import {activeItemCounter} from "../utils/validation";
@@ -15,7 +14,7 @@ import TagDrilldown from "./TagDrilldown";
 
 /** @type {React.FC} */
 export const AreaDrilldowns = () => {
-  const dispatch = useDispatch();
+  const actions = useActions();
 
   const {translate: t} = useTranslation();
 
@@ -24,43 +23,43 @@ export const AreaDrilldowns = () => {
 
   /** @type {() => void} */
   const clearHandler = useCallback(() => {
-    dispatch(doDrilldownClear());
+    actions.resetDrilldowns({});
   }, []);
 
-  /** @type {(level: OlapClient.PlainLevel) => void} */
+  /** @type {(level: import("@datawheel/olap-client").PlainLevel) => void} */
   const createHandler = useCallback(level => {
     const drilldownItem = buildDrilldown(level);
-    dispatch(doDrilldownUpdate(drilldownItem));
-    dispatch(willFetchMembers(level))
+    actions.updateDrilldown(drilldownItem);
+    actions.willFetchMembers({...level, level: level.name})
       .then(members => {
         const dimension = dimensions.find(dim => dim.name === level.dimension);
         if (!dimension) return;
-        dispatch(doDrilldownUpdate({
+        actions.updateDrilldown({
           ...drilldownItem,
           dimType: dimension.dimensionType,
           memberCount: members.length
-        }));
+        });
       });
   }, [dimensions]);
 
-  /** @type {(item: TessExpl.Struct.DrilldownItem) => void} */
+  /** @type {(item: import("../utils/structs").DrilldownItem) => void} */
   const removeHandler = item => {
-    dispatch(doDrilldownRemove(item.key));
+    actions.removeDrilldown(item.key);
   };
 
-  /** @type {(item: TessExpl.Struct.DrilldownItem) => void} */
+  /** @type {(item: import("../utils/structs").DrilldownItem) => void} */
   const toggleHandler = item => {
-    dispatch(doDrilldownUpdate({...item, active: !item.active}));
+    actions.updateDrilldown({...item, active: !item.active});
   };
 
-  /** @type {(item: TessExpl.Struct.DrilldownItem, caption: string) => void} */
+  /** @type {(item: import("../utils/structs").DrilldownItem, caption: string) => void} */
   const updateCaptionHandler = (item, captionProperty) => {
-    dispatch(doDrilldownUpdate({...item, captionProperty}));
+    actions.updateDrilldown({...item, captionProperty});
   };
 
-  /** @type {(item: TessExpl.Struct.DrilldownItem, props: TessExpl.Struct.PropertyItem[]) => void} */
+  /** @type {(item: import("../utils/structs").DrilldownItem, props: import("../utils/structs").PropertyItem[]) => void} */
   const updatePropertiesHandler = (item, properties) => {
-    dispatch(doDrilldownUpdate({...item, properties}));
+    actions.updateDrilldown({...item, properties});
   };
 
   const toolbar =

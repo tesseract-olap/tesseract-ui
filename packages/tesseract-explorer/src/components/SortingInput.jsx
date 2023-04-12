@@ -1,10 +1,10 @@
 import {Group, Input} from "@mantine/core";
-import React, {memo, useMemo} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import React, {memo, useCallback, useMemo} from "react";
+import {useSelector} from "react-redux";
 import {SelectObject} from "../components/Select";
+import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {doSortingUpdate} from "../state/params/actions";
-import {selectSortingParams} from "../state/params/selectors";
+import {selectSortingParams} from "../state/queries";
 import {shallowEqualForProps} from "../utils/validation";
 import {MemoSelectMeasure as SelectMeasure} from "./SelectMeasure";
 
@@ -12,7 +12,7 @@ import {MemoSelectMeasure as SelectMeasure} from "./SelectMeasure";
 const SelectDirection = memo(SelectObject, shallowEqualForProps("items", "selectedItem"));
 
 export const SortingInput = () => {
-  const dispatch = useDispatch();
+  const actions = useActions();
 
   const {locale, translate: t} = useTranslation();
 
@@ -30,18 +30,28 @@ export const SortingInput = () => {
     return {directions, options};
   }, [locale]);
 
+  /** @type {(item: import("@datawheel/olap-client").PlainMeasure) => void} */
+  const measureChangeHandler = useCallback(measure => {
+    actions.updateSorting({key: measure.name, dir: sortDir});
+  }, []);
+
+  /** @type {(item: {label: string; value: "asc" | "desc"}) => void} */
+  const directionChangeHandler = useCallback(direction => {
+    actions.updateSorting({key: sortKey, dir: direction.value});
+  }, []);
+
   return (
     <Input.Wrapper label={t("params.label_sorting_key")}>
       <Group noWrap spacing="xs">
         <SelectMeasure
           selectedItem={sortKey}
-          onItemSelect={measure => dispatch(doSortingUpdate(measure.name, sortDir))}
+          onItemSelect={measureChangeHandler}
         />
         <SelectDirection
           getKey={item => item.value}
           getLabel={item => item.label}
           items={sort.options}
-          onItemSelect={direction => dispatch(doSortingUpdate(sortKey, direction.value))}
+          onItemSelect={directionChangeHandler}
           selectedItem={sortDir}
         />
       </Group>

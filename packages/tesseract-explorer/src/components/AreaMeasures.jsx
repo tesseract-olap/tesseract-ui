@@ -1,21 +1,27 @@
 import {Checkbox, CloseButton, Input, Popover, Stack, ThemeIcon} from "@mantine/core";
 import {IconFilter, IconFilterOff, IconSearch} from "@tabler/icons-react";
 import React, {useCallback, useMemo, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
+import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {doMeasureToggle} from "../state/params/actions";
-import {selectLocale, selectMeasureItems} from "../state/params/selectors";
-import {selectOlapMeasureItems} from "../state/selectors";
+import {selectLocale, selectMeasureMap} from "../state/queries";
+import {selectOlapMeasureItems, selectOlapMeasureMap} from "../state/selectors";
+import {filterMap} from "../utils/array";
 import {getCaption} from "../utils/string";
+import {buildMeasure} from "../utils/structs";
 import {safeRegExp} from "../utils/transform";
+import {isActiveItem} from "../utils/validation";
 import {LayoutParamsArea} from "./LayoutParamsArea";
 
-/** @type {React.FC} */
-export const AreaMeasures = () => {
-  const dispatch = useDispatch();
+/**
+ * Renders the block to select a Measure from the currently selected cube.
+ */
+export function AreaMeasures() {
+  const actions = useActions();
 
   const {code: locale} = useSelector(selectLocale);
-  const items = useSelector(selectMeasureItems);
+  const itemMap = useSelector(selectMeasureMap);
+  const measureMap = useSelector(selectOlapMeasureMap);
   const measures = useSelector(selectOlapMeasureItems);
 
   const [filter, setFilter] = useState("");
@@ -23,19 +29,36 @@ export const AreaMeasures = () => {
   const {translate: t} = useTranslation();
 
   const filteredItems = useMemo(() => {
-    if (filter) {
-      const query = safeRegExp(filter, "i");
-      return measures.filter(item => query.test(getCaption(item, locale)));
-    }
-    return measures;
-  }, [measures, filter]);
+    const query = filter ? safeRegExp(filter, "i") : null;
+    return filterMap(measures, measure => {
+      if (query && !query.test(getCaption(measure, locale))) {
+        return null;
+      }
+      return itemMap[measure.name] || buildMeasure({active: false, ...measure});
+    });
+  }, [itemMap, measures, filter, locale]);
+
+  const activeItems = filteredItems.filter(isActiveItem);
+
+  const measureNodes = useMemo(() => filteredItems.map(item => {
+    const measure = measureMap[item.name];
+    return <Checkbox
+      key={item.key}
+      checked={item.active}
+      label={getCaption(measure, locale)}
+      onChange={() => {
+        actions.updateMeasure({...item, active: !item.active});
+      }}
+    />;
+  }), [filteredItems, measureMap]);
 
   const resetFilter = useCallback(() => setFilter(""), []);
+
   const toolbar =
     <Popover
       closeOnClickOutside
       closeOnEscape
-      position="bottom" 
+      position="bottom"
       shadow="md"
       trapFocus
       withArrow
@@ -65,23 +88,14 @@ export const AreaMeasures = () => {
   return (
     <LayoutParamsArea
       id="measures"
-      title={t("params.title_area_measures", {n: items.length})}
+      title={t("params.title_area_measures", {n: activeItems.length})}
       toolbar={toolbar}
       tooltip={t("params.tooltip_area_measures")}
       value="measures"
     >
       <Stack spacing="xs">
-        {filteredItems.map(item =>
-          <Checkbox
-            checked={items.includes(item.name)}
-            key={item.name}
-            label={getCaption(item, locale)}
-            onChange={() => {
-              dispatch(doMeasureToggle(item.name));
-            }}
-          />
-        )}
+        {measureNodes}
       </Stack>
     </LayoutParamsArea>
   );
-};
+}

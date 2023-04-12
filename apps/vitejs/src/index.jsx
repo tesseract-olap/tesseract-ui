@@ -1,56 +1,45 @@
+// @ts-check
+import {DebugView, Explorer, PivotView, TableView} from "@datawheel/tesseract-explorer";
+import Vizbuilder from "@datawheel/tesseract-vizbuilder";
 import React from "react";
 import ReactDOM from "react-dom";
-import {Provider} from "react-redux";
-import {applyMiddleware, compose, createStore} from "redux";
-import {
-  DebugView,
-  Explorer,
-  explorerReducer,
-  olapMiddleware,
-  permalinkMiddleware,
-  PivotView,
-  TableView
-} from "@datawheel/tesseract-explorer";
+
 import "normalize.css";
 
-import Vizbuilder from "@datawheel/tesseract-vizbuilder";
+const formatters = {
+  "Metric Ton": n => `${n.toFixed()} 📦`,
+  "Sheep": n => `🐑 ${n.toFixed()}`
+};
 
 const VizbuilderPanel = props =>
   <Vizbuilder
-    cube={props.cube}
-    result={props.result}
-    params={props.params}
     allowedChartTypes={["barchart", "barchartyear", "lineplot", "stacked", "treemap", "geomap", "donut"]}
+    cube={props.cube}
     downloadFormats={["svg", "png"]}
+    formatters={formatters}
+    params={props.params}
+    result={props.result}
     showConfidenceInt={false}
   />;
 
-const composeEnhancers =
-  typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    : compose;
-const enhancers = composeEnhancers(
-  applyMiddleware(permalinkMiddleware, olapMiddleware)
-);
-
-const store = createStore(explorerReducer, undefined, enhancers);
-
-const PANELS = {
-  "Data Table": TableView,
-  "Pivot Table": PivotView,
-  "Raw response": DebugView,
-  "Vizbuilder": VizbuilderPanel
-};
+const PANELS = [
+  {key: "table", label: "Data Table", component: TableView},
+  {key: "matrix", label: "Pivot Table", component: PivotView},
+  {key: "debug", label: "Raw response", component: DebugView},
+  {key: "vizbuilder", label: "Vizbuilder", component: VizbuilderPanel}
+];
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Explorer
-      src="/olap/"
-      formatters={{Sheep: n => `🐑 ${n.toFixed()}`}}
-      multiquery
-      previewLimit={75}
-      panels={PANELS}
-    />
-  </Provider>,
+  <Explorer
+    source="/olap/"
+    formatters={formatters}
+    dataLocale="en,es"
+    previewLimit={75}
+    panels={PANELS}
+    withinMantineProvider
+    withinReduxProvider
+    withMultiQuery
+    withPermalink
+  />,
   document.getElementById("app")
 );

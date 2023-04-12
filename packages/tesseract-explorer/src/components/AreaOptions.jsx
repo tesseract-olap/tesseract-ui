@@ -1,16 +1,16 @@
 import {Checkbox, Stack} from "@mantine/core";
 import React from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {doBooleanToggle} from "../state/params/actions";
-import {selectBooleans} from "../state/params/selectors";
-import {selectServerBooleansEnabled} from "../state/server/selectors";
+import {selectBooleans} from "../state/queries";
+import {selectServerBooleansEnabled} from "../state/server";
+import {useSelector} from "../state/store";
 import {LayoutParamsArea} from "./LayoutParamsArea";
 import {PaginationInput} from "./PaginationInput";
 import {SortingInput} from "./SortingInput";
 
 export const AreaOptions = () => {
-  const dispatch = useDispatch();
+  const actions = useActions();
 
   const {translate: t} = useTranslation();
 
@@ -32,7 +32,7 @@ export const AreaOptions = () => {
               label={t(`params.label_boolean_${key}`)}
               checked={booleans[key] || false}
               onChange={() => {
-                dispatch(doBooleanToggle(key));
+                actions.updateBoolean({key});
               }}
             />
           )}

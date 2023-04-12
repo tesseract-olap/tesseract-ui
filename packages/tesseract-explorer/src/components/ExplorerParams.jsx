@@ -19,9 +19,9 @@ export const ExplorerParams = () => {
       <SelectLocale />
       <SelectCube />
       <Space h="md" />
-      <Accordion 
+      <Accordion
         chevronPosition="left"
-        defaultValue="measures" 
+        defaultValue="measures"
         styles={theme => ({
           chevron: {
             marginRight: theme.spacing.xs / 2

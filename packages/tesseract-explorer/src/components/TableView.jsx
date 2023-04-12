@@ -5,17 +5,17 @@ import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useFormatter} from "../hooks/formatter";
 import {useTranslation} from "../hooks/translation";
-import {selectIsFullResults} from "../state/params/selectors";
+import {selectIsPreviewMode} from "../state/queries";
 import {filterMap} from "../utils/array";
 import {getCaption} from "../utils/string";
 
-/** @type {React.FC<TessExpl.ViewProps>} */
+/** @type {React.FC<import("./ExplorerResults").ViewProps>} */
 export const TableView = props => {
   const {cube, params, result, ...mantineReactTableProps} = props;
   const data = result.data;
   const locale = params.locale;
 
-  const isFullResults = useSelector(selectIsFullResults);
+  const isPreviewMode = useSelector(selectIsPreviewMode);
   const {translate: t} = useTranslation();
 
   const {
@@ -30,6 +30,8 @@ export const TableView = props => {
    * This array contains a list of all the columns to be presented in the Table
    * Each item is an object containing useful information related to the column
    * and its contents, for later use.
+   *
+   * @type {import("mantine-react-table").MRT_ColumnDef<typeof data[0]>[]}
    */
   const columns = useMemo(() => {
     const firstDatum = data[0];
@@ -39,7 +41,8 @@ export const TableView = props => {
       const dataType = typeof firstDatum[columnKey];
 
       const formatterKey =
-        getFormatterKey(columnKey) || (dataType === "number" ? "Decimal" : "identity");
+        getFormatterKey(columnKey) ||
+        (dataType === "number" ? "Decimal" : "identity");
       const formatter = getFormatter(formatterKey);
 
       const entity = findEntity(columnKey);
@@ -54,9 +57,16 @@ export const TableView = props => {
         ? entity._type === "measure"
         : isIdColumn && dataType === "number";
 
-      const Cell = ({cell, renderedCellValue}) => isNumeric ? formatter(cell.getValue()) : renderedCellValue;
-
-      return {accessorKey: columnKey, Cell, dataType, entity, header, formatter, formatterKey, isNumeric};
+      return {
+        dataType, entity, header, formatter, formatterKey, isNumeric,
+        accessorKey: columnKey,
+        Cell: isNumeric
+          ? ({cell}) => formatter(cell.getValue())
+          : ({renderedCellValue}) => renderedCellValue,
+        mantineTableBodyCellProps: {
+          align: isNumeric ? "right" : "left"
+        }
+      };
     });
   }, [cube, currentFormats, data, locale, params]);
 
@@ -106,7 +116,7 @@ export const TableView = props => {
       mantinePaperProps={{
         id: "query-results-table-view",
         withBorder: false,
-        sx: (theme) => ({
+        sx: theme => ({
           [theme.fn.smallerThan("md")]: {
             padding: theme.spacing.sm
           }
@@ -116,12 +126,14 @@ export const TableView = props => {
         id: "query-results-table-view-table",
         sx: {
           // TODO: Find a better way to calculate the max height of Mantine React Table
-          maxHeight: isFullResults ? "clamp(350px, calc(100vh - 56px - 48px), 9999px)" : "clamp(350px, calc(100vh - 56px - 48px - 48px), 9999px)"
+          maxHeight: isPreviewMode
+            ? "clamp(350px, calc(100vh - 56px - 48px - 48px), 9999px)"
+            : "clamp(350px, calc(100vh - 56px - 48px), 9999px)"
         }
       }}
       mantineTopToolbarProps={{
         id: "query-results-table-view-toolbar",
-        sx: (theme) => ({
+        sx: theme => ({
           [theme.fn.smallerThan("md")]: {
             padding: 0
           }
@@ -145,7 +157,7 @@ TableView.displayName = "TesseractExplorer:TableView";
  * query, and returns a function to quickly get the entity by its name.
  *
  * @param {OlapClient.PlainCube} cube
- * @param {TessExpl.Struct.QueryParams} params
+ * @param {import("../utils/structs").QueryParams} params
  */
 function entityFinderFactory(cube, params) {
   const measureMap = Object.fromEntries(
@@ -159,7 +171,9 @@ function entityFinderFactory(cube, params) {
     )])
   );
 
-  const measures = params.measures.map(item => measureMap[item]);
+  const measures = Object.values(params.measures).map(item =>
+    measureMap[item.name]
+  );
 
   const drilldowns = Object.values(params.drilldowns).flatMap(item => {
     const level = levelMap[item.dimension][item.hierarchy][item.level];
