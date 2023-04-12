@@ -1,4 +1,4 @@
-#!/bin/env node
+#!/usr/bin/env node
 
 const {name, version} = require("./package.json");
 
@@ -30,7 +30,7 @@ cli
   .option(
     "-t, --target <version>",
     "Specifies a version of the tesseract-explorer package. If not set, the latest version available will be used.")
-  .action(async(directory, options = {debug: false}) => {
+  .action(async(directory = ".", options = {debug: false}) => {
     print("%s v%s\n", name, version);
 
     const resolvedPath = path.resolve(directory);
