@@ -174,9 +174,7 @@ export const defaultTranslation = {
   }
 };
 
-/**
- * @typedef {typeof defaultTranslation} TranslationDict
- */
+export type TranslationDict = typeof defaultTranslation;
 
 export const {
   useTranslation,
