@@ -1,13 +1,13 @@
-import {Measure} from "@datawheel/olap-client";
-import {buildCut, buildDrilldown, buildFilter, buildMeasure} from "./structs";
+import {Measure, Query} from "@datawheel/olap-client";
+import {CutItem, DrilldownItem, FilterItem, MeasureItem, QueryParams, QueryParamsItem, buildCut, buildDrilldown, buildFilter, buildMeasure} from "./structs";
 import {keyBy} from "./transform";
 import {isActiveCut, isActiveItem} from "./validation";
 
 /**
- * @param {import("@datawheel/olap-client").Query} query
- * @param {import("./structs").QueryParams} params
+ * Applies the properties set on a QueryParams object
+ * to an OlapClient Query object.
  */
-export function applyQueryParams(query, params) {
+export function applyQueryParams(query: Query, params: QueryParams) {
 
   Object.entries(params.booleans).forEach(item => {
     item[1] != null && query.setOption(item[0], item[1]);
@@ -49,10 +49,10 @@ export function applyQueryParams(query, params) {
 }
 
 /**
- * @param {OlapClient.Query} query
- * @returns {import("./structs").QueryParams}
+ * Extracts the properties set in an OlapClient Query object
+ * to a new QueryParams object.
  */
-export function extractQueryParams(query) {
+export function extractQueryParams(query: Query): QueryParams {
   const cube = query.cube;
 
   const booleans = query.getParam("options");
@@ -75,7 +75,8 @@ export function extractQueryParams(query) {
   const pagination = query.getParam("pagination");
   const sorting = query.getParam("sorting");
 
-  const getKey = i => i.key;
+  const getKey = <T extends QueryParamsItem>(item: T) => item.key;
+
   return {
     booleans: {
       debug: Boolean(booleans.debug),
@@ -86,11 +87,11 @@ export function extractQueryParams(query) {
       sparse: Boolean(booleans.sparse)
     },
     cube: cube.name,
-    cuts: keyBy(cuts, getKey),
-    drilldowns: keyBy(drilldowns, getKey),
-    filters: keyBy(filters, getKey),
+    cuts: keyBy<CutItem>(cuts, getKey),
+    drilldowns: keyBy<DrilldownItem>(drilldowns, getKey),
+    filters: keyBy<FilterItem>(filters, getKey),
     locale: query.getParam("locale"),
-    measures: keyBy(measures, getKey),
+    measures: keyBy<MeasureItem>(measures, getKey),
     pagiLimit: pagination.limit,
     pagiOffset: pagination.offset,
     previewLimit: 0,

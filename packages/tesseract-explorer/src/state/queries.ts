@@ -221,7 +221,7 @@ export const queriesSlice = createSlice({
     /**
      * Replaces the pagination settings in the current QueryItem.
      */
-    updatePagination(state, {payload}: Action<{limit: number | "", offset: number | ""}>) {
+    updatePagination(state, {payload}: Action<{limit: number, offset: number}>) {
       const query = taintCurrentQuery(state);
       query.params.pagiLimit = payload.limit;
       query.params.pagiOffset = payload.offset;
