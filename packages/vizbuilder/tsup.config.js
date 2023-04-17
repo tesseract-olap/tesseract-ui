@@ -4,10 +4,11 @@ import pkg from "./package.json";
 
 export default defineConfig(options => ({
   clean: !options.watch,
-  entry: ["src/index.js"],
+  entry: ["src/index.ts"],
   env: {
     BUILD_VERSION: pkg.version,
   },
+  dts: true,
   format: ["cjs", "esm"],
   outExtension({format}) {
     return {js: `.${format}.js`};

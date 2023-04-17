@@ -10,16 +10,16 @@
       "require": "./dist/index.cjs.js",
       "default": "./dist/index.cjs.js"
     },
-    "./vizbuilder.css": "./dist/vizbuilder.css"
+    "./vizbuilder.css": "./dist/index.css"
   },
-  "types": "index.d.ts",
-  "style": "dist/vizbuilder.css",
+  "types": "./dist/index.d.ts",
+  "style": "./dist/index.css",
   "readme": "README.md",
   "files": [
-    "index.d.ts",
     "dist/index.cjs.js",
-    "dist/index.esm.js",
-    "dist/vizbuilder.css"
+    "dist/index.css",
+    "dist/index.d.ts",
+    "dist/index.esm.js"
   ],
   "scripts": {
     "build": "tsup",
@@ -46,7 +46,7 @@
     "@datawheel/vizbuilder": "^0.3.0"
   },
   "peerDependencies": {
-    "@datawheel/tesseract-explorer": "^1.0.0 || ^2.0.0",
+    "@datawheel/tesseract-explorer": "^2.0.0",
     "prop-types": ">=15.6.0",
     "react": "^16.14.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.14.0 || ^17.0.0 || ^18.0.0"
@@ -57,5 +57,13 @@
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "tsup": "^6.6.3"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true
+    },
+    "globals": {
+      "process": "readonly"
+    }
   }
 }
