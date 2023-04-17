@@ -10,7 +10,7 @@ import {getCaption} from "../utils/string";
 import {stringifyName} from "../utils/transform";
 
 /**
- * @typedef {(level: OlapClient.PlainLevel, hierarchy: OlapClient.PlainHierarchy, dimension: OlapClient.PlainDimension) => any} LvlHieDimCallback
+ * @typedef {(level: import("@datawheel/olap-client").PlainLevel, hierarchy: import("@datawheel/olap-client").PlainHierarchy, dimension: import("@datawheel/olap-client").PlainDimension) => any} LvlHieDimCallback
  */
 
 /**
@@ -41,7 +41,7 @@ export const DimensionMenu = props => {
 
 /**
  * @type {React.FC<{
- *  dimension: OlapClient.PlainDimension;
+ *  dimension: import("@datawheel/olap-client").PlainDimension;
  *  isMediumScreen?: boolean;
  *  locale: string;
  *  onItemSelect: LvlHieDimCallback;
@@ -111,8 +111,8 @@ export const DimensionMenuItem = props => {
 
 /**
  * @type {React.FC<{
- *  dimension: OlapClient.PlainDimension;
- *  hierarchy: OlapClient.PlainHierarchy;
+ *  dimension: import("@datawheel/olap-client").PlainDimension;
+ *  hierarchy: import("@datawheel/olap-client").PlainHierarchy;
  *  isMediumScreen?: boolean;
  *  isSubMenu?: boolean;
  *  locale: string;
@@ -191,10 +191,10 @@ export const HierarchyMenuItem = props => {
 
 /**
  * @type {React.FC<{
- *  dimension: OlapClient.PlainDimension;
- *  hierarchy: OlapClient.PlainHierarchy;
+ *  dimension: import("@datawheel/olap-client").PlainDimension;
+ *  hierarchy: import("@datawheel/olap-client").PlainHierarchy;
  *  isSubMenu?: boolean;
- *  level: OlapClient.PlainLevel;
+ *  level: import("@datawheel/olap-client").PlainLevel;
  *  locale: string;
  *  onItemSelect: LvlHieDimCallback;
  *  selectedItems: string[];

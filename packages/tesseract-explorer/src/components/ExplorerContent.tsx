@@ -1,3 +1,4 @@
+import {ServerConfig} from "@datawheel/olap-client";
 import {TranslationContextProps} from "@datawheel/use-translation";
 import {Flex} from "@mantine/core";
 import React, {useMemo} from "react";
@@ -17,7 +18,7 @@ export function ExplorerContent(props: {
   dataLocale: string[];
   panels: PanelDescriptor[];
   previewLimit: number;
-  source: import("@datawheel/olap-client").ServerConfig;
+  source: ServerConfig;
   splash?: React.ComponentType<{translation: TranslationContextProps}>;
   withMultiQuery: boolean;
 }) {

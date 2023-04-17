@@ -7,7 +7,7 @@ import {shallowEqualExceptFns} from "../utils/validation";
 
 /**
  * @typedef OwnProps
- * @property {(item: OlapClient.PlainMeasure) => void} onItemSelect
+ * @property {(item: import("@datawheel/olap-client").PlainMeasure) => void} onItemSelect
  * @property {string} [placeholder]
  * @property {string | undefined} selectedItem
  */

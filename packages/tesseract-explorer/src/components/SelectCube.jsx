@@ -1,16 +1,16 @@
-import { Box, Stack } from "@mantine/core";
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { useActions } from "../hooks/settings";
-import { useTranslation } from "../hooks/translation";
-import { selectLocale } from "../state/queries";
-import { selectOlapCube } from "../state/selectors";
-import { selectOlapCubeItems } from "../state/server";
-import { getAnnotation, getCaption } from "../utils/string";
-import { groupBy } from "../utils/transform";
-import { shallowEqualForProps } from "../utils/validation";
-import { MemoCubeDescription, MemoCubeSource } from "./CubeMetadata";
-import { SelectWithButtons } from "./SelectWithButtons";
+import {Box, Stack} from "@mantine/core";
+import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
+import {useSelector} from "react-redux";
+import {useActions} from "../hooks/settings";
+import {useTranslation} from "../hooks/translation";
+import {selectLocale} from "../state/queries";
+import {selectOlapCube} from "../state/selectors";
+import {selectOlapCubeItems} from "../state/server";
+import {getAnnotation, getCaption} from "../utils/string";
+import {groupBy} from "../utils/transform";
+import {shallowEqualForProps} from "../utils/validation";
+import {MemoCubeDescription, MemoCubeSource} from "./CubeMetadata";
+import {SelectWithButtons} from "./SelectWithButtons";
 
 /** @type {React.FC<import("./SelectWithButtons").OwnProps<string>>} */
 const SelectLevel = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));

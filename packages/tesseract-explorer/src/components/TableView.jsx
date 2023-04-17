@@ -156,7 +156,7 @@ TableView.displayName = "TesseractExplorer:TableView";
  * Creates an index for the Measures, Levels, and Properties involved in the
  * query, and returns a function to quickly get the entity by its name.
  *
- * @param {OlapClient.PlainCube} cube
+ * @param {import("@datawheel/olap-client").PlainCube} cube
  * @param {import("../utils/structs").QueryParams} params
  */
 function entityFinderFactory(cube, params) {

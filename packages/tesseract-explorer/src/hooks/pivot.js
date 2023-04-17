@@ -5,7 +5,7 @@ import {useTranslation} from "./translation";
 
 /**
  * Encapsulates the logic for the formatting in this component.
- * @param {OlapClient.PlainMeasure[]} measures
+ * @param {import("@datawheel/olap-client").PlainMeasure[]} measures
  * @param {string} valueProperty
  */
 export function useFormatParams(measures, valueProperty) {

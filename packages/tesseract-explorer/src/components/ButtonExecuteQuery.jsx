@@ -1,5 +1,5 @@
 import {ActionIcon, Box, Button, Group, Stack, Tooltip} from "@mantine/core";
-import {IconCircleMinus, IconDatabase, IconReplace, IconTrash} from "@tabler/icons-react";
+import {IconDatabase, IconTrash} from "@tabler/icons-react";
 import React from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
@@ -14,8 +14,8 @@ export const ButtonExecuteQuery = () => {
 
   const {translate: t} = useTranslation();
 
-  const endpoint = useSelector(selectServerEndpoint);
-  const software = useSelector(selectServerSoftware);
+  // const endpoint = useSelector(selectServerEndpoint);
+  // const software = useSelector(selectServerSoftware);
 
   const {isValid, error} = useSelector(selectValidQueryStatus);
   const errorText = error ? t(error) : "";
@@ -95,7 +95,7 @@ export const ButtonExecuteQuery = () => {
               variant="filled"
             >
               <IconTrash />
-            </ActionIcon>  
+            </ActionIcon>
           </Tooltip>
         </Group>
         <Box id="switch-params-load-all-results">

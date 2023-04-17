@@ -1,3 +1,4 @@
+import {PlainCube} from "@datawheel/olap-client";
 import {Anchor, Box, Flex, Stack, Tabs, Text, Title} from "@mantine/core";
 import {IconAlertTriangle, IconBox, IconWorld} from "@tabler/icons-react";
 import React, {Suspense, useState} from "react";
@@ -6,32 +7,31 @@ import {useTranslation} from "../hooks/translation";
 import {selectCurrentQueryItem} from "../state/queries";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server";
+import {QueryParams, QueryResult} from "../utils/structs";
 import {NonIdealState} from "./NonIdealState";
 import {PreviewModeMessage} from "./PreviewModeMessage";
 
-/**
- * @typedef ViewProps
- * @property {string} [className]
- * @property {OlapClient.PlainCube} cube
- * @property {import("../utils/structs").QueryParams} params
- * @property {import("../utils/structs").QueryResult} result
- */
+export interface ViewProps {
+  className?: string;
+  cube: PlainCube;
+  params: QueryParams;
+  result: QueryResult;
+}
+
+export interface PanelDescriptor {
+  key: string;
+  label: string;
+  component: React.ComponentType<ViewProps>;
+}
 
 /**
- * @typedef PanelDescriptor
- * @property {string} key
- * @property {string} label
- * @property {React.ComponentType<ViewProps>} component
+ * Renders the result area in the UI.
+ * Handles the currently active tab and its contents.
  */
-
-/**
- * @typedef OwnProps
- * @property {React.ReactElement | null} splash
- * @property {PanelDescriptor[]} panels
- */
-
-/** @type {React.FC<OwnProps>} */
-export const ExplorerResults = props => {
+export function ExplorerResults(props: {
+  splash: React.ReactElement | null;
+  panels: PanelDescriptor[];
+}) {
   const {panels} = props;
   // TODO: move this state to QueryItem, set via actions
   const [currentTab, setCurrentTab] = useState(0);
@@ -81,7 +81,7 @@ export const ExplorerResults = props => {
     />;
   }
 
-  if (queryItem.isDirty) {
+  if (!cube || queryItem.isDirty) {
     return props.splash || null;
   }
 
@@ -135,4 +135,4 @@ export const ExplorerResults = props => {
       </Box>
     </Flex>
   );
-};
+}

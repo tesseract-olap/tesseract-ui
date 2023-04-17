@@ -5,7 +5,7 @@ import {useSelector} from "react-redux";
 import {useActions, useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectIsPreviewMode} from "../state/queries";
-import { selectSerializedParams } from "../state/selectors";
+import {selectSerializedParams} from "../state/selectors";
 
 /**
  * @typedef LoadAllResultsSwitchProps

@@ -1,9 +1,11 @@
+import {ServerConfig} from "@datawheel/olap-client";
 import {TranslationContextProps, TranslationProviderProps} from "@datawheel/use-translation";
 import {MantineProvider} from "@mantine/core";
-import React, {useMemo, useRef, useState} from "react";
+import React, {useMemo} from "react";
 import {Provider as ReduxProvider, useStore} from "react-redux";
 import {SettingsProvider} from "../hooks/settings";
 import {TranslationDict, TranslationProvider} from "../hooks/translation";
+import {storeFactory} from "../state";
 import {Formatter} from "../utils/types";
 import {DebugView} from "./DebugView";
 import {ExplorerContent} from "./ExplorerContent";
@@ -11,7 +13,6 @@ import {PanelDescriptor} from "./ExplorerResults";
 import {PermalinkSync} from "./PermalinkSync";
 import {PivotView} from "./PivotView";
 import {TableView} from "./TableView";
-import { storeFactory } from "../state";
 
 /**
  * Main DataExplorer component
@@ -26,7 +27,7 @@ export function ExplorerComponent(props: {
    * [AxiosRequestConfig](https://github.com/axios/axios#request-config)
    * for more complex handling of authorization/authentication.
    */
-  source: import("@datawheel/olap-client").ServerConfig;
+  source: ServerConfig;
 
   /**
    * A list of the available locale options.

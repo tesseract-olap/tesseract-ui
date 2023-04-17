@@ -3,10 +3,11 @@ import {IconChevronsLeft, IconChevronsRight, IconSearch} from "@tabler/icons-rea
 import React, {useCallback, useMemo, useRef, useState} from "react";
 import ViewPortList from "react-viewport-list";
 import {useTranslation} from "../hooks/translation";
+import {hasOwnProperty} from "../utils/object";
 import {keyBy, safeRegExp} from "../utils/transform";
 
 /**
- * @template {TessExpl.Struct.IQueryItem} T
+ * @template {import("../utils/structs").QueryParamsItem} T
  * @typedef OwnProps
  * @property {Record<string, T>} items
  * @property {T["key"][]} activeItems
@@ -17,7 +18,7 @@ import {keyBy, safeRegExp} from "../utils/transform";
  */
 
 /**
- * @template {TessExpl.Struct.IQueryItem} T
+ * @template {import("../utils/structs").QueryParamsItem} T
  * @type {React.FC<OwnProps<T>>}
  */
 export const TransferInput = props => {
@@ -64,7 +65,7 @@ export const TransferInput = props => {
       const key = keys[index];
       const item = items[key];
       if (!currentPredicate(tester, item, index++)) continue;
-      activeKeys.hasOwnProperty(key)
+      hasOwnProperty(activeKeys, key)
         ? selected.push(item)
         : unselected.push(item);
     }
@@ -112,7 +113,7 @@ export const TransferInput = props => {
   const unselectedHidden = results.totalCount - activeItems.length - results.unselectedCount;
 
   const rightElement = useMemo(() => {
-    const resetButton = filter.length > 0 
+    const resetButton = filter.length > 0
       ? <CloseButton mr="xs" onClick={() => setFilter("")} />
       : undefined;
 
@@ -125,8 +126,8 @@ export const TransferInput = props => {
       return (
         <Group mr="xs" noWrap spacing="xs">
           <Badge
-            leftSection={<Avatar 
-              color="blue" 
+            leftSection={<Avatar
+              color="blue"
               radius="xl"
               size="xs"
             >
@@ -150,17 +151,17 @@ export const TransferInput = props => {
     onClick={toggleHandler.bind(null, item)}
     w="100%"
   >
-    <Group 
+    <Group
       noWrap
-      position="apart" 
+      position="apart"
       spacing="xs"
     >
       <Group noWrap spacing="xs">
-        <Checkbox 
-          defaultChecked={activeKeys.hasOwnProperty(item.key)} 
+        <Checkbox
+          defaultChecked={hasOwnProperty(activeKeys, item.key)}
         />
-        <Text 
-          fz="sm" 
+        <Text
+          fz="sm"
           lineClamp={1}
           sx={{
             wordBreak: "break-all"
@@ -190,9 +191,9 @@ export const TransferInput = props => {
           rightSectionWidth="auto"
           value={filter}
         />
-        <Group 
-          grow 
-          noWrap 
+        <Group
+          grow
+          noWrap
           spacing="xs"
           sx={theme => ({
             [theme.fn.smallerThan("md")]: {
@@ -200,7 +201,7 @@ export const TransferInput = props => {
             }
           })}
         >
-          <Input.Wrapper 
+          <Input.Wrapper
             label={t("transfer_input.unselected_items")}
             sx={theme => ({
               [theme.fn.smallerThan("md")]: {
@@ -231,7 +232,7 @@ export const TransferInput = props => {
               </Button>
             </Stack>
           </Input.Wrapper>
-          <Input.Wrapper 
+          <Input.Wrapper
             label={t("transfer_input.selected_items")}
             sx={theme => ({
               [theme.fn.smallerThan("md")]: {
@@ -274,6 +275,6 @@ TransferInput.defaultProps = {
 };
 
 /**
- * @template {TessExpl.Struct.IQueryItem} T
+ * @template {import("../utils/structs").QueryParamsItem} T
  * @typedef {(query: RegExp, item: T, index: number) => boolean} ItemPredicateFunction
  */
