@@ -1,4 +1,4 @@
-import {Button, Input} from "@mantine/core";
+import {Button, Group, Input} from "@mantine/core";
 import {IconClipboard, IconExternalLink, IconWorld} from "@tabler/icons-react";
 import React from "react";
 import {useTranslation} from "../hooks/translation";
@@ -20,12 +20,15 @@ export const DebugURL = props => {
     </Button.Group>;
 
   return (
-    <Input 
-      icon={<IconWorld />} 
-      readOnly 
-      rightSection={toolbar}
-      rightSectionWidth="auto"
-      value={url} 
-    />
+    <Group noWrap spacing="xs">
+      <Input
+        icon={<IconWorld />} 
+        readOnly
+        rightSectionWidth="auto"
+        value={url} 
+        w="100%"
+      />
+      {toolbar}
+    </Group>
   );
 };

@@ -8,7 +8,7 @@ export default defineConfig(options => ({
   env: {
     BUILD_VERSION: pkg.version,
   },
-  dts: true,
+  dts: false,
   format: ["cjs", "esm"],
   outExtension({format}) {
     return {js: `.${format}.js`};

@@ -24,7 +24,7 @@ export const StoredQuery = props => {
     .map(item => item.level);
   const measureList = Object.values(params.measures)
     .filter(isActiveItem)
-    .map(item => item.measure);
+    .map(item => item.name);
 
   const iconProps = useMemo(() => ({
     size: 15

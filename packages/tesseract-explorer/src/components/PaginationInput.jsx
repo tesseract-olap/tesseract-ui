@@ -14,12 +14,12 @@ export const PaginationInput = () => {
 
   const isPreviewMode = useSelector(selectIsPreviewMode);
 
-  /** @type {(value: number | undefined) => void} */
+  /** @type {(value: number | "") => void} */
   const onLimitChange = useCallback((limit = 0) => {
     actions.updatePagination({limit, offset});
   }, [offset]);
 
-  /** @type {(value: number | undefined) => void} */
+  /** @type {(value: number | "") => void} */
   const onOffsetChange = useCallback((offset = 0) => {
     actions.updatePagination({limit, offset});
   }, [limit]);

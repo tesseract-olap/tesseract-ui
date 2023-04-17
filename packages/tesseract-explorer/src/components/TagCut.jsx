@@ -129,7 +129,7 @@ export const TagCut = props => {
     >
       <Popover.Target>
         <Card
-          p="xs"
+          padding="xs"
           withBorder
         >
           <Group noWrap position="apart">
@@ -186,7 +186,7 @@ export const MemoTagCut = memo(TagCut);
  */
 const TagCutLoading = props =>
   <Card
-    p="xs"
+    padding="xs"
     withBorder
   >
     <Group noWrap position="apart">
@@ -221,7 +221,7 @@ const TagCutError = props => {
     >
       <HoverCard.Target>
         <Card
-          p="xs"
+          padding="xs"
           withBorder
         >
           <Group noWrap position="apart">

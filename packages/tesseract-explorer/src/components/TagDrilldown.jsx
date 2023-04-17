@@ -57,7 +57,7 @@ const TagDrilldown = props => {
 
   const target =
     <Card
-      p="xs"
+      padding="xs"
       withBorder
     >
       <Group noWrap position="apart">

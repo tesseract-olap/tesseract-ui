@@ -14,8 +14,8 @@ This project has some peer dependencies, which must be installed by the user man
 
 ```bash
 # The project is compatible with React ^16.12, 17, and 18
-npm install react@17 react-dom@17 @emotion/react@11
-npm install @mantine/core@5 @mantine/hooks@5 @mantine/prism@5 @mantine/dates@5
+npm install react@18 react-dom@18 @emotion/react@11
+npm install @mantine/core@6 @mantine/hooks@6 @mantine/prism@6 @mantine/dates@6
 ```
 
 ## Usage
