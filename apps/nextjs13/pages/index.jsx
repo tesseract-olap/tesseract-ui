@@ -1,11 +1,11 @@
-import { Explorer } from "@datawheel/tesseract-explorer";
+import { Explorer, TableView, PivotView, DebugView } from "@datawheel/tesseract-explorer";
 import Head from 'next/head';
 
 const PANELS = [
   {key: "table", label: "Data Table", component: TableView},
   {key: "matrix", label: "Pivot Table", component: PivotView},
   {key: "debug", label: "Raw response", component: DebugView},
-  {key: "vizbuilder", label: "Vizbuilder", component: VizbuilderPanel}
+  // {key: "vizbuilder", label: "Vizbuilder", component: VizbuilderPanel}
 ];
 
 export default function Home() {
@@ -23,6 +23,7 @@ export default function Home() {
         withinMantineProvider
         withinReduxProvider
         withMultiQuery
+        withPermalink
       />
     </div>
   )

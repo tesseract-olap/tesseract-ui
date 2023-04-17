@@ -1,5 +1,5 @@
-import {Box, Button, Group, Stack, Tooltip} from "@mantine/core";
-import {IconCircleMinus, IconDatabase, IconReplace} from "@tabler/icons-react";
+import {ActionIcon, Box, Button, Group, Stack, Tooltip} from "@mantine/core";
+import {IconCircleMinus, IconDatabase, IconReplace, IconTrash} from "@tabler/icons-react";
 import React from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
@@ -38,6 +38,7 @@ export const ButtonExecuteQuery = () => {
             withinPortal
           >
             <Button
+              disabled={!isValid}
               fullWidth
               id="button-execute-query"
               leftIcon={<IconDatabase />}
@@ -45,13 +46,12 @@ export const ButtonExecuteQuery = () => {
                 actions.willRequestQuery();
               }}
               sx={{"&[data-disabled]": {pointerEvents: "all"}}}
-              data-disabled={!isValid}
               // {...executeButtonProps}
             >
               {t("params.action_execute")}
             </Button>
           </Tooltip>
-          {software === "tesseract-olap" && <Tooltip
+          {/* software === "tesseract-olap" && <Tooltip
             color="gray"
             events={{
               hover: true,
@@ -72,12 +72,7 @@ export const ButtonExecuteQuery = () => {
             >
               <IconReplace />
             </Button>
-          </Tooltip>}
-        </Group>
-        <Box id="switch-params-load-all-results">
-          <PreviewModeSwitch />
-        </Box>
-        <Group noWrap spacing="xs">
+            </Tooltip>*/}
           <Tooltip
             color="red"
             events={{
@@ -90,19 +85,22 @@ export const ButtonExecuteQuery = () => {
             withArrow
             withinPortal
           >
-            <Button
+            <ActionIcon
               color="red"
               id="button-clear-params"
-              fullWidth
-              leftIcon={<IconCircleMinus />}
               onClick={() => {
                 actions.resetAllParams({});
               }}
+              size="lg"
+              variant="filled"
             >
-              {t("params.action_clear")}
-            </Button>
+              <IconTrash />
+            </ActionIcon>  
           </Tooltip>
         </Group>
+        <Box id="switch-params-load-all-results">
+          <PreviewModeSwitch />
+        </Box>
       </Stack>
     </Box>
   );

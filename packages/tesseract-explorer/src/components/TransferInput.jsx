@@ -210,7 +210,7 @@ export const TransferInput = props => {
             })}
           >
             <Stack>
-              <Card p="xs" ref={unselectedRef} withBorder>
+              <Card padding="xs" ref={unselectedRef} withBorder>
                 <ScrollArea h={150} offsetScrollbars type="auto" viewportRef={unselectedRef}>
                   {unselectedHidden > 0 &&
                 <Text c="gray" fz="sm" pb="sm">{t("transfer_input.count_hidden", {n: unselectedHidden})}</Text>
@@ -241,7 +241,7 @@ export const TransferInput = props => {
             })}
           >
             <Stack>
-              <Card p="xs" ref={selectedRef} withBorder>
+              <Card padding="xs" ref={selectedRef} withBorder>
                 <ScrollArea h={150} offsetScrollbars type="auto" viewportRef={selectedRef}>
                   {selectedHidden > 0 &&
                   <Text c="gray" fz="sm" pb="sm">{t("transfer_input.count_hidden", {n: selectedHidden})}</Text>

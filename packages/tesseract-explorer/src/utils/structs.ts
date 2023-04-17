@@ -22,8 +22,8 @@ export interface QueryParams {
   locale: string | undefined;
   measures: Record<string, MeasureItem>;
   previewLimit: number;
-  pagiLimit: number | undefined;
-  pagiOffset: number | undefined;
+  pagiLimit: number;
+  pagiOffset: number;
   sortDir: "asc" | "desc";
   sortKey: string | undefined;
 }

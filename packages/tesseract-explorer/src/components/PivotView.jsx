@@ -227,7 +227,7 @@ export const PivotView = props => {
         }
       })}
     >
-      <Card id="query-results-pivot-view-params" miw={300} p="xs" radius={0}>
+      <Card id="query-results-pivot-view-params" miw={300} padding="xs" radius={0}>
         <Flex
           direction="column"
           p="sm"

@@ -24,7 +24,7 @@ export const ExplorerParams = () => {
         defaultValue="measures"
         styles={theme => ({
           chevron: {
-            marginRight: theme.spacing.xs / 2
+            marginRight: `calc(${theme.spacing.xs} / 2)`
           }
         })}
         variant="contained"

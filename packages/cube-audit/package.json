@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@datawheel/olap-client": "^2.0.0",
-    "d3plus-text": "^0.10.1",
+    "d3plus-text": "^1.2.3",
     "getopts": "^2.3.0",
     "lodash": "^4.17.21"
   },
