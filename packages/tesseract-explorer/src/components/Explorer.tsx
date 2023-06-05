@@ -144,6 +144,7 @@ export function ExplorerComponent(props: {
           previewLimit={previewLimit}
           panels={panels}
           splash={props.splash}
+          uiLocale={props.uiLocale}
           withMultiQuery={withMultiQuery}
         />
         {props.withPermalink && <PermalinkSync />}

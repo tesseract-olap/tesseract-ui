@@ -1,7 +1,7 @@
 import {ServerConfig} from "@datawheel/olap-client";
 import {TranslationContextProps} from "@datawheel/use-translation";
 import {Flex} from "@mantine/core";
-import React, {useMemo} from "react";
+import React, {useEffect, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useSetup} from "../hooks/setup";
 import {useTranslation} from "../hooks/translation";
@@ -20,6 +20,7 @@ export function ExplorerContent(props: {
   previewLimit: number;
   source: ServerConfig;
   splash?: React.ComponentType<{translation: TranslationContextProps}>;
+  uiLocale: string | undefined;
   withMultiQuery: boolean;
 }) {
   const translation = useTranslation();
@@ -27,6 +28,11 @@ export function ExplorerContent(props: {
   const isSetupDone = useSetup(props.source, props.dataLocale, props.previewLimit);
 
   const serverState = useSelector(selectServerState);
+
+  // Monitor the uiLocale param to update the UI on change
+  useEffect(() => {
+    if (props.uiLocale) translation.setLocale(props.uiLocale);
+  }, [props.uiLocale]);
 
   const splash = useMemo(() => {
     const SplashComponent = props.splash;
