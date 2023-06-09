@@ -19,7 +19,7 @@ const VizbuilderPanel = props =>
     formatters={formatters}
     params={props.params}
     result={props.result}
-    showConfidenceInt={false}
+    // showConfidenceInt={false}
   />;
 
 const PANELS = [
@@ -31,9 +31,9 @@ const PANELS = [
 
 ReactDOM.render(
   <Explorer
-    source="/olap/"
+    source="https://api.datasaudi.datawheel.us/tesseract/"
     formatters={formatters}
-    dataLocale="en,es"
+    dataLocale="en,ar"
     previewLimit={75}
     panels={PANELS}
     withinMantineProvider
