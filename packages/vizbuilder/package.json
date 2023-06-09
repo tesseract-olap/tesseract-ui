@@ -43,7 +43,7 @@
     "directory": "packages/vizbuilder"
   },
   "dependencies": {
-    "@datawheel/vizbuilder": "^0.3.0"
+    "@datawheel/vizbuilder": "^0.4.0"
   },
   "peerDependencies": {
     "@datawheel/tesseract-explorer": "^2.0.0",
