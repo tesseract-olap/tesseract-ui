@@ -6,8 +6,8 @@ type MaybeArray<T> = T | T[];
  * Ensures the returned value is always an array,
  * and discards `null` and `undefined` elements inside it.
  */
-export function ensureArray<T>(value: MaybeArray<T | undefined | null>): T[] {
-  const target = [] as Array<T | undefined | null>;
+export function asArray<T>(value: MaybeArray<T | undefined | null>): T[] {
+  const target: (T | null | undefined)[] = [];
   return target.concat(value).filter(item => item != null) as T[];
 }
 

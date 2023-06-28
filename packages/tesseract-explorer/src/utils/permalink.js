@@ -1,6 +1,6 @@
 import formUrlEncode from "form-urlencoded";
 import {SERIAL_BOOLEAN} from "../enums";
-import {ensureArray, filterMap} from "./array";
+import {asArray, filterMap} from "./array";
 import {buildCut, buildDrilldown, buildFilter, buildMeasure} from "./structs";
 import {keyBy, parseName, stringifyName} from "./transform";
 import {isActiveCut, isActiveItem} from "./validation";
@@ -107,13 +107,13 @@ export function parseStateFromSearchParams(query) {
   return {
     booleans: parseBooleans(query.booleans || 0),
     cube: query.cube,
-    cuts: ensureArray(query.cuts).reduce(cutReducer, cuts),
-    drilldowns: ensureArray(query.drilldowns).reduce(drilldownReducer, drilldowns),
-    filters: keyBy(ensureArray(query.filters).map(parseFilter), getKey),
+    cuts: asArray(query.cuts).reduce(cutReducer, cuts),
+    drilldowns: asArray(query.drilldowns).reduce(drilldownReducer, drilldowns),
+    filters: keyBy(asArray(query.filters).map(parseFilter), getKey),
     locale: query.locale,
-    measures: keyBy(ensureArray(query.measures).map(parseMeasure), getKey),
-    pagiLimit: undefined,
-    pagiOffset: undefined,
+    measures: keyBy(asArray(query.measures).map(parseMeasure), getKey),
+    pagiLimit: 0,
+    pagiOffset: 0,
     previewLimit: 0, // TODO: add to permalink
     sortDir: "desc",
     sortKey: undefined

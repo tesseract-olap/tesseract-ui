@@ -1,6 +1,6 @@
 import formUrlDecode from "form-urldecoded";
 import {useEffect, useMemo, useState} from "react";
-import {ensureArray} from "../utils/array";
+import {asArray} from "../utils/array";
 import {hasOwnProperty} from "../utils/object";
 import {parseStateFromSearchParams} from "../utils/permalink";
 import {decodeUrlFromBase64} from "../utils/string";
@@ -23,7 +23,7 @@ export function useSetup(serverConfig, locale, previewLimit) {
   // ensure the locale variable is an array
   const cleanLocale = useMemo(() => typeof locale === "string"
     ? locale.split(",").map(item => item.trim())
-    : ensureArray(locale).map(item => item.trim())
+    : asArray(locale).map(item => item.trim())
   , [`${locale}`]);
 
   // Keep the locale list in sync with the server state

@@ -1,5 +1,5 @@
 import {Comparison, Measure} from "@datawheel/olap-client";
-import {ensureArray} from "./array";
+import {asArray} from "./array";
 import {parseNumeric, randomKey} from "./string";
 import {joinName} from "./transform";
 
@@ -181,7 +181,7 @@ export function buildDrilldown(props): DrilldownItem {
     key: props.key || randomKey(),
     level,
     memberCount: 0,
-    properties: ensureArray(props.properties).map(buildProperty),
+    properties: asArray(props.properties).map(buildProperty),
     uniqueName: props.uniqueName || props.name || props.level
   };
 }
