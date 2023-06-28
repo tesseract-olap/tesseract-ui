@@ -2,7 +2,7 @@ import {PayloadAction as Action, AnyAction, createSelector, createSlice} from "@
 import ISO6391 from "iso-639-1";
 import {sortByDate} from "../utils/array";
 import {getKeys, getValues, hasOwnProperty} from "../utils/object";
-import {CutItem, DrilldownItem, FilterItem, MeasureItem, QueryItem, QueryParams, QueryResult, buildQuery, buildQueryParams} from "../utils/structs";
+import {CutItem, DimensionColumn, DrilldownItem, FilterItem, MeasureItem, MeasureColumn, QueryItem, QueryParams, QueryResult, buildQuery, buildQueryParams} from "../utils/structs";
 import {isValidQueryVerbose} from "../utils/validation";
 import {selectServerState} from "./server";
 import type {ExplorerState} from "./store";
@@ -178,6 +178,11 @@ export const queriesSlice = createSlice({
       }
     },
 
+    updateMeasureColumn(state, {payload}: Action<MeasureColumn>) {
+      const query = taintCurrentQuery(state);
+      query.params.measurements[payload.key] = payload;
+    },
+
     /**
      * Replaces a single CutItem in the current QueryItem.
      */
@@ -301,6 +306,20 @@ export const selectLocale = createSelector(
     };
   }
 );
+
+export const selectDimensionMap = createSelector(
+  selectCurrentQueryParams,
+  params => params.dimensions);
+export const selectDimensionItems = createSelector(
+  selectDimensionMap,
+  getValues<DimensionColumn>);
+
+export const selectMeasurementMap = createSelector(
+  selectCurrentQueryParams,
+  params => params.measurements);
+export const selectMeasurementItems = createSelector(
+  selectMeasurementMap,
+  getValues<MeasureColumn>);
 
 export const selectCutMap = createSelector(
   selectCurrentQueryParams,

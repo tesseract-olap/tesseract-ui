@@ -1,6 +1,7 @@
 import {Accordion, Space} from "@mantine/core";
 import React from "react";
 import {useTranslation} from "../hooks/translation";
+import {AreaColumns} from "./AreaColumns";
 import {AreaCuts} from "./AreaCuts";
 import {AreaDownloadQuery} from "./AreaDownloadQuery";
 import {AreaDrilldowns} from "./AreaDrilldowns";
@@ -18,6 +19,8 @@ export const ExplorerParams = () => {
     <LayoutColumn id="explorer-params" title={t("params.column_title")}>
       <SelectLocale />
       <SelectCube />
+      <Space h="md" />
+      <AreaColumns />
       <Space h="md" />
       <Accordion
         chevronPosition="left"

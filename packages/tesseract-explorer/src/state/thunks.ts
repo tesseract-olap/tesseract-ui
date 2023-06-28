@@ -1,7 +1,7 @@
 import {Format, LevelDescriptor, Client as OLAPClient, PlainCube, PlainMember, ServerConfig, TesseractDataSource} from "@datawheel/olap-client";
 import {filterMap} from "../utils/array";
 import {applyQueryParams, extractQueryParams} from "../utils/query";
-import {QueryItem, buildMeasure, buildQuery} from "../utils/structs";
+import {DimensionColumn, MeasureColumn, QueryItem, buildDimensionColumn, buildMeasure, buildMeasureColumn, buildQuery} from "../utils/structs";
 import {keyBy} from "../utils/transform";
 import {FileDescriptor} from "../utils/types";
 import {isValidQuery} from "../utils/validation";
@@ -169,11 +169,31 @@ export function willHydrateParams(
             hydrateDrilldownProperties(cube, item) || null
           );
 
+          const resolvedMsrCols: MeasureColumn[] = cube.measures.map(item => {
+            const column: MeasureColumn | undefined = params.measurements[item.name];
+            return buildMeasureColumn({...item.toJSON(), ...column});
+          });
+
+          const resolvedDimCols: DimensionColumn[] = filterMap(cube.dimensions, item => {
+            const firstIter = item.levelIterator.next();
+            // Dimensions with no Levels are not possible, but we must ensure it anyway
+            if (firstIter.done) return null;
+            const level = firstIter.value;
+            const column: DimensionColumn | undefined = params.dimensions[item.name];
+            return buildDimensionColumn({
+              ...column,
+              key: item.name, // use dimension name as key
+              level: level.uniqueName || level.fullName
+            });
+          });
+
           return {
             ...queryItem,
             params: {
               ...params,
               cube: cubeName,
+              measurements: keyBy(resolvedMsrCols, item => item.key),
+              dimensions: keyBy(resolvedDimCols, item => item.key),
               drilldowns: keyBy(resolvedDrilldowns, item => item.key),
               measures: keyBy(resolvedMeasures, item => item.key)
             }

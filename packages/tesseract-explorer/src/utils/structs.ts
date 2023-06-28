@@ -2,6 +2,7 @@ import {Comparison, Measure} from "@datawheel/olap-client";
 import {asArray} from "./array";
 import {parseNumeric, randomKey} from "./string";
 import {joinName} from "./transform";
+import {isNumeric, isOneOf} from "./validation";
 
 
 export interface QueryItem {
@@ -16,6 +17,8 @@ export interface QueryItem {
 export interface QueryParams {
   booleans: Record<string, undefined | boolean>;
   cube: string;
+  dimensions: Record<string, DimensionColumn>;
+  measurements: Record<string, MeasureColumn>;
   cuts: Record<string, CutItem>;
   drilldowns: Record<string, DrilldownItem>;
   filters: Record<string, FilterItem>;
@@ -40,6 +43,46 @@ export interface QueryResult {
 export interface QueryParamsItem {
   active: boolean;
   readonly key: string;
+}
+
+// This interface replaces CutItem and DrilldownItem
+export interface DimensionColumn {
+  key: string;
+
+  isDrilldownActive: boolean;
+  isCutActive: boolean;
+
+  /** Identifier for the selected Level in this Dimension */
+  level: string;
+
+  /** List of selected Members to cut this Level. */
+  members: string[];
+
+  /** List of selected Properties from this Level. */
+  properties: string[];
+
+  /** Property to be used as caption for this Level in the data. */
+  caption: string | undefined;
+}
+
+// This interface replaces MeasureItem
+export interface MeasureColumn {
+  key: string;
+
+  isMeasureActive: boolean;
+  isFilterActive: boolean;
+
+  /** Identifier for the Measure this object refers. */
+  measure: string;
+
+  /** First condition for the range of the Filter applied to the Measure. */
+  conditionOne: undefined | [string, string];
+
+  /** Second condition for the range of the Filter applied to the Measure. */
+  conditionTwo: undefined | [string, string];
+
+  /** Union operator for both conditions. */
+  joint: undefined | "and" | "or";
 }
 
 export interface CutItem extends QueryParamsItem {
@@ -123,6 +166,8 @@ export function buildQueryParams(props): QueryParams {
   return {
     booleans: props.booleans || {},
     cube: props.cube || "",
+    dimensions: props.dimensions || {},
+    measurements: props.measurements || {},
     cuts: props.cuts || {},
     drilldowns: props.drilldowns || {},
     filters: props.filters || {},
@@ -133,6 +178,46 @@ export function buildQueryParams(props): QueryParams {
     previewLimit: props.previewLimit || 0,
     sortDir: props.sortDir || props.sortDirection || props.sortOrder || props.order || "desc",
     sortKey: props.sortKey || props.sortProperty || ""
+  };
+}
+
+/**
+ * Creates a {@link DimensionColumn} object.
+ */
+export function buildDimensionColumn(props: Partial<DimensionColumn> & {
+  name?: string;
+  uniqueName?: string;
+}): DimensionColumn {
+  return {
+    key: props.key || props.uniqueName || props.name || randomKey(),
+    isDrilldownActive: !!props.isDrilldownActive || false,
+    isCutActive: !!props.isCutActive || false,
+    level: props.level || props.uniqueName || `${props.name}`,
+    members: asArray(props.members),
+    caption: props.caption || undefined,
+    properties: asArray(props.properties)
+  };
+}
+
+/**
+ * Creates a {@link MeasureColumn} object.
+ */
+export function buildMeasureColumn(props: Partial<MeasureColumn> & {
+  name?: string;
+}): MeasureColumn {
+  const comparisonValues = Object.values(Comparison);
+  const condOne = asArray(props.conditionOne).slice(0, 2).map(String);
+  const condTwo = asArray(props.conditionTwo).slice(0, 2).map(String);
+  return {
+    key: props.key || props.name || randomKey(),
+    isMeasureActive: !!props.isMeasureActive || false,
+    isFilterActive: !!props.isFilterActive || false,
+    measure: props.measure || `${props.name}`,
+    conditionOne: isOneOf(condOne[0], comparisonValues) && isNumeric(condOne[1])
+      ? [condOne[0], condOne[1]] : undefined,
+    conditionTwo: isOneOf(condTwo[0], comparisonValues) && isNumeric(condTwo[1])
+      ? [condTwo[0], condTwo[1]] : undefined,
+    joint: isOneOf(props.joint, ["and", "or"]) ? props.joint : undefined
   };
 }
 
