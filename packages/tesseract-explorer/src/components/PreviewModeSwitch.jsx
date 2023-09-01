@@ -30,8 +30,8 @@ export const PreviewModeSwitch = props => {
   }, [isPreviewMode, serialParams]);
 
   const onClickLoadAllResults = useCallback(() => {
-    actions.updatePreviewLimit(isPreviewMode ? 0 : previewLimit);
-  }, [previewLimit, isPreviewMode]);
+    actions.updateIsPreview(!isPreviewMode);
+  }, [isPreviewMode]);
 
   return (
     <Tooltip

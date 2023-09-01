@@ -45,7 +45,7 @@ export function SettingsProvider(props: {
   const value: SettingsContextProps = useMemo(() => ({
     actions: boundActions as ExplorerBoundActions,
     formatters: props.formatters || {},
-    previewLimit: props.previewLimit || 100,
+    previewLimit: props.previewLimit || 50,
   }), [props.formatters, props.previewLimit]);
 
   return <ContextProvider value={value}>{props.children}</ContextProvider>;

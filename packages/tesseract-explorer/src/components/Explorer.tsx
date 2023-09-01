@@ -5,7 +5,7 @@ import React, {useMemo} from "react";
 import {Provider as ReduxProvider, useStore} from "react-redux";
 import {SettingsProvider} from "../hooks/settings";
 import {TranslationDict, TranslationProvider} from "../hooks/translation";
-import {storeFactory} from "../state";
+import {ExplorerStore, storeFactory} from "../state";
 import {Formatter} from "../utils/types";
 import {DebugView} from "./DebugView";
 import {ExplorerContent} from "./ExplorerContent";
@@ -126,7 +126,15 @@ export function ExplorerComponent(props: {
     {key: "debug", label: "debug_view.tab_label", component: DebugView}
   ], [props.panels]);
 
-  const store = withinReduxProvider ? useMemo(storeFactory, []) : useStore();
+  const store: ExplorerStore = withinReduxProvider ? useMemo(storeFactory, []) : useStore();
+
+  useMemo(() => {
+    // Keep the previewLimit value in sync with the value stored in Settings
+    // TODO: There's probably a better way, but we need previewLimit in the extraArg
+    store.dispatch((_, __, extra) => {
+      extra.previewLimit = previewLimit;
+    });
+  }, [previewLimit]);
 
   let content =
     <SettingsProvider
@@ -141,7 +149,6 @@ export function ExplorerComponent(props: {
         <ExplorerContent
           source={props.source}
           dataLocale={locale}
-          previewLimit={previewLimit}
           panels={panels}
           splash={props.splash}
           uiLocale={props.uiLocale}

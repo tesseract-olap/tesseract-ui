@@ -17,7 +17,6 @@ import {NonIdealState} from "./NonIdealState";
 export function ExplorerContent(props: {
   dataLocale: string[];
   panels: PanelDescriptor[];
-  previewLimit: number;
   source: ServerConfig;
   splash?: React.ComponentType<{translation: TranslationContextProps}>;
   uiLocale: string | undefined;
@@ -25,7 +24,7 @@ export function ExplorerContent(props: {
 }) {
   const translation = useTranslation();
 
-  const isSetupDone = useSetup(props.source, props.dataLocale, props.previewLimit);
+  const isSetupDone = useSetup(props.source, props.dataLocale);
 
   const serverState = useSelector(selectServerState);
 

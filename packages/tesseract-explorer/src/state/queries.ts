@@ -139,11 +139,11 @@ export const queriesSlice = createSlice({
     },
 
     /**
-     * Sets the previewLimit value for the current QueryItem.
+     * Sets the isPreview value for the current QueryItem.
      */
-    updatePreviewLimit(state, {payload}: Action<number | undefined>) {
+    updateIsPreview(state, {payload}: Action<boolean | undefined>) {
       const query = taintCurrentQuery(state);
-      query.params.previewLimit = payload || 0;
+      query.params.isPreview = payload || false;
     },
 
     /**
@@ -336,7 +336,7 @@ export const selectBooleans = createSelector(
 );
 export const selectIsPreviewMode = createSelector(
   selectCurrentQueryParams,
-  params => params.previewLimit > 0
+  params => params.isPreview
 );
 
 export const selectPaginationParams = createSelector(

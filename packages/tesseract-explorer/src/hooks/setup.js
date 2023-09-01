@@ -4,7 +4,7 @@ import {asArray} from "../utils/array";
 import {hasOwnProperty} from "../utils/object";
 import {parseStateFromSearchParams} from "../utils/permalink";
 import {decodeUrlFromBase64} from "../utils/string";
-import {buildQuery} from "../utils/structs";
+import {buildQuery, buildQueryParams} from "../utils/structs";
 import {isValidQuery} from "../utils/validation";
 import {useActions} from "./settings";
 
@@ -13,9 +13,8 @@ import {useActions} from "./settings";
  *
  * @param {import("@datawheel/olap-client").ServerConfig} serverConfig
  * @param {string | string[]} locale
- * @param {number} previewLimit
  */
-export function useSetup(serverConfig, locale, previewLimit) {
+export function useSetup(serverConfig, locale) {
   const actions = useActions();
 
   const [done, setDone] = useState(false);
@@ -46,10 +45,10 @@ export function useSetup(serverConfig, locale, previewLimit) {
         if (searchString) {
           // The current URL contains search params, parse them
           // We need to decode them using this function, as reconstructs arrays
-          /** @type {SerializedQuery} */
+          /** @type {import("../utils/permalink").SerializedQuery | {query: string}} */
           const searchObject = formUrlDecode(searchString);
 
-          if (searchObject.query) {
+          if ("query" in searchObject) {
           // Search params are a base64-encoded OLAP server URL
             const decodedURL = decodeUrlFromBase64(searchObject.query);
             const url = new URL(decodedURL);
@@ -61,11 +60,11 @@ export function useSetup(serverConfig, locale, previewLimit) {
           // else, search params are a Explorer state permalink
           const locationState = parseStateFromSearchParams(searchObject);
           query = isValidQuery(locationState) && buildQuery({
-            params: {...locationState, pagiLimit: previewLimit}
+            params: buildQueryParams({...locationState})
           });
         }
         else if (isValidQuery(historyState)) {
-          query = buildQuery({params: {...historyState, pagiLimit: previewLimit}});
+          query = buildQuery({params: {...historyState}});
         }
 
         if (!query || !hasOwnProperty(cubeMap, query.params.cube)) {

@@ -17,7 +17,10 @@ export const reducer = combineReducers(reducerMap);
  * Inyects the Client dependency to the thunk's extra argument.
  */
 export function thunkExtraArg() {
-  return {olapClient: new Client()};
+  return {
+    olapClient: new Client(),
+    previewLimit: 50
+  };
 }
 
 export const storeFactory = () => configureStore({

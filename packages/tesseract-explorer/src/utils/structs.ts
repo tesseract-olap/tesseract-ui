@@ -21,7 +21,7 @@ export interface QueryParams {
   filters: Record<string, FilterItem>;
   locale: string | undefined;
   measures: Record<string, MeasureItem>;
-  previewLimit: number;
+  isPreview: boolean;
   pagiLimit: number;
   pagiOffset: number;
   sortDir: "asc" | "desc";
@@ -126,11 +126,11 @@ export function buildQueryParams(props): QueryParams {
     cuts: props.cuts || {},
     drilldowns: props.drilldowns || {},
     filters: props.filters || {},
+    isPreview: props.isPreview || false,
     locale: props.locale || "",
     measures: props.measures || {},
     pagiLimit: props.pagiLimit || props.limitAmount || props.limit || 0,
     pagiOffset: props.pagiOffset || props.limitOffset || props.offset || 0,
-    previewLimit: props.previewLimit || 0,
     sortDir: props.sortDir || props.sortDirection || props.sortOrder || props.order || "desc",
     sortKey: props.sortKey || props.sortProperty || ""
   };

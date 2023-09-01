@@ -7,7 +7,13 @@ import {isActiveCut, isActiveItem} from "./validation";
  * Applies the properties set on a QueryParams object
  * to an OlapClient Query object.
  */
-export function applyQueryParams(query: Query, params: QueryParams) {
+export function applyQueryParams(
+  query: Query,
+  params: QueryParams,
+  settings: {
+    previewLimit: number;
+  }
+) {
 
   Object.entries(params.booleans).forEach(item => {
     item[1] != null && query.setOption(item[0], item[1]);
@@ -38,8 +44,8 @@ export function applyQueryParams(query: Query, params: QueryParams) {
     query.setSorting(params.sortKey, params.sortDir === "desc");
   }
 
-  if (params.previewLimit) {
-    query.setPagination(params.previewLimit, 0);
+  if (params.isPreview) {
+    query.setPagination(settings.previewLimit, 0);
   }
   else {
     query.setPagination(params.pagiLimit || 0, params.pagiOffset);
@@ -94,7 +100,7 @@ export function extractQueryParams(query: Query): QueryParams {
     measures: keyBy<MeasureItem>(measures, getKey),
     pagiLimit: pagination.limit,
     pagiOffset: pagination.offset,
-    previewLimit: 0,
+    isPreview: true,
     sortDir: sorting.direction === "asc" ? "asc" : "desc",
     sortKey: Measure.isMeasure(sorting.property)
       ? sorting.property.name
