@@ -1,15 +1,25 @@
 import formUrlEncode from "form-urlencoded";
 import {SERIAL_BOOLEAN} from "../enums";
 import {asArray, filterMap} from "./array";
-import {buildCut, buildDrilldown, buildFilter, buildMeasure} from "./structs";
+import {CutItem, DrilldownItem, FilterItem, MeasureItem, QueryParams, buildCut, buildDrilldown, buildFilter, buildMeasure} from "./structs";
 import {keyBy, parseName, stringifyName} from "./transform";
 import {isActiveCut, isActiveItem} from "./validation";
 
+export interface SerializedQuery {
+  cube: string;
+  drilldowns: string[];
+  measures: string[];
+  booleans?: number;
+  cuts?: string[];
+  filters?: string[];
+  locale?: string;
+  preview?: 1 | undefined;
+}
+
 /**
- * @param {import("./structs").QueryParams} params
- * @returns {string}
+ *
  */
-export function serializePermalink(params) {
+export function serializePermalink(params: QueryParams): string {
   return formUrlEncode(serializeStateToSearchParams(params), {
     ignorenull: true,
     skipIndex: false,
@@ -18,10 +28,9 @@ export function serializePermalink(params) {
 }
 
 /**
- * @param {import("./structs").QueryParams} query
- * @returns {TessExpl.Struct.SerializedQuery}
+ *
  */
-function serializeStateToSearchParams(query) {
+function serializeStateToSearchParams(query: QueryParams): SerializedQuery {
   const cuts = filterMap(Object.values(query.cuts), item =>
     isActiveCut(item) ? serializeCut(item) : null
   );
@@ -45,27 +54,24 @@ function serializeStateToSearchParams(query) {
 
   return {
     cube: query.cube,
+    drilldowns,
+    measures,
+    booleans: booleans > 0 ? booleans : undefined,
     cuts: cuts.length > 0 ? cuts : undefined,
-    drilldowns: drilldowns.length > 0 ? drilldowns : undefined,
     filters: filters.length > 0 ? filters : undefined,
     locale: query.locale ? query.locale : undefined,
-    measures: measures.length > 0 ? measures : undefined,
-    booleans: booleans > 0 ? booleans : undefined
+    preview: query.isPreview ? 1 : undefined
   };
 
   /**
-   * @param {import("./structs").CutItem} item
-   * @returns {string}
    */
-  function serializeCut(item) {
+  function serializeCut(item: CutItem): string {
     return [stringifyName(item)].concat(item.members).join(",");
   }
 
   /**
-   * @param {import("./structs").DrilldownItem} item
-   * @returns {string}
    */
-  function serializeDrilldown(item) {
+  function serializeDrilldown(item: DrilldownItem): string {
     return [stringifyName(item)].concat(
       filterMap(item.properties, prop =>
         isActiveItem(prop) ? prop.name : null
@@ -74,10 +80,8 @@ function serializeStateToSearchParams(query) {
   }
 
   /**
-   * @param {import("./structs").FilterItem} item
-   * @returns {string}
    */
-  function serializeFilter(item) {
+  function serializeFilter(item: FilterItem): string {
     return `${item.measure},${item.comparison},${item.interpretedValue}`;
   }
 
@@ -92,10 +96,9 @@ function serializeStateToSearchParams(query) {
 }
 
 /**
- * @param {TessExpl.Struct.SerializedQuery} query
- * @returns {import("./structs").QueryParams}
+ *
  */
-export function parseStateFromSearchParams(query) {
+export function parseStateFromSearchParams(query: SerializedQuery): QueryParams {
   const getKey = i => i.key;
 
   /** @type {Record<string, TessExpl.Struct.CutItem>} */
@@ -110,20 +113,18 @@ export function parseStateFromSearchParams(query) {
     cuts: asArray(query.cuts).reduce(cutReducer, cuts),
     drilldowns: asArray(query.drilldowns).reduce(drilldownReducer, drilldowns),
     filters: keyBy(asArray(query.filters).map(parseFilter), getKey),
+    isPreview: query.preview === 1,
     locale: query.locale,
     measures: keyBy(asArray(query.measures).map(parseMeasure), getKey),
     pagiLimit: 0,
     pagiOffset: 0,
-    previewLimit: 0, // TODO: add to permalink
     sortDir: "desc",
     sortKey: undefined
   };
 
   /**
-   * @param {Record<string, import("./structs").CutItem>} cuts
-   * @param {string} item
    */
-  function cutReducer(cuts, item) {
+  function cutReducer(cuts: Record<string, CutItem>, item: string) {
     const [fullName, ...members] = item.split(",");
     const cut = buildCut({...parseName(fullName), active: true, members});
 
@@ -143,10 +144,8 @@ export function parseStateFromSearchParams(query) {
   }
 
   /**
-   * @param {Record<string, import("./structs").DrilldownItem>} drilldowns
-   * @param {string} item
    */
-  function drilldownReducer(drilldowns, item) {
+  function drilldownReducer(drilldowns: Record<string, DrilldownItem>, item: string) {
     const [fullName, ...props] = item.split(",");
     const nameParts = parseName(fullName);
     const properties = props.map(name => ({active: true, level: nameParts.level, name}));
@@ -156,13 +155,9 @@ export function parseStateFromSearchParams(query) {
   }
 
   /**
-   * @param {number} item
-   * @returns {Record<string, boolean>}
    */
-  function parseBooleans(item) {
-
-    /** @type {Record<string, boolean>} */
-    const booleans = Object.create(null);
+  function parseBooleans(item: number): Record<string, boolean> {
+    const booleans: Record<string, boolean> = Object.create(null);
 
     Object.keys(SERIAL_BOOLEAN).forEach(key => {
       const value = item & SERIAL_BOOLEAN[key];
@@ -175,10 +170,8 @@ export function parseStateFromSearchParams(query) {
   }
 
   /**
-   * @param {string} item
-   * @returns {import("./structs").FilterItem}
    */
-  function parseFilter(item) {
+  function parseFilter(item: string): FilterItem {
     const [measure, comparison, inputtedValue] = item.split(",");
     return buildFilter({
       active: true,
@@ -190,10 +183,8 @@ export function parseStateFromSearchParams(query) {
   }
 
   /**
-   * @param {string} item
-   * @returns {import("./structs").MeasureItem}
    */
-  function parseMeasure(item) {
+  function parseMeasure(item: string): MeasureItem {
     return buildMeasure({
       active: true,
       key: item,
