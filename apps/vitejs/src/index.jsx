@@ -2,7 +2,7 @@
 import {DebugView, Explorer, PivotView, TableView} from "@datawheel/tesseract-explorer";
 import Vizbuilder from "@datawheel/tesseract-vizbuilder";
 import React from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import "normalize.css";
 
@@ -29,17 +29,23 @@ const PANELS = [
   {key: "vizbuilder", label: "Vizbuilder", component: VizbuilderPanel}
 ];
 
-ReactDOM.render(
-  <Explorer
-    source="/olap/"
-    formatters={formatters}
-    dataLocale="en,es"
-    previewLimit={75}
-    panels={PANELS}
-    withinMantineProvider
-    withinReduxProvider
-    withMultiQuery
-    withPermalink
-  />,
-  document.getElementById("app")
-);
+const container = document.getElementById("app");
+container && mount(container);
+
+/** */
+function mount(container) {
+  const root = createRoot(container);
+  root.render(
+    <Explorer
+      source="/olap/"
+      formatters={formatters}
+      dataLocale="en,es"
+      previewLimit={75}
+      panels={PANELS}
+      withinMantineProvider
+      withinReduxProvider
+      withMultiQuery
+      withPermalink
+    />
+  );
+}

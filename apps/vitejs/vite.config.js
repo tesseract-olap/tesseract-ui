@@ -1,4 +1,6 @@
 import pluginReact from "@vitejs/plugin-react";
+import pluginLegacy from '@vitejs/plugin-legacy'
+import { defineConfig } from "vite";
 
 const {
   OLAPPROXY_BASICAUTH,
@@ -14,29 +16,36 @@ if (OLAPPROXY_JWTAUTH) {
   headers["x-tesseract-jwt-token"] = OLAPPROXY_JWTAUTH;
 }
 
-/** @type {import("vite").UserConfig} */
-const config = {
-  root: "./src",
-  define: {
-    'process.env.BUILD_VERSION': '"x.y.z"',
-    'process.env': {}
-  },
-  plugins: [
-    pluginReact()
-  ],
-  server: {
-    proxy: {
-      "/olap/": {
-        auth: OLAPPROXY_BASICAUTH,
-        changeOrigin: true,
-        secure: false,
-        target: target.origin,
-        followRedirects: true,
-        headers,
-        rewrite: (path) => path.replace(/^\/olap\//, target.pathname)
+export default defineConfig(({command, mode, ssrBuild}) => {
+  const plugins = [pluginReact()];
+
+  if (command == "build") {
+    plugins.push(
+      pluginLegacy({
+        targets: ["defaults", "not IE 11"],
+      })
+    );
+  }
+
+  return {
+    root: "./src",
+    define: {
+      'process.env.BUILD_VERSION': '"x.y.z"',
+      'process.env': {}
+    },
+    plugins,
+    server: {
+      proxy: {
+        "/olap/": {
+          auth: OLAPPROXY_BASICAUTH,
+          changeOrigin: true,
+          secure: false,
+          target: target.origin,
+          followRedirects: true,
+          headers,
+          rewrite: (path) => path.replace(/^\/olap\//, target.pathname)
+        }
       }
     }
-  }
-};
-
-export default config
+  };
+})
