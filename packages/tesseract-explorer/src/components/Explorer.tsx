@@ -36,6 +36,13 @@ export function ExplorerComponent(props: {
   dataLocale?: string | string[];
 
   /**
+   * Defines the parameter panel which will be opened when the component first loads.
+   * Available options are `measures`, `drilldowns`, `cuts`, and `options`.
+   * @default "measures"
+   */
+  defaultOpenParams?: "measures" | "drilldowns" | "cuts" | "options";
+
+  /**
    * Defines an index of formatter functions available to the measures shown
    * in the app, besides a limited list of default ones. The key used comes
    * from `measure.annotations.units_of_measurement`, if present.
@@ -112,6 +119,7 @@ export function ExplorerComponent(props: {
 }) {
   const {
     dataLocale = "en",
+    defaultOpenParams = "measures",
     previewLimit = 50,
     withinMantineProvider = true,
     withinReduxProvider = false,
@@ -149,6 +157,7 @@ export function ExplorerComponent(props: {
         <ExplorerContent
           source={props.source}
           dataLocale={locale}
+          defaultOpenParams={defaultOpenParams}
           panels={panels}
           splash={props.splash}
           uiLocale={props.uiLocale}

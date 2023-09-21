@@ -16,6 +16,7 @@ import {NonIdealState} from "./NonIdealState";
 /** */
 export function ExplorerContent(props: {
   dataLocale: string[];
+  defaultOpenParams: string;
   panels: PanelDescriptor[];
   source: ServerConfig;
   splash?: React.ComponentType<{translation: TranslationContextProps}>;
@@ -58,7 +59,7 @@ export function ExplorerContent(props: {
         : <div/>
       }
       {isSetupDone && serverState.online
-        ? <ExplorerParams />
+        ? <ExplorerParams defaultOpen={props.defaultOpenParams} />
         : <div/>
       }
       <ExplorerResults

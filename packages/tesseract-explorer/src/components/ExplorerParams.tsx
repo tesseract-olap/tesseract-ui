@@ -11,7 +11,11 @@ import {LayoutColumn} from "./LayoutColumn";
 import {SelectCube} from "./SelectCube";
 import {SelectLocale} from "./SelectLocale";
 
-export const ExplorerParams = () => {
+export const ExplorerParams = (props: {
+
+  /** Defines which panel will be opened by default on the first load. */
+  defaultOpen: string;
+}) => {
   const {translate: t} = useTranslation();
 
   return (
@@ -21,7 +25,7 @@ export const ExplorerParams = () => {
       <Space h="md" />
       <Accordion
         chevronPosition="left"
-        defaultValue="measures"
+        defaultValue={props.defaultOpen}
         styles={theme => ({
           chevron: {
             marginRight: `calc(${theme.spacing.xs} / 2)`
