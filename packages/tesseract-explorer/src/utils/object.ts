@@ -1,5 +1,8 @@
-import {parseNumeric} from "./string";
-import {Annotated} from "./types";
+import type {PlainCube} from "@datawheel/olap-client";
+import {filterMap} from "./array";
+import {getCaption, parseNumeric} from "./string";
+import type {AnyResultColumn, QueryParams} from "./structs";
+import type {Annotated} from "./types";
 
 /**
  * Wraps `Object.keys` for reusability.
@@ -30,4 +33,87 @@ export function hasOwnProperty(obj: any, property: string): boolean {
 export function getOrderValue<T extends Annotated>(schemaObject: T) {
   const value = schemaObject.annotations.order || "NaN";
   return parseNumeric(value, 99);
+}
+
+/**
+ * Checks the structure of an array of data and returns an object that describes
+ * the types, ranges and values in it.
+ */
+export function describeData(
+  cube: PlainCube,
+  params: QueryParams,
+  data: Record<string, any>[]
+): Record<string, AnyResultColumn> {
+  const {locale} = params;
+
+  const measureMap = new Map(cube.measures.map(msr => [msr.name, msr]));
+  const measures = filterMap(Object.values(params.measures), item =>
+    measureMap.get(item.name) || null
+  );
+
+  const dimensionMap = new Map(
+    cube.dimensions.map(dim => [dim.name, new Map(
+      dim.hierarchies.map(hie => [hie.name, new Map(
+        hie.levels.map(lvl => [lvl.name, lvl])
+      )])
+    )])
+  );
+  const drilldowns = filterMap(Object.values(params.drilldowns), item => {
+    const hierarchyMap = dimensionMap.get(item.dimension);
+    const levelMap = hierarchyMap?.get(item.hierarchy);
+    const level = levelMap?.get(item.level);
+    if (!level) return null;
+    const properties = filterMap(item.properties, prop => prop.active
+      ? level.properties.find(item => item.name === prop.name) || null
+      : null
+    );
+    return [level, ...properties];
+  }).flat(1);
+
+  const entityFinder = (name: string) => {
+    const nameWoId = name.replace(/^ID\s|\sID$/, "");
+    return (
+      drilldowns.find(item => item.uniqueName === name) ||
+      measures.find(item => item.name === name) ||
+      drilldowns.find(item => item.name === name) ||
+      drilldowns.find(item => item.uniqueName === nameWoId) ||
+      measures.find(item => item.name === nameWoId) ||
+      drilldowns.find(item => item.name === nameWoId)
+    );
+  };
+
+  return Object.fromEntries(
+    filterMap<string, [string, AnyResultColumn]>(Object.keys(data[0]), key => {
+      const entity = entityFinder(key);
+      if (!entity) return null;
+      const typeSet = new Set(data.map(item => typeof item[key]));
+      /* eslint-disable indent, operator-linebreak */
+      const valueType =
+        typeSet.size === 1 ?
+          typeSet.has("number") ? "number" :
+          typeSet.has("boolean") ? "boolean" :
+          /* else */ "string" :
+        typeSet.has("number") ? "number" : "string";
+      /* eslint-enable indent, operator-linebreak */
+      const isId = key !== entity.name;
+      return [key, {
+        label: key,
+        localeLabel: getCaption(entity, locale) + (isId ? " ID" : "") || key,
+        entity,
+        entityType: entity._type,
+        isId,
+        range: valueType === "number" ? getDomain(data, key) : undefined,
+        valueType
+      } as AnyResultColumn];
+    })
+  );
+}
+
+
+/**
+ * Calculates the range of the values for a specific key in a dataset.
+ */
+function getDomain(data: Record<string, number>[], key: string): [number, number] {
+  const values = data.map(item => item[key]);
+  return [Math.min(...values), Math.max(...values)];
 }

@@ -11,11 +11,11 @@ import {QueryParams, QueryResult} from "../utils/structs";
 import {NonIdealState} from "./NonIdealState";
 import {PreviewModeMessage} from "./PreviewModeMessage";
 
-export interface ViewProps {
+export interface ViewProps<TData = Record<string, string | number>> {
   className?: string;
   cube: PlainCube;
   params: QueryParams;
-  result: QueryResult;
+  result: QueryResult<TData>;
 }
 
 export interface PanelDescriptor {

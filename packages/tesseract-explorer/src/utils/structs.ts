@@ -1,4 +1,4 @@
-import {Comparison, Measure} from "@datawheel/olap-client";
+import {Comparison, Measure, PlainLevel, PlainMeasure, PlainProperty} from "@datawheel/olap-client";
 import {asArray} from "./array";
 import {parseNumeric, randomKey} from "./string";
 import {joinName} from "./transform";
@@ -28,14 +28,36 @@ export interface QueryParams {
   sortKey: string | undefined;
 }
 
-export interface QueryResult {
-  data: Record<string, string | number>[];
+export interface QueryResult<D = Record<string, string | number>> {
+  data: D[];
+  types: Record<string, AnyResultColumn>;
   error?: string;
   headers?: Record<string, string>;
   sourceCall?: string | undefined;
   status: number;
   url: string;
 }
+
+interface ResultEntityType {
+  level: PlainLevel;
+  property: PlainProperty;
+  measure: PlainMeasure;
+}
+
+export interface ResultColumn<T extends keyof ResultEntityType> {
+  label: string;
+  localeLabel: string;
+  isId: boolean;
+  entity: ResultEntityType[T];
+  entityType: T;
+  valueType: "boolean" | "number" | "string";
+  range?: [number, number];
+}
+
+export type AnyResultColumn =
+  | ResultColumn<"level">
+  | ResultColumn<"measure">
+  | ResultColumn<"property">;
 
 export interface QueryParamsItem {
   active: boolean;
@@ -108,6 +130,7 @@ export function buildQuery(
     params: buildQueryParams(props.params || {}),
     result: {
       data: [],
+      types: {},
       headers: {},
       sourceCall: "",
       status: 0,

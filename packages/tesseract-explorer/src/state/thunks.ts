@@ -10,6 +10,7 @@ import {queriesActions, selectCubeName, selectCurrentQueryParams, selectLocale, 
 import {selectOlapCubeMap, selectServerEndpoint, serverActions} from "./server";
 import {ExplorerThunk} from "./store";
 import {calcMaxMemberCount, hydrateDrilldownProperties} from "./utils";
+import {describeData} from "../utils/object";
 
 /**
  * Initiates a new download of the queried data by the current parameters.
@@ -85,6 +86,7 @@ export function willExecuteQuery(): ExplorerThunk<Promise<void>> {
           dispatch(
             queriesActions.updateResult({
               data: aggregation.data,
+              types: describeData(cube.toJSON(), params, aggregation.data),
               headers: aggregation.headers || {},
               sourceCall: query.toSource(),
               status: aggregation.status || 500,
@@ -94,6 +96,7 @@ export function willExecuteQuery(): ExplorerThunk<Promise<void>> {
         }, error => {
           dispatch(queriesActions.updateResult({
             data: [],
+            types: {},
             error: error.message,
             status: error?.response?.status ?? 500,
             url: query.toString(endpoint)
