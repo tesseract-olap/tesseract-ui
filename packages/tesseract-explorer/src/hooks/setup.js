@@ -72,6 +72,7 @@ export function useSetup(serverConfig, locale) {
           return actions.willHydrateParams(defaultCube);
         }
 
+        query.params.locale = query.params.locale || cleanLocale[0];
         actions.resetQueries({[query.key]: query});
         return actions.willHydrateParams()
           .then(() => actions.willExecuteQuery());

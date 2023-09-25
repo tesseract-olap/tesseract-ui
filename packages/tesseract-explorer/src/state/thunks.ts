@@ -176,6 +176,7 @@ export function willHydrateParams(
             ...queryItem,
             params: {
               ...params,
+              locale: params.locale || state.explorerServer.localeOptions[0],
               cube: cubeName,
               drilldowns: keyBy(resolvedDrilldowns, item => item.key),
               measures: keyBy(resolvedMeasures, item => item.key)
