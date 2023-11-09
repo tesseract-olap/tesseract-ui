@@ -1,6 +1,6 @@
 import {ServerConfig} from "@datawheel/olap-client";
 import {TranslationContextProps, TranslationProviderProps} from "@datawheel/use-translation";
-import {MantineProvider} from "@mantine/core";
+import {CSSObject, MantineProvider} from "@mantine/core";
 import React, {useMemo} from "react";
 import {Provider as ReduxProvider, useStore} from "react-redux";
 import {SettingsProvider} from "../hooks/settings";
@@ -48,6 +48,12 @@ export function ExplorerComponent(props: {
    * from `measure.annotations.units_of_measurement`, if present.
    */
   formatters?: Record<string, Formatter>;
+
+  /**
+   * Defines an alternative height for the component structure.
+   * @default "100vh"
+   */
+  height?: CSSObject["height"];
 
   /**
    * The list of tabs to offer to the user to render the results.
@@ -120,6 +126,7 @@ export function ExplorerComponent(props: {
   const {
     dataLocale = "en",
     defaultOpenParams = "measures",
+    height = "100vh",
     previewLimit = 50,
     withinMantineProvider = true,
     withinReduxProvider = false,
@@ -155,10 +162,11 @@ export function ExplorerComponent(props: {
         translations={props.translations}
       >
         <ExplorerContent
-          source={props.source}
           dataLocale={locale}
           defaultOpenParams={defaultOpenParams}
+          height={height}
           panels={panels}
+          source={props.source}
           splash={props.splash}
           uiLocale={props.uiLocale}
           withMultiQuery={withMultiQuery}

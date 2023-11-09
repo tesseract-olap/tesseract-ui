@@ -1,6 +1,6 @@
 import {ServerConfig} from "@datawheel/olap-client";
 import {TranslationContextProps} from "@datawheel/use-translation";
-import {Flex} from "@mantine/core";
+import {CSSObject, Flex} from "@mantine/core";
 import React, {useEffect, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useSetup} from "../hooks/setup";
@@ -17,6 +17,7 @@ import {NonIdealState} from "./NonIdealState";
 export function ExplorerContent(props: {
   dataLocale: string[];
   defaultOpenParams: string;
+  height: CSSObject["height"];
   panels: PanelDescriptor[];
   source: ServerConfig;
   splash?: React.ComponentType<{translation: TranslationContextProps}>;
@@ -42,17 +43,15 @@ export function ExplorerContent(props: {
   }, [props.splash]);
 
   return (
-    <Flex
-      h="100vh"
-      w="100%"
-      gap={0}
-      sx={theme => ({
-        [theme.fn.smallerThan("md")]: {
-          flexDirection: "column",
-          height: "100%"
-        }
-      })}
-    >
+    <Flex sx={theme => ({
+      height: props.height,
+      width: "100%",
+      gap: 0,
+      [theme.fn.smallerThan("md")]: {
+        flexDirection: "column",
+        height: "100%"
+      }
+    })}>
       <LoadingOverlay />
       {isSetupDone && serverState.online && props.withMultiQuery
         ? <ExplorerQueries />
