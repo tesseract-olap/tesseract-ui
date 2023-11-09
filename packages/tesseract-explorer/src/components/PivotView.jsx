@@ -374,7 +374,7 @@ const MemoMatrixTable = memo(MatrixTable);
 
 /**
  * Outputs a CSV-like string.
- * @param {JSONArrays} matrix
+ * @param {import("../utils/types").JSONArrays} matrix
  * @param {import("../utils/types").Formatter} formatter
  * @param {"csv" | "tsv"} format
  * @returns {string}

@@ -1,4 +1,4 @@
-import {Box, Divider, Navbar, Paper, ScrollArea, Title, UnstyledButton} from "@mantine/core";
+import {Navbar, Paper, Title, UnstyledButton} from "@mantine/core";
 import React, {useState} from "react";
 
 /**
@@ -18,31 +18,27 @@ export const LayoutColumn = props => {
 
   if (!isOpen) {
     return (
-      <Paper 
-        id={`closed-layout-column-${props.id}`} 
-        py="sm" 
-        px={5} 
-        radius={0} 
-        w="max-content" 
+      <Paper
+        id={`closed-layout-column-${props.id}`}
         withBorder
+        radius={0}
         sx={theme => ({
-          [theme.fn.smallerThan("md")]: {
-            padding: `${theme.spacing.sm}px ${theme.spacing.md}px`,
-            width: "100%"
+          padding: `${theme.spacing.xs} ${theme.spacing.md}`,
+
+          [theme.fn.largerThan("md")]: {
+            padding: `${theme.spacing.sm} ${theme.spacing.xs}`
           }
         })}
       >
         <UnstyledButton sx={{display: "grid"}} onClick={toggleHandler}>
-          <Title
-            order={4}
-            tt="uppercase"
-            sx={theme => ({
-              writingMode: "vertical-rl",
-              [theme.fn.smallerThan("md")]: {
-                writingMode: "horizontal-tb"
-              }
-            })}
-          >
+          <Title order={4} sx={theme => ({
+            lineHeight: 1,
+            textTransform: "uppercase",
+            writingMode: "vertical-rl",
+            [theme.fn.smallerThan("md")]: {
+              writingMode: "horizontal-tb"
+            }
+          })}>
             {props.title}
           </Title>
         </UnstyledButton>
@@ -51,44 +47,31 @@ export const LayoutColumn = props => {
   }
 
   return (
-    <Navbar 
-      id={`layout-column-${props.id}`} 
-      px="md" 
-      py="xs" 
-      w={380} 
+    <Navbar
+      id={`layout-column-${props.id}`}
       withBorder
-      zIndex={10}
       sx={theme => ({
-        [theme.fn.smallerThan("md")]: {
+        height: "auto",
+        padding: `${theme.spacing.xs} ${theme.spacing.md} ${theme.spacing.xl}`,
+        zIndex: 10,
+
+        [theme.fn.largerThan("md")]: {
           height: "100%",
-          width: "100%"
+          width: 380,
+          padding: `${theme.spacing.xs} ${theme.spacing.md}`
         }
       })}
     >
       <Navbar.Section>
         <UnstyledButton onClick={toggleHandler}>
-          <Title order={4} tt="uppercase">
+          <Title order={4} lh={1} tt="uppercase">
             {props.title}
           </Title>
         </UnstyledButton>
       </Navbar.Section>
-      <Navbar.Section 
-        component={ScrollArea} 
-        grow 
-        mx="-md" 
-        px="md" 
-        w={380}
-        sx={theme => ({
-          [theme.fn.smallerThan("md")]: {
-            margin: 0,
-            padding: `${theme.spacing.sm}px 0px`,
-            width: "100%"
-          }
-        })}
-      >
-        <Box>{props.children}</Box>
+      <Navbar.Section grow>
+        {props.children}
       </Navbar.Section>
-      <Divider mt="md" />
     </Navbar>
   );
 };

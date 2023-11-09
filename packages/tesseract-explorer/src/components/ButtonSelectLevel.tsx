@@ -1,19 +1,16 @@
-import {Menu, ThemeIcon, useMantineTheme} from "@mantine/core";
+import {ActionIcon, ActionIconProps, Menu, useMantineTheme} from "@mantine/core";
 import {useMediaQuery} from "@mantine/hooks";
 import React from "react";
 import {stringifyName} from "../utils/transform";
+import type {LevelDescriptor} from "../utils/types";
 import {DimensionMenu} from "./MenuDimension";
 
-/**
- * @typedef OwnProps
- * @property {React.ReactNode} children
- * @property {TessExpl.Struct.LevelDescriptor[]} selectedItems
- * @property {React.ComponentProps<DimensionMenu>["onItemSelect"]} onItemSelect
- */
-
-/** @type {React.FC<OwnProps>} */
-export const ButtonSelectLevel = props => {
-  const {selectedItems, onItemSelect, ...buttonProps} = props;
+export const ButtonSelectLevel = (props: ActionIconProps & {
+  children: React.ReactNode;
+  onItemSelect: React.ComponentProps<typeof DimensionMenu>["onItemSelect"];
+  selectedItems: LevelDescriptor[];
+}) => {
+  const {selectedItems, onItemSelect, children, ...buttonProps} = props;
 
   const theme = useMantineTheme();
   const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`);
@@ -28,7 +25,7 @@ export const ButtonSelectLevel = props => {
       withinPortal
     >
       <Menu.Target>
-        <ThemeIcon {...buttonProps}>{props.children}</ThemeIcon>
+        <ActionIcon {...buttonProps}>{children}</ActionIcon>
       </Menu.Target>
       <Menu.Dropdown>
         <DimensionMenu

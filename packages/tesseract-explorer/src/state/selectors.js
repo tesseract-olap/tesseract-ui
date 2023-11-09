@@ -3,7 +3,7 @@ import {triad, tuple} from "../utils/array";
 import {getOrderValue} from "../utils/object";
 import {selectCubeName, selectCurrentQueryParams} from "./queries";
 import {selectOlapCubeMap} from "./server";
-import { serializePermalink } from "../utils/permalink";
+import {serializePermalink} from "../utils/permalink";
 
 
 export const selectOlapCube = createSelector(
