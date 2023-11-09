@@ -1,5 +1,5 @@
-import {Checkbox, CloseButton, Input, Popover, Stack, ThemeIcon} from "@mantine/core";
-import {IconFilter, IconFilterOff, IconSearch} from "@tabler/icons-react";
+import {ActionIcon, Checkbox, CloseButton, Input, Popover, Stack} from "@mantine/core";
+import {IconFilter, IconFilterOff, IconSearch, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
@@ -9,7 +9,7 @@ import {selectOlapMeasureItems, selectOlapMeasureMap} from "../state/selectors";
 import {filterMap} from "../utils/array";
 import {getCaption} from "../utils/string";
 import {buildMeasure} from "../utils/structs";
-import {safeRegExp} from "../utils/transform";
+import {keyBy, safeRegExp} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
 import {LayoutParamsArea} from "./LayoutParamsArea";
 
@@ -52,38 +52,52 @@ export function AreaMeasures() {
     />;
   }), [filteredItems, measureMap]);
 
+  const resetActive = useCallback(() => {
+    const nextMeasures = measures.map(item => ({
+      ...itemMap[item.name],
+      active: false
+    }));
+    actions.resetMeasures(keyBy(nextMeasures, "key"));
+  }, [itemMap, measures]);
+
   const resetFilter = useCallback(() => setFilter(""), []);
 
   const toolbar =
-    <Popover
-      closeOnClickOutside
-      closeOnEscape
-      position="bottom"
-      shadow="md"
-      trapFocus
-      withArrow
-      withinPortal
-    >
-      <Popover.Target>
-        <ThemeIcon color={filter ? "red" : "blue"} variant="light">
-          {filter ? <IconFilterOff onClick={resetFilter} /> : <IconFilter />}
-        </ThemeIcon>
-      </Popover.Target>
-      <Popover.Dropdown>
-        <Input
-          icon={<IconSearch />}
-          onChange={evt => setFilter(evt.target.value)}
-          placeholder={t("params.search_placeholder")}
-          rightSection={
-            filter.length > 0
-              ? <CloseButton onClick={resetFilter} />
-              : undefined
-          }
-          type="search"
-          value={filter}
-        />
-      </Popover.Dropdown>
-    </Popover>;
+    <>
+      {activeItems.length > 0 &&
+        <ActionIcon onClick={resetActive} variant="light">
+          <IconTrashX />
+        </ActionIcon>}
+      <Popover
+        closeOnClickOutside
+        closeOnEscape
+        position="bottom"
+        shadow="md"
+        trapFocus
+        withArrow
+        withinPortal
+      >
+        <Popover.Target>
+          <ActionIcon color={filter ? "red" : "blue"} variant="light">
+            {filter ? <IconFilterOff onClick={resetFilter} /> : <IconFilter />}
+          </ActionIcon>
+        </Popover.Target>
+        <Popover.Dropdown>
+          <Input
+            icon={<IconSearch />}
+            onChange={evt => setFilter(evt.target.value)}
+            placeholder={t("params.search_placeholder")}
+            rightSection={
+              filter.length > 0
+                ? <CloseButton onClick={resetFilter} />
+                : undefined
+            }
+            type="search"
+            value={filter}
+          />
+        </Popover.Dropdown>
+      </Popover>
+    </>;
 
   return (
     <LayoutParamsArea

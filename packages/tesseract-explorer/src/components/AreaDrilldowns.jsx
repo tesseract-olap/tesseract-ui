@@ -1,4 +1,4 @@
-import {Alert, Group, Stack, ThemeIcon} from "@mantine/core";
+import {ActionIcon, Alert, Stack} from "@mantine/core";
 import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
@@ -63,15 +63,11 @@ export const AreaDrilldowns = () => {
   };
 
   const toolbar =
-    <Group noWrap spacing="xs">
+    <>
       {items.length > 0 &&
-        <ThemeIcon
-          color="red"
-          onClick={clearHandler}
-          variant="light"
-        >
+        <ActionIcon color="red" onClick={clearHandler} variant="light">
           <IconTrashX />
-        </ThemeIcon>
+        </ActionIcon>
       }
       <ButtonSelectLevel
         color="blue"
@@ -81,7 +77,7 @@ export const AreaDrilldowns = () => {
       >
         <IconCirclePlus />
       </ButtonSelectLevel>
-    </Group>;
+    </>;
 
   return (
     <LayoutParamsArea
