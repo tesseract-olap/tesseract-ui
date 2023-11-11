@@ -42,7 +42,7 @@ export const SortingInput = () => {
 
   return (
     <Input.Wrapper label={t("params.label_sorting_key")}>
-      <Group noWrap spacing="xs">
+      <Group noWrap spacing="xs" align="end">
         <SelectMeasure
           selectedItem={sortKey}
           onItemSelect={measureChangeHandler}

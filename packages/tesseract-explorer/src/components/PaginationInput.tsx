@@ -23,7 +23,7 @@ export const PaginationInput = () => {
   }, [limit]);
 
   return (
-    <Group noWrap spacing="xs">
+    <Group noWrap spacing="xs" align="end">
       <Input.Wrapper label={t("params.label_pagination_limit")}>
         <NumberInput
           disabled={isPreviewMode}
