@@ -1,4 +1,4 @@
-import {Group, Switch, ThemeIcon, Tooltip} from "@mantine/core";
+import {Switch, ThemeIcon, Tooltip} from "@mantine/core";
 import {IconInfoCircleFilled} from "@tabler/icons-react";
 import React, {useCallback, useEffect} from "react";
 import {useSelector} from "react-redux";
@@ -49,20 +49,20 @@ export const PreviewModeSwitch = props => {
       withArrow
       withinPortal
     >
-      <Group noWrap spacing="xs" w="max-content">
-        <Switch
-          checked={!isPreviewMode}
-          label={t("params.label_boolean_full_results")}
-          onChange={onClickLoadAllResults}
-        />
-        {!noPopover && <ThemeIcon
-          color="blue"
-          // @ts-ignore
-          variant="subtle"
-        >
-          <IconInfoCircleFilled />
-        </ThemeIcon>}
-      </Group>
+      <Switch
+        checked={!isPreviewMode}
+        styles={{label: {display: "flex", alignContent: "center", gap: "0.25rem"}}}
+        label={
+          <>
+            {t("params.label_boolean_full_results")}
+            {!noPopover &&
+                <ThemeIcon variant="subtle" size="sm">
+                  <IconInfoCircleFilled />
+                </ThemeIcon>}
+          </>
+        }
+        onChange={onClickLoadAllResults}
+      />
     </Tooltip>
   );
 };
