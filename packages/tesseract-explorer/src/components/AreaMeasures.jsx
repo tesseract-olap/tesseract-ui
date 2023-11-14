@@ -65,7 +65,7 @@ export function AreaMeasures() {
   const toolbar =
     <>
       {activeItems.length > 0 &&
-        <ActionIcon onClick={resetActive} variant="light">
+        <ActionIcon onClick={resetActive} variant="subtle">
           <IconTrashX />
         </ActionIcon>}
       <Popover
@@ -78,7 +78,7 @@ export function AreaMeasures() {
         withinPortal
       >
         <Popover.Target>
-          <ActionIcon color={filter ? "red" : "blue"} variant="light">
+          <ActionIcon color={filter ? "red" : "blue"} variant="subtle">
             {filter ? <IconFilterOff onClick={resetFilter} /> : <IconFilter />}
           </ActionIcon>
         </Popover.Target>

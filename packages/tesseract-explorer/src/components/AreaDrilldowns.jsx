@@ -65,7 +65,7 @@ export const AreaDrilldowns = () => {
   const toolbar =
     <>
       {items.length > 0 &&
-        <ActionIcon color="red" onClick={clearHandler} variant="light">
+        <ActionIcon color="red" onClick={clearHandler} variant="subtle">
           <IconTrashX />
         </ActionIcon>
       }
@@ -73,7 +73,7 @@ export const AreaDrilldowns = () => {
         color="blue"
         onItemSelect={createHandler}
         selectedItems={items}
-        variant="light"
+        variant="subtle"
       >
         <IconCirclePlus />
       </ButtonSelectLevel>
