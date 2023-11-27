@@ -1,4 +1,4 @@
-import {Anchor, Box, Button, Group, Input, Stack, Text} from "@mantine/core";
+import {Anchor, Box, Button, Group, Input, SimpleGrid, Stack, Text} from "@mantine/core";
 import {useClipboard} from "@mantine/hooks";
 import {Prism} from "@mantine/prism";
 import {IconClipboard, IconExternalLink, IconWorld} from "@tabler/icons-react";
@@ -46,8 +46,8 @@ export function DebugView(props: ViewProps) {
   }, [props.result.headers]);
 
   return (
-    <Box id="query-results-debug-view" p="md">
-      <Stack spacing="md">
+    <Box id="query-results-debug-view">
+      <Stack spacing="md" px="md" py="sm">
         {url && <Input.Wrapper label={t("debug_view.url_logiclayer")}>
           <Group noWrap spacing="xs">
             <Input
@@ -76,13 +76,18 @@ export function DebugView(props: ViewProps) {
           </Group>
         </Input.Wrapper>}
 
-        {sourceCall && <Input.Wrapper label={jssourceLabel}>
-          <Prism language="javascript">
-            {sourceCall}
-          </Prism>
-        </Input.Wrapper>}
+        <SimpleGrid cols={2}>
+          {sourceCall && <Input.Wrapper label={jssourceLabel}>
+            <Prism
+              language="javascript"
+              styles={{line: {boxSizing: "border-box"}}}
+            >
+              {sourceCall}
+            </Prism>
+          </Input.Wrapper>}
 
-        {headers}
+          {headers}
+        </SimpleGrid>
       </Stack>
     </Box>
   );

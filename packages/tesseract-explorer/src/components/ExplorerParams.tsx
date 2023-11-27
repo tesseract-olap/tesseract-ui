@@ -22,7 +22,6 @@ export const ExplorerParams = (props: {
     <LayoutColumn id="explorer-params" title={t("params.column_title")}>
       <SelectLocale />
       <SelectCube />
-      <Space h="md" />
       <Accordion
         chevronPosition="left"
         defaultValue={props.defaultOpen}

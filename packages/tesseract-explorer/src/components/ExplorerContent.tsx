@@ -1,6 +1,6 @@
 import {ServerConfig} from "@datawheel/olap-client";
 import {TranslationContextProps} from "@datawheel/use-translation";
-import {CSSObject, Flex} from "@mantine/core";
+import {CSSObject, Center, createStyles} from "@mantine/core";
 import React, {useEffect, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useSetup} from "../hooks/setup";
@@ -11,7 +11,35 @@ import {ExplorerParams} from "./ExplorerParams";
 import {ExplorerQueries} from "./ExplorerQueries";
 import {ExplorerResults, PanelDescriptor} from "./ExplorerResults";
 import {LoadingOverlay} from "./LoadingOverlay";
-import {NonIdealState} from "./NonIdealState";
+
+const useStyles = createStyles((theme, params: {height: CSSObject["height"]}) => ({
+  root: {
+    display: "flex",
+    flexFlow: "column nowrap",
+
+    [theme.fn.largerThan("sm")]: {
+      flexDirection: "row",
+      height: params.height,
+      width: "100%"
+    }
+  },
+
+  fixedCol: {
+    flex: "0 0 auto",
+
+    [theme.fn.largerThan("sm")]: {
+      width: 0
+    }
+  },
+
+  flexCol: {
+    flex: "1 1 auto",
+
+    [theme.fn.largerThan("sm")]: {
+      width: 0
+    }
+  }
+}));
 
 /** */
 export function ExplorerContent(props: {
@@ -30,6 +58,8 @@ export function ExplorerContent(props: {
 
   const serverState = useSelector(selectServerState);
 
+  const {classes} = useStyles({height: props.height});
+
   // Monitor the uiLocale param to update the UI on change
   useEffect(() => {
     if (props.uiLocale) translation.setLocale(props.uiLocale);
@@ -39,32 +69,30 @@ export function ExplorerContent(props: {
     const SplashComponent = props.splash;
     return SplashComponent
       ? <SplashComponent translation={translation} />
-      : <NonIdealState icon={<AnimatedCube />} />;
+      : <Center h="100%"><AnimatedCube /></Center>;
   }, [props.splash]);
 
   return (
-    <Flex sx={theme => ({
-      height: props.height,
-      width: "100%",
-      gap: 0,
-      [theme.fn.smallerThan("md")]: {
-        flexDirection: "column",
-        height: "100%"
-      }
-    })}>
+    <div className={classes.root}>
       <LoadingOverlay />
       {isSetupDone && serverState.online && props.withMultiQuery
-        ? <ExplorerQueries />
-        : <div/>
+        ? <ExplorerQueries
+          className={classes.fixedCol}
+        />
+        : null
       }
       {isSetupDone && serverState.online
-        ? <ExplorerParams defaultOpen={props.defaultOpenParams} />
-        : <div/>
+        ? <ExplorerParams
+          className={classes.fixedCol}
+          defaultOpen={props.defaultOpenParams}
+        />
+        : null
       }
       <ExplorerResults
+        className={classes.flexCol}
         panels={props.panels}
         splash={splash}
       />
-    </Flex>
+    </div>
   );
 }

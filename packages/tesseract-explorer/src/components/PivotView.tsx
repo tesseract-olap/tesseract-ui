@@ -1,21 +1,24 @@
-import {Alert, Box, Button, Card, Container, Divider, Flex, Input, Loader, Space, Title} from "@mantine/core";
-import {MantineReactTable} from "mantine-react-table";
+import {Alert, Box, Button, Input, Loader, SimpleGrid} from "@mantine/core";
+import {IconAlertCircle, IconAlertTriangle} from "@tabler/icons-react";
+import {MantineReactTable, useMantineReactTable, MRT_TableOptions as TableOptions} from "mantine-react-table";
 import React, {memo, useMemo, useState} from "react";
+import {useSelector} from "react-redux";
 import {useFormatParams, usePivottedData} from "../hooks/pivot";
 import {useTranslation} from "../hooks/translation";
+import {selectOlapMeasureMap} from "../state/selectors";
 import {filterMap} from "../utils/array";
 import {getCaption} from "../utils/string";
+import {Formatter, JSONArrays} from "../utils/types";
 import {isActiveItem} from "../utils/validation";
 import {ButtonDownload} from "./ButtonDownload";
-import {SelectObject} from "./Select";
+import {ViewProps} from "./ExplorerResults";
 import {NonIdealState} from "./NonIdealState";
-import {IconAlertCircle, IconAlertTriangle} from "@tabler/icons-react";
-import {useSelector} from "react-redux";
-import {selectIsPreviewMode} from "../state/queries";
-import {selectOlapMeasureMap} from "../state/selectors";
+import {SelectObject} from "./Select";
 
-/** @type {React.FC<import("./ExplorerResults").ViewProps>} */
-export const PivotView = props => {
+/** */
+export function PivotView<TData extends Record<string, any>>(props: {
+
+} & ViewProps<TData> & TableOptions<TData>) {
   const {cube, params, result, ...mantineReactTableProps} = props;
   const locale = params.locale;
 
@@ -91,7 +94,7 @@ export const PivotView = props => {
   } = useFormatParams(props.cube.measures, valProp.value);
 
   const warnings = useMemo(() => {
-    const warnings = [];
+    const warnings: React.ReactNode[] = [];
     if (rowProp.type === "prop" || colProp.type === "prop") {
       warnings.push(
         <Alert
@@ -145,8 +148,7 @@ export const PivotView = props => {
     if (!pivottedData) return null;
 
     return (
-      <Box>
-        <Title order={5}>{t("pivot_view.title_download")}</Title>
+      <Input.Wrapper label={t("pivot_view.title_download")}>
         <Button.Group>
           <ButtonDownload
             provider={() => ({
@@ -167,7 +169,7 @@ export const PivotView = props => {
             TSV
           </ButtonDownload>
         </Button.Group>
-      </Box>
+      </Input.Wrapper>
     );
   }, [pivottedData, formatter]);
 
@@ -206,180 +208,164 @@ export const PivotView = props => {
     />;
   }
   else {
-    preview = <MemoMatrixTable
+    preview = <MatrixTable
       key={`${fileName} ${formatterKey}`}
       data={pivottedData.data}
       headers={pivottedData.headers}
       formatter={formatter}
-      {...mantineReactTableProps}
+      tableProps={mantineReactTableProps}
     />;
   }
 
   return (
-    <Flex
-      gap={0}
-      h="100%"
+    <Box
       id="query-results-pivot-view"
-      wrap="nowrap"
-      sx={theme => ({
-        [theme.fn.smallerThan("lg")]: {
-          flexDirection: "column"
-        }
-      })}
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexFlow: "column nowrap"
+      }}
     >
-      <Card id="query-results-pivot-view-params" miw={300} padding="xs" radius={0}>
-        <Flex
-          direction="column"
-          p="sm"
-        >
-          <Title order={5}>{t("pivot_view.title_params")}</Title>
-
-          <Input.Wrapper
-            label={colProp.type === "prop"
-              ? t("pivot_view.label_ddcolumnprop")
-              : t("pivot_view.label_ddcolumn")
-            }
-          >
-            <SelectObject
-              getLabel={item => item.label}
-              items={drilldownOptions}
-              onItemSelect={setColumnProp}
-              selectedItem={colProp.label}
-            />
-          </Input.Wrapper>
-
-          <Input.Wrapper
-            label={rowProp.type === "prop"
-              ? t("pivot_view.label_ddrowprop")
-              : t("pivot_view.label_ddrow")
-            }
-          >
-            <SelectObject
-              getLabel={item => item.label}
-              items={drilldownOptions}
-              onItemSelect={setRowProp}
-              selectedItem={rowProp.label}
-            />
-          </Input.Wrapper>
-
-          <Input.Wrapper label={t("pivot_view.label_valmeasure")}>
-            <SelectObject
-              getLabel={item => item.label}
-              items={measureOptions}
-              onItemSelect={setValueProp}
-              selectedItem={valProp.label}
-            />
-          </Input.Wrapper>
-
-          <Input.Wrapper label={t("pivot_view.label_formatter")}>
-            <SelectObject
-              getKey={item => item.value}
-              getLabel={item => item.label}
-              items={formatterKeyOptions}
-              onItemSelect={item => setFormat(valProp.value, item.value)}
-              selectedItem={formatterKey}
-            />
-          </Input.Wrapper>
-
-          {warnings && <Box>
-            <Space h="sm" />
-            {warnings}
-          </Box>}
-
-          <Space h="sm" />
-
-          {downloadToolbar}
-        </Flex>
-      </Card>
-      <Divider orientation="vertical" />
-      <Container
-        fluid
-        id="query-results-pivot-view-table"
-        m={0}
-        p={0}
-        maw="100%"
-        w="100%"
-        sx={{
-          overflow: "hidden"
-        }}
+      <SimpleGrid
+        id="query-results-pivot-view-params"
+        px="md"
+        py="sm"
+        cols={2}
+        breakpoints={[
+          {minWidth: "md", cols: 3},
+          {minWidth: "lg", cols: 5}
+        ]}
       >
-        {preview}
-      </Container>
-    </Flex>
+        <Input.Wrapper
+          label={colProp.type === "prop"
+            ? t("pivot_view.label_ddcolumnprop")
+            : t("pivot_view.label_ddcolumn")
+          }
+        >
+          <SelectObject
+            getLabel={item => item.label}
+            items={drilldownOptions}
+            onItemSelect={setColumnProp}
+            selectedItem={colProp.label}
+          />
+        </Input.Wrapper>
+
+        <Input.Wrapper
+          label={rowProp.type === "prop"
+            ? t("pivot_view.label_ddrowprop")
+            : t("pivot_view.label_ddrow")
+          }
+        >
+          <SelectObject
+            getLabel={item => item.label}
+            items={drilldownOptions}
+            onItemSelect={setRowProp}
+            selectedItem={rowProp.label}
+          />
+        </Input.Wrapper>
+
+        <Input.Wrapper label={t("pivot_view.label_valmeasure")}>
+          <SelectObject
+            getLabel={item => item.label}
+            items={measureOptions}
+            onItemSelect={setValueProp}
+            selectedItem={valProp.label}
+          />
+        </Input.Wrapper>
+
+        <Input.Wrapper label={t("pivot_view.label_formatter")}>
+          <SelectObject
+            getKey={item => item.value}
+            getLabel={item => item.label}
+            items={formatterKeyOptions}
+            onItemSelect={item => setFormat(valProp.value, item.value)}
+            selectedItem={formatterKey}
+          />
+        </Input.Wrapper>
+
+        {downloadToolbar}
+      </SimpleGrid>
+
+      {warnings.length > 0 && <Box p="sm">
+        {warnings}
+      </Box>}
+
+      {preview}
+    </Box>
   );
-};
+}
 
-/** @type {React.FC<JSONArrays & {formatter: TessExpl.Formatter}>} */
-const MatrixTable = props => {
-  const {data: values, formatter, ...mantineReactTableProps} = props;
+/** */
+function MatrixTable(props: JSONArrays & {
+  formatter: Formatter,
+  tableProps: TableOptions<any>,
+}) {
+  const {data, formatter, headers, ...mantineReactTableProps} = props;
 
-  const isPreviewMode = useSelector(selectIsPreviewMode);
-
-  const columns = useMemo(() => props.headers.map((header, colIndex) => ({
+  const columns = useMemo(() => headers.map((header, colIndex) => ({
     accesorKey: header,
     Cell: ({row}) => colIndex > 0 && typeof row.original[colIndex] === "number" ? formatter(row.original[colIndex]) : row.original[colIndex],
     header
-  })), [props.headers]);
+  })), [headers]);
 
-  return (
-    <MantineReactTable
-      columns={columns}
-      data={values}
-      enableBottomToolbar={false}
-      enableColumnFilterModes
-      enableColumnResizing
-      enableColumnVirtualization
-      enableTopToolbar={false}
-      enablePagination={false}
-      enableRowNumbers
-      enableRowVirtualization
-      initialState={{
-        density: "xs"
-      }}
-      mantineTableProps={{
-        sx: {
-          "& td": {
-            padding: "7px 10px!important"
-          }
-        },
-        withColumnBorders: true
-      }}
-      mantinePaperProps={{
-        withBorder: false,
-        sx: theme => ({
-          [theme.fn.smallerThan("lg")]: {
-            padding: theme.spacing.sm
-          }
-        })
-      }}
-      mantineTableContainerProps={{
-        sx: {
-          // TODO: Find a better way to calculate the max height of Mantine React Table
-          maxHeight: isPreviewMode
-            ? "clamp(350px, calc(100vh - 48px - 48px), 9999px)"
-            : "clamp(350px, calc(100vh - 48px), 9999px)"
+  const tableProps = useMemo(() => ({
+    enableBottomToolbar: false,
+    enableColumnFilterModes: true,
+    enableColumnResizing: true,
+    enableColumnVirtualization: true,
+    enableTopToolbar: false,
+    enablePagination: false,
+    enableRowNumbers: true,
+    enableRowVirtualization: true,
+    initialState: {
+      density: "xs"
+    },
+    mantineTableProps: {
+      sx: {
+        "& td": {
+          padding: "7px 10px!important"
         }
-      }}
-      rowVirtualizerProps={{
-        measureElement() {
-          return 37;
+      },
+      withColumnBorders: true
+    },
+    mantinePaperProps: {
+      id: "query-results-pivot-view-preview",
+      withBorder: false,
+      sx: theme => ({
+        height: "100%",
+        padding: `0 ${theme.spacing.sm}`,
+        [theme.fn.largerThan("lg")]: {
+          padding: 0
         }
-      }}
-      {...mantineReactTableProps}
-    />
-  );
-};
+      })
+    },
+    mantineTableContainerProps: {
+      id: "query-results-pivot-view-table",
+      sx: {
+        height: "100%"
+      }
+    },
+    rowVirtualizerProps: {
+      measureElement() {
+        return 37;
+      }
+    }
+  } as const), []);
 
-const MemoMatrixTable = memo(MatrixTable);
+  const table = useMantineReactTable({
+    ...tableProps,
+    ...mantineReactTableProps,
+    columns,
+    data
+  });
+
+  return <MantineReactTable table={table} />;
+}
 
 /**
  * Outputs a CSV-like string.
- * @param {import("../utils/types").JSONArrays} matrix
- * @param {import("../utils/types").Formatter} formatter
- * @param {"csv" | "tsv"} format
- * @returns {string}
  */
-function stringifyMatrix(matrix, formatter, format) {
+function stringifyMatrix(matrix: JSONArrays, formatter: Formatter, format: "csv" | "tsv") {
   const joint = {csv: ",", tsv: "\t"}[format];
   const safeQuoter = value => {
     const str = `${value}`.trim();
