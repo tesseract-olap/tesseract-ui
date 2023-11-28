@@ -6,10 +6,11 @@ import {useSelector} from "react-redux";
 import {useSetup} from "../hooks/setup";
 import {useTranslation} from "../hooks/translation";
 import {selectServerState} from "../state/server";
+import {PanelDescriptor} from "../utils/types";
 import {AnimatedCube} from "./AnimatedCube";
 import {ExplorerParams} from "./ExplorerParams";
 import {ExplorerQueries} from "./ExplorerQueries";
-import {ExplorerResults, PanelDescriptor} from "./ExplorerResults";
+import {ExplorerResults} from "./ExplorerResults";
 import {LoadingOverlay} from "./LoadingOverlay";
 
 const useStyles = createStyles((theme, params: {height: CSSObject["height"]}) => ({

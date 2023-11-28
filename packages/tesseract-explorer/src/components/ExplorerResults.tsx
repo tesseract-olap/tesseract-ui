@@ -9,20 +9,8 @@ import {selectCurrentQueryItem, selectIsPreviewMode} from "../state/queries";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server";
 import {QueryParams, QueryResult} from "../utils/structs";
+import {PanelDescriptor} from "../utils/types";
 import {PreviewModeSwitch} from "./PreviewModeSwitch";
-
-export interface ViewProps<TData = Record<string, string | number>> {
-  className?: string;
-  cube: PlainCube;
-  params: QueryParams;
-  result: QueryResult<TData>;
-}
-
-export interface PanelDescriptor {
-  key: string;
-  label: string;
-  component: React.ComponentType<ViewProps>;
-}
 
 const useStyles = createStyles(() => ({
   container: {
