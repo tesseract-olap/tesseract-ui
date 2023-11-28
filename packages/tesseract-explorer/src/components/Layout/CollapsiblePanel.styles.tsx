@@ -28,7 +28,6 @@ export const useStyles = createStyles((theme, params: CollapsiblePanelStyleParam
   },
 
   toggle: {
-    display: "block",
     marginBottom: theme.spacing.sm
   },
 

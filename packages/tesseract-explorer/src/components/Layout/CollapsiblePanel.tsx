@@ -45,7 +45,9 @@ export function CollapsiblePanel(props: CollapsiblePanelProps) {
           {props.title}
         </Title>
       </UnstyledButton>
-      {isOpen && <ScrollArea><Stack>{props.children}</Stack></ScrollArea>}
+      {isOpen && <ScrollArea mx="-sm" px="sm">
+        <Stack>{props.children}</Stack>
+      </ScrollArea>}
     </Paper>
   );
 }
