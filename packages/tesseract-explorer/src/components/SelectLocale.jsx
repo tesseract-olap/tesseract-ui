@@ -1,5 +1,5 @@
 import {Box, Input} from "@mantine/core";
-import React from "react";
+import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
@@ -15,9 +15,14 @@ export const SelectLocale = () => {
 
   const {translate: t} = useTranslation();
 
-  const currentLocale = useSelector(selectLocale);
+  const {code: currentCode} = useSelector(selectLocale);
   const localeOptions = useSelector(selectLocaleOptions);
 
+  const localeChangeHandler = useCallback(locale => {
+    if (currentCode !== locale.value) {
+      actions.updateLocale(locale.value);
+    }
+  }, [currentCode]);
 
   if (localeOptions.length < 2) {
     return null;
@@ -30,12 +35,8 @@ export const SelectLocale = () => {
           getLabel={item => item.label}
           getKey={item => item.value}
           items={localeOptions}
-          onItemSelect={locale => {
-            if (currentLocale.code !== locale.value) {
-              actions.updateLocale(locale.value);
-            }
-          }}
-          selectedItem={currentLocale.code}
+          onItemSelect={localeChangeHandler}
+          selectedItem={currentCode}
         />
       </Input.Wrapper>
     </Box>

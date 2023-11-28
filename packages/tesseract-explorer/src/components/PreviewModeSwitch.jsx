@@ -35,7 +35,6 @@ export const PreviewModeSwitch = props => {
 
   return (
     <Tooltip
-      color="blue"
       disabled={noPopover}
       events={{
         hover: true,

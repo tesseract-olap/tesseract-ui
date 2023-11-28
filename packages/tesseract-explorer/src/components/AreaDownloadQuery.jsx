@@ -1,4 +1,4 @@
-import {Box, Button, Divider, Input} from "@mantine/core";
+import {Box, Button, Input} from "@mantine/core";
 import React, {useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
@@ -40,7 +40,6 @@ export const AreaDownloadQuery = () => {
 
   return (
     <Box id="button-group-download-results">
-      <Divider my="md" />
       <Input.Wrapper label={t("params.title_downloaddata")}>
         <Button.Group>{buttons}</Button.Group>
       </Input.Wrapper>

@@ -1,11 +1,10 @@
-import {ActionIcon, Button, Group, Stack, Tooltip} from "@mantine/core";
+import {ActionIcon, Button, Group, Tooltip} from "@mantine/core";
 import {IconDatabase, IconTrash} from "@tabler/icons-react";
 import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectValidQueryStatus} from "../state/queries";
-import {PreviewModeSwitch} from "./PreviewModeSwitch";
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
@@ -71,14 +70,9 @@ export const ButtonExecuteQuery = () => {
     </Tooltip>;
 
   return (
-    <Stack id="button-group-execute-query" spacing="sm">
-      <div id="switch-params-load-all-results">
-        <PreviewModeSwitch />
-      </div>
-      <Group noWrap spacing="xs">
-        {buttonExecute}
-        {buttonReset}
-      </Group>
-    </Stack>
+    <Group id="button-group-execute-query" noWrap spacing="xs">
+      {buttonExecute}
+      {buttonReset}
+    </Group>
   );
 };

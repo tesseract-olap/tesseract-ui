@@ -1,4 +1,4 @@
-import {Accordion, Space} from "@mantine/core";
+import {Accordion} from "@mantine/core";
 import React from "react";
 import {useTranslation} from "../hooks/translation";
 import {AreaCuts} from "./AreaCuts";
@@ -8,6 +8,7 @@ import {AreaMeasures} from "./AreaMeasures";
 import {AreaOptions} from "./AreaOptions";
 import {ButtonExecuteQuery} from "./ButtonExecuteQuery";
 import {CollapsiblePanel} from "./Layout/CollapsiblePanel";
+import {PreviewModeSwitch} from "./PreviewModeSwitch";
 import {SelectCube} from "./SelectCube";
 import {SelectLocale} from "./SelectLocale";
 
@@ -22,6 +23,7 @@ export const ExplorerParams = (props: {
     <CollapsiblePanel id="layout-column-explorer-params" title={t("params.column_title")}>
       <SelectLocale />
       <SelectCube />
+
       <Accordion
         chevronPosition="left"
         defaultValue={props.defaultOpen}
@@ -37,7 +39,10 @@ export const ExplorerParams = (props: {
         <AreaCuts />
         <AreaOptions />
       </Accordion>
-      <Space h="md" />
+
+      <div id="switch-params-load-all-results">
+        <PreviewModeSwitch />
+      </div>
       <ButtonExecuteQuery />
       <AreaDownloadQuery />
     </CollapsiblePanel>
