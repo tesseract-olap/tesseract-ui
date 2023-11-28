@@ -16,26 +16,19 @@ const useStyles = createStyles((theme, params: {height: CSSObject["height"]}) =>
   root: {
     display: "flex",
     flexFlow: "column nowrap",
+    height: "100%",
 
-    [theme.fn.largerThan("sm")]: {
+    [theme.fn.largerThan("md")]: {
       flexDirection: "row",
       height: params.height,
       width: "100%"
     }
   },
 
-  fixedCol: {
-    flex: "0 0 auto",
-
-    [theme.fn.largerThan("sm")]: {
-      width: 0
-    }
-  },
-
   flexCol: {
     flex: "1 1 auto",
 
-    [theme.fn.largerThan("sm")]: {
+    [theme.fn.largerThan("md")]: {
       width: 0
     }
   }
@@ -69,23 +62,18 @@ export function ExplorerContent(props: {
     const SplashComponent = props.splash;
     return SplashComponent
       ? <SplashComponent translation={translation} />
-      : <Center h="100%"><AnimatedCube /></Center>;
+      : <Center h="100%" sx={{flex: 1}}><AnimatedCube /></Center>;
   }, [props.splash]);
 
   return (
     <div className={classes.root}>
       <LoadingOverlay />
       {isSetupDone && serverState.online && props.withMultiQuery
-        ? <ExplorerQueries
-          className={classes.fixedCol}
-        />
+        ? <ExplorerQueries />
         : null
       }
       {isSetupDone && serverState.online
-        ? <ExplorerParams
-          className={classes.fixedCol}
-          defaultOpen={props.defaultOpenParams}
-        />
+        ? <ExplorerParams defaultOpen={props.defaultOpenParams} />
         : null
       }
       <ExplorerResults

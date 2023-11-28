@@ -7,7 +7,7 @@ import {AreaDrilldowns} from "./AreaDrilldowns";
 import {AreaMeasures} from "./AreaMeasures";
 import {AreaOptions} from "./AreaOptions";
 import {ButtonExecuteQuery} from "./ButtonExecuteQuery";
-import {LayoutColumn} from "./LayoutColumn";
+import {CollapsiblePanel} from "./Layout/CollapsiblePanel";
 import {SelectCube} from "./SelectCube";
 import {SelectLocale} from "./SelectLocale";
 
@@ -19,7 +19,7 @@ export const ExplorerParams = (props: {
   const {translate: t} = useTranslation();
 
   return (
-    <LayoutColumn id="explorer-params" title={t("params.column_title")}>
+    <CollapsiblePanel id="layout-column-explorer-params" title={t("params.column_title")}>
       <SelectLocale />
       <SelectCube />
       <Accordion
@@ -40,6 +40,6 @@ export const ExplorerParams = (props: {
       <Space h="md" />
       <ButtonExecuteQuery />
       <AreaDownloadQuery />
-    </LayoutColumn>
+    </CollapsiblePanel>
   );
 };

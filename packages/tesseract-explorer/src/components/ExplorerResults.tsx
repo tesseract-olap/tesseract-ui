@@ -26,6 +26,7 @@ export interface PanelDescriptor {
 
 const useStyles = createStyles(() => ({
   container: {
+    minHeight: "40vh",
     display: "flex",
     flexFlow: "column nowrap"
   }
@@ -147,6 +148,7 @@ function FailureResult(props: {
       id="query-results-failure"
       className={props.className}
       radius={0}
+      withBorder
     >
       <Stack align="center" spacing="xs">
         {props.icon && props.icon}
@@ -194,6 +196,7 @@ function SuccessResult(props: {
       id="query-results-success"
       className={props.className}
       radius={0}
+      withBorder
     >
       <Tabs
         id="query-results-tabs"
