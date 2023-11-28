@@ -137,6 +137,7 @@ function FailureResult(props: {
       className={props.className}
       radius={0}
       withBorder
+      sx={{justifyContent: "center"}}
     >
       <Stack align="center" spacing="xs">
         {props.icon && props.icon}
