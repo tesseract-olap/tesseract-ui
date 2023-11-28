@@ -129,24 +129,26 @@ function SelectCubeInternal(props: {
         onItemSelect={onItemSelect}
         selectedItem={selectedItem}
       />}
-      {selectedItem && <CubeAnnotation
-        annotation="description"
-        className="dex-cube-description"
-        item={selectedItem}
-        locale={locale}
-      />}
-      {selectedItem && <CubeSourceAnchor
-        item={selectedItem}
-        locale={locale}
-        fz="xs"
-      />}
-      {selectedItem && <CubeAnnotation
-        annotation="source_description"
-        className="dex-cube-srcdescription"
-        fz="xs"
-        item={selectedItem}
-        locale={locale}
-      />}
+      {selectedItem && <Text mt="sm" sx={{"& p": {margin: 0}}}>
+        <CubeAnnotation
+          annotation="description"
+          className="dex-cube-description"
+          item={selectedItem}
+          locale={locale}
+        />
+        <CubeSourceAnchor
+          item={selectedItem}
+          locale={locale}
+          fz="xs"
+        />
+        <CubeAnnotation
+          annotation="source_description"
+          className="dex-cube-srcdescription"
+          fz="xs"
+          item={selectedItem}
+          locale={locale}
+        />
+      </Text>}
     </Stack>
   );
 }
