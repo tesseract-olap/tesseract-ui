@@ -4,7 +4,7 @@ import {Prism} from "@mantine/prism";
 import {IconClipboard, IconExternalLink, IconWorld} from "@tabler/icons-react";
 import React, {useCallback, useMemo} from "react";
 import {useTranslation} from "../hooks/translation";
-import {ViewProps} from "./ExplorerResults";
+import {ViewProps} from "../utils/types";
 
 /** */
 export function DebugView(props: ViewProps) {
@@ -31,16 +31,14 @@ export function DebugView(props: ViewProps) {
 
     return (
       <Input.Wrapper label={t("debug_view.httpheaders")}>
-        <dl>{headers.map(entry =>
-          <React.Fragment key={entry[0]}>
-            <dt>
-              <Text fw="bold" fz="sm">{entry[0]}</Text>
-            </dt>
-            <dd>
-              <Text c="#5c940d" fz="sm">{entry[1]}</Text>
-            </dd>
-          </React.Fragment>
-        )}</dl>
+        <Box component="dl" sx={{fontFamily: "monospace", overflowWrap: "break-word"}}>
+          {headers.map(entry =>
+            <React.Fragment key={entry[0]}>
+              <Text component="dt" fw="bold" fz="sm">{entry[0]}</Text>
+              <Text component="dd" c="#5c940d" fz="sm">{entry[1]}</Text>
+            </React.Fragment>
+          )}
+        </Box>
       </Input.Wrapper>
     );
   }, [props.result.headers]);
