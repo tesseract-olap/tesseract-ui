@@ -12,7 +12,7 @@ export const AreaDownloadQuery = () => {
 
   const {translate: t} = useTranslation();
 
-  const queryItem = useSelector(selectCurrentQueryItem);
+  const {isDirty, result} = useSelector(selectCurrentQueryItem);
   const formats = useSelector(selectServerFormatsEnabled);
 
   const buttons = useMemo(() => formats.map(format =>
@@ -34,7 +34,7 @@ export const AreaDownloadQuery = () => {
     </ButtonDownload>
   ), [formats]);
 
-  if (queryItem.isDirty || buttons.length === 0) {
+  if (buttons.length === 0 || isDirty || result.data.length === 0) {
     return null;
   }
 
