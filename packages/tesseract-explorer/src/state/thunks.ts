@@ -163,8 +163,8 @@ export function willHydrateParams(
       return olapClient.getCube(cubeName)
         .then((cube): QueryItem => {
           const resolvedMeasures = cube.measures
-            .map(measure => buildMeasure({
-              active: measure.name in measureItems,
+            .map(measure => buildMeasure(measureItems[measure.name] || {
+              active: false,
               key: measure.name,
               name: measure.name
             }));
