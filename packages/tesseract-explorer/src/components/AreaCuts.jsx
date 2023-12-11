@@ -1,6 +1,6 @@
 import {ActionIcon, Alert, Stack} from "@mantine/core";
 import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
-import React, {useCallback} from "react";
+import React, {useCallback, useMemo} from "react";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectCutItems} from "../state/queries";
@@ -29,20 +29,21 @@ export const AreaCuts = () => {
     actions.updateCut(cutItem);
   }, []);
 
-  /** @type {(item: import("../utils/structs").CutItem) => void} */
-  const removeHandler = useCallback(item => {
-    actions.removeCut(item.key);
-  }, []);
-
-  /** @type {(item: import("../utils/structs").CutItem) => void} */
-  const toggleHandler = useCallback(item => {
-    actions.updateCut({...item, active: !item.active});
-  }, []);
-
-  /** @type {(item: import("../utils/structs").CutItem, members: string[]) => void} */
-  const updateMembersHandler = useCallback((item, members) => {
-    actions.updateCut({...item, members});
-  }, []);
+  const cutTags = useMemo(() => items.map(item =>
+    <TagCut
+      item={item}
+      key={item.key}
+      onMembersUpdate={members => {
+        actions.updateCut({...item, members});
+      }}
+      onRemove={() => {
+        actions.removeCut(item.key);
+      }}
+      onToggle={() => {
+        actions.updateCut({...item, active: !item.active});
+      }}
+    />
+  ), [items]);
 
   const toolbar =
     <>
@@ -73,15 +74,7 @@ export const AreaCuts = () => {
           icon={<IconAlertCircle size="2rem" />}
           title={t("params.error_no_cut_selected_title")}
         >{t("params.error_no_cut_selected_detail")}</Alert>}
-        {items.length > 0 && items.map(item =>
-          <TagCut
-            item={item}
-            key={item.key}
-            onMembersUpdate={updateMembersHandler}
-            onRemove={removeHandler}
-            onToggle={toggleHandler}
-          />
-        )}
+        {cutTags}
       </Stack>
     </LayoutParamsArea>
   );
