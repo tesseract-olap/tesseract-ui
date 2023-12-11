@@ -51,7 +51,6 @@ export const AreaCuts = () => {
           <IconTrashX />
         </ActionIcon>}
       <ButtonSelectLevel
-        color="blue"
         onItemSelect={createHandler}
         selectedItems={items}
         variant="subtle"

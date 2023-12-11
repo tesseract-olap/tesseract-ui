@@ -78,7 +78,7 @@ export function AreaMeasures() {
         withinPortal
       >
         <Popover.Target>
-          <ActionIcon color={filter ? "red" : "blue"} variant="subtle">
+          <ActionIcon variant="subtle">
             {filter ? <IconFilterOff onClick={resetFilter} /> : <IconFilter />}
           </ActionIcon>
         </Popover.Target>
