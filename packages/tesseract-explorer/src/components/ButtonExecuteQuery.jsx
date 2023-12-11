@@ -15,64 +15,53 @@ export const ButtonExecuteQuery = () => {
   const {isValid, error} = useSelector(selectValidQueryStatus);
   const errorText = error ? t(error) : "";
 
-  const buttonExecute =
-    <Tooltip
-      color="red"
-      disabled={isValid}
-      events={{
-        hover: true,
-        focus: false,
-        touch: true
-      }}
-      label={errorText}
-      multiline
-      withArrow
-      withinPortal
-    >
-      <Button
-        disabled={!isValid}
-        fullWidth
-        id="button-execute-query"
-        leftIcon={<IconDatabase />}
-        onClick={useCallback(() => {
-          actions.willRequestQuery();
-        }, [])}
-        sx={{"&[data-disabled]": {pointerEvents: "all"}}}
-      >
-        {t("params.action_execute")}
-      </Button>
-    </Tooltip>;
-
-  const buttonReset =
-    <Tooltip
-      color="red"
-      events={{
-        hover: true,
-        focus: false,
-        touch: true
-      }}
-      label={t("params.action_clear_description")}
-      multiline
-      withArrow
-      withinPortal
-    >
-      <ActionIcon
-        color="red"
-        id="button-clear-params"
-        onClick={useCallback(() => {
-          actions.resetAllParams({});
-        }, [])}
-        size="lg"
-        variant="filled"
-      >
-        <IconTrash />
-      </ActionIcon>
-    </Tooltip>;
-
   return (
     <Group id="button-group-execute-query" noWrap spacing="xs">
-      {buttonExecute}
-      {buttonReset}
+      <Tooltip
+        color="red"
+        disabled={isValid}
+        events={{
+          hover: true,
+          focus: false,
+          touch: true
+        }}
+        label={errorText}
+        multiline
+        withArrow
+        withinPortal
+      >
+        <Button
+          disabled={!isValid}
+          fullWidth
+          id="button-execute-query"
+          leftIcon={<IconDatabase />}
+          onClick={useCallback(() => {
+            actions.willRequestQuery();
+          }, [])}
+          sx={{"&[data-disabled]": {pointerEvents: "all"}}}
+        >
+          {t("params.action_execute")}
+        </Button>
+      </Tooltip>
+
+      <Tooltip
+        events={{hover: true, focus: false, touch: true}}
+        label={t("params.action_clear_description")}
+        multiline
+        withArrow
+        withinPortal
+      >
+        <ActionIcon
+          color="red"
+          id="button-clear-params"
+          onClick={useCallback(() => {
+            actions.resetAllParams({});
+          }, [])}
+          size="lg"
+        >
+          <IconTrash />
+        </ActionIcon>
+      </Tooltip>
     </Group>
   );
 };
