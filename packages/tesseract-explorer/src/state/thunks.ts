@@ -87,7 +87,7 @@ export function willExecuteQuery(): ExplorerThunk<Promise<void>> {
             queriesActions.updateResult({
               data: aggregation.data,
               types: describeData(cube.toJSON(), params, aggregation.data),
-              headers: aggregation.headers || {},
+              headers: {...aggregation.headers},
               sourceCall: query.toSource(),
               status: aggregation.status || 500,
               url: query.toString(endpoint)
