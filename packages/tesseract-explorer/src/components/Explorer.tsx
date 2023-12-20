@@ -43,6 +43,13 @@ export function ExplorerComponent(props: {
   defaultOpenParams?: "measures" | "drilldowns" | "cuts" | "options";
 
   /**
+   * Specifies which property should be used to filter elements in the member
+   * selection control of the Cuts parameter area.
+   * @default "id"
+   */
+  defaultMembersFilter?: "id" | "name" | "any";
+
+  /**
    * Defines an index of formatter functions available to the measures shown
    * in the app, besides a limited list of default ones. The key used comes
    * from `measure.annotations.units_of_measurement`, if present.
@@ -149,6 +156,7 @@ export function ExplorerComponent(props: {
       store={store}
       formatters={props.formatters}
       previewLimit={previewLimit}
+      defaultMembersFilter={props.defaultMembersFilter}
     >
       <TranslationProvider
         defaultLocale={props.uiLocale}

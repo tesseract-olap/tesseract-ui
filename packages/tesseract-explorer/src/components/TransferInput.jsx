@@ -15,6 +15,7 @@ import {keyBy, safeRegExp} from "../utils/transform";
  * @property {(item: T) => string} getLabel
  * @property {(item: T) => string | undefined} [getSecondLabel]
  * @property {ItemPredicateFunction<T> | {label: string; method: ItemPredicateFunction<T>}[]} [itemPredicate]
+ * @property {number} [initialItemPredicateIndex]
  */
 
 /**
@@ -31,7 +32,7 @@ export const TransferInput = props => {
   const {translate: t} = useTranslation();
 
   const [filter, setFilter] = useState("");
-  const [itemPredicateIndex, setItemPredicateIndex] = useState(0);
+  const [itemPredicateIndex, setItemPredicateIndex] = useState(props.initialItemPredicateIndex || 0);
 
   const activeKeys = useMemo(
     () => keyBy(activeItems, key => key),

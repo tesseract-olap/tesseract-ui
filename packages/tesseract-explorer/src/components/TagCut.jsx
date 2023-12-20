@@ -3,7 +3,7 @@ import {useMediaQuery} from "@mantine/hooks";
 import {IconAlertTriangle, IconRefresh} from "@tabler/icons-react";
 import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
-import {useActions} from "../hooks/settings";
+import {useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
 import {selectLevelTriadMap} from "../state/selectors";
@@ -28,7 +28,7 @@ export const TagCut = props => {
   const {item, onMembersUpdate, onRemove, onToggle} = props;
   const {translate: t} = useTranslation();
 
-  const actions = useActions();
+  const {defaultMembersFilter, actions} = useSettings();
 
   const locale = useSelector(selectLocale);
   const theme = useMantineTheme();
@@ -98,6 +98,8 @@ export const TagCut = props => {
     method: (query, item) => query.test(item.key) || query.test(item.name)
   }], [locale.code]);
 
+  const initialItemPredicateIndex = {id: 0, name: 1, any: 2}[defaultMembersFilter];
+
   if (isLoadingMembers) {
     return <TagCutLoading onRemove={removeHandler}>{label}</TagCutLoading>;
   }
@@ -165,6 +167,7 @@ export const TagCut = props => {
                 // eslint-disable-next-line eqeqeq
                 ? item => item.key != item.name ? item.key : undefined
                 : undefined}
+              initialItemPredicateIndex={initialItemPredicateIndex}
               itemPredicate={itemPredicate}
               items={members}
               onChange={members => onMembersUpdate && onMembersUpdate(item, members)}
