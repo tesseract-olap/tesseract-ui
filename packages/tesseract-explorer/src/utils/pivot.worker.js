@@ -12,7 +12,7 @@ export default shimWorker(self => {
    *
    * @param {Record<string, number>[]} data
    * @param {Record<"rowProp" | "colProp" | "valProp", string>} sides
-   * @returns {JSONArrays}
+   * @returns {import("./types").JSONArrays}
    */
   // function serializeTidyToArrays(data, sides) {
   const serializeTidyToArrays = new Function("data", "sides", `
@@ -69,7 +69,8 @@ export default shimWorker(self => {
    * @type {(prop: string) => string}
    */
     function getIdProperty(prop) {
-      return {}.hasOwnProperty.call(data[0], prop + ' ID') ? prop + ' ID' : prop;
+      const propid = "".concat(prop, " ID");
+      return {}.hasOwnProperty.call(data[0], propid) ? propid : prop;
     }
 
     /**

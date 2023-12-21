@@ -1,5 +1,6 @@
 import {Select} from "@mantine/core";
 import React, {useMemo} from "react";
+import {keyBy} from "../utils/transform";
 
 /**
  * @typedef SelectPrimitiveProps
@@ -16,7 +17,7 @@ import React, {useMemo} from "react";
 /** @type {React.FC<SelectPrimitiveProps>} */
 export const SelectPrimitive = props => {
   if (props.hidden) return null;
-  
+
   return (
     <Select
       data={props.items}
@@ -58,29 +59,25 @@ SelectPrimitive.defaultProps = {
  */
 export const SelectObject = props => {
 
-  const objectItems = useMemo(() => {
-    const formattedItems = {};
-
-    props.items.forEach(item => {
-      formattedItems[props.getKey ? props.getKey(item) : props.getLabel(item)] = item;
-    });
-
-    return formattedItems;
-
+  const [itemList, itemMap] = useMemo(() => {
+    const getKey = props.getKey || props.getLabel;
+    const list = props.items.map(item => ({
+      item,
+      label: item.label || props.getLabel(item),
+      value: item.value || getKey(item)
+    }));
+    const map = keyBy(list, item => item.value);
+    return [list, map];
   }, [props.items]);
 
   return (
     <SelectPrimitive
       disabled={props.disabled}
       hidden={props.hidden}
-      items={props.items.map(item => ({
-        ...item,
-        label: item.label || props.getLabel(item),
-        value: item.value || props.getLabel(item)
-      }))}
+      items={itemList}
       label={props.label}
       loading={props.loading}
-      onItemSelect={value => props.onItemSelect(objectItems[value])}
+      onItemSelect={value => props.onItemSelect(itemMap[value].item)}
       searchable={props.searchable}
       selectedItem={props.selectedItem}
     />

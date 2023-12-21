@@ -1,4 +1,4 @@
-import {ActionIcon, Alert, Group, Stack} from "@mantine/core";
+import {ThemeIcon, Alert, Group, Stack} from "@mantine/core";
 import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback} from "react";
 import {useActions} from "../hooks/settings";
@@ -47,9 +47,9 @@ export const AreaCuts = () => {
   const toolbar =
     <Group noWrap spacing="xs">
       {items.length > 0 &&
-        <ActionIcon color="red" onClick={clearHandler} variant="light">
+        <ThemeIcon color="red" onClick={clearHandler} variant="light">
           <IconTrashX />
-        </ActionIcon>
+        </ThemeIcon>
       }
       <ButtonSelectLevel
         color="blue"
