@@ -1,15 +1,14 @@
 import {Box, Menu} from "@mantine/core";
 import {IconCircle, IconCircleCheck} from "@tabler/icons-react";
-import {MantineReactTable, MRT_TableOptions as TableOptions, useMantineReactTable, type MRT_ColumnDef as ColumnDef} from "mantine-react-table";
+import {MRT_ColumnDef as ColumnDef, MantineReactTable, MRT_TableOptions as TableOptions, useMantineReactTable} from "mantine-react-table";
 import React, {useMemo} from "react";
-import {useSelector} from "react-redux";
 import {useFormatter} from "../hooks/formatter";
 import {useTranslation} from "../hooks/translation";
-import {selectIsPreviewMode} from "../state/queries";
 import {AnyResultColumn} from "../utils/structs";
-import {type ViewProps} from "./ExplorerResults";
+import {ViewProps} from "./ExplorerResults";
 
-export const TableView = <TData extends Record<string, any>>(props: {
+/** */
+export function TableView<TData extends Record<string, any>>(props: {
 
   /**
    * Defines which columns will be rendered and which will be hidden.
@@ -24,7 +23,7 @@ export const TableView = <TData extends Record<string, any>>(props: {
    * descriptors for the columns.
    */
   columnSorting?: (a: AnyResultColumn, b: AnyResultColumn) => number;
-} & ViewProps<TData> & TableOptions<TData>) => {
+} & ViewProps<TData> & TableOptions<TData>) {
   const {
     cube,
     result,
@@ -34,7 +33,6 @@ export const TableView = <TData extends Record<string, any>>(props: {
   } = props;
   const {data, types} = result;
 
-  const isPreviewMode = useSelector(selectIsPreviewMode);
   const {translate: t} = useTranslation();
 
   const {
@@ -98,27 +96,28 @@ export const TableView = <TData extends Record<string, any>>(props: {
       id: "query-results-table-view",
       withBorder: false,
       sx: theme => ({
-        [theme.fn.smallerThan("md")]: {
-          padding: theme.spacing.sm
+        height: "100%",
+        display: "flex",
+        flexFlow: "column nowrap",
+        padding: `0 ${theme.spacing.sm}`,
+
+        [theme.fn.largerThan("md")]: {
+          padding: 0
         }
       })
     },
     mantineTableContainerProps: {
       id: "query-results-table-view-table",
+      h: {base: "auto", md: 0},
       sx: {
-        // TODO: Find a better way to calculate the max height of Mantine React Table
-        maxHeight: isPreviewMode
-          ? "clamp(350px, calc(100vh - 56px - 48px - 48px), 9999px)"
-          : "clamp(350px, calc(100vh - 56px - 48px), 9999px)"
+        flex: "1 1 auto"
       }
     },
     mantineTopToolbarProps: {
       id: "query-results-table-view-toolbar",
-      sx: theme => ({
-        [theme.fn.smallerThan("md")]: {
-          padding: 0
-        }
-      })
+      sx: {
+        flex: "0 0 auto"
+      }
     },
     renderColumnActionsMenuItems({column}) {
       if (!column?.columnDef?.isNumeric) return null;
@@ -142,7 +141,7 @@ export const TableView = <TData extends Record<string, any>>(props: {
         return 37;
       }
     }
-  }) as const, [isPreviewMode]);
+  }) as const, []);
 
   const table = useMantineReactTable({
     ...constTableProps,
@@ -152,6 +151,6 @@ export const TableView = <TData extends Record<string, any>>(props: {
   });
 
   return <MantineReactTable table={table} />;
-};
+}
 
 TableView.displayName = "TesseractExplorer:TableView";

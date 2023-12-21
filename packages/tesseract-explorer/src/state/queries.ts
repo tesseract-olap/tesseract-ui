@@ -168,7 +168,6 @@ export const queriesSlice = createSlice({
           measures: payload.measures,
           locale: query.params.locale
         }});
-        query.isDirty = false;
         query.params = params;
         query.result = result;
       }

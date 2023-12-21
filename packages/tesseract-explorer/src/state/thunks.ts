@@ -1,16 +1,16 @@
 import {Format, LevelDescriptor, Client as OLAPClient, PlainCube, PlainMember, ServerConfig, TesseractDataSource} from "@datawheel/olap-client";
 import {filterMap} from "../utils/array";
+import {describeData} from "../utils/object";
 import {applyQueryParams, extractQueryParams} from "../utils/query";
 import {QueryItem, buildMeasure, buildQuery} from "../utils/structs";
 import {keyBy} from "../utils/transform";
 import {FileDescriptor} from "../utils/types";
 import {isValidQuery} from "../utils/validation";
 import {loadingActions} from "./loading";
-import {queriesActions, selectCubeName, selectCurrentQueryParams, selectLocale, selectMeasureKeys, selectQueryItems} from "./queries";
+import {queriesActions, selectCubeName, selectCurrentQueryParams, selectLocale, selectMeasureMap, selectQueryItems} from "./queries";
 import {selectOlapCubeMap, selectServerEndpoint, serverActions} from "./server";
 import {ExplorerThunk} from "./store";
 import {calcMaxMemberCount, hydrateDrilldownProperties} from "./utils";
-import {describeData} from "../utils/object";
 
 /**
  * Initiates a new download of the queried data by the current parameters.
@@ -163,8 +163,7 @@ export function willHydrateParams(
       return olapClient.getCube(cubeName)
         .then((cube): QueryItem => {
           const resolvedMeasures = cube.measures
-            .map(measure => buildMeasure({
-              active: measure.name in measureItems,
+            .map(measure => buildMeasure(measureItems[measure.name] || {
               key: measure.name,
               name: measure.name
             }));
@@ -258,14 +257,13 @@ export function willRequestQuery(): ExplorerThunk<Promise<void>> {
 export function willSetCube(cubeName: string): ExplorerThunk<Promise<void>> {
   return (dispatch, getState, {olapClient}) => {
     const state = getState();
-    const currentMeasures = selectMeasureKeys(state);
+    const currentMeasures = selectMeasureMap(state);
 
     return olapClient.getCube(cubeName)
       .then(cube => {
-        const measures = filterMap(cube.measures, measure => buildMeasure({
-          active: currentMeasures.includes(measure.name),
-          ...measure.toJSON()
-        }));
+        const measures = filterMap(cube.measures, measure =>
+          buildMeasure(currentMeasures[measure.name] || measure.toJSON())
+        );
         dispatch(queriesActions.updateCube({
           cube: cube.name,
           measures: keyBy(measures, item => item.key)

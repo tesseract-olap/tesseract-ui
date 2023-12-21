@@ -1,4 +1,4 @@
-import {Alert, Group, ThemeIcon} from "@mantine/core";
+import {ActionIcon, Alert, Group, Stack} from "@mantine/core";
 import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback} from "react";
 import {useActions} from "../hooks/settings";
@@ -47,13 +47,9 @@ export const AreaCuts = () => {
   const toolbar =
     <Group noWrap spacing="xs">
       {items.length > 0 &&
-          <ThemeIcon
-            color="red"
-            onClick={clearHandler}
-            variant="light"
-          >
-            <IconTrashX />
-          </ThemeIcon>
+        <ActionIcon color="red" onClick={clearHandler} variant="light">
+          <IconTrashX />
+        </ActionIcon>
       }
       <ButtonSelectLevel
         color="blue"
@@ -73,20 +69,22 @@ export const AreaCuts = () => {
       tooltip={t("params.tooltip_area_cuts")}
       value="cuts"
     >
-      {items.length === 0 && <Alert
-        color="yellow"
-        icon={<IconAlertCircle size="2rem" />}
-        title={t("params.error_no_cut_selected_title")}
-      >{t("params.error_no_cut_selected_detail")}</Alert>}
-      {items.length > 0 && items.map(item =>
-        <TagCut
-          item={item}
-          key={item.key}
-          onMembersUpdate={updateMembersHandler}
-          onRemove={removeHandler}
-          onToggle={toggleHandler}
-        />
-      )}
+      <Stack spacing="xs">
+        {items.length === 0 && <Alert
+          color="yellow"
+          icon={<IconAlertCircle size="2rem" />}
+          title={t("params.error_no_cut_selected_title")}
+        >{t("params.error_no_cut_selected_detail")}</Alert>}
+        {items.length > 0 && items.map(item =>
+          <TagCut
+            item={item}
+            key={item.key}
+            onMembersUpdate={updateMembersHandler}
+            onRemove={removeHandler}
+            onToggle={toggleHandler}
+          />
+        )}
+      </Stack>
     </LayoutParamsArea>
   );
 };

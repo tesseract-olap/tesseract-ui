@@ -1,8 +1,9 @@
-import {Box, Input, Stack, Text} from "@mantine/core";
+import {Anchor, Box, Button, Group, Input, SimpleGrid, Stack, Text} from "@mantine/core";
 import {Prism} from "@mantine/prism";
-import React, {useMemo} from "react";
+import React, {useCallback, useMemo} from "react";
 import {useTranslation} from "../hooks/translation";
-import {DebugURL} from "./DebugURL";
+import {useClipboard} from "@mantine/hooks";
+import {IconWorld, IconExternalLink, IconClipboard} from "@tabler/icons-react";
 
 /** @type {React.FC<import("./ExplorerResults").ViewProps>} */
 export const DebugView = props => {
@@ -10,10 +11,16 @@ export const DebugView = props => {
 
   const {translate: t} = useTranslation();
 
+  const {copy, copied} = useClipboard({timeout: 1000});
+
+  const copyHandler = useCallback(() => copy(url), [url]);
+
+  const openHandler = useCallback(() => window.open(url, "_blank"), [url]);
+
   const jssourceLabel =
-    <Box>
+    <Box component="span">
       {t("debug_view.jssource_prefix")}
-      <a href="https://www.npmjs.com/package/@datawheel/olap-client">olap-client</a>
+      <Anchor href="https://www.npmjs.com/package/@datawheel/olap-client">olap-client</Anchor>
       {t("debug_view.jssource_suffix")}
     </Box>;
 
@@ -23,16 +30,14 @@ export const DebugView = props => {
 
     return (
       <Input.Wrapper label={t("debug_view.httpheaders")}>
-        <dl>{headers.map(entry =>
-          <React.Fragment key={entry[0]}>
-            <dt>
-              <Text fw="bold" fz="sm">{entry[0]}</Text>
-            </dt>
-            <dd>
-              <Text c="#5c940d" fz="sm">{entry[1]}</Text>
-            </dd>
-          </React.Fragment>
-        )}</dl>
+        <Box component="dl" sx={{fontFamily: "monospace", overflowWrap: "break-word"}}>
+          {headers.map(entry =>
+            <React.Fragment key={entry[0]}>
+              <Text component="dt" fw="bold" fz="sm">{entry[0]}</Text>
+              <Text component="dd" c="#5c940d" fz="sm">{entry[1]}</Text>
+            </React.Fragment>
+          )}
+        </Box>
       </Input.Wrapper>
     );
   }, [props.result.headers]);
@@ -41,16 +46,45 @@ export const DebugView = props => {
     <Box id="query-results-debug-view" p="md">
       <Stack spacing="md">
         {url && <Input.Wrapper label={t("debug_view.url_logiclayer")}>
-          <DebugURL url={url} />
+          <Group noWrap spacing="xs">
+            <Input
+              icon={<IconWorld />}
+              readOnly
+              rightSectionWidth="auto"
+              value={url}
+              w="100%"
+            />
+            <Button.Group>
+              <Button
+                leftIcon={<IconExternalLink />}
+                onClick={openHandler}
+                variant="default"
+              >
+                {t("action_open")}
+              </Button>
+              <Button
+                leftIcon={<IconClipboard />}
+                onClick={copyHandler}
+                variant="default"
+              >
+                {copied ? t("action_copy_done") : t("action_copy")}
+              </Button>
+            </Button.Group>
+          </Group>
         </Input.Wrapper>}
 
-        {sourceCall && <Input.Wrapper label={jssourceLabel}>
-          <Prism language="javascript">
-            {sourceCall}
-          </Prism>
-        </Input.Wrapper>}
+        <SimpleGrid cols={2}>
+          {sourceCall && <Input.Wrapper label={jssourceLabel}>
+            <Prism
+              language="javascript"
+              styles={{line: {boxSizing: "border-box"}}}
+            >
+              {sourceCall}
+            </Prism>
+          </Input.Wrapper>}
 
-        {headers}
+          {headers}
+        </SimpleGrid>
       </Stack>
     </Box>
   );

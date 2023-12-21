@@ -25,18 +25,16 @@ export const AreaOptions = () => {
       value="options"
     >
       <Stack spacing="xs">
-        <Stack spacing="xs">
-          {enabledBooleans.map(key =>
-            <Checkbox
-              key={key}
-              label={t(`params.label_boolean_${key}`)}
-              checked={booleans[key] || false}
-              onChange={() => {
-                actions.updateBoolean({key});
-              }}
-            />
-          )}
-        </Stack>
+        {enabledBooleans.map(key =>
+          <Checkbox
+            key={key}
+            label={t(`params.label_boolean_${key}`)}
+            checked={booleans[key] || false}
+            onChange={() => {
+              actions.updateBoolean({key});
+            }}
+          />
+        )}
         <SortingInput />
         <PaginationInput />
       </Stack>

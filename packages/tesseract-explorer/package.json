@@ -40,7 +40,6 @@
     "@datawheel/use-translation": "^0.2.0",
     "@reduxjs/toolkit": "^1.9.3",
     "@tabler/icons-react": "^2.7.0",
-    "clipboard-copy": "^3.2.0",
     "d3plus-format": "^1.1.0",
     "dayjs": "^1.0.0",
     "form-urldecoded": "^1.2.0",

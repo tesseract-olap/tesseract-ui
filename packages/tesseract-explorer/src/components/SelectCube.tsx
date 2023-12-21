@@ -1,4 +1,5 @@
-import {Box, Stack} from "@mantine/core";
+import {type PlainCube} from "@datawheel/olap-client";
+import {Anchor, Stack, Text, TextProps} from "@mantine/core";
 import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
@@ -8,8 +9,8 @@ import {selectOlapCube} from "../state/selectors";
 import {selectOlapCubeItems} from "../state/server";
 import {getAnnotation, getCaption} from "../utils/string";
 import {groupBy} from "../utils/transform";
+import {type Annotated} from "../utils/types";
 import {shallowEqualForProps} from "../utils/validation";
-import {MemoCubeDescription, MemoCubeSource} from "./CubeMetadata";
 import {SelectWithButtons} from "./SelectWithButtons";
 
 /** @type {React.FC<import("./SelectWithButtons").OwnProps<string>>} */
@@ -18,14 +19,33 @@ const SelectLevel = memo(SelectWithButtons, shallowEqualForProps("items", "selec
 /** @type {React.FC<import("./SelectWithButtons").OwnProps<import("@datawheel/olap-client").PlainCube>>} */
 const SelectPlainCube = memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
 
-export const SelectCube = () => {
+/** */
+export function SelectCube() {
+  const items = useSelector(selectOlapCubeItems);
+  const selectedItem = useSelector(selectOlapCube);
+
+  if (items.length === 1) {
+    return null;
+  }
+
+  return <SelectCubeInternal items={items} selectedItem={selectedItem} />;
+}
+
+/** */
+function SelectCubeInternal(props: {
+  items: PlainCube[];
+  selectedItem: PlainCube | undefined;
+}) {
+  const {items, selectedItem} = props;
+
   const actions = useActions();
+
+  const onItemSelect = useCallback((cube: PlainCube) => {
+    actions.willSetCube(cube.name);
+  }, []);
 
   const {translate: t} = useTranslation();
   const {code: locale} = useSelector(selectLocale);
-
-  const items = useSelector(selectOlapCubeItems);
-  const selectedItem = useSelector(selectOlapCube);
 
   // Each level limits the available cubes for the next level
   const {
@@ -70,11 +90,6 @@ export const SelectCube = () => {
     /* else */                items;
   /* eslint-enable indent, operator-linebreak */
 
-  /** @type {(cube: import("@datawheel/olap-client").PlainCube) => void} */
-  const onItemSelect = useCallback(cube => {
-    actions.willSetCube(cube.name);
-  }, []);
-
   // We need to keep the selectedItem in sync if at some point the
   // user selection leaves it out of the final subset of options
   useEffect(() => {
@@ -83,52 +98,96 @@ export const SelectCube = () => {
     }
   }, [cubeItems, selectedItem]);
 
-  const selectCube = selectedItem
-    ? <SelectPlainCube
-      getLabel={item => getCaption(item, locale)}
-      hidden={cubeItems.length < 2}
-      items={cubeItems}
-      label={t("params.label_cube")}
-      onItemSelect={onItemSelect}
-      selectedItem={selectedItem}
-    />
+  return (
+    <Stack id="select-cube" spacing={0}>
+      <SelectLevel
+        hidden={level1 === "Hidden"}
+        items={level1Keys}
+        label={t("params.label_topic")}
+        onItemSelect={setLevel1}
+        selectedItem={level1}
+      />
+      <SelectLevel
+        hidden={level2 === "Hidden"}
+        items={level2Keys}
+        label={t("params.label_subtopic")}
+        onItemSelect={setLevel2}
+        selectedItem={level2}
+      />
+      <SelectLevel
+        hidden={level3 === "Hidden"}
+        items={level3Keys}
+        label={t("params.label_table")}
+        onItemSelect={setLevel3}
+        selectedItem={level3}
+      />
+      {selectedItem && <SelectPlainCube
+        getLabel={item => getCaption(item, locale)}
+        hidden={cubeItems.length < 2}
+        items={cubeItems}
+        label={t("params.label_cube")}
+        onItemSelect={onItemSelect}
+        selectedItem={selectedItem}
+      />}
+      {selectedItem && <Text mt="sm" sx={{"& p": {margin: 0}}}>
+        <CubeAnnotation
+          annotation="description"
+          className="dex-cube-description"
+          item={selectedItem}
+          locale={locale}
+        />
+        <CubeSourceAnchor
+          item={selectedItem}
+          locale={locale}
+          fz="xs"
+        />
+        <CubeAnnotation
+          annotation="source_description"
+          className="dex-cube-srcdescription"
+          fz="xs"
+          item={selectedItem}
+          locale={locale}
+        />
+      </Text>}
+    </Stack>
+  );
+}
+
+/** */
+function CubeAnnotation(props: TextProps & {
+  annotation: string;
+  item: Annotated;
+  locale: string;
+}) {
+  const {annotation, item, locale, ...textProps} = props;
+  const content = getAnnotation(item, annotation, locale);
+  return content
+    ? <Text component="p" {...textProps}>{content}</Text>
     : null;
+}
+
+/** */
+function CubeSourceAnchor(props: TextProps & {
+  item: Annotated;
+  locale: string;
+}) {
+  const {item, locale, ...textProps} = props;
+  const {translate: t} = useTranslation();
+
+  const srcName = getAnnotation(item, "source_name", locale);
+  const srcLink = getAnnotation(item, "source_link", locale);
+
+  if (!srcName) return null;
 
   return (
-    <Box id="select-cube">
-      <Stack spacing={0}>
-        <SelectLevel
-          hidden={level1 === "Hidden"}
-          items={level1Keys}
-          label={t("params.label_topic")}
-          onItemSelect={setLevel1}
-          selectedItem={level1}
-        />
-        <SelectLevel
-          hidden={level2 === "Hidden"}
-          items={level2Keys}
-          label={t("params.label_subtopic")}
-          onItemSelect={setLevel2}
-          selectedItem={level2}
-        />
-        <SelectLevel
-          hidden={level3 === "Hidden"}
-          items={level3Keys}
-          label={t("params.label_table")}
-          onItemSelect={setLevel3}
-          selectedItem={level3}
-        />
-        {selectCube}
-      </Stack>
-      {selectedItem && <MemoCubeDescription
-        cube={selectedItem}
-      />}
-      {selectedItem && <MemoCubeSource
-        cube={selectedItem}
-      />}
-    </Box>
+    <Text component="p" {...textProps}>
+      {`${t("params.label_source")}: `}
+      {srcLink
+        ? <Anchor href={srcLink}>{srcName}</Anchor>
+        : <Text span>{srcName}</Text>}
+    </Text>
   );
-};
+}
 
 /**
  * Keeps the state for the selector at that level, and limits the values passed
@@ -149,13 +208,21 @@ export const SelectCube = () => {
  * If the accessor function returns `undefined` for all items, both `keys` and
  * `values` in the returned object will be empty.
  *
- * @template T
- * @param {T[]} items The list of items to to select from.
- * @param {T | undefined} currentItem The currently selected item, must belong to the `items` array.
- * @param {(item: T) => string | null | undefined} accessor A function to select a item's property, whose value will be used a filtering step
- * @param {string[]} [dependencies]
+ * @param items
+ * The list of items to to select from.
+ * @param currentItem
+ * The currently selected item, must belong to the `items` array.
+ * @param accessor
+ * The value returned by this function will be used as filtering step
+ * @param dependencies
+ * Manual dependencies to declare for internal calculation.
  */
-function useSyncedSubset(items, currentItem, accessor, dependencies = []) {
+function useSyncedSubset<T>(
+  items: T[],
+  currentItem: T | undefined,
+  accessor: (item: T) => string | null | undefined,
+  dependencies: string[] = []
+) {
   const [level, setLevel] = useState(() => currentItem && accessor(currentItem) || "");
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectCurrentQueryItem, selectQueryItems} from "../state/queries";
 import {buildQuery} from "../utils/structs";
-import {LayoutColumn} from "./LayoutColumn";
+import {CollapsiblePanel} from "./CollapsiblePanel";
 import {MemoStoredQuery as StoredQuery} from "./StoredQuery";
 
 export const ExplorerQueries = () => {
@@ -50,7 +50,7 @@ export const ExplorerQueries = () => {
   }, []);
 
   return (
-    <LayoutColumn
+    <CollapsiblePanel
       id="explorer-queries"
       title={t("queries.column_title")}
       defaultOpen={items.length > 1}
@@ -85,6 +85,6 @@ export const ExplorerQueries = () => {
           />
         )}
       </Stack>
-    </LayoutColumn>
+    </CollapsiblePanel>
   );
 };
