@@ -2,11 +2,15 @@ import {Select} from "@mantine/core";
 import React, {memo, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
+import {selectMeasureMap} from "../state/queries";
 import {selectOlapMeasureItems} from "../state/selectors";
-import {shallowEqualExceptFns} from "../utils/validation";
+import {filterMap} from "../utils/array";
+import {keyBy} from "../utils/transform";
+import {isActiveItem, shallowEqualExceptFns} from "../utils/validation";
 
 /**
  * @typedef OwnProps
+ * @property {boolean} [activeOnly]
  * @property {(item: import("@datawheel/olap-client").PlainMeasure) => void} onItemSelect
  * @property {string} [placeholder]
  * @property {string | undefined} selectedItem
@@ -14,31 +18,34 @@ import {shallowEqualExceptFns} from "../utils/validation";
 
 /** @type {React.FC<OwnProps>} */
 export const SelectMeasure = props => {
+  const {activeOnly, onItemSelect} = props;
+
   const {translate: t} = useTranslation();
 
-  const items = useSelector(selectOlapMeasureItems).map(item => ({
-    ...item,
-    label: item.name,
-    value: item.name
-  }));
+  const measures = useSelector(selectOlapMeasureItems);
+  const measureMap = useSelector(selectMeasureMap);
 
-  const objectItems = useMemo(() => {
-    const formattedItems = {};
-
-    items.forEach(item => {
-      formattedItems[item.value] = item;
+  const [itemList, changeHandler] = useMemo(() => {
+    const list = filterMap(measures, item => {
+      const {name} = item;
+      if (activeOnly && !isActiveItem(measureMap[name])) return null;
+      return {item, label: name, value: name};
     });
 
-    return formattedItems;
+    const map = keyBy(list, item => item.value);
+    const callback = value => {
+      if (value && onItemSelect) onItemSelect(map[value].item);
+    };
 
-  }, [items]);
+    return [list, callback];
+  }, [measureMap, onItemSelect]);
 
   return (
     <Select
-      data={items}
-      onChange={value => props.onItemSelect(objectItems[value])}
+      data={itemList}
+      onChange={changeHandler}
       placeholder={t("selectmeasure_placeholder")}
-      searchable={items.length > 6}
+      searchable={itemList.length > 6}
     />
   );
 };
