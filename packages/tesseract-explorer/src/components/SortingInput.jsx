@@ -53,6 +53,7 @@ export const SortingInput = () => {
           items={sort.options}
           onItemSelect={directionChangeHandler}
           selectedItem={sortDir}
+          searchable={false}
         />
       </Group>
     </Input.Wrapper>
