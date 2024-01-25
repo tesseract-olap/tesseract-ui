@@ -36,9 +36,10 @@ export function willDownloadQuery(
       .then(cube => {
         const filename = `${cube.name}_${new Date().toISOString()}`;
         const query = applyQueryParams(cube.query, params, {previewLimit}).setFormat(format);
+        const dataURL = query.toString("logiclayer").replace(olapClient.datasource.serverUrl, "");
 
         return Promise.all([
-          axios({url: query.toString("logiclayer"), responseType: "blob"})
+          axios({url: dataURL, responseType: "blob"})
             .then(response => response.data),
           calcMaxMemberCount(query, params)
             .then(maxRows => {
