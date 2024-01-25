@@ -5,7 +5,6 @@ import {ExplorerStore, actions} from "../state";
 import {Formatter} from "../utils/types";
 import {ExplorerThunk} from "../state/store";
 
-
 type ExplorerActionMap = typeof actions;
 type ExplorerBoundActions = {
   [K in keyof ExplorerActionMap]:
@@ -29,7 +28,6 @@ const {Consumer: ContextConsumer, Provider: ContextProvider} = SettingsContext;
 
 /**
  * A wrapper for the Provider, to handle the changes and API given by the hook.
- * @type {React.FC<SettingsProviderProps>}
  */
 export function SettingsProvider(props: {
   children?: React.ReactElement;

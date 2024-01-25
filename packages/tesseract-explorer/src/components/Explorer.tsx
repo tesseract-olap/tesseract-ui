@@ -3,14 +3,13 @@ import {TranslationContextProps, TranslationProviderProps} from "@datawheel/use-
 import {CSSObject, MantineProvider} from "@mantine/core";
 import React, {useMemo} from "react";
 import {Provider as ReduxProvider, useStore} from "react-redux";
+import {usePermalink} from "../hooks/permalink";
 import {SettingsProvider} from "../hooks/settings";
 import {TranslationDict, TranslationProvider} from "../hooks/translation";
 import {ExplorerStore, storeFactory} from "../state";
-import {Formatter} from "../utils/types";
+import {Formatter, PanelDescriptor} from "../utils/types";
 import {DebugView} from "./DebugView";
 import {ExplorerContent} from "./ExplorerContent";
-import {PanelDescriptor} from "./ExplorerResults";
-import {PermalinkSync} from "./PermalinkSync";
 import {PivotView} from "./PivotView";
 import {TableView} from "./TableView";
 
@@ -151,6 +150,8 @@ export function ExplorerComponent(props: {
     });
   }, [previewLimit]);
 
+  usePermalink(props.withPermalink, store);
+
   let content =
     <SettingsProvider
       store={store}
@@ -171,10 +172,8 @@ export function ExplorerComponent(props: {
           uiLocale={props.uiLocale}
           withMultiQuery={withMultiQuery}
         />
-        {props.withPermalink && <PermalinkSync />}
       </TranslationProvider>
     </SettingsProvider>;
-
 
   if (withinMantineProvider) {
     content = <MantineProvider withNormalizeCSS>{content}</MantineProvider>;
