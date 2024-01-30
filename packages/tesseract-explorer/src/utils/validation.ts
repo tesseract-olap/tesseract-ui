@@ -3,6 +3,11 @@ import {CutItem, FilterItem, QueryParams} from "./structs";
 import {stringifyName} from "./transform";
 
 /**
+ * Void function
+ */
+export function noop() {}
+
+/**
  * Checks if the provided string matches one of the options.
  */
 export function isOneOf<T extends string>(str: any, options: T[]): str is T {
@@ -64,13 +69,17 @@ const validQueryConditions = [{
   condition: (query: QueryParams) =>
     Object.values(query.drilldowns).reduce(activeItemCounter, 0) > 0
 }, {
-  error: "queries.error_one_drilldown_per_dimension",
+  error: "queries.error_one_hierarchy_per_dimension",
   condition: (query: QueryParams) => {
-    const dimensions = filterMap(Object.values(query.drilldowns), item =>
-      isActiveItem(item) ? item.dimension : null
-    );
-    const uniqueDimensions = new Set(dimensions);
-    return dimensions.length === uniqueDimensions.size;
+    const dimensions = new Map<string, string>();
+    return Object.values(query.drilldowns).every(dd => {
+      if (isActiveItem(dd)) {
+        const hierarchy = dimensions.get(dd.dimension);
+        dimensions.set(dd.dimension, dd.hierarchy);
+        return !hierarchy || hierarchy === dd.hierarchy;
+      }
+      return true;
+    });
   }
 }, {
   error: "queries.error_one_cut_per_dimension",

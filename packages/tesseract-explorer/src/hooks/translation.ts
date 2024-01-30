@@ -139,6 +139,8 @@ export const defaultTranslation = {
     error_not_query: "Please construct a valid query",
     error_no_drilldowns: "You must add at least one drilldown.",
     error_no_measures: "You must add at least one measure.",
+    error_one_hierarchy_per_dimension: "You must only select drilldowns of a single hierarchy.",
+    error_one_cut_per_dimension: "You must only apply cuts over levels of a single hierarchy.",
     column_title: "Queries",
     unset_parameters: "No parameters set",
   },
