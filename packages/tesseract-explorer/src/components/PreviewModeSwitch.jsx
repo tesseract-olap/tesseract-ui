@@ -9,11 +9,13 @@ import {selectSerializedParams} from "../state/selectors";
 
 /**
  * @typedef LoadAllResultsSwitchProps
- * @property {boolean} [noPopover]
+ * @property {boolean} [withTooltip]
  */
 
 /** @type {React.FC<LoadAllResultsSwitchProps>} */
 export const PreviewModeSwitch = props => {
+  const withTooltip = !!props.withTooltip;
+
   const actions = useActions();
 
   const {translate: t} = useTranslation();
@@ -23,8 +25,6 @@ export const PreviewModeSwitch = props => {
 
   const {previewLimit} = useSettings();
 
-  const noPopover = props.noPopover ? true : false;
-
   useEffect(() => {
     isPreviewMode && actions.willRequestQuery();
   }, [isPreviewMode, serialParams]);
@@ -33,9 +33,26 @@ export const PreviewModeSwitch = props => {
     actions.updateIsPreview(!isPreviewMode);
   }, [isPreviewMode]);
 
+  const target =
+    <Switch
+      checked={!isPreviewMode}
+      styles={{label: {display: "flex", alignContent: "center", gap: "0.25rem"}}}
+      label={
+        <>
+          {t("params.label_boolean_full_results")}
+          {withTooltip &&
+                  <ThemeIcon variant="subtle" size="sm">
+                    <IconInfoCircleFilled />
+                  </ThemeIcon>}
+        </>
+      }
+      onChange={onClickLoadAllResults}
+    />;
+
+  if (!withTooltip) return target;
+
   return (
     <Tooltip
-      disabled={noPopover}
       events={{
         hover: true,
         focus: false,
@@ -48,20 +65,7 @@ export const PreviewModeSwitch = props => {
       withArrow
       withinPortal
     >
-      <Switch
-        checked={!isPreviewMode}
-        styles={{label: {display: "flex", alignContent: "center", gap: "0.25rem"}}}
-        label={
-          <>
-            {t("params.label_boolean_full_results")}
-            {!noPopover &&
-                <ThemeIcon variant="subtle" size="sm">
-                  <IconInfoCircleFilled />
-                </ThemeIcon>}
-          </>
-        }
-        onChange={onClickLoadAllResults}
-      />
+      <div>{target}</div>
     </Tooltip>
   );
 };

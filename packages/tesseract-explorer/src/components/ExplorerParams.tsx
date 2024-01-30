@@ -41,7 +41,7 @@ export const ExplorerParams = (props: {
       </Accordion>
 
       <div id="switch-params-load-all-results">
-        <PreviewModeSwitch />
+        <PreviewModeSwitch withTooltip />
       </div>
       <ButtonExecuteQuery />
       <AreaDownloadQuery />

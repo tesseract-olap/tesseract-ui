@@ -211,7 +211,7 @@ function SuccessResult(props: {
               <Text fw={700} span>{t("previewMode.title_preview")}: </Text>
               <Text span>{t("previewMode.description_preview", {limit: previewLimit})}</Text>
             </Text>
-            <PreviewModeSwitch noPopover={true} />
+            <PreviewModeSwitch />
           </Group>
         </Alert>}
 
