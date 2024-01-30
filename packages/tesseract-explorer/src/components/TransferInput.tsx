@@ -4,24 +4,24 @@ import React, {useCallback, useMemo, useRef, useState} from "react";
 import ViewPortList from "react-viewport-list";
 import {useTranslation} from "../hooks/translation";
 import {hasOwnProperty} from "../utils/object";
+import {QueryParamsItem} from "../utils/structs";
 import {keyBy, safeRegExp} from "../utils/transform";
 
-/**
- * @template {import("../utils/structs").QueryParamsItem} T
- * @typedef OwnProps
- * @property {Record<string, T>} items
- * @property {T["key"][]} activeItems
- * @property {(items: T["key"][]) => void} onChange
- * @property {(item: T) => string} getLabel
- * @property {(item: T) => string | undefined} [getSecondLabel]
- * @property {ItemPredicateFunction<T> | {label: string; method: ItemPredicateFunction<T>}[]} [itemPredicate]
- */
+type ItemPredicateFunction<T extends QueryParamsItem> =
+  (query: RegExp, item: T, index: number) => boolean;
 
-/**
- * @template {import("../utils/structs").QueryParamsItem} T
- * @type {React.FC<OwnProps<T>>}
- */
-export const TransferInput = props => {
+/** */
+export function TransferInput<T extends QueryParamsItem>(props: {
+  items: Record<string, T>;
+  activeItems: string[];
+  onChange: (items: string[]) => void;
+  getLabel: (item: T) => string;
+  getSecondLabel?: (item: T) => string | undefined;
+  itemPredicate?: ItemPredicateFunction<T> | {
+    label: string;
+    method: ItemPredicateFunction<T>;
+  }[];
+}) {
   const {activeItems, getLabel, items, itemPredicate, onChange} = props;
   const sideLabelRenderer = props.getSecondLabel || (() => undefined);
 
@@ -39,8 +39,8 @@ export const TransferInput = props => {
   );
 
   const results = useMemo(() => {
-    const selected = [];
-    const unselected = [];
+    const selected: T[] = [];
+    const unselected: T[] = [];
 
     // If the user filters using a comma-separated list of words/numbers,
     // consider the commas as RegExp `|`
@@ -51,8 +51,7 @@ export const TransferInput = props => {
 
     // If multiple options were provided, pick according to stored index
     // Else use unique option directly. Define a fallback if anything went wrong.
-    /** @type {ItemPredicateFunction<T>} */
-    const currentPredicate = (
+    const currentPredicate: ItemPredicateFunction<T> = (
       Array.isArray(itemPredicate)
         ? itemPredicate[itemPredicateIndex].method
         : itemPredicate
@@ -145,8 +144,7 @@ export const TransferInput = props => {
     return resetButton;
   }, [filter.length > 0, itemPredicateIndex]);
 
-  /** @type {(item: T, index: number) => JSX.Element} */
-  const renderItem = item => <UnstyledButton
+  const renderItem: (item: T, index: number) => React.ReactNode = item => <UnstyledButton
     key={item.key}
     onClick={toggleHandler.bind(null, item)}
     w="100%"
@@ -268,13 +266,8 @@ export const TransferInput = props => {
       </Stack>
     </Box>
   );
-};
+}
 
 TransferInput.defaultProps = {
   getLabel: item => `${item}`
 };
-
-/**
- * @template {import("../utils/structs").QueryParamsItem} T
- * @typedef {(query: RegExp, item: T, index: number) => boolean} ItemPredicateFunction
- */
