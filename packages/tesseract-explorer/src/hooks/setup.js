@@ -60,6 +60,7 @@ export function useSetup(serverConfig, locale) {
           // else, search params are a Explorer state permalink
           const locationState = parseStateFromSearchParams(searchObject);
           query = isValidQuery(locationState) && buildQuery({
+            panel: searchObject.panel,
             params: buildQueryParams({...locationState})
           });
         }

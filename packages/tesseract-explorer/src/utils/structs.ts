@@ -9,6 +9,7 @@ export interface QueryItem {
   isDirty: boolean;
   key: string;
   label: string;
+  panel: string | null;
   params: QueryParams;
   result: QueryResult;
 }
@@ -127,6 +128,7 @@ export function buildQuery(
     key: props.key || randomKey(),
     label: props.label || "",
     isDirty: true,
+    panel: props.panel || null,
     params: buildQueryParams(props.params || {}),
     result: {
       data: [],

@@ -1,7 +1,7 @@
 import {PlainCube} from "@datawheel/olap-client";
 import {Alert, Anchor, Box, Group, Paper, Stack, Tabs, TabsValue, Text, Title, createStyles} from "@mantine/core";
 import {IconAlertTriangle, IconBox, IconWorld} from "@tabler/icons-react";
-import React, {Suspense, useCallback, useState} from "react";
+import React, {Suspense, useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
@@ -9,6 +9,7 @@ import {selectCurrentQueryItem, selectIsPreviewMode} from "../state/queries";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server";
 import {QueryParams, QueryResult} from "../utils/structs";
+import {keyBy} from "../utils/transform";
 import {PanelDescriptor} from "../utils/types";
 import {PreviewModeSwitch} from "./PreviewModeSwitch";
 
@@ -165,20 +166,18 @@ function SuccessResult(props: {
 
   const {translate: t} = useTranslation();
 
-  const {previewLimit} = useSettings();
+  const {previewLimit, actions} = useSettings();
 
+  const currentTab = useSelector(selectCurrentQueryItem).panel || panels[0].key;
   const isPreviewMode = useSelector(selectIsPreviewMode);
 
-  // TODO: move this state to QueryItem, set via actions
-  const [currentTab, setCurrentTab] = useState(0);
+  const panelMap = useMemo(() => keyBy(panels, "key"), [panels]);
+
+  const {key: currentKey, component: CurrentComponent} = panelMap[currentTab];
 
   const tabHandler = useCallback((newTab: TabsValue) => {
-    const index = panels.findIndex(panel => panel.key === newTab);
-    setCurrentTab(index);
-  }, [panels, setCurrentTab]);
-
-  const currentPanel = panels[currentTab];
-  const CurrentComponent = currentPanel.component;
+    actions.switchPanel(newTab);
+  }, []);
 
   return (
     <Paper
@@ -187,11 +186,7 @@ function SuccessResult(props: {
       radius={0}
       withBorder
     >
-      <Tabs
-        id="query-results-tabs"
-        onTabChange={tabHandler}
-        value={currentPanel.key}
-      >
+      <Tabs id="query-results-tabs" onTabChange={tabHandler} value={currentKey}>
         <Tabs.List>
           {panels.map(panel =>
             <Tabs.Tab key={panel.key} id={panel.key} value={panel.key}>
@@ -217,7 +212,7 @@ function SuccessResult(props: {
 
       <Box id="query-results-content" sx={{flex: "1 1"}} h={{base: "auto", md: 0}}>
         <Suspense fallback={props.children}>
-          <CurrentComponent cube={cube} params={params} result={result} />
+          <CurrentComponent panelKey={currentKey} cube={cube} params={params} result={result} />
         </Suspense>
       </Box>
     </Paper>

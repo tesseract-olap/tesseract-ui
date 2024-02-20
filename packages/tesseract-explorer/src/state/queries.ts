@@ -1,4 +1,4 @@
-import {PayloadAction as Action, AnyAction, createSelector, createSlice} from "@reduxjs/toolkit";
+import {PayloadAction as Action, createSelector, createSlice} from "@reduxjs/toolkit";
 import ISO6391 from "iso-639-1";
 import {sortByDate} from "../utils/array";
 import {getKeys, getValues, hasOwnProperty} from "../utils/object";
@@ -73,6 +73,11 @@ export const queriesSlice = createSlice({
 
     // =========================================================================
     // CURRENT QUERY MANAGEMENT
+
+    switchPanel(state, action: Action<string | null>) {
+      const current = state.itemMap[state.current];
+      current.panel = action.payload;
+    },
 
     /**
      * Remove a single CutItem from the current QueryItem.

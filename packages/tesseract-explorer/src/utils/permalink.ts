@@ -13,23 +13,22 @@ export interface SerializedQuery {
   cuts?: string[];
   filters?: string[];
   locale?: string;
-  preview?: 1 | undefined;
+  preview?: 1;
+  panel?: string;
 }
 
-/**
- *
- */
-export function serializePermalink(params: QueryParams): string {
-  return formUrlEncode(serializeStateToSearchParams(params), {
+/** */
+export function serializePermalink(params: QueryParams, panel: string | null): string {
+  const struct = serializeStateToSearchParams(params);
+  struct.panel = panel || undefined;
+  return formUrlEncode(struct, {
     ignorenull: true,
     skipIndex: false,
     sorted: true
   });
 }
 
-/**
- *
- */
+/** */
 function serializeStateToSearchParams(query: QueryParams): SerializedQuery {
   const cuts = filterMap(Object.values(query.cuts), item =>
     isActiveCut(item) ? serializeCut(item) : null
@@ -60,17 +59,16 @@ function serializeStateToSearchParams(query: QueryParams): SerializedQuery {
     cuts: cuts.length > 0 ? cuts : undefined,
     filters: filters.length > 0 ? filters : undefined,
     locale: query.locale ? query.locale : undefined,
+    panel: undefined,
     preview: query.isPreview ? 1 : undefined
   };
 
-  /**
-   */
+  /** */
   function serializeCut(item: CutItem): string {
     return [stringifyName(item)].concat(item.members).join(",");
   }
 
-  /**
-   */
+  /** */
   function serializeDrilldown(item: DrilldownItem): string {
     return [stringifyName(item)].concat(
       filterMap(item.properties, prop =>
@@ -79,33 +77,26 @@ function serializeStateToSearchParams(query: QueryParams): SerializedQuery {
     ).join(",");
   }
 
-  /**
-   */
+  /** */
   function serializeFilter(item: FilterItem): string {
-    return `${item.measure},${item.comparison},${item.interpretedValue}`;
+    const conditions = filterMap([item.conditionOne, item.conditionTwo], cond =>
+      cond ? `${cond[0]},${cond[2]}` : null
+    );
+    return `${item.measure},${conditions.join(`,${item.joint},`)}`;
   }
 
-  /**
-   *
-   * @param {import("./structs").MeasureItem} item
-   * @returns
-   */
-  function serializeMeasure(item) {
+  /** */
+  function serializeMeasure(item: MeasureItem) {
     return `${item.key}`;
   }
 }
 
-/**
- *
- */
+/** */
 export function parseStateFromSearchParams(query: SerializedQuery): QueryParams {
   const getKey = i => i.key;
 
-  /** @type {Record<string, TessExpl.Struct.CutItem>} */
-  const cuts = Object.create(null);
-
-  /** @type {Record<string, TessExpl.Struct.DrilldownItem>} */
-  const drilldowns = Object.create(null);
+  const cuts: Record<string, CutItem> = Object.create(null);
+  const drilldowns: Record<string, DrilldownItem> = Object.create(null);
 
   return {
     booleans: parseBooleans(query.booleans || 0),
@@ -122,8 +113,7 @@ export function parseStateFromSearchParams(query: SerializedQuery): QueryParams 
     sortKey: undefined
   };
 
-  /**
-   */
+  /** */
   function cutReducer(cuts: Record<string, CutItem>, item: string) {
     const [fullName, ...members] = item.split(",");
     const cut = buildCut({...parseName(fullName), active: true, members});
@@ -143,8 +133,7 @@ export function parseStateFromSearchParams(query: SerializedQuery): QueryParams 
     return cuts;
   }
 
-  /**
-   */
+  /** */
   function drilldownReducer(drilldowns: Record<string, DrilldownItem>, item: string) {
     const [fullName, ...props] = item.split(",");
     const nameParts = parseName(fullName);
@@ -154,8 +143,7 @@ export function parseStateFromSearchParams(query: SerializedQuery): QueryParams 
     return drilldowns;
   }
 
-  /**
-   */
+  /** */
   function parseBooleans(item: number): Record<string, boolean> {
     const booleans: Record<string, boolean> = Object.create(null);
 
@@ -169,21 +157,30 @@ export function parseStateFromSearchParams(query: SerializedQuery): QueryParams 
     return booleans;
   }
 
-  /**
-   */
+  /** */
   function parseFilter(item: string): FilterItem {
-    const [measure, comparison, inputtedValue] = item.split(",");
+    const [measure, ...comparisons] = item.split(",");
+    const conditionOne = comparisons.slice(1, 3);
+    const conditionTwo = comparisons.length > 2 ? comparisons.slice(4, 6) : undefined;
+    const joint = comparisons.length > 2 ? comparisons[3] : undefined;
     return buildFilter({
       active: true,
-      comparison,
-      inputtedValue,
-      interpretedValue: Number.parseFloat(inputtedValue),
-      measure
+      measure,
+      conditionOne: parseCondition(conditionOne),
+      conditionTwo: conditionTwo ? parseCondition(conditionTwo) : undefined,
+      joint
     });
+
+    /** */
+    function parseCondition(cond: string[]): FilterItem["conditionOne"] {
+      const comparison = cond[0] as "gt";
+      const inputtedValue = cond[1];
+      const interpretedValue = Number.parseFloat(cond[1]);
+      return [comparison, inputtedValue, interpretedValue];
+    }
   }
 
-  /**
-   */
+  /** */
   function parseMeasure(item: string): MeasureItem {
     return buildMeasure({
       active: true,

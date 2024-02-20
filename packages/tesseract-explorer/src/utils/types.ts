@@ -34,6 +34,7 @@ export interface PanelDescriptor {
 export interface ViewProps<TData = Record<string, string | number>> {
   className?: string;
   cube: PlainCube;
+  panelKey: string | null;
   params: QueryParams;
   result: QueryResult<TData>;
 }

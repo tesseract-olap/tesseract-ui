@@ -7,7 +7,7 @@ import {serializePermalink} from "../utils/permalink";
 /** */
 export function usePermalink(enabled: boolean | undefined) {
   const cubeMap = useSelector(selectOlapCubeMap);
-  const {params, isDirty} = useSelector(selectCurrentQueryItem);
+  const {isDirty, panel, params} = useSelector(selectCurrentQueryItem);
   const dispatch = useDispatch();
 
   const listener = useMemo(() => (evt: PopStateEvent) => {
@@ -27,13 +27,21 @@ export function usePermalink(enabled: boolean | undefined) {
     // is successful: this is when `isDirty` changes from `false` to `true`
     if (!enabled || isDirty || cubeMap[params.cube] == null) return;
 
-    const nextPermalink = serializePermalink(params);
+    const currPermalink = window.location.search.slice(1);
+    const nextPermalink = serializePermalink(params, panel);
 
-    if (window.location.search.slice(1) !== nextPermalink) {
+    if (currPermalink !== nextPermalink) {
       const nextLocation = `${window.location.pathname}?${nextPermalink}`;
-      window.history.pushState(params, "", nextLocation);
+      const oldPanel = (/[&]?panel=([\w\d-]+)[&]?/).exec(currPermalink);
+      // If only the panel changed, use replaceState
+      if (oldPanel && oldPanel[1] !== panel) {
+        window.history.replaceState(params, "", nextLocation);
+      }
+      else {
+        window.history.pushState(params, "", nextLocation);
+      }
     }
-  }, [cubeMap, isDirty]);
+  }, [cubeMap, isDirty, panel]);
 
   return null;
 }
