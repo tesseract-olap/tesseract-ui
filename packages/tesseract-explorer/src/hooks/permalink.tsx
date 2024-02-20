@@ -1,18 +1,18 @@
 import {useEffect, useMemo} from "react";
 import {queriesSlice, selectCurrentQueryItem} from "../state/queries";
 import {selectOlapCubeMap} from "../state/server";
-import {ExplorerStore} from "../state/store";
+import {useDispatch, useSelector} from "../state/store";
 import {serializePermalink} from "../utils/permalink";
 
 /** */
-export function usePermalink(enabled: boolean | undefined, store: ExplorerStore) {
-  const state = store.getState();
-  const cubeMap = selectOlapCubeMap(state);
-  const {params, isDirty} = selectCurrentQueryItem(state);
+export function usePermalink(enabled: boolean | undefined) {
+  const cubeMap = useSelector(selectOlapCubeMap);
+  const {params, isDirty} = useSelector(selectCurrentQueryItem);
+  const dispatch = useDispatch();
 
   const listener = useMemo(() => (evt: PopStateEvent) => {
-    evt.state && store.dispatch(queriesSlice.actions.resetAllParams(evt.state));
-  }, [store]);
+    evt.state && dispatch(queriesSlice.actions.resetAllParams(evt.state));
+  }, []);
 
   // eslint-disable-next-line consistent-return
   useEffect(() => {
@@ -25,7 +25,7 @@ export function usePermalink(enabled: boolean | undefined, store: ExplorerStore)
   useEffect(() => {
     // We want to update the Permalink only when we are sure the current Query
     // is successful: this is when `isDirty` changes from `false` to `true`
-    if (!enabled || isDirty === true || cubeMap[params.cube] == null) return;
+    if (!enabled || isDirty || cubeMap[params.cube] == null) return;
 
     const nextPermalink = serializePermalink(params);
 

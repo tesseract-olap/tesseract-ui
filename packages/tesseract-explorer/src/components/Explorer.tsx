@@ -3,7 +3,6 @@ import {TranslationContextProps, TranslationProviderProps} from "@datawheel/use-
 import {CSSObject, MantineProvider} from "@mantine/core";
 import React, {useMemo} from "react";
 import {Provider as ReduxProvider, useStore} from "react-redux";
-import {usePermalink} from "../hooks/permalink";
 import {SettingsProvider} from "../hooks/settings";
 import {TranslationDict, TranslationProvider} from "../hooks/translation";
 import {ExplorerStore, storeFactory} from "../state";
@@ -150,13 +149,12 @@ export function ExplorerComponent(props: {
     });
   }, [previewLimit]);
 
-  usePermalink(props.withPermalink, store);
-
   let content =
     <SettingsProvider
       store={store}
       formatters={props.formatters}
       previewLimit={previewLimit}
+      withPermalink={props.withPermalink}
     >
       <TranslationProvider
         defaultLocale={props.uiLocale}

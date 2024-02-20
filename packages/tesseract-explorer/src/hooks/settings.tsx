@@ -2,8 +2,9 @@
 import {bindActionCreators} from "@reduxjs/toolkit";
 import React, {createContext, useCallback, useContext, useMemo} from "react";
 import {ExplorerStore, actions} from "../state";
-import {Formatter} from "../utils/types";
 import {ExplorerThunk} from "../state/store";
+import {Formatter} from "../utils/types";
+import {usePermalink} from "./permalink";
 
 type ExplorerActionMap = typeof actions;
 type ExplorerBoundActions = {
@@ -34,7 +35,10 @@ export function SettingsProvider(props: {
   formatters?: Record<string, Formatter>;
   previewLimit?: number;
   store: ExplorerStore;
+  withPermalink: boolean | undefined;
 }) {
+  usePermalink(props.withPermalink);
+
   // We need to cast this to unknown, then to ExplorerBoundActions for the
   // thunks' return value to be correctly converted
   const boundActions: unknown = useMemo(() =>
