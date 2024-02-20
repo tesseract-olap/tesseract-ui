@@ -16,6 +16,7 @@ type ExplorerBoundActions = {
 
 interface SettingsContextProps {
   actions: ExplorerBoundActions;
+  defaultMembersFilter: "id" | "name" | "any";
   formatters: Record<string, Formatter>;
   previewLimit: number;
 }
@@ -32,6 +33,7 @@ const {Consumer: ContextConsumer, Provider: ContextProvider} = SettingsContext;
  */
 export function SettingsProvider(props: {
   children?: React.ReactElement;
+  defaultMembersFilter?: "id" | "name" | "any";
   formatters?: Record<string, Formatter>;
   previewLimit?: number;
   store: ExplorerStore;
@@ -46,6 +48,7 @@ export function SettingsProvider(props: {
 
   const value: SettingsContextProps = useMemo(() => ({
     actions: boundActions as ExplorerBoundActions,
+    defaultMembersFilter: props.defaultMembersFilter || "id",
     formatters: props.formatters || {},
     previewLimit: props.previewLimit || 50,
   }), [props.formatters, props.previewLimit]);

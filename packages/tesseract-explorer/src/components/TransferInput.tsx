@@ -17,6 +17,7 @@ export function TransferInput<T extends QueryParamsItem>(props: {
   onChange: (items: string[]) => void;
   getLabel: (item: T) => string;
   getSecondLabel?: (item: T) => string | undefined;
+  initialItemPredicateIndex?: number;
   itemPredicate?: ItemPredicateFunction<T> | {
     label: string;
     method: ItemPredicateFunction<T>;
@@ -31,7 +32,7 @@ export function TransferInput<T extends QueryParamsItem>(props: {
   const {translate: t} = useTranslation();
 
   const [filter, setFilter] = useState("");
-  const [itemPredicateIndex, setItemPredicateIndex] = useState(0);
+  const [itemPredicateIndex, setItemPredicateIndex] = useState(props.initialItemPredicateIndex || 0);
 
   const activeKeys = useMemo(
     () => keyBy(activeItems, key => key),
