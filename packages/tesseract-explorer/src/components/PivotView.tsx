@@ -1,19 +1,41 @@
-import {Alert, Box, Button, Input, Loader, SimpleGrid} from "@mantine/core";
+import {Alert, Box, Button, Input, Loader, SimpleGrid, createStyles} from "@mantine/core";
 import {IconAlertCircle, IconAlertTriangle} from "@tabler/icons-react";
 import {MantineReactTable, useMantineReactTable, MRT_TableOptions as TableOptions} from "mantine-react-table";
-import React, {memo, useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useFormatParams, usePivottedData} from "../hooks/pivot";
 import {useTranslation} from "../hooks/translation";
 import {selectOlapMeasureMap} from "../state/selectors";
 import {filterMap} from "../utils/array";
 import {getCaption} from "../utils/string";
-import {Formatter, JSONArrays} from "../utils/types";
+import {Formatter, JSONArrays, ViewProps} from "../utils/types";
 import {isActiveItem} from "../utils/validation";
 import {ButtonDownload} from "./ButtonDownload";
-import {ViewProps} from "./ExplorerResults";
 import {NonIdealState} from "./NonIdealState";
 import {SelectObject} from "./Select";
+
+const useStyles = createStyles(theme => ({
+  container: {
+    [theme.fn.largerThan("md")]: {
+      height: "100%",
+      display: "flex",
+      flexFlow: "row nowrap"
+    }
+  },
+
+  colParams: {
+    [theme.fn.largerThan("md")]: {
+      flex: "0 0 280px"
+    }
+  },
+
+  colContent: {
+    [theme.fn.largerThan("md")]: {
+      width: 0,
+      flex: "1 1 auto"
+    }
+  }
+}));
 
 /** */
 export function PivotView<TData extends Record<string, any>>(props: {
@@ -25,6 +47,8 @@ export function PivotView<TData extends Record<string, any>>(props: {
   const {translate: t} = useTranslation();
 
   const measureMap = useSelector(selectOlapMeasureMap);
+
+  const {classes, cx} = useStyles();
 
   const measureOptions = useMemo(() =>
     filterMap(Object.values(params.measures), item => {
@@ -66,7 +90,7 @@ export function PivotView<TData extends Record<string, any>>(props: {
           const entity = propertyMap[item.name];
           return !isActiveItem(item) ? null : {
             value: item.name,
-            label: `${getCaption(entity, locale)} (${caption})`,
+            label: `${caption} › ${getCaption(entity, locale)}`,
             type: "prop"
           };
         })
@@ -99,15 +123,9 @@ export function PivotView<TData extends Record<string, any>>(props: {
       warnings.push(
         <Alert
           color="yellow"
+          m="sm"
           icon={<IconAlertCircle size="2rem" />}
-          maw={500}
           key="propertypivot"
-          title={t("pivot_view.warning")}
-          sx={theme => ({
-            [theme.fn.smallerThan("lg")]: {
-              maxWidth: "100%"
-            }
-          })}
         >{t("pivot_view.warning_propertypivot")}</Alert>
       );
     }
@@ -117,27 +135,15 @@ export function PivotView<TData extends Record<string, any>>(props: {
         valProp.type !== "SUM"
           ? <Alert
             color="yellow"
+            m="sm"
             icon={<IconAlertCircle size="2rem" />}
             key="notsummeasure"
-            maw={500}
-            title={t("pivot_view.warning")}
-            sx={theme => ({
-              [theme.fn.smallerThan("lg")]: {
-                maxWidth: "100%"
-              }
-            })}
           >{t("pivot_view.warning_notsummeasure")}</Alert>
           : <Alert
             color="yellow"
+            m="sm"
             icon={<IconAlertCircle size="2rem" />}
             key="sumdimensions"
-            maw={500}
-            title={t("pivot_view.warning")}
-            sx={theme => ({
-              [theme.fn.smallerThan("lg")]: {
-                maxWidth: "100%"
-              }
-            })}
           >{t("pivot_view.warning_sumdimensions")}</Alert>
       );
     }
@@ -220,77 +226,76 @@ export function PivotView<TData extends Record<string, any>>(props: {
   return (
     <Box
       id="query-results-pivot-view"
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexFlow: "column nowrap"
-      }}
+      className={cx(props.className, classes.container)}
     >
-      <SimpleGrid
-        id="query-results-pivot-view-params"
-        px="md"
-        py="sm"
-        cols={2}
-        breakpoints={[
-          {minWidth: "md", cols: 3},
-          {minWidth: "lg", cols: 5}
-        ]}
-      >
-        <Input.Wrapper
-          label={colProp.type === "prop"
-            ? t("pivot_view.label_ddcolumnprop")
-            : t("pivot_view.label_ddcolumn")
-          }
+      <Box className={classes.colParams}>
+        <SimpleGrid
+          id="query-results-pivot-view-params"
+          px="md"
+          py="sm"
+          cols={1}
+          breakpoints={[
+            {minWidth: "xs", cols: 2},
+            {minWidth: "sm", cols: 3},
+            {minWidth: "md", cols: 1}
+          ]}
         >
-          <SelectObject
-            getLabel={item => item.label}
-            items={drilldownOptions}
-            onItemSelect={setColumnProp}
-            selectedItem={colProp.label}
-          />
-        </Input.Wrapper>
+          <Input.Wrapper
+            label={colProp.type === "prop"
+              ? t("pivot_view.label_ddcolumnprop")
+              : t("pivot_view.label_ddcolumn")
+            }
+          >
+            <SelectObject
+              getLabel={item => item.label}
+              items={drilldownOptions}
+              onItemSelect={setColumnProp}
+              selectedItem={colProp.value}
+            />
+          </Input.Wrapper>
 
-        <Input.Wrapper
-          label={rowProp.type === "prop"
-            ? t("pivot_view.label_ddrowprop")
-            : t("pivot_view.label_ddrow")
-          }
-        >
-          <SelectObject
-            getLabel={item => item.label}
-            items={drilldownOptions}
-            onItemSelect={setRowProp}
-            selectedItem={rowProp.label}
-          />
-        </Input.Wrapper>
+          <Input.Wrapper
+            label={rowProp.type === "prop"
+              ? t("pivot_view.label_ddrowprop")
+              : t("pivot_view.label_ddrow")
+            }
+          >
+            <SelectObject
+              getLabel={item => item.label}
+              items={drilldownOptions}
+              onItemSelect={setRowProp}
+              selectedItem={rowProp.value}
+            />
+          </Input.Wrapper>
 
-        <Input.Wrapper label={t("pivot_view.label_valmeasure")}>
-          <SelectObject
-            getLabel={item => item.label}
-            items={measureOptions}
-            onItemSelect={setValueProp}
-            selectedItem={valProp.label}
-          />
-        </Input.Wrapper>
+          <Input.Wrapper label={t("pivot_view.label_valmeasure")}>
+            <SelectObject
+              getLabel={item => item.label}
+              items={measureOptions}
+              onItemSelect={setValueProp}
+              selectedItem={valProp.value}
+            />
+          </Input.Wrapper>
 
-        <Input.Wrapper label={t("pivot_view.label_formatter")}>
-          <SelectObject
-            getKey={item => item.value}
-            getLabel={item => item.label}
-            items={formatterKeyOptions}
-            onItemSelect={item => setFormat(valProp.value, item.value)}
-            selectedItem={formatterKey}
-          />
-        </Input.Wrapper>
+          <Input.Wrapper label={t("pivot_view.label_formatter")}>
+            <SelectObject
+              getKey={item => item.value}
+              getLabel={item => item.label}
+              items={formatterKeyOptions}
+              onItemSelect={item => setFormat(valProp.value, item.value)}
+              selectedItem={formatterKey}
+            />
+          </Input.Wrapper>
 
-        {downloadToolbar}
-      </SimpleGrid>
+          {downloadToolbar}
+        </SimpleGrid>
 
-      {warnings.length > 0 && <Box p="sm">
-        {warnings}
-      </Box>}
+        {warnings.length > 0 ? warnings : null}
+      </Box>
 
-      {preview}
+      <Box className={classes.colContent}>
+        {preview}
+      </Box>
     </Box>
   );
 }
@@ -305,8 +310,11 @@ function MatrixTable(props: JSONArrays & {
   const columns = useMemo(() => headers.map((header, colIndex) => ({
     accesorKey: header,
     Cell: ({row}) => colIndex > 0 && typeof row.original[colIndex] === "number" ? formatter(row.original[colIndex]) : row.original[colIndex],
-    header
-  })), [headers]);
+    header,
+    mantineTableBodyCellProps: {
+      align: colIndex > 0 ? "right" : "left"
+    }
+  }) as const), [headers]);
 
   const tableProps = useMemo(() => ({
     enableBottomToolbar: false,

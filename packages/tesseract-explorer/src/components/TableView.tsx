@@ -5,7 +5,7 @@ import React, {useMemo} from "react";
 import {useFormatter} from "../hooks/formatter";
 import {useTranslation} from "../hooks/translation";
 import {AnyResultColumn} from "../utils/structs";
-import {ViewProps} from "./ExplorerResults";
+import {ViewProps} from "../utils/types";
 
 /** */
 export function TableView<TData extends Record<string, any>>(props: {
