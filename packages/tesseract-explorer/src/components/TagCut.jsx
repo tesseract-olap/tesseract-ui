@@ -177,11 +177,10 @@ export const TagCut = props => {
             </Text>
           </Group>
           <Popover.Target>
-            <Group>
+            <Group noWrap position="right">
               <ActionIcon onClick={() => setOpened(o => !o)}>
                 {opened ? <IconArrowAutofitDown /> : <IconArrowAutofitUp />}
               </ActionIcon>
-
               <CloseButton onClick={removeHandler} />
             </Group>
           </Popover.Target>
