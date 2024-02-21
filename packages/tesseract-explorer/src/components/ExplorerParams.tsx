@@ -12,21 +12,22 @@ import {PreviewModeSwitch} from "./PreviewModeSwitch";
 import {SelectCube} from "./SelectCube";
 import {SelectLocale} from "./SelectLocale";
 
-export const ExplorerParams = (props: {
-
-  /** Defines which panel will be opened by default on the first load. */
-  defaultOpen: string;
-}) => {
+/** Defines which panel will be opened by default on the first load. */
+export const ExplorerParams = (props: {defaultOpen: string}) => {
   const {translate: t} = useTranslation();
 
   return (
-    <CollapsiblePanel id="layout-column-explorer-params" title={t("params.column_title")}>
+    <CollapsiblePanel
+      id="layout-column-explorer-params"
+      title={t("params.column_title")}
+    >
       <SelectLocale />
       <SelectCube />
 
       <Accordion
+        multiple
         chevronPosition="left"
-        defaultValue={props.defaultOpen}
+        defaultValue={[props.defaultOpen]}
         styles={theme => ({
           chevron: {
             marginRight: `calc(${theme.spacing.xs} / 2)`
