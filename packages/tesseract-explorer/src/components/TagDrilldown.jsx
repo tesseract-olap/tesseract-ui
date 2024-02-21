@@ -1,4 +1,14 @@
-import {Box, Card, CloseButton, Group, Input, Popover, Switch, Text, useMantineTheme} from "@mantine/core";
+import {
+  Box,
+  Card,
+  CloseButton,
+  Group,
+  Input,
+  Popover,
+  Switch,
+  Text,
+  useMantineTheme
+} from "@mantine/core";
 import {useMediaQuery} from "@mantine/hooks";
 import React, {memo, useMemo} from "react";
 import {useSelector} from "react-redux";
@@ -30,7 +40,7 @@ const SelectCaption = memo(SelectObject, (prev, next) => prev.selectedItem === n
  */
 
 /** @type {React.FC<OwnProps>} */
-const TagDrilldown = props => {
+export const TagDrilldown = props => {
   const {item, onRemove, onToggle, onCaptionUpdate, onPropertiesUpdate} = props;
   const {translate: t} = useTranslation();
 
@@ -55,11 +65,8 @@ const TagDrilldown = props => {
     });
   }, [activeProperties.join("-"), item, locale.code]);
 
-  const target =
-    <Card
-      padding="xs"
-      withBorder
-    >
+  const target = (
+    <Card padding="xs" withBorder>
       <Group noWrap position="apart">
         <Group noWrap spacing="xs">
           <Switch checked={item.active} onChange={() => onToggle(item)} size="xs" />
@@ -67,12 +74,15 @@ const TagDrilldown = props => {
             {label}
           </Text>
         </Group>
-        <CloseButton onClick={evt => {
-          evt.stopPropagation();
-          onRemove(item);
-        }} />
+        <CloseButton
+          onClick={evt => {
+            evt.stopPropagation();
+            onRemove(item);
+          }}
+        />
       </Group>
-    </Card>;
+    </Card>
+  );
 
   const propertyRecords = useMemo(
     () => keyBy(item.properties, item => item.key),
@@ -85,7 +95,7 @@ const TagDrilldown = props => {
 
   const captionItems = [{name: t("placeholders.unselected")}].concat(item.properties);
 
-  const content =
+  const content = (
     <Box
       miw={400}
       sx={theme => ({
@@ -110,25 +120,21 @@ const TagDrilldown = props => {
           items={propertyRecords}
           itemPredicate={(query, item) => query.test(item.name)}
           onChange={actProps => {
-            const properties = item.properties.map(
-              prop => ({...prop, active: actProps.includes(prop.key)})
-            );
+            const properties = item.properties.map(prop => ({
+              ...prop,
+              active: actProps.includes(prop.key)
+            }));
             onPropertiesUpdate(item, properties);
           }}
         />
       </Input.Wrapper>
-    </Box>;
+    </Box>
+  );
 
   return (
     <Popover position={isMediumScreen ? "bottom" : "right"} shadow="md" withArrow withinPortal>
-      <Popover.Target>
-        {target}
-      </Popover.Target>
-      <Popover.Dropdown>
-        {content}
-      </Popover.Dropdown>
+      <Popover.Target>{target}</Popover.Target>
+      <Popover.Dropdown>{content}</Popover.Dropdown>
     </Popover>
   );
 };
-
-export default TagDrilldown;
