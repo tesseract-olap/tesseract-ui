@@ -1,6 +1,28 @@
-import {ActionIcon, Alert, Box, Button, Card, CloseButton, Group, HoverCard, Input, Loader, Popover, Stack, Switch, Text, ThemeIcon, useMantineTheme} from "@mantine/core";
+import {
+  ActionIcon,
+  Alert,
+  Box,
+  Button,
+  Card,
+  CloseButton,
+  Group,
+  HoverCard,
+  Input,
+  Loader,
+  Popover,
+  Stack,
+  Switch,
+  Text,
+  ThemeIcon,
+  useMantineTheme
+} from "@mantine/core";
 import {useMediaQuery} from "@mantine/hooks";
-import {IconAlertTriangle, IconRefresh} from "@tabler/icons-react";
+import {
+  IconAlertTriangle,
+  IconRefresh,
+  IconArrowAutofitUp,
+  IconArrowAutofitDown
+} from "@tabler/icons-react";
 import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useSettings} from "../hooks/settings";
@@ -27,7 +49,7 @@ export const MembersTransferInput = TransferInput;
 export const TagCut = props => {
   const {item, onMembersUpdate, onRemove, onToggle} = props;
   const {translate: t} = useTranslation();
-
+  const [opened, setOpened] = useState(false);
   const {actions, defaultMembersFilter} = useSettings();
 
   const locale = useSelector(selectLocale);
@@ -45,14 +67,18 @@ export const TagCut = props => {
     onToggle && onToggle(item);
   }, [item.active]);
 
-  const removeHandler = useCallback(evt => {
-    evt.stopPropagation();
-    onRemove && onRemove(item);
-  }, [item.key]);
+  const removeHandler = useCallback(
+    evt => {
+      evt.stopPropagation();
+      onRemove && onRemove(item);
+    },
+    [item.key]
+  );
 
   const reloadHandler = useCallback(() => {
     const activeMembers = item.members;
-    actions.willFetchMembers(item)
+    actions
+      .willFetchMembers(item)
       .then(members => {
         const memberRecords = {};
         let i = members.length;
@@ -87,16 +113,23 @@ export const TagCut = props => {
   }, [item.members.join("-"), item, locale.code]);
 
   /** @type {{label: string; method: import("./TransferInput").ItemPredicateFunction<import("../utils/structs").MemberItem>}[]} */
-  const itemPredicate = useMemo(() => [{
-    label: t("params.label_cuts_filterby_id"),
-    method: (query, item) => query.test(item.key)
-  }, {
-    label: t("params.label_cuts_filterby_name"),
-    method: (query, item) => query.test(item.name)
-  }, {
-    label: t("params.label_cuts_filterby_any"),
-    method: (query, item) => query.test(item.key) || query.test(item.name)
-  }], [locale.code]);
+  const itemPredicate = useMemo(
+    () => [
+      {
+        label: t("params.label_cuts_filterby_id"),
+        method: (query, item) => query.test(item.key)
+      },
+      {
+        label: t("params.label_cuts_filterby_name"),
+        method: (query, item) => query.test(item.name)
+      },
+      {
+        label: t("params.label_cuts_filterby_any"),
+        method: (query, item) => query.test(item.key) || query.test(item.name)
+      }
+    ],
+    [locale.code]
+  );
 
   const initialItemPredicateIndex = {id: 0, name: 1, any: 2}[defaultMembersFilter];
 
@@ -124,31 +157,36 @@ export const TagCut = props => {
 
   return (
     <Popover
+      opened={opened}
+      onChange={setOpened}
       position={isMediumScreen ? "bottom" : "right"}
       shadow="md"
       withArrow
       withinPortal
     >
-      <Popover.Target>
-        <Card
-          padding="xs"
-          withBorder
-        >
-          <Group noWrap position="apart">
-            <Group noWrap spacing="xs">
-              <Switch checked={item.active} onChange={toggleHandler} size="xs" />
-              <Text fz="sm" lineClamp={1}>
-                {t("params.tag_cuts", {
-                  abbr: label,
-                  first_member: uniqueActive ? uniqueActive.name : "",
-                  n: activeCount
-                })}
-              </Text>
-            </Group>
-            <CloseButton onClick={removeHandler} />
+      <Card padding="xs" withBorder>
+        <Group noWrap position="apart">
+          <Group noWrap spacing="xs">
+            <Switch checked={item.active} onChange={toggleHandler} size="xs" />
+            <Text fz="sm" lineClamp={1}>
+              {t("params.tag_cuts", {
+                abbr: label,
+                first_member: uniqueActive ? uniqueActive.name : "",
+                n: activeCount
+              })}
+            </Text>
           </Group>
-        </Card>
-      </Popover.Target>
+          <Popover.Target>
+            <Group>
+              <ActionIcon onClick={() => setOpened(o => !o)}>
+                {opened ? <IconArrowAutofitDown /> : <IconArrowAutofitUp />}
+              </ActionIcon>
+
+              <CloseButton onClick={removeHandler} />
+            </Group>
+          </Popover.Target>
+        </Group>
+      </Card>
       <Popover.Dropdown>
         <Box
           miw={400}
@@ -163,10 +201,12 @@ export const TagCut = props => {
             <MembersTransferInput
               activeItems={item.members}
               getLabel={item => item.name}
-              getSecondLabel={showMemberKey
-                // eslint-disable-next-line eqeqeq
-                ? item => item.key != item.name ? item.key : undefined
-                : undefined}
+              getSecondLabel={
+                showMemberKey
+                  ? // eslint-disable-next-line eqeqeq
+                    item => (item.key != item.name ? item.key : undefined)
+                  : undefined
+              }
               initialItemPredicateIndex={initialItemPredicateIndex}
               itemPredicate={itemPredicate}
               items={members}
@@ -187,11 +227,8 @@ export const MemoTagCut = memo(TagCut);
  *  onRemove: () => void,
  * }>}
  */
-const TagCutLoading = props =>
-  <Card
-    padding="xs"
-    withBorder
-  >
+const TagCutLoading = props => (
+  <Card padding="xs" withBorder>
     <Group noWrap position="apart">
       <Group noWrap spacing="xs">
         <Loader size="sm" />
@@ -201,7 +238,8 @@ const TagCutLoading = props =>
       </Group>
       <CloseButton onClick={props.onRemove} />
     </Group>
-  </Card>;
+  </Card>
+);
 
 /**
  * @type {React.FC<{
@@ -216,23 +254,16 @@ const TagCutError = props => {
   const {translate: t} = useTranslation();
 
   return (
-    <HoverCard
-      position="right"
-      shadow="md"
-      withArrow
-      withinPortal
-    >
+    <HoverCard position="right" shadow="md" withArrow withinPortal>
       <HoverCard.Target>
-        <Card
-          padding="xs"
-          withBorder
-        >
+        <Card padding="xs" withBorder>
           <Group noWrap position="apart">
             <Group noWrap spacing="xs">
               <ThemeIcon
                 color="yellow"
                 // @ts-ignore
-                variant="subtle">
+                variant="subtle"
+              >
                 <IconAlertTriangle />
               </ThemeIcon>
               <Text fz="sm" lineClamp={1}>
