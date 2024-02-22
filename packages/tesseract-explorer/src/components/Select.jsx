@@ -1,5 +1,7 @@
-import {Select} from "@mantine/core";
-import React, {useMemo} from "react";
+/* eslint-disable quotes */
+/* eslint-disable quote-props */
+import {Select, Highlight} from "@mantine/core";
+import React, {useMemo, useRef} from "react";
 import {keyBy} from "../utils/transform";
 
 /**
@@ -18,18 +20,27 @@ import {keyBy} from "../utils/transform";
 export const SelectPrimitive = props => {
   if (props.hidden) return null;
 
+  const ref = useRef(null);
+  console.log(ref.current, "current");
   return (
     <Select
+      ref={ref}
       data={props.items}
       disabled={props.loading || props.disabled}
       label={props.label}
       onChange={props.onItemSelect}
       searchable={props.searchable ?? props.items.length > 6}
       value={props.selectedItem}
+      data-highlight={"Nacional"}
+      styles={theme => ({
+        input: {
+          "&:focus": {color: "highlight"}
+        },
+        '& [data-highlight="Nacional"]': {backgroundColor: theme.colors.grape[4]}
+      })}
     />
   );
-}
-  ;
+};
 
 SelectPrimitive.defaultProps = {
   disabled: false,
@@ -58,7 +69,6 @@ SelectPrimitive.defaultProps = {
  * @type {React.FC<SelectObjectProps<any>>}
  */
 export const SelectObject = props => {
-
   const [itemList, itemMap] = useMemo(() => {
     const getKey = props.getKey || props.getLabel;
     const list = props.items.map(item => ({
