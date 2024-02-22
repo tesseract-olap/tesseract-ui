@@ -204,9 +204,8 @@ export const TagCut = props => {
               activeItems={item.members}
               getLabel={item => item.name}
               getSecondLabel={
-                showMemberKey
-                  ? // eslint-disable-next-line eqeqeq
-                    item => (item.key != item.name ? item.key : undefined)
+                showMemberKey // eslint-disable-next-line eqeqeq
+                  ? item => (item.key != item.name ? item.key : undefined)
                   : undefined
               }
               initialItemPredicateIndex={initialItemPredicateIndex}
