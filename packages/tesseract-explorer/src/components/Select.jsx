@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 /* eslint-disable quote-props */
-import {Select, Highlight} from "@mantine/core";
-import React, {useMemo, useRef} from "react";
+import {Select} from "@mantine/core";
+import React, {useMemo} from "react";
 import {keyBy} from "../utils/transform";
 
 /**
@@ -20,8 +20,6 @@ import {keyBy} from "../utils/transform";
 export const SelectPrimitive = props => {
   if (props.hidden) return null;
 
-  const ref = useRef(null);
-  console.log(ref.current, "current");
   return (
     <Select
       ref={ref}
