@@ -32,9 +32,8 @@ export const SelectPrimitive = props => {
       data-highlight={"Nacional"}
       styles={theme => ({
         input: {
-          "&:focus": {color: "highlight"}
-        },
-        '& [data-highlight="Nacional"]': {backgroundColor: theme.colors.grape[4]}
+          "&:focus": {color: theme.colors.highlight}
+        }
       })}
     />
   );
