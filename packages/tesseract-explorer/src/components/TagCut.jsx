@@ -20,8 +20,8 @@ import {useMediaQuery} from "@mantine/hooks";
 import {
   IconAlertTriangle,
   IconRefresh,
-  IconArrowAutofitUp,
-  IconArrowAutofitDown
+  IconWindowMaximize,
+  IconWindowMinimize
 } from "@tabler/icons-react";
 import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
@@ -177,9 +177,12 @@ export const TagCut = props => {
             </Text>
           </Group>
           <Popover.Target>
-            <Group noWrap position="right">
-              <ActionIcon onClick={() => setOpened(o => !o)}>
-                {opened ? <IconArrowAutofitDown /> : <IconArrowAutofitUp />}
+            <Group noWrap position="right" spacing="xs">
+              <ActionIcon
+                variant={opened ? "filled" : undefined}
+                onClick={() => setOpened(o => !o)}
+              >
+                {opened ? <IconWindowMinimize /> : <IconWindowMaximize />}
               </ActionIcon>
               <CloseButton onClick={removeHandler} />
             </Group>
