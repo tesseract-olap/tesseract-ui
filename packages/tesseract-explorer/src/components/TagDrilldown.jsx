@@ -1,6 +1,17 @@
-import {Box, Card, CloseButton, Group, Input, Popover, Switch, Text, useMantineTheme} from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Card,
+  CloseButton,
+  Group,
+  Input,
+  Popover,
+  Switch,
+  useMantineTheme
+} from "@mantine/core";
 import {useMediaQuery} from "@mantine/hooks";
-import React, {memo, useMemo} from "react";
+import {IconWindowMaximize, IconWindowMinimize} from "@tabler/icons-react";
+import React, {memo, useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
@@ -13,8 +24,7 @@ import {isActiveItem} from "../utils/validation";
 import {SelectObject} from "./Select";
 import {TransferInput} from "./TransferInput";
 
-/** @type {React.FC<import("./TransferInput").OwnProps<TessExpl.Struct.PropertyItem>>} */
-// @ts-ignore
+/** @type {typeof import("./TransferInput").TransferInput<import("../utils/structs").PropertyItem>} */
 export const PropertiesTransferInput = TransferInput;
 
 /** @type {React.FC<import("./Select").SelectObjectProps<{name: string, level?: string}>>} */
@@ -22,22 +32,29 @@ const SelectCaption = memo(SelectObject, (prev, next) => prev.selectedItem === n
 
 /**
  * @typedef OwnProps
- * @property {TessExpl.Struct.DrilldownItem} item
- * @property {(item: TessExpl.Struct.DrilldownItem) => void} onRemove
- * @property {(item: TessExpl.Struct.DrilldownItem) => void} onToggle
- * @property {(item: TessExpl.Struct.DrilldownItem, caption: string) => void} onCaptionUpdate
- * @property {(item: TessExpl.Struct.DrilldownItem, props: TessExpl.Struct.PropertyItem[]) => void} onPropertiesUpdate
+ * @property {import("../utils/structs").DrilldownItem} item
+ * @property {(item: import("../utils/structs").DrilldownItem) => void} onRemove
+ * @property {(item: import("../utils/structs").DrilldownItem) => void} onToggle
+ * @property {(item: import("../utils/structs").DrilldownItem, caption: string) => void} onCaptionUpdate
+ * @property {(item: import("../utils/structs").DrilldownItem, props: import("../utils/structs").PropertyItem[]) => void} onPropertiesUpdate
  */
 
 /** @type {React.FC<OwnProps>} */
-const TagDrilldown = props => {
+export const TagDrilldown = props => {
   const {item, onRemove, onToggle, onCaptionUpdate, onPropertiesUpdate} = props;
   const {translate: t} = useTranslation();
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const locale = useSelector(selectLocale);
   const levelTriadMap = useSelector(selectLevelTriadMap);
   const theme = useMantineTheme();
   const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`);
+
+  const propertyRecords = useMemo(
+    () => keyBy(item.properties, item => item.key),
+    [item.properties]
+  );
 
   const activeProperties = filterMap(item.properties, item =>
     isActiveItem(item) ? item.key : null
@@ -55,28 +72,37 @@ const TagDrilldown = props => {
     });
   }, [activeProperties.join("-"), item, locale.code]);
 
-  const target =
-    <Card
-      padding="xs"
-      withBorder
-    >
-      <Group noWrap position="apart">
-        <Group noWrap spacing="xs">
-          <Switch checked={item.active} onChange={() => onToggle(item)} size="xs" />
-          <Text fz="sm" lineClamp={1}>
-            {label}
-          </Text>
-        </Group>
-        <CloseButton onClick={evt => {
-          evt.stopPropagation();
-          onRemove(item);
-        }} />
-      </Group>
-    </Card>;
+  const popoverButton = item.properties.length > 0 &&
+    <Popover.Target>
+      <ActionIcon
+        variant={isOpen ? "filled" : undefined}
+        onClick={useCallback(() => setIsOpen(value => !value), [])}
+      >
+        {isOpen ? <IconWindowMinimize /> : <IconWindowMaximize />}
+      </ActionIcon>
+    </Popover.Target>;
 
-  const propertyRecords = useMemo(
-    () => keyBy(item.properties, item => item.key),
-    [item.properties]
+  const target = (
+    <Card padding="xs" withBorder>
+      <Group noWrap position="apart">
+        <Switch
+          checked={item.active}
+          label={label}
+          onChange={() => onToggle(item)}
+          size="xs"
+          styles={{label: {fontSize: "0.875rem"}}}
+        />
+        <Group noWrap spacing="xs">
+          {popoverButton}
+          <CloseButton
+            onClick={evt => {
+              evt.stopPropagation();
+              onRemove(item);
+            }}
+          />
+        </Group>
+      </Group>
+    </Card>
   );
 
   if (item.properties.length === 0) {
@@ -85,7 +111,7 @@ const TagDrilldown = props => {
 
   const captionItems = [{name: t("placeholders.unselected")}].concat(item.properties);
 
-  const content =
+  const content = (
     <Box
       miw={400}
       sx={theme => ({
@@ -110,25 +136,28 @@ const TagDrilldown = props => {
           items={propertyRecords}
           itemPredicate={(query, item) => query.test(item.name)}
           onChange={actProps => {
-            const properties = item.properties.map(
-              prop => ({...prop, active: actProps.includes(prop.key)})
-            );
+            const properties = item.properties.map(prop => ({
+              ...prop,
+              active: actProps.includes(prop.key)
+            }));
             onPropertiesUpdate(item, properties);
           }}
         />
       </Input.Wrapper>
-    </Box>;
+    </Box>
+  );
 
   return (
-    <Popover position={isMediumScreen ? "bottom" : "right"} shadow="md" withArrow withinPortal>
-      <Popover.Target>
-        {target}
-      </Popover.Target>
-      <Popover.Dropdown>
-        {content}
-      </Popover.Dropdown>
+    <Popover
+      onChange={setIsOpen}
+      opened={isOpen}
+      position={isMediumScreen ? "bottom" : "right"}
+      shadow="md"
+      withArrow
+      withinPortal
+    >
+      {target}
+      <Popover.Dropdown>{content}</Popover.Dropdown>
     </Popover>
   );
 };
-
-export default TagDrilldown;
