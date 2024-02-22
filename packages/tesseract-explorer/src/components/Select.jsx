@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 /* eslint-disable quote-props */
-import {Select} from "@mantine/core";
 import React, {useMemo} from "react";
+import {Select} from "@mantine/core";
 import {keyBy} from "../utils/transform";
 
 /**
@@ -22,19 +22,14 @@ export const SelectPrimitive = props => {
 
   return (
     <Select
-      ref={ref}
       data={props.items}
       disabled={props.loading || props.disabled}
       label={props.label}
       onChange={props.onItemSelect}
       searchable={props.searchable ?? props.items.length > 6}
       value={props.selectedItem}
-      data-highlight={"Nacional"}
-      styles={theme => ({
-        input: {
-          "&:focus": {color: theme.colors.highlight}
-        }
-      })}
+      onFocus={event => event.target.select()}
+      onClick={event => event.target.select()}
     />
   );
 };
