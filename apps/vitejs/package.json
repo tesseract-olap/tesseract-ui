@@ -2,8 +2,6 @@
   "name": "demo-vitejs",
   "private": true,
   "scripts": {
-    "build": "vite build",
-    "preview": "vite preview --port 8080",
     "dev": "vite serve"
   },
   "dependencies": {

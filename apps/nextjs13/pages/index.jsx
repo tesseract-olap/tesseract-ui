@@ -1,13 +1,15 @@
-import { Explorer, TableView, PivotView, DebugView } from "@datawheel/tesseract-explorer";
-import Head from 'next/head';
+import {DebugView, Explorer, PivotView, TableView} from "@datawheel/tesseract-explorer";
+import Head from "next/head";
+import React from "react";
 
 const PANELS = [
   {key: "table", label: "Data Table", component: TableView},
   {key: "matrix", label: "Pivot Table", component: PivotView},
-  {key: "debug", label: "Raw response", component: DebugView},
+  {key: "debug", label: "Raw response", component: DebugView}
   // {key: "vizbuilder", label: "Vizbuilder", component: VizbuilderPanel}
 ];
 
+/** */
 export default function Home() {
   return (
     <div>
@@ -19,12 +21,12 @@ export default function Home() {
       <Explorer
         panels={PANELS}
         previewLimit={100}
-        source={process.env.TESSERACT_SOURCE}
+        source={process.env.OLAPPROXY_TARGET}
         withinMantineProvider
         withinReduxProvider
         withMultiQuery
         withPermalink
       />
     </div>
-  )
+  );
 }

@@ -9,10 +9,9 @@
     "lib": ["dom", "es2019.array", "es2019.object"],
     "moduleResolution": "node",
     "outDir": "dist",
+    "skipLibCheck": true,
     "strictNullChecks": true,
-    "target": "es2015"
+    "target": "es2018",
   },
-  "include": [
-    "./src",
-  ]
+  "include": ["./src"]
 }

@@ -2,9 +2,7 @@
   "name": "demo-nextjs13",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "dev": "next dev"
   },
   "dependencies": {
     "@datawheel/tesseract-explorer": "*",

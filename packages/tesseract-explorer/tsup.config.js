@@ -8,8 +8,9 @@ export default defineConfig(options => ({
   env: {
     BUILD_VERSION: pkg.version,
   },
-  external: ["mantine-react-table"],
-  dts: true,
+  dts: options.watch ? false : {
+    resolve: false,
+  },
   format: ["cjs", "esm"],
   outExtension({format}) {
     return {js: `.${format}.js`};

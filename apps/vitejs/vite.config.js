@@ -17,7 +17,7 @@ if (OLAPPROXY_JWTAUTH) {
 }
 
 export default defineConfig(({command, mode, ssrBuild}) => {
-  const plugins = [pluginReact()];
+  const plugins = [pluginReact({fastRefresh: false})];
 
   if (command == "build") {
     plugins.push(
@@ -43,7 +43,11 @@ export default defineConfig(({command, mode, ssrBuild}) => {
           target: target.origin,
           followRedirects: true,
           headers,
-          rewrite: (path) => path.replace(/^\/olap\//, target.pathname)
+          rewrite: (path) => {
+            const newPath = path.replace(/^\/olap\//, target.pathname);
+            console.log(target.origin, newPath);
+            return newPath;
+          }
         }
       }
     }
