@@ -1,5 +1,7 @@
-import {Select} from "@mantine/core";
+/* eslint-disable quotes */
+/* eslint-disable quote-props */
 import React, {useMemo} from "react";
+import {Select} from "@mantine/core";
 import {keyBy} from "../utils/transform";
 
 /**
@@ -26,10 +28,11 @@ export const SelectPrimitive = props => {
       onChange={props.onItemSelect}
       searchable={props.searchable ?? props.items.length > 6}
       value={props.selectedItem}
+      onFocus={event => event.target.select()}
+      onClick={event => event.target.select()}
     />
   );
-}
-  ;
+};
 
 SelectPrimitive.defaultProps = {
   disabled: false,
@@ -58,7 +61,6 @@ SelectPrimitive.defaultProps = {
  * @type {React.FC<SelectObjectProps<any>>}
  */
 export const SelectObject = props => {
-
   const [itemList, itemMap] = useMemo(() => {
     const getKey = props.getKey || props.getLabel;
     const list = props.items.map(item => ({
