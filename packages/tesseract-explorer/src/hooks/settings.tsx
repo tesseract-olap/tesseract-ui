@@ -1,21 +1,19 @@
 /* eslint-disable comma-dangle */
-import {bindActionCreators} from "@reduxjs/toolkit";
 import React, {createContext, useCallback, useContext, useMemo} from "react";
-import {ExplorerStore, actions} from "../state";
-import {ExplorerThunk} from "../state/store";
+import {type ExplorerActionMap} from "../state";
 import {Formatter} from "../utils/types";
 import {usePermalink} from "./permalink";
 
-type ExplorerActionMap = typeof actions;
-type ExplorerBoundActions = {
+// These types are needed to `.then()` over the returned value of dispatched thunks
+export type ExplorerBoundActionMap = {
   [K in keyof ExplorerActionMap]:
-    ExplorerActionMap[K] extends (...args: infer Params) => ExplorerThunk<infer R>
+    ExplorerActionMap[K] extends (...args: infer Params) => (...args) => infer R
       ? (...args: Params) => R
       : ExplorerActionMap[K];
 }
 
 interface SettingsContextProps {
-  actions: ExplorerBoundActions;
+  actions: ExplorerBoundActionMap;
   defaultMembersFilter: "id" | "name" | "any";
   formatters: Record<string, Formatter>;
   previewLimit: number;
@@ -32,22 +30,17 @@ const {Consumer: ContextConsumer, Provider: ContextProvider} = SettingsContext;
  * A wrapper for the Provider, to handle the changes and API given by the hook.
  */
 export function SettingsProvider(props: {
+  actions: ExplorerBoundActionMap;
   children?: React.ReactElement;
   defaultMembersFilter?: "id" | "name" | "any";
   formatters?: Record<string, Formatter>;
   previewLimit?: number;
-  store: ExplorerStore;
   withPermalink: boolean | undefined;
 }) {
   usePermalink(props.withPermalink);
 
-  // We need to cast this to unknown, then to ExplorerBoundActions for the
-  // thunks' return value to be correctly converted
-  const boundActions: unknown = useMemo(() =>
-    bindActionCreators(actions, props.store.dispatch), []);
-
   const value: SettingsContextProps = useMemo(() => ({
-    actions: boundActions as ExplorerBoundActions,
+    actions: props.actions,
     defaultMembersFilter: props.defaultMembersFilter || "id",
     formatters: props.formatters || {},
     previewLimit: props.previewLimit || 50,

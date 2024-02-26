@@ -1,11 +1,12 @@
 import {ServerConfig} from "@datawheel/olap-client";
 import {TranslationContextProps, TranslationProviderProps} from "@datawheel/use-translation";
 import {CSSObject, MantineProvider} from "@mantine/core";
+import {bindActionCreators} from "@reduxjs/toolkit";
 import React, {useMemo} from "react";
 import {Provider as ReduxProvider, useStore} from "react-redux";
-import {SettingsProvider} from "../hooks/settings";
+import {ExplorerBoundActionMap, SettingsProvider} from "../hooks/settings";
 import {TranslationDict, TranslationProvider} from "../hooks/translation";
-import {ExplorerStore, storeFactory} from "../state";
+import {ExplorerActionMap, ExplorerStore, actions, storeFactory} from "../state";
 import {Formatter, PanelDescriptor} from "../utils/types";
 import {DebugView} from "./DebugView";
 import {ExplorerContent} from "./ExplorerContent";
@@ -148,6 +149,9 @@ export function ExplorerComponent(props: {
 
   const store: ExplorerStore = withinReduxProvider ? useMemo(storeFactory, []) : useStore();
 
+  const boundActions = useMemo(() =>
+    bindActionCreators<ExplorerActionMap, ExplorerBoundActionMap>(actions, store.dispatch), []);
+
   useMemo(() => {
     // Keep the previewLimit value in sync with the value stored in Settings
     // TODO: There's probably a better way, but we need previewLimit in the extraArg
@@ -158,10 +162,10 @@ export function ExplorerComponent(props: {
 
   let content =
     <SettingsProvider
+      actions={boundActions}
       defaultMembersFilter={props.defaultMembersFilter}
       formatters={props.formatters}
       previewLimit={previewLimit}
-      store={store}
       withPermalink={props.withPermalink}
     >
       <TranslationProvider

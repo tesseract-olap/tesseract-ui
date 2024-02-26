@@ -9,6 +9,7 @@ export {ServerState} from "./server";
 export {ExplorerState, ExplorerStore, reducer, storeFactory, thunkExtraArg, useDispatch, useSelector} from "./store";
 export {loadingActions, queriesActions, serverActions, thunks};
 
+export type ExplorerActionMap = typeof actions;
 
 export const actions = {
   ...serverActions,
