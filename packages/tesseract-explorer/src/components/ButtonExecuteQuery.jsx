@@ -4,7 +4,7 @@ import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {selectValidQueryStatus} from "../state/queries";
+import {selectValidQueryStatus, selectCurrentQueryParams} from "../state/queries";
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
@@ -13,6 +13,8 @@ export const ButtonExecuteQuery = () => {
   const {translate: t} = useTranslation();
 
   const {isValid, error} = useSelector(selectValidQueryStatus);
+  const {cube, locale, measures} = useSelector(selectCurrentQueryParams);
+
   const errorText = error ? t(error) : "";
 
   return (
@@ -55,7 +57,13 @@ export const ButtonExecuteQuery = () => {
           color="red"
           id="button-clear-params"
           onClick={useCallback(() => {
-            actions.resetAllParams({});
+            actions.resetAllParams({
+              cube,
+              locale,
+              measures: Object.keys(measures)
+                .filter(key => measures[key].key)
+                .reduce((prev, k) => ({...prev, [k]: {...measures[k], active: false}}), {})
+            });
           }, [])}
           size="lg"
         >
