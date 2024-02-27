@@ -109,11 +109,19 @@ export function describeData(
   );
 }
 
-
 /**
  * Calculates the range of the values for a specific key in a dataset.
+ * The array needs to be sliced because the amount of acceptable arguments
+ * to the Math.max/Math.min functions is limited, and varies across browsers.
  */
 function getDomain(data: Record<string, number>[], key: string): [number, number] {
-  const values = data.map(item => item[key]);
-  return [Math.min(...values), Math.max(...values)];
+  const iterations = Math.ceil(data.length / 30000);
+  let max = -Infinity, min = Infinity;
+  for (let index = 0; index < iterations; index++) {
+    const slice = data.slice(index * 30000, (index + 1) * 30000);
+    const values = slice.map(item => item[key]);
+    min = Math.min(min, ...values);
+    max = Math.max(max, ...values);
+  }
+  return [min, max];
 }
