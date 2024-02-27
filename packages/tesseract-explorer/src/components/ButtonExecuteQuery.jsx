@@ -4,7 +4,9 @@ import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
-import {selectValidQueryStatus, selectCurrentQueryParams} from "../state/queries";
+import {selectCurrentQueryParams, selectValidQueryStatus} from "../state/queries";
+import {keyBy} from "../utils/transform";
+import { buildMeasure } from "../utils/structs";
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
@@ -57,12 +59,12 @@ export const ButtonExecuteQuery = () => {
           color="red"
           id="button-clear-params"
           onClick={useCallback(() => {
+            const resetMeasures = Object.values(measures)
+              .map(item => buildMeasure({...item, active: false}));
             actions.resetAllParams({
               cube,
               locale,
-              measures: Object.keys(measures)
-                .filter(key => measures[key].key)
-                .reduce((prev, k) => ({...prev, [k]: {...measures[k], active: false}}), {})
+              measures: keyBy(resetMeasures, "key")
             });
           }, [])}
           size="lg"
