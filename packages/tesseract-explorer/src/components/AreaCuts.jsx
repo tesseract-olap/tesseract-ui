@@ -30,19 +30,7 @@ export const AreaCuts = () => {
   }, []);
 
   const cutTags = useMemo(() => items.map(item =>
-    <TagCut
-      item={item}
-      key={item.key}
-      onMembersUpdate={members => {
-        actions.updateCut({...item, members});
-      }}
-      onRemove={() => {
-        actions.removeCut(item.key);
-      }}
-      onToggle={() => {
-        actions.updateCut({...item, active: !item.active});
-      }}
-    />
+    <TagCut key={item.key} item={item} />
   ), [items]);
 
   const toolbar =

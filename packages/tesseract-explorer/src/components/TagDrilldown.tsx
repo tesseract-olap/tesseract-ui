@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import {useMediaQuery} from "@mantine/hooks";
 import {IconWindowMaximize, IconWindowMinimize} from "@tabler/icons-react";
-import React, {memo, useCallback, useMemo, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
@@ -23,38 +23,60 @@ import {keyBy} from "../utils/transform";
 import {isActiveItem} from "../utils/validation";
 import {SelectObject} from "./Select";
 import {TransferInput} from "./TransferInput";
+import {DrilldownItem, PropertyItem, buildProperty} from "../utils/structs";
+import {useActions} from "../hooks/settings";
 
-/** @type {typeof import("./TransferInput").TransferInput<import("../utils/structs").PropertyItem>} */
-export const PropertiesTransferInput = TransferInput;
+type CaptionItem = {name: string, level?: string};
 
-/** @type {React.FC<import("./Select").SelectObjectProps<{name: string, level?: string}>>} */
-const SelectCaption = memo(SelectObject, (prev, next) => prev.selectedItem === next.selectedItem);
+const PropertiesTransferInput = TransferInput<PropertyItem>;
 
-/**
- * @typedef OwnProps
- * @property {import("../utils/structs").DrilldownItem} item
- * @property {(item: import("../utils/structs").DrilldownItem) => void} onRemove
- * @property {(item: import("../utils/structs").DrilldownItem) => void} onToggle
- * @property {(item: import("../utils/structs").DrilldownItem, caption: string) => void} onCaptionUpdate
- * @property {(item: import("../utils/structs").DrilldownItem, props: import("../utils/structs").PropertyItem[]) => void} onPropertiesUpdate
- */
+/** */
+export function TagDrilldown(props: {
+  item: DrilldownItem;
+}) {
+  const {item} = props;
 
-/** @type {React.FC<OwnProps>} */
-export const TagDrilldown = props => {
-  const {item, onRemove, onToggle, onCaptionUpdate, onPropertiesUpdate} = props;
+  const actions = useActions();
+  const theme = useMantineTheme();
   const {translate: t} = useTranslation();
+
+  const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`);
+  const levelTriadMap = useSelector(selectLevelTriadMap);
+  const locale = useSelector(selectLocale);
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const locale = useSelector(selectLocale);
-  const levelTriadMap = useSelector(selectLevelTriadMap);
-  const theme = useMantineTheme();
-  const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`);
+  const toggleHandler = useCallback(() => {
+    actions.updateDrilldown({...item, active: !item.active});
+  }, [item]);
+
+  const removeHandler = useCallback(evt => {
+    evt.stopPropagation();
+    actions.removeDrilldown(item.key);
+  }, [item.key]);
+
+  const captionUpdateHandler = useCallback((caption: CaptionItem) => {
+    const captionProperty = caption.level ? caption.name : "";
+    actions.updateDrilldown({...item, captionProperty});
+  }, [item]);
+
+  const propertiesUpdateHandler = useCallback((activeProps: string[]) => {
+    const properties = item.properties.map(prop => buildProperty({
+      ...prop,
+      active: activeProps.includes(prop.key)
+    }));
+    actions.updateDrilldown({...item, properties});
+  }, [item]);
 
   const propertyRecords = useMemo(
     () => keyBy(item.properties, item => item.key),
     [item.properties]
   );
+
+  const captionItems: CaptionItem[] = useMemo(() => [
+    {name: t("placeholders.unselected")},
+    ...item.properties
+  ], [locale.code, item.properties]);
 
   const activeProperties = filterMap(item.properties, item =>
     isActiveItem(item) ? item.key : null
@@ -82,36 +104,28 @@ export const TagDrilldown = props => {
       </ActionIcon>
     </Popover.Target>;
 
-  const target = (
+  const target =
     <Card padding="xs" withBorder>
       <Group noWrap position="apart">
         <Switch
           checked={item.active}
           label={label}
-          onChange={() => onToggle(item)}
+          onChange={toggleHandler}
           size="xs"
           styles={{label: {fontSize: "0.875rem"}}}
         />
         <Group noWrap spacing="xs">
           {popoverButton}
-          <CloseButton
-            onClick={evt => {
-              evt.stopPropagation();
-              onRemove(item);
-            }}
-          />
+          <CloseButton onClick={removeHandler} />
         </Group>
       </Group>
-    </Card>
-  );
+    </Card>;
 
   if (item.properties.length === 0) {
     return target;
   }
 
-  const captionItems = [{name: t("placeholders.unselected")}].concat(item.properties);
-
-  const content = (
+  const content =
     <Box
       miw={400}
       sx={theme => ({
@@ -121,31 +135,23 @@ export const TagDrilldown = props => {
         }
       })}
     >
-      <Input.Wrapper label={t("params.title_caption")}>
-        <SelectCaption
-          items={captionItems}
-          onItemSelect={caption => onCaptionUpdate(item, caption.level ? caption.name : "")}
-          getLabel={item => item.name}
-          selectedItem={item.captionProperty || t("placeholders.unselected")}
-        />
-      </Input.Wrapper>
+      <SelectObject
+        getValue="name"
+        items={captionItems}
+        label={t("params.title_caption")}
+        onItemSelect={captionUpdateHandler}
+        selectedItem={item.captionProperty || t("placeholders.unselected")}
+      />
       <Input.Wrapper label={t("params.title_properties")}>
         <PropertiesTransferInput
           activeItems={activeProperties}
           getLabel={item => item.name}
           items={propertyRecords}
           itemPredicate={(query, item) => query.test(item.name)}
-          onChange={actProps => {
-            const properties = item.properties.map(prop => ({
-              ...prop,
-              active: actProps.includes(prop.key)
-            }));
-            onPropertiesUpdate(item, properties);
-          }}
+          onChange={propertiesUpdateHandler}
         />
       </Input.Wrapper>
-    </Box>
-  );
+    </Box>;
 
   return (
     <Popover
@@ -160,4 +166,4 @@ export const TagDrilldown = props => {
       <Popover.Dropdown>{content}</Popover.Dropdown>
     </Popover>
   );
-};
+}

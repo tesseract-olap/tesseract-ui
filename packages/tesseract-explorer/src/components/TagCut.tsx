@@ -31,49 +31,44 @@ import {selectLocale} from "../state/queries";
 import {selectLevelTriadMap} from "../state/selectors";
 import {abbreviateFullName} from "../utils/format";
 import {getCaption} from "../utils/string";
-import {buildMember} from "../utils/structs";
-import {TransferInput} from "./TransferInput";
+import {CutItem, MemberItem, buildMember} from "../utils/structs";
+import {ItemPredicateMethod, TransferInput} from "./TransferInput";
 
-/** @type {React.FC<import("./TransferInput").OwnProps<import("../utils/structs").MemberItem>>} */
-// @ts-ignore
-export const MembersTransferInput = TransferInput;
+const MembersTransferInput = TransferInput<MemberItem>;
 
-/**
- * @type {React.FC<{
- *  item: import("../utils/structs").CutItem,
- *  onMembersUpdate?: (item: import("../utils/structs").CutItem, members: string[]) => any,
- *  onRemove?: (item: import("../utils/structs").CutItem) => any,
- *  onToggle?: (item: import("../utils/structs").CutItem) => any,
- * }>}
- */
-export const TagCut = props => {
-  const {item, onMembersUpdate, onRemove, onToggle} = props;
-  const {translate: t} = useTranslation();
-  const [opened, setOpened] = useState(false);
-  const {actions, defaultMembersFilter} = useSettings();
+/** */
+export function TagCut(props: {
+  item: CutItem;
+}) {
+  const {item} = props;
 
-  const locale = useSelector(selectLocale);
   const theme = useMantineTheme();
+  const {actions, defaultMembersFilter} = useSettings();
+  const {translate: t} = useTranslation();
+
   const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`);
-
   const levelTriadMap = useSelector(selectLevelTriadMap);
-  const triad = levelTriadMap[`${item.dimension}.${item.hierarchy}.${item.level}`];
+  const locale = useSelector(selectLocale);
 
+  const [opened, setOpened] = useState(false);
   const [error, setError] = useState("");
   const [members, setMembers] = useState(Object.create(null));
   const [isLoadingMembers, setLoadingMembers] = useState(true);
 
-  const toggleHandler = useCallback(() => {
-    onToggle && onToggle(item);
-  }, [item.active]);
+  const triad = levelTriadMap[`${item.dimension}.${item.hierarchy}.${item.level}`];
 
-  const removeHandler = useCallback(
-    evt => {
-      evt.stopPropagation();
-      onRemove && onRemove(item);
-    },
-    [item.key]
-  );
+  const toggleHandler = useCallback(() => {
+    actions.updateCut({...item, active: !item.active});
+  }, [item]);
+
+  const removeHandler = useCallback(evt => {
+    evt.stopPropagation();
+    actions.removeCut(item.key);
+  }, [item.key]);
+
+  const membersUpdateHandler = useCallback((members: string[]) => {
+    actions.updateCut({...item, members});
+  }, [item]);
 
   const reloadHandler = useCallback(() => {
     const activeMembers = item.members;
@@ -112,24 +107,20 @@ export const TagCut = props => {
     });
   }, [item.members.join("-"), item, locale.code]);
 
-  /** @type {{label: string; method: import("./TransferInput").ItemPredicateFunction<import("../utils/structs").MemberItem>}[]} */
-  const itemPredicate = useMemo(
-    () => [
-      {
-        label: t("params.label_cuts_filterby_id"),
-        method: (query, item) => query.test(item.key)
-      },
-      {
-        label: t("params.label_cuts_filterby_name"),
-        method: (query, item) => query.test(item.name)
-      },
-      {
-        label: t("params.label_cuts_filterby_any"),
-        method: (query, item) => query.test(item.key) || query.test(item.name)
-      }
-    ],
-    [locale.code]
-  );
+  const itemPredicate = useMemo((): ItemPredicateMethod<MemberItem>[] => [
+    {
+      label: t("params.label_cuts_filterby_id"),
+      method: (query, item) => query.test(item.key)
+    },
+    {
+      label: t("params.label_cuts_filterby_name"),
+      method: (query, item) => query.test(item.name)
+    },
+    {
+      label: t("params.label_cuts_filterby_any"),
+      method: (query, item) => query.test(item.key) || query.test(item.name)
+    }
+  ], [locale.code]);
 
   const initialItemPredicateIndex = {id: 0, name: 1, any: 2}[defaultMembersFilter];
 
@@ -205,53 +196,51 @@ export const TagCut = props => {
               getLabel={item => item.name}
               getSecondLabel={
                 showMemberKey // eslint-disable-next-line eqeqeq
-                  ? item => (item.key != item.name ? item.key : undefined)
+                  ? item => item.key != item.name ? item.key : undefined
                   : undefined
               }
               initialItemPredicateIndex={initialItemPredicateIndex}
               itemPredicate={itemPredicate}
               items={members}
-              onChange={members => onMembersUpdate && onMembersUpdate(item, members)}
+              onChange={membersUpdateHandler}
             />
           </Input.Wrapper>
         </Box>
       </Popover.Dropdown>
     </Popover>
   );
-};
+}
 
 export const MemoTagCut = memo(TagCut);
 
-/**
- * @type {React.FC<{
- *  children: string,
- *  onRemove: () => void,
- * }>}
- */
-const TagCutLoading = props => (
-  <Card padding="xs" withBorder>
-    <Group noWrap position="apart">
-      <Group noWrap spacing="xs">
-        <Loader size="sm" />
-        <Text fz="sm" lineClamp={1}>
-          {props.children}
-        </Text>
+/** */
+function TagCutLoading(props: {
+  children: string;
+  onRemove: React.MouseEventHandler<HTMLButtonElement>;
+}) {
+  return (
+    <Card padding="xs" withBorder>
+      <Group noWrap position="apart">
+        <Group noWrap spacing="xs">
+          <Loader size="sm" />
+          <Text fz="sm" lineClamp={1}>
+            {props.children}
+          </Text>
+        </Group>
+        <CloseButton onClick={props.onRemove} />
       </Group>
-      <CloseButton onClick={props.onRemove} />
-    </Group>
-  </Card>
-);
+    </Card>
+  );
+}
 
-/**
- * @type {React.FC<{
- *  children: string,
- *  item: import("../utils/structs").CutItem,
- *  error: string,
- *  onReload: () => void,
- *  onRemove: () => void,
- * }>}
- */
-const TagCutError = props => {
+/** */
+function TagCutError(props: {
+  children: string;
+  error: string;
+  item: CutItem;
+  onReload?: React.MouseEventHandler<HTMLButtonElement>;
+  onRemove?: React.MouseEventHandler<HTMLButtonElement>;
+}) {
   const {translate: t} = useTranslation();
 
   return (
@@ -297,4 +286,4 @@ const TagCutError = props => {
       </HoverCard.Dropdown>
     </HoverCard>
   );
-};
+}

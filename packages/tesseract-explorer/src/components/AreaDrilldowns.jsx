@@ -42,22 +42,7 @@ export const AreaDrilldowns = () => {
   }, [dimensions]);
 
   const drilldownTags = useMemo(() => items.map(item =>
-    <TagDrilldown
-      key={item.key}
-      item={item}
-      onRemove={() => {
-        actions.removeDrilldown(item.key);
-      }}
-      onToggle={() => {
-        actions.updateDrilldown({...item, active: !item.active});
-      }}
-      onCaptionUpdate={captionProperty => {
-        actions.updateDrilldown({...item, captionProperty});
-      }}
-      onPropertiesUpdate={properties => {
-        actions.updateDrilldown({...item, properties});
-      }}
-    />
+    <TagDrilldown key={item.key} item={item} />
   ), [items]);
 
   const toolbar =

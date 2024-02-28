@@ -7,8 +7,10 @@ import {hasOwnProperty} from "../utils/object";
 import {QueryParamsItem} from "../utils/structs";
 import {keyBy, safeRegExp} from "../utils/transform";
 
-type ItemPredicateFunction<T extends QueryParamsItem> =
+export type ItemPredicateFunction<T extends QueryParamsItem> =
   (query: RegExp, item: T, index: number) => boolean;
+export type ItemPredicateMethod<T extends QueryParamsItem> =
+  {label: string; method: ItemPredicateFunction<T>}
 
 /** */
 export function TransferInput<T extends QueryParamsItem>(props: {
