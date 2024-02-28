@@ -1,11 +1,29 @@
 /**
+ * @template T
+ * @param {T} item
+ */
+export function identity(item) {
+  return `${item}`;
+}
+
+/**
+ * @template T, U
+ * @param {keyof T | ((item: T) => U)} accesor
+ * @returns {(item: T) => U}
+ */
+export function accesorFactory(accesor) {
+  // @ts-ignore
+  return typeof accesor === "function" ? accesor : i => i[accesor];
+}
+
+/**
  * Converts an array of tidy data into a pivotted table.
  * Outputs a CSV-like string.
  * @param {any[]} data
  * @param {string} cName Property on the columns side
  * @param {string} rName Property on the rows side
  * @param {string} vName Property with the value
- * @param {TessExpl.Formatter | undefined} formatter A formatter function for the values
+ * @param {import("./types").Formatter | undefined} formatter A formatter function for the values
  * @param {string} [colJoint=","] Joint character for the columns
  * @param {string} [rowJoint="\n"] Joint character for the columns
  */
@@ -253,6 +271,6 @@ export function stringifyName(ref) {
  * @returns {number}
  */
 export function sumBy(data, accesor) {
-  const accesorFn = typeof accesor === "function" ? accesor : i => i[accesor];
+  const accesorFn = accesorFactory(accesor);
   return data.reduce((sum, i) => sum + accesorFn(i), 0);
 }

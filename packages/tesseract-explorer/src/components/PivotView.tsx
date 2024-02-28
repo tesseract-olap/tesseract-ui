@@ -1,6 +1,6 @@
 import {Alert, Box, Button, Input, Loader, SimpleGrid, createStyles} from "@mantine/core";
 import {IconAlertCircle, IconAlertTriangle} from "@tabler/icons-react";
-import {MantineReactTable, useMantineReactTable, MRT_TableOptions as TableOptions} from "mantine-react-table";
+import {MantineReactTable, MRT_TableOptions as TableOptions, useMantineReactTable} from "mantine-react-table";
 import React, {useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useFormatParams, usePivottedData} from "../hooks/pivot";
@@ -8,11 +8,17 @@ import {useTranslation} from "../hooks/translation";
 import {selectOlapMeasureMap} from "../state/selectors";
 import {filterMap} from "../utils/array";
 import {getCaption} from "../utils/string";
+import {keyBy} from "../utils/transform";
 import {Formatter, JSONArrays, ViewProps} from "../utils/types";
 import {isActiveItem} from "../utils/validation";
 import {ButtonDownload} from "./ButtonDownload";
 import {NonIdealState} from "./NonIdealState";
 import {SelectObject} from "./Select";
+
+type DrilldownType = "geo" | "std" | "time" | "prop";
+type VoidFunction = (...args) => void;
+
+const SelectOption = SelectObject<{label: string; value: string; type: string}>;
 
 const useStyles = createStyles(theme => ({
   container: {
@@ -76,10 +82,8 @@ export function PivotView<TData extends Record<string, any>>(props: {
       const entity = levelMap[item.dimension][item.hierarchy][item.level];
       const caption = getCaption(entity, locale);
 
-      const type = dimensionMap[item.dimension].dimensionType.toString();
-      const propertyMap = Object.fromEntries(
-        entity.properties.map(prop => [prop.name, prop])
-      );
+      const type = `${dimensionMap[item.dimension].dimensionType}` as DrilldownType;
+      const propertyMap = keyBy(entity.properties, "name");
 
       const levelOptions = [{value: item.level, label: caption, type}];
       if (`${item.level} ID` in result.data[0]) {
@@ -240,52 +244,46 @@ export function PivotView<TData extends Record<string, any>>(props: {
             {minWidth: "md", cols: 1}
           ]}
         >
-          <Input.Wrapper
+          <SelectOption
+            getLabel="label"
+            getValue="value"
+            items={drilldownOptions}
+            onItemSelect={setColumnProp as VoidFunction}
+            selectedItem={colProp.value}
             label={colProp.type === "prop"
               ? t("pivot_view.label_ddcolumnprop")
               : t("pivot_view.label_ddcolumn")
             }
-          >
-            <SelectObject
-              getLabel={item => item.label}
-              items={drilldownOptions}
-              onItemSelect={setColumnProp}
-              selectedItem={colProp.value}
-            />
-          </Input.Wrapper>
+          />
 
-          <Input.Wrapper
+          <SelectOption
+            getLabel="label"
+            getValue="value"
+            items={drilldownOptions}
+            onItemSelect={setRowProp as VoidFunction}
+            selectedItem={rowProp.value}
             label={rowProp.type === "prop"
               ? t("pivot_view.label_ddrowprop")
-              : t("pivot_view.label_ddrow")
-            }
-          >
-            <SelectObject
-              getLabel={item => item.label}
-              items={drilldownOptions}
-              onItemSelect={setRowProp}
-              selectedItem={rowProp.value}
-            />
-          </Input.Wrapper>
+              : t("pivot_view.label_ddrow")}
+          />
 
-          <Input.Wrapper label={t("pivot_view.label_valmeasure")}>
-            <SelectObject
-              getLabel={item => item.label}
-              items={measureOptions}
-              onItemSelect={setValueProp}
-              selectedItem={valProp.value}
-            />
-          </Input.Wrapper>
+          <SelectOption
+            getLabel="label"
+            getValue="value"
+            items={measureOptions}
+            label={t("pivot_view.label_valmeasure")}
+            onItemSelect={setValueProp as VoidFunction}
+            selectedItem={valProp.value}
+          />
 
-          <Input.Wrapper label={t("pivot_view.label_formatter")}>
-            <SelectObject
-              getKey={item => item.value}
-              getLabel={item => item.label}
-              items={formatterKeyOptions}
-              onItemSelect={item => setFormat(valProp.value, item.value)}
-              selectedItem={formatterKey}
-            />
-          </Input.Wrapper>
+          <SelectObject
+            getLabel="label"
+            getValue="value"
+            items={formatterKeyOptions}
+            label={t("pivot_view.label_formatter")}
+            onItemSelect={item => setFormat(valProp.value, item.value)}
+            selectedItem={formatterKey}
+          />
 
           {downloadToolbar}
         </SimpleGrid>

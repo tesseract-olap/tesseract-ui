@@ -1,19 +1,18 @@
+import {PlainMeasure} from "@datawheel/olap-client";
 import {Group, Input} from "@mantine/core";
-import React, {memo, useCallback, useMemo} from "react";
+import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
-import {SelectObject} from "../components/Select";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectSortingParams} from "../state/queries";
-import {shallowEqualForProps} from "../utils/validation";
+import {SelectObject} from "./Select";
 import {MemoSelectMeasure as SelectMeasure} from "./SelectMeasure";
 
-/** @type {React.FC<import("../components/Select").SelectObjectProps<{value: string, label: string}>>} */
-const SelectDirection = memo(SelectObject, shallowEqualForProps("items", "selectedItem"));
+type DirectionOptions = {label: string, value: "asc" | "desc"};
 
-export const SortingInput = () => {
+/** */
+export function SortingInput() {
   const actions = useActions();
-
   const {locale, translate: t} = useTranslation();
 
   const {sortDir, sortKey} = useSelector(selectSortingParams);
@@ -23,20 +22,18 @@ export const SortingInput = () => {
       asc: t("direction.ASC"),
       desc: t("direction.DESC")
     };
-    const options = [
+    const options: DirectionOptions[] = [
       {value: "asc", label: directions.asc},
       {value: "desc", label: directions.desc}
     ];
     return {directions, options};
   }, [locale]);
 
-  /** @type {(item: import("@datawheel/olap-client").PlainMeasure) => void} */
-  const measureChangeHandler = useCallback(measure => {
+  const measureChangeHandler = useCallback((measure: PlainMeasure) => {
     actions.updateSorting({key: measure.name, dir: sortDir});
   }, []);
 
-  /** @type {(item: {label: string; value: "asc" | "desc"}) => void} */
-  const directionChangeHandler = useCallback(direction => {
+  const directionChangeHandler = useCallback((direction: DirectionOptions) => {
     actions.updateSorting({key: sortKey, dir: direction.value});
   }, []);
 
@@ -48,9 +45,9 @@ export const SortingInput = () => {
           selectedItem={sortKey}
           onItemSelect={measureChangeHandler}
         />
-        <SelectDirection
-          getKey={item => item.value}
-          getLabel={item => item.label}
+        <SelectObject
+          getValue="value"
+          getLabel="label"
           items={sort.options}
           onItemSelect={directionChangeHandler}
           selectedItem={sortDir}
@@ -59,4 +56,4 @@ export const SortingInput = () => {
       </Group>
     </Input.Wrapper>
   );
-};
+}

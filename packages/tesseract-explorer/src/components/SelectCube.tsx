@@ -1,6 +1,6 @@
 import {type PlainCube} from "@datawheel/olap-client";
 import {Anchor, Stack, Text, TextProps} from "@mantine/core";
-import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
@@ -9,15 +9,11 @@ import {selectOlapCube} from "../state/selectors";
 import {selectOlapCubeItems} from "../state/server";
 import {getAnnotation, getCaption} from "../utils/string";
 import {groupBy} from "../utils/transform";
-import {shallowEqualForProps} from "../utils/validation";
-import {SelectWithButtons, type OwnProps} from "./SelectWithButtons";
 import {Annotated} from "../utils/types";
+import {SelectWithButtons} from "./Select";
 
-const SelectLevel: React.NamedExoticComponent<OwnProps<string>> =
-  memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
-
-const SelectPlainCube: React.NamedExoticComponent<OwnProps<PlainCube>> =
-  memo(SelectWithButtons, shallowEqualForProps("items", "selectedItem"));
+const SelectLevel = SelectWithButtons<string>;
+const SelectPlainCube = SelectWithButtons<PlainCube>;
 
 /** */
 export function SelectCube() {
@@ -121,9 +117,10 @@ function SelectCubeInternal(props: {
         onItemSelect={setLevel3}
         selectedItem={level3}
       />
-      {selectedItem && <SelectPlainCube
-        getLabel={item => getCaption(item, locale)}
+      {<SelectPlainCube
         hidden={cubeItems.length < 2}
+        getLabel={item => getCaption(item, locale)}
+        getValue="name"
         items={cubeItems}
         label={t("params.label_cube")}
         onItemSelect={onItemSelect}
