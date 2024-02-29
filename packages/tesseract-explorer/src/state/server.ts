@@ -1,6 +1,5 @@
 import {Format, PlainCube, TesseractDataSource} from "@datawheel/olap-client";
 import {createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import ISO6391 from "iso-639-1";
 import type {ExplorerState} from "./store";
 import {getKeys, getValues} from "../utils/object";
 
@@ -91,10 +90,3 @@ export const selectOlapCubeMap = createSelector(
 );
 export const selectOlapCubeKeys = createSelector(selectOlapCubeMap, getKeys);
 export const selectOlapCubeItems = createSelector(selectOlapCubeMap, getValues);
-
-export const selectLocaleOptions = createSelector(selectServerState, server =>
-  ISO6391.getLanguages(server.localeOptions).map(locale => ({
-    label: locale.nativeName,
-    value: locale.code
-  }))
-);

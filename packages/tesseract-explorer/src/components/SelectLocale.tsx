@@ -1,11 +1,11 @@
 import {Box, Input} from "@mantine/core";
-import {LanguageCode} from "iso-639-1";
-import React, {useCallback} from "react";
+import ISO6391, {LanguageCode} from "iso-639-1";
+import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
-import {selectLocaleOptions} from "../state/server";
+import {selectServerState} from "../state/server";
 import {SelectObject} from "./Select";
 
 type LocaleOptions = {label: string, value: LanguageCode};
@@ -14,10 +14,23 @@ type LocaleOptions = {label: string, value: LanguageCode};
 export function SelectLocale() {
   const actions = useActions();
 
-  const {translate: t} = useTranslation();
+  const {translate: t, locale} = useTranslation();
 
   const {code: currentCode} = useSelector(selectLocale);
-  const localeOptions = useSelector(selectLocaleOptions);
+  const {localeOptions} = useSelector(selectServerState);
+
+  const options: LocaleOptions[] = useMemo(() => {
+    const languages = ISO6391.getLanguages(localeOptions);
+    return languages.map(lang => ({
+      label: t("params.label_localeoption", {
+        code: lang.code,
+        engName: lang.name,
+        nativeName: lang.nativeName,
+        customName: t(`params.label_localecustom_${lang.code}`)
+      }) || lang.nativeName,
+      value: lang.code
+    }));
+  }, [locale, localeOptions]);
 
   const localeChangeHandler = useCallback((locale: LocaleOptions) => {
     actions.updateLocale(locale.value);
@@ -33,7 +46,7 @@ export function SelectLocale() {
         <SelectObject
           getLabel="label"
           getValue="value"
-          items={localeOptions}
+          items={options}
           onItemSelect={localeChangeHandler}
           selectedItem={currentCode}
         />
