@@ -3,6 +3,7 @@ import {translationFactory} from "@datawheel/use-translation";
 
 export const defaultTranslation = {
   action_copy: "Copy",
+  action_copy_done: "Copied",
   action_download: "Download",
   action_open: "Open",
   action_reload: "Reload",
