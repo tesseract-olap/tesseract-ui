@@ -20,10 +20,8 @@ export function SelectLocale() {
   const localeOptions = useSelector(selectLocaleOptions);
 
   const localeChangeHandler = useCallback((locale: LocaleOptions) => {
-    if (currentCode !== locale.value) {
-      actions.updateLocale(locale.value);
-    }
-  }, [currentCode]);
+    actions.updateLocale(locale.value);
+  }, []);
 
   if (localeOptions.length < 2) {
     return null;
