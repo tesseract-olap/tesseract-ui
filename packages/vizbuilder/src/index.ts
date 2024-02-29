@@ -1,2 +1,9 @@
-import "./style.css";
-export {VizbuilderView, VizbuilderView as default} from "./VizbuilderView";
+import {Translation} from "@datawheel/vizbuilder";
+
+export {createVizbuilderView} from "./components/VizbuilderView";
+
+declare module "@datawheel/tesseract-explorer" {
+  interface TranslationDict {
+    vizbuilder: Translation;
+  }
+}
