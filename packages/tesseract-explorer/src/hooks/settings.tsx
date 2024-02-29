@@ -37,7 +37,7 @@ export function SettingsProvider(props: {
   previewLimit?: number;
   withPermalink: boolean | undefined;
 }) {
-  usePermalink(props.withPermalink);
+  usePermalink(props.withPermalink, {onChange: props.actions.resetAllParams});
 
   const value: SettingsContextProps = useMemo(() => ({
     actions: props.actions,

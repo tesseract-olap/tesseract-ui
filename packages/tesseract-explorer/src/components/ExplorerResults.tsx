@@ -9,7 +9,6 @@ import {selectCurrentQueryItem, selectIsPreviewMode} from "../state/queries";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server";
 import {QueryParams, QueryResult} from "../utils/structs";
-import {keyBy} from "../utils/transform";
 import {PanelDescriptor} from "../utils/types";
 import {PreviewModeSwitch} from "./PreviewModeSwitch";
 
@@ -168,12 +167,15 @@ function SuccessResult(props: {
 
   const {previewLimit, actions} = useSettings();
 
-  const currentTab = useSelector(selectCurrentQueryItem).panel || panels[0].key;
+  const queryItem = useSelector(selectCurrentQueryItem);
   const isPreviewMode = useSelector(selectIsPreviewMode);
 
-  const panelMap = useMemo(() => keyBy(panels, "key"), [panels]);
-
-  const {key: currentKey, component: CurrentComponent} = panelMap[currentTab];
+  const [CurrentComponent, panelKey, panelMeta] = useMemo(() => {
+    const currentPanel = queryItem.panel || `${panels[0].key}-`;
+    const [panelKey, ...panelMeta] = currentPanel.split("-");
+    const panel = panels.find(item => item.key === panelKey) || panels[0];
+    return [panel.component, panel.key, panelMeta.join("-")];
+  }, [panels, queryItem.panel]);
 
   const tabHandler = useCallback((newTab: TabsValue) => {
     actions.switchPanel(newTab);
@@ -186,7 +188,7 @@ function SuccessResult(props: {
       radius={0}
       withBorder
     >
-      <Tabs id="query-results-tabs" onTabChange={tabHandler} value={currentKey}>
+      <Tabs id="query-results-tabs" onTabChange={tabHandler} value={panelKey}>
         <Tabs.List>
           {panels.map(panel =>
             <Tabs.Tab key={panel.key} id={panel.key} value={panel.key}>
@@ -212,7 +214,12 @@ function SuccessResult(props: {
 
       <Box id="query-results-content" sx={{flex: "1 1"}} h={{base: "auto", md: 0}}>
         <Suspense fallback={props.children}>
-          <CurrentComponent panelKey={currentKey} cube={cube} params={params} result={result} />
+          <CurrentComponent
+            cube={cube}
+            panelKey={`${panelKey}-${panelMeta}`}
+            params={params}
+            result={result}
+          />
         </Suspense>
       </Box>
     </Paper>
