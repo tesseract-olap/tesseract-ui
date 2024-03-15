@@ -157,7 +157,7 @@ function PageComponent(props) {
 }
 ```
 
-* `translations` must be an object where the keys are the locale codes you intend to make available in the app, and the values are dictionaries that complies with the labels [defined in this file](./src/utils/localization.js).
+* `translations` must be an object where the keys are the locale codes you intend to make available in the app, and the values are dictionaries that complies with the labels [defined in this file](./src/hooks/translation.ts).
   This object is also exported by this package so you can check it yourself.
 * `uiLocale`, which is not related to the `locale` property mentioned in the earlier section, must be a string matching one of the keys defined in the `translations` property.
 
