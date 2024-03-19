@@ -93,13 +93,14 @@ export function willExecuteQuery(): ExplorerThunk<Promise<void>> {
             url: query.toString(endpoint)
           }));
         }, error => {
+          const getErrorMessage = (root: any = {}) => `${root.message || root.detail || root}`;
           dispatch(queriesActions.updateResult({
             data: [],
             types: {},
             error: {
               status: error.response?.status || 500,
               statusText: error.response?.statusText || "Unknown error",
-              response: error.response?.data || {}
+              response: getErrorMessage(error.response?.data)
             },
             status: error.response?.status || 500,
             url: query.toString(endpoint)

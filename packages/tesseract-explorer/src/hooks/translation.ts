@@ -148,8 +148,8 @@ export const defaultTranslation = {
   },
   results: {
     error_execquery_title: "There was a problem with the last query",
-    error_execquery_code401: "You don't have authorization to execute this query.",
-    error_execquery_default: "The backend server had an unexpected issue.\nPlease contact us if you require the data urgently.\nCode {{status}}: {{statusText}}\n{{response.detail}}",
+    error_execquery_code401: "You don't have authorization to execute this query.\n{{response}}",
+    error_execquery_default: "The backend server had an unexpected issue.\nPlease contact us if you require the data urgently.\n{{response}}\nCode {{status}}: {{statusText}}",
     error_disconnected_title: "You are not connected to the internet.",
     error_serveroffline_title: "There's a problem contacting with the server",
     error_serveroffline_detail: "Check the availability of the URL ",
