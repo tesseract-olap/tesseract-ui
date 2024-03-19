@@ -67,6 +67,21 @@ export function ExplorerResults(props: {
     );
   }
 
+  // Check if there was an error in the last query
+  if (error) {
+    const description = t(`results.error_execquery_code${error.status}`, error);
+    return (
+      <FailureResult
+        className={cx(classes.container, props.className)}
+        icon={<IconAlertTriangle color="orange" size="5rem" />}
+        title={t("results.error_execquery_title", error)}
+        description={description.startsWith("results.error_")
+          ? t("results.error_execquery_default", error)
+          : description}
+      />
+    );
+  }
+
   // Show splash if the schema is not fully loaded, server hasn't been checked,
   // or the user changed parameters since last query
   if (isServerOnline == null || !cube || isDirty) {
@@ -78,22 +93,6 @@ export function ExplorerResults(props: {
       >
         {props.splash || null}
       </Paper>
-    );
-  }
-
-  // Check if there was an error in the last query
-  if (error) {
-    return (
-      <FailureResult
-        className={cx(classes.container, props.className)}
-        description={
-          <Stack align="center" spacing="xs">
-            <Text>{t("results.error_execquery_detail")}</Text>
-            <Text>{error}</Text>
-          </Stack>
-        }
-        icon={<IconAlertTriangle color="orange" size="5rem" />}
-      />
     );
   }
 
@@ -142,7 +141,7 @@ function FailureResult(props: {
       <Stack align="center" spacing="xs">
         {props.icon && props.icon}
         {props.title && <Title order={5}>{props.title}</Title>}
-        {props.description && <Text>{props.description}</Text>}
+        {props.description && <Text ta="center" sx={{whiteSpace: "pre"}}>{props.description}</Text>}
         {props.children && props.children}
         {props.action && props.action}
       </Stack>

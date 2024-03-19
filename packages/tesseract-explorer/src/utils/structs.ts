@@ -32,7 +32,11 @@ export interface QueryParams {
 export interface QueryResult<D = Record<string, string | number>> {
   data: D[];
   types: Record<string, AnyResultColumn>;
-  error?: string;
+  error?: {
+    status: number;
+    statusText: string;
+    response: string;
+  };
   headers?: Record<string, string>;
   sourceCall?: string | undefined;
   status: number;

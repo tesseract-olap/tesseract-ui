@@ -84,24 +84,27 @@ export function willExecuteQuery(): ExplorerThunk<Promise<void>> {
           })
         ]).then(result => {
           const [aggregation] = result;
-          dispatch(
-            queriesActions.updateResult({
-              data: aggregation.data,
-              types: describeData(cube.toJSON(), params, aggregation.data),
-              headers: {...aggregation.headers},
-              sourceCall: query.toSource(),
-              status: aggregation.status || 500,
-              url: query.toString(endpoint)
-            })
-          );
+          dispatch(queriesActions.updateResult({
+            data: aggregation.data,
+            types: describeData(cube.toJSON(), params, aggregation.data),
+            headers: {...aggregation.headers},
+            sourceCall: query.toSource(),
+            status: aggregation.status || 500,
+            url: query.toString(endpoint)
+          }));
         }, error => {
           dispatch(queriesActions.updateResult({
             data: [],
             types: {},
-            error: error.message,
-            status: error?.response?.status ?? 500,
+            error: {
+              status: error.response?.status || 500,
+              statusText: error.response?.statusText || "Unknown error",
+              response: error.response?.data || {}
+            },
+            status: error.response?.status || 500,
             url: query.toString(endpoint)
           }));
+          throw error;
         });
       });
   };
