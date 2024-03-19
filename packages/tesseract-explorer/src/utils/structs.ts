@@ -134,14 +134,21 @@ export function buildQuery(
     isDirty: true,
     panel: props.panel || null,
     params: buildQueryParams(props.params || {}),
-    result: {
-      data: [],
-      types: {},
-      headers: {},
-      sourceCall: "",
-      status: 0,
-      url: ""
-    }
+    result: buildQueryResult(props.result || {})
+  };
+}
+
+/**
+ * Creates a QueryResult object.
+ */
+export function buildQueryResult(props): QueryResult {
+  return {
+    data: props.data || [],
+    types: props.types || {},
+    headers: props.headers || {},
+    sourceCall: props.sourceCall || "",
+    status: props.status || 0,
+    url: props.url || ""
   };
 }
 

@@ -5,8 +5,8 @@ import {useSelector} from "react-redux";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectCurrentQueryParams, selectValidQueryStatus} from "../state/queries";
+import {buildMeasure} from "../utils/structs";
 import {keyBy} from "../utils/transform";
-import { buildMeasure } from "../utils/structs";
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {

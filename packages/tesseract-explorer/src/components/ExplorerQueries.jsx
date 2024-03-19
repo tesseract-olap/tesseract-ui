@@ -40,6 +40,10 @@ export const ExplorerQueries = () => {
       actions.setLoadingState("FETCHING");
       const url = new URL(string);
       actions.willParseQueryUrl(url)
+        .then(queryItem => {
+          actions.updateQuery(queryItem);
+          actions.selectQuery(queryItem.key);
+        })
         .then(() => actions.willHydrateParams())
         .then(() => actions.willExecuteQuery())
         .then(

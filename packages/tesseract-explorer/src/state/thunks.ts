@@ -203,16 +203,12 @@ export function willHydrateParams(
  */
 export function willParseQueryUrl(
   url: string | URL
-): ExplorerThunk<Promise<void>> {
+): ExplorerThunk<Promise<QueryItem>> {
   return (dispatch, getState, {olapClient}) =>
     olapClient.parseQueryURL(url.toString(), {anyServer: true})
-      .then(query => {
-        const queryItem = buildQuery({
-          params: extractQueryParams(query)
-        });
-        dispatch(queriesActions.updateQuery(queryItem));
-        dispatch(queriesActions.selectQuery(queryItem.key));
-      });
+      .then(query => buildQuery({
+        params: extractQueryParams(query)
+      }));
 }
 
 /**
