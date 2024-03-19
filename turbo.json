@@ -9,7 +9,7 @@
     "lint": {},
     "dev": {
       "cache": false,
-      "env": ["OLAPPROXY_TARGET"],
+      "env": ["OLAPPROXY_TARGET", "OLAPPROXY_JWTAUTH"],
       "persistent": true
     }
   }
