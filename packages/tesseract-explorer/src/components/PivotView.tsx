@@ -280,8 +280,11 @@ function MatrixTable(props: JSONArrays & {
 
   const columns = useMemo(() => headers.map((header, colIndex) => ({
     accesorKey: header,
-    Cell: ({row}) => colIndex > 0 && typeof row.original[colIndex] === "number" ? formatter(row.original[colIndex]) : row.original[colIndex],
+    Cell: ({row}) => colIndex > 0 && typeof row.original[colIndex] === "number"
+      ? formatter(row.original[colIndex])
+      : row.original[colIndex],
     header,
+    id: `${header}_${colIndex}`,
     mantineTableBodyCellProps: {
       align: colIndex > 0 ? "right" : "left"
     }

@@ -60,6 +60,7 @@ export function TableView<TData extends Record<string, any>>(props: {
 
       return {
         entity, header, formatter, formatterKey, isNumeric,
+        id: columnKey,
         dataType: valueType,
         accessorFn: item => item[columnKey],
         Cell: isNumeric
