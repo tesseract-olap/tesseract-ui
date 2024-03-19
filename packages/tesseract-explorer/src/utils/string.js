@@ -46,11 +46,11 @@ ${params.chartConfig.replace(
 
 /**
  * Retrieves the caption property from a OlapClient entity object.
- * @param {import("./types").Annotated & {caption?: string; name: string;}} item
+ * @param {import("./types").Annotated & {caption?: string; uniqueName?: string; name: string;}} item
  * @param {string} [locale]
  */
 export function getCaption(item, locale = "en") {
-  return getAnnotation(item, "caption", locale) || item.caption || item.name;
+  return getAnnotation(item, "caption", locale) || item.caption || item.uniqueName || item.name;
 }
 
 /**

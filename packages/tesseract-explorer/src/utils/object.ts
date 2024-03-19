@@ -47,9 +47,6 @@ export function describeData(
   const {locale} = params;
 
   const measureMap = new Map(cube.measures.map(msr => [msr.name, msr]));
-  const measures = filterMap(Object.values(params.measures), item =>
-    measureMap.get(item.name) || null
-  );
 
   const dimensionMap = new Map(
     cube.dimensions.map(dim => [dim.name, new Map(
@@ -74,19 +71,19 @@ export function describeData(
     const nameWoId = name.replace(/^ID\s|\sID$/, "");
     return (
       drilldowns.find(item => item.uniqueName === name) ||
-      measures.find(item => item.name === name) ||
       drilldowns.find(item => item.name === name) ||
       drilldowns.find(item => item.uniqueName === nameWoId) ||
-      measures.find(item => item.name === nameWoId) ||
       drilldowns.find(item => item.name === nameWoId)
     );
   };
 
+  const columnNames = Object.keys(data[0]);
+
   return Object.fromEntries(
-    filterMap<string, [string, AnyResultColumn]>(Object.keys(data[0]), key => {
-      const entity = entityFinder(key);
+    filterMap<string, [string, AnyResultColumn]>(columnNames, columnName => {
+      const entity = measureMap.get(columnName) || entityFinder(columnName);
       if (!entity) return null;
-      const typeSet = new Set(data.map(item => typeof item[key]));
+      const typeSet = new Set(data.map(item => typeof item[columnName]));
       /* eslint-disable indent, operator-linebreak */
       const valueType =
         typeSet.size === 1 ?
@@ -95,14 +92,20 @@ export function describeData(
           /* else */ "string" :
         typeSet.has("number") ? "number" : "string";
       /* eslint-enable indent, operator-linebreak */
-      const isId = key !== entity.name;
-      return [key, {
-        label: key,
-        localeLabel: getCaption(entity, locale) + (isId ? " ID" : "") || key,
+      const entityType = entity._type;
+      const entityName = entityType === "level"
+        ? entity.uniqueName || entity.name
+        : entity.name;
+      const isId = entityType === "level" && (
+        columnName.endsWith(" ID") || !columnNames.includes(`${entityName} ID`)
+      );
+      return [columnName, {
+        label: columnName,
+        localeLabel: columnName.replace(entityName, getCaption(entity, locale)),
         entity,
-        entityType: entity._type,
+        entityType,
         isId,
-        range: valueType === "number" ? getDomain(data, key) : undefined,
+        range: valueType === "number" ? getDomain(data, columnName) : undefined,
         valueType
       } as AnyResultColumn];
     })

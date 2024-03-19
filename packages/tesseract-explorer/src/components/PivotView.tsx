@@ -5,10 +5,8 @@ import React, {useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useFormatParams, usePivottedData} from "../hooks/pivot";
 import {useTranslation} from "../hooks/translation";
-import {selectOlapMeasureMap} from "../state/selectors";
+import {selectOlapDimensionMap} from "../state/selectors";
 import {filterMap} from "../utils/array";
-import {getCaption} from "../utils/string";
-import {keyBy} from "../utils/transform";
 import {Formatter, JSONArrays, ViewProps} from "../utils/types";
 import {isActiveItem} from "../utils/validation";
 import {ButtonDownload} from "./ButtonDownload";
@@ -48,59 +46,34 @@ export function PivotView<TData extends Record<string, any>>(props: {
 
 } & ViewProps<TData> & TableOptions<TData>) {
   const {cube, params, result, ...mantineReactTableProps} = props;
-  const locale = params.locale;
 
   const {translate: t} = useTranslation();
 
-  const measureMap = useSelector(selectOlapMeasureMap);
+  const dimensionMap = useSelector(selectOlapDimensionMap);
 
   const {classes, cx} = useStyles();
 
-  const measureOptions = useMemo(() =>
-    filterMap(Object.values(params.measures), item => {
-      const entity = measureMap[item.name];
-      return !isActiveItem(item) ? null : {
-        value: item.name,
-        label: getCaption(entity, locale),
-        type: entity.aggregatorType
+  const drilldownOptions = useMemo(() =>
+    filterMap(Object.values(result.types), column => {
+      if (column.entityType === "measure") return null;
+      return {
+        value: column.label,
+        label: column.localeLabel,
+        type: (column.entityType === "level"
+          ? dimensionMap[column.entity.dimension].dimensionType
+          : "prop") as DrilldownType
       };
-    }), [cube, params.measures, locale]);
+    }), [result]);
 
-  const drilldownOptions = useMemo(() => {
-    const dimensionMap = Object.fromEntries(
-      cube.dimensions.map(dim => [dim.name, dim])
-    );
-    const levelMap = Object.fromEntries(
-      cube.dimensions.map(dim => [dim.name, Object.fromEntries(
-        dim.hierarchies.map(hie => [hie.name, Object.fromEntries(
-          hie.levels.map(lvl => [lvl.name, lvl])
-        )])
-      )])
-    );
-
-    return Object.values(params.drilldowns).filter(isActiveItem).flatMap(item => {
-      const entity = levelMap[item.dimension][item.hierarchy][item.level];
-      const caption = getCaption(entity, locale);
-
-      const type = `${dimensionMap[item.dimension].dimensionType}` as DrilldownType;
-      const propertyMap = keyBy(entity.properties, "name");
-
-      const levelOptions = [{value: item.level, label: caption, type}];
-      if (`${item.level} ID` in result.data[0]) {
-        levelOptions.push({value: `${item.level} ID`, label: `${caption} ID`, type});
-      }
-      return levelOptions.concat(
-        filterMap(item.properties, item => {
-          const entity = propertyMap[item.name];
-          return !isActiveItem(item) ? null : {
-            value: item.name,
-            label: `${caption} › ${getCaption(entity, locale)}`,
-            type: "prop"
-          };
-        })
-      );
-    });
-  }, [cube, params.drilldowns, locale]);
+  const measureOptions = useMemo(() =>
+    filterMap(Object.values(result.types), column => {
+      if (column.entityType !== "measure") return null;
+      return {
+        value: column.label,
+        label: column.localeLabel,
+        type: column.entity.aggregatorType
+      };
+    }), [result]);
 
   const [colProp, setColumnProp] = useState(() =>
     drilldownOptions.find(item => item.type === "time") || drilldownOptions[0]
@@ -119,7 +92,7 @@ export function PivotView<TData extends Record<string, any>>(props: {
     formatterKey,
     formatterKeyOptions,
     setFormat
-  } = useFormatParams(props.cube.measures, valProp.value);
+  } = useFormatParams(cube.measures, valProp.value);
 
   const warnings = useMemo(() => {
     const warnings: React.ReactNode[] = [];
