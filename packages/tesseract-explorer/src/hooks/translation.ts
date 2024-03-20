@@ -166,6 +166,7 @@ export const defaultTranslation = {
     numeral_format: "Numeral format",
     sort_asc: "Sort Asc",
     sort_desc: "Sort Desc",
+    slicedresult: "Due to performance limitations on Firefox, we are limiting the results in this view to the first 10000 rows.\nThis limitation only affects this table; you can download the full dataset as normal."
   },
   transfer_input: {
     count_hidden: "{{n}} item hidden",

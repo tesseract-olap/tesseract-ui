@@ -1,7 +1,7 @@
-import {Box, Menu} from "@mantine/core";
-import {IconCircle, IconCircleCheck} from "@tabler/icons-react";
+import {Alert, Box, Menu} from "@mantine/core";
+import {IconAlertCircle, IconCircle, IconCircleCheck} from "@tabler/icons-react";
 import {MRT_ColumnDef as ColumnDef, MantineReactTable, MRT_TableOptions as TableOptions, useMantineReactTable} from "mantine-react-table";
-import React, {useMemo} from "react";
+import React, {useMemo, useState} from "react";
 import {useFormatter} from "../hooks/formatter";
 import {useTranslation} from "../hooks/translation";
 import {AnyResultColumn} from "../utils/structs";
@@ -31,7 +31,14 @@ export function TableView<TData extends Record<string, any>>(props: {
     columnSorting = () => 0,
     ...mantineReactTableProps
   } = props;
-  const {data, types} = result;
+  const {types} = result;
+
+  const data = useMemo(() => window.navigator.userAgent.includes("Firefox")
+    ? result.data.slice(0, 10000)
+    : result.data
+  , [result.data]);
+
+  const isLimited = result.data.length !== data.length;
 
   const {translate: t} = useTranslation();
 
@@ -74,7 +81,7 @@ export function TableView<TData extends Record<string, any>>(props: {
   }, [currentFormats, data, types]);
 
   const constTableProps = useMemo(() => ({
-    enableBottomToolbar: false,
+    enableBottomToolbar: isLimited,
     enableColumnFilterModes: true,
     enableColumnResizing: true,
     enableDensityToggle: false,
@@ -85,6 +92,9 @@ export function TableView<TData extends Record<string, any>>(props: {
     enableRowVirtualization: true,
     globalFilterFn: "contains",
     initialState: {density: "xs"},
+    mantineBottomToolbarProps: {
+      id: "query-results-table-view-footer"
+    },
     mantineTableProps: {
       sx: {
         "& td": {
@@ -120,6 +130,13 @@ export function TableView<TData extends Record<string, any>>(props: {
         flex: "0 0 auto"
       }
     },
+    renderBottomToolbar() {
+      const [isOpen, setIsOpen] = useState(isLimited);
+      if (!isOpen) return null;
+      return (
+        <Alert icon={<IconAlertCircle size="1rem" />} color="yellow" withCloseButton onClose={() => setIsOpen(false)}>{t("table_view.slicedresult")}</Alert>
+      );
+    },
     renderColumnActionsMenuItems({column}) {
       if (!column?.columnDef?.isNumeric) return null;
       return (
@@ -142,7 +159,7 @@ export function TableView<TData extends Record<string, any>>(props: {
         return 37;
       }
     }
-  }) as const, []);
+  }) as const, [isLimited]);
 
   const table = useMantineReactTable({
     ...constTableProps,
