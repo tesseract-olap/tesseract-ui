@@ -166,8 +166,6 @@ function SuccessResult(props: {
 
   const {previewLimit, rowLimit, actions} = useSettings();
 
-  console.log(previewLimit, rowLimit);
-
   const queryItem = useSelector(selectCurrentQueryItem);
   const isPreviewMode = useSelector(selectIsPreviewMode);
 
