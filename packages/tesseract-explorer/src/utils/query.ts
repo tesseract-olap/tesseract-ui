@@ -49,7 +49,6 @@ export function applyQueryParams(
     query.setPagination(settings.previewLimit, 0);
   }
   else {
-    console.log("no preview", settings.rowLimit);
     query.setPagination(params.pagiLimit || settings.rowLimit || 0, params.pagiOffset);
   }
 
