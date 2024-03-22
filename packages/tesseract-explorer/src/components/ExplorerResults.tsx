@@ -164,7 +164,9 @@ function SuccessResult(props: {
 
   const {translate: t} = useTranslation();
 
-  const {previewLimit, actions} = useSettings();
+  const {previewLimit, rowLimit, actions} = useSettings();
+
+  console.log(previewLimit, rowLimit);
 
   const queryItem = useSelector(selectCurrentQueryItem);
   const isPreviewMode = useSelector(selectIsPreviewMode);
@@ -204,11 +206,19 @@ function SuccessResult(props: {
         <Alert id="alert-load-all-results" color="yellow" radius={0} sx={{flex: "0 0 auto"}}>
           <Group position="apart">
             <Text>
-              <Text fw={700} span>{t("previewMode.title_preview")}: </Text>
-              <Text span>{t("previewMode.description_preview", {limit: previewLimit})}</Text>
+              <Text fw={700} span>{t("preview_mode.title_preview")}: </Text>
+              <Text span>{t("preview_mode.description_preview", {limit: previewLimit})}</Text>
             </Text>
             <PreviewModeSwitch />
           </Group>
+        </Alert>}
+      
+      {!isPreviewMode && rowLimit > 0 && rowLimit === result.data.length && 
+        <Alert id="alert-limit-hit-results" color="orange" radius={0} sx={{flex: "0 0 auto"}}>
+          <Text>
+            <Text fw={700} span>{t("row_limit.title")}: </Text>
+            <Text span dangerouslySetInnerHTML={{__html: t("row_limit.description", {limit: rowLimit})}}></Text>
+          </Text>
         </Alert>}
 
       <Box id="query-results-content" sx={{flex: "1 1"}} h={{base: "auto", md: 0}}>

@@ -1,7 +1,7 @@
 import {Group, Input, NumberInput} from "@mantine/core";
 import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
-import {useActions} from "../hooks/settings";
+import {useActions, useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectIsPreviewMode, selectPaginationParams} from "../state/queries";
 
@@ -14,6 +14,8 @@ export const PaginationInput = () => {
 
   const isPreviewMode = useSelector(selectIsPreviewMode);
 
+  const {rowLimit} = useSettings();
+
   const onLimitChange = useCallback((value: number | "") => {
     actions.updatePagination({limit: value ? value : 0, offset});
   }, [offset]);
@@ -23,11 +25,16 @@ export const PaginationInput = () => {
   }, [limit]);
 
   return (
-    <Group noWrap spacing="xs" align="end">
-      <Input.Wrapper label={t("params.label_pagination_limit")}>
+    <Group noWrap spacing="xs" align="start" grow>
+      <Input.Wrapper
+        label={t("params.label_pagination_limit")}
+        description={rowLimit && !isPreviewMode ? t("params.label_pagination_limit_description", {limit: rowLimit}) : ""}
+        inputWrapperOrder={["label", "input", "description"]}
+      >
         <NumberInput
           disabled={isPreviewMode}
           min={0}
+          max={rowLimit ? rowLimit : undefined}
           onChange={onLimitChange}
           value={limit}
         />

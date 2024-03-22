@@ -59,8 +59,8 @@ export const PreviewModeSwitch = props => {
         touch: true
       }}
       label={isPreviewMode
-        ? t("previewMode.description_preview", {limit: previewLimit})
-        : t("previewMode.description_full")}
+        ? t("preview_mode.description_preview", {limit: previewLimit})
+        : t("preview_mode.description_full")}
       multiline
       withArrow
       withinPortal
