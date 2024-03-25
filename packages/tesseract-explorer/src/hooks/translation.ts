@@ -71,6 +71,7 @@ export const defaultTranslation = {
     label_localeoption: "{{nativeName}}",
     label_measure: "Measure",
     label_pagination_limit: "Results limit",
+    label_pagination_limit_description: "Max limit: {{limit}}",
     label_pagination_offset: "Results offset",
     label_sorting_key: "Sort by",
     label_sorting_order: "Order",
@@ -127,7 +128,7 @@ export const defaultTranslation = {
     unselected: "[Unselected]",
     none: "[None]",
   },
-  previewMode: {
+  preview_mode: {
     btn_get_all: "Show all rows",
     btn_get_preview: "Show preview",
     description_full: "You are currently viewing all available rows. Turn off for faster performance.",
@@ -157,6 +158,10 @@ export const defaultTranslation = {
     error_emptyresult_detail: "The query didn't return elements. Try again with different parameters.",
     count_rows: "{{n}} row",
     count_rows_plural: "{{n}} rows",
+  },
+  row_limit: {
+    title: "Max row limit hit",
+    description: "Your last query hits the defined row limit. You are currently viewing a truncated response of the first {{limit}} rows.",
   },
   selectlevel_placeholder: "Level...",
   selectmeasure_placeholder: "Measure...",

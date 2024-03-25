@@ -35,6 +35,7 @@ export default function Home() {
       <Explorer
         panels={PANELS}
         previewLimit={100}
+        rowLimit={1000}
         source={{
           headers,
           url: "/olap"

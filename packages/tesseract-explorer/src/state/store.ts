@@ -19,7 +19,8 @@ export const reducer = combineReducers(reducerMap);
 export function thunkExtraArg() {
   return {
     olapClient: new Client(),
-    previewLimit: 50
+    previewLimit: 50,
+    rowLimit: 0
   };
 }
 

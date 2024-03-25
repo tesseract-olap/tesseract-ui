@@ -82,6 +82,12 @@ export function ExplorerComponent(props: {
   previewLimit?: number;
 
   /**
+   * Limit the query. 0 is no limit
+   * @default 0
+   */
+  rowLimit?: number;
+
+  /**
    * A component that is rendered to display the default "splash screen";
    * the screen that is shown in the results panel when there is no query,
    * or a query has been dirtied.
@@ -134,6 +140,7 @@ export function ExplorerComponent(props: {
     defaultOpenParams = "measures",
     height = "100vh",
     previewLimit = 50,
+    rowLimit = 0,
     withinMantineProvider = true,
     withinReduxProvider = false,
     withMultiQuery = false
@@ -157,8 +164,9 @@ export function ExplorerComponent(props: {
     // TODO: There's probably a better way, but we need previewLimit in the extraArg
     store.dispatch((_, __, extra) => {
       extra.previewLimit = previewLimit;
+      extra.rowLimit = rowLimit;
     });
-  }, [previewLimit]);
+  }, [previewLimit, rowLimit]);
 
   let content =
     <SettingsProvider
@@ -166,6 +174,7 @@ export function ExplorerComponent(props: {
       defaultMembersFilter={props.defaultMembersFilter}
       formatters={props.formatters}
       previewLimit={previewLimit}
+      rowLimit={rowLimit}
       withPermalink={props.withPermalink}
     >
       <TranslationProvider

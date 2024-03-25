@@ -22,7 +22,7 @@ import {calcMaxMemberCount, hydrateDrilldownProperties} from "./utils";
 export function willDownloadQuery(
   format: Format
 ): ExplorerThunk<Promise<FileDescriptor>> {
-  return (dispatch, getState, {olapClient, previewLimit}) => {
+  return (dispatch, getState, {olapClient, previewLimit, rowLimit}) => {
     const state = getState();
     const params = selectCurrentQueryParams(state);
 
@@ -35,7 +35,7 @@ export function willDownloadQuery(
     return olapClient.getCube(params.cube)
       .then(cube => {
         const filename = `${cube.name}_${new Date().toISOString()}`;
-        const query = applyQueryParams(cube.query, params, {previewLimit}).setFormat(format);
+        const query = applyQueryParams(cube.query, params, {previewLimit, rowLimit}).setFormat(format);
         const dataURL = query.toString("logiclayer").replace(olapClient.datasource.serverUrl, "");
 
         return Promise.all([
@@ -65,7 +65,7 @@ export function willDownloadQuery(
  * `willRequestQuery()` for that.
  */
 export function willExecuteQuery(): ExplorerThunk<Promise<void>> {
-  return (dispatch, getState, {olapClient, previewLimit}) => {
+  return (dispatch, getState, {olapClient, previewLimit, rowLimit}) => {
     const state = getState();
     const params = selectCurrentQueryParams(state);
     const endpoint = selectServerEndpoint(state);
@@ -74,7 +74,7 @@ export function willExecuteQuery(): ExplorerThunk<Promise<void>> {
 
     return olapClient.getCube(params.cube)
       .then(cube => {
-        const query = applyQueryParams(cube.query, params, {previewLimit});
+        const query = applyQueryParams(cube.query, params, {previewLimit, rowLimit});
         return Promise.all([
           olapClient.execQuery(query, endpoint),
           calcMaxMemberCount(query, params).then(maxRows => {

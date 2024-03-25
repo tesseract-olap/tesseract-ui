@@ -17,6 +17,7 @@ interface SettingsContextProps {
   defaultMembersFilter: "id" | "name" | "any";
   formatters: Record<string, Formatter>;
   previewLimit: number;
+  rowLimit: number;
 }
 
 /**
@@ -35,6 +36,7 @@ export function SettingsProvider(props: {
   defaultMembersFilter?: "id" | "name" | "any";
   formatters?: Record<string, Formatter>;
   previewLimit?: number;
+  rowLimit?: number;
   withPermalink: boolean | undefined;
 }) {
   usePermalink(props.withPermalink, {onChange: props.actions.resetAllParams});
@@ -44,6 +46,7 @@ export function SettingsProvider(props: {
     defaultMembersFilter: props.defaultMembersFilter || "id",
     formatters: props.formatters || {},
     previewLimit: props.previewLimit || 50,
+    rowLimit: props.rowLimit || 0,
   }), [props.formatters, props.previewLimit]);
 
   return <ContextProvider value={value}>{props.children}</ContextProvider>;

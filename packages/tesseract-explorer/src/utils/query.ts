@@ -12,6 +12,7 @@ export function applyQueryParams(
   params: QueryParams,
   settings: {
     previewLimit: number;
+    rowLimit: number;
   }
 ) {
 
@@ -48,7 +49,7 @@ export function applyQueryParams(
     query.setPagination(settings.previewLimit, 0);
   }
   else {
-    query.setPagination(params.pagiLimit || 0, params.pagiOffset);
+    query.setPagination(params.pagiLimit || settings.rowLimit || 0, params.pagiOffset);
   }
 
   return query;
