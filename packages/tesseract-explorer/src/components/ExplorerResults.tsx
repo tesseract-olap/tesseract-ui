@@ -210,12 +210,12 @@ function SuccessResult(props: {
             <PreviewModeSwitch />
           </Group>
         </Alert>}
-      
-      {!isPreviewMode && rowLimit > 0 && rowLimit === result.data.length && 
+
+      {!isPreviewMode && rowLimit > 0 && rowLimit === result.data.length &&
         <Alert id="alert-limit-hit-results" color="orange" radius={0} sx={{flex: "0 0 auto"}}>
           <Text>
             <Text fw={700} span>{t("row_limit.title")}: </Text>
-            <Text span dangerouslySetInnerHTML={{__html: t("row_limit.description", {limit: rowLimit})}}></Text>
+            <Text span>{t("row_limit.description", {limit: rowLimit})}</Text>
           </Text>
         </Alert>}
 
