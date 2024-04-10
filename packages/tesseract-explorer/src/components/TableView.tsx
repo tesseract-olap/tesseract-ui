@@ -1,11 +1,11 @@
-import {Alert, Box, Menu} from "@mantine/core";
+import {Alert, Menu} from "@mantine/core";
 import {IconAlertCircle, IconCircle, IconCircleCheck} from "@tabler/icons-react";
-import {MRT_ColumnDef as ColumnDef, MantineReactTable, MRT_TableOptions as TableOptions, useMantineReactTable} from "mantine-react-table";
+import {type MRT_ColumnDef as ColumnDef, MantineReactTable, type MRT_TableOptions as TableOptions, useMantineReactTable} from "mantine-react-table";
 import React, {useMemo, useState} from "react";
 import {useFormatter} from "../hooks/formatter";
 import {useTranslation} from "../hooks/translation";
-import {AnyResultColumn} from "../utils/structs";
-import {ViewProps} from "../utils/types";
+import type {AnyResultColumn} from "../utils/structs";
+import type {ViewProps} from "../utils/types";
 
 /** */
 export function TableView<TData extends Record<string, any>>(props: {
@@ -134,25 +134,33 @@ export function TableView<TData extends Record<string, any>>(props: {
       const [isOpen, setIsOpen] = useState(isLimited);
       if (!isOpen) return null;
       return (
-        <Alert icon={<IconAlertCircle size="1rem" />} color="yellow" withCloseButton onClose={() => setIsOpen(false)}>{t("table_view.slicedresult")}</Alert>
+        <Alert
+          icon={<IconAlertCircle size="1rem" />}
+          color="yellow"
+          withCloseButton
+          onClose={() => setIsOpen(false)}
+        >
+          {t("table_view.slicedresult")}
+        </Alert>
       );
     },
     renderColumnActionsMenuItems({column}) {
-      if (!column?.columnDef?.isNumeric) return null;
+      const columnDef = column.columnDef || {};
+      if (!columnDef.isNumeric) return null;
       return (
-        <Box>
+        <>
           <Menu.Label>{t("table_view.numeral_format")}</Menu.Label>
-          {column?.columnDef?.isNumeric && getAvailableKeys(column?.columnDef?.accessorKey).map(key =>
+          {getAvailableKeys(columnDef.id).map(key =>
             <Menu.Item
               key={key}
-              icon={column?.columnDef?.formatterKey === key ? <IconCircleCheck /> : <IconCircle />}
-              onClick={() => setFormat(column?.columnDef?.accessorKey, key)}
+              icon={columnDef.formatterKey === key ? <IconCircleCheck /> : <IconCircle />}
+              onClick={() => setFormat(columnDef.id, key)}
             >
               {getFormatter(key)(12345.678)}
             </Menu.Item>
           )}
-          <Menu.Divider />
-        </Box>);
+        </>
+      );
     },
     rowVirtualizerProps: {
       measureElement() {
