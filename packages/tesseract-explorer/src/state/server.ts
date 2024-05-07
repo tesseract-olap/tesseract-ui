@@ -1,5 +1,11 @@
-import {Format, PlainCube, TesseractDataSource} from "@datawheel/olap-client";
-import {createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {
+  Format,
+  type PlainCube,
+  PyTesseractDataSource,
+  TesseractDataSource,
+  MondrianDataSource
+} from "@datawheel/olap-client";
+import {createSelector, createSlice, type PayloadAction} from "@reduxjs/toolkit";
 import type {ExplorerState} from "./store";
 import {getKeys, getValues} from "../utils/object";
 
@@ -41,7 +47,8 @@ export const serverSlice = createSlice({
      * Updates the type of endpoint to use in the current query.
      */
     updateEndpoint(state, action: PayloadAction<string | undefined>) {
-      state.endpoint = action.payload || (state.endpoint === "aggregate" ? "logiclayer" : "aggregate");
+      state.endpoint =
+        action.payload || (state.endpoint === "aggregate" ? "logiclayer" : "aggregate");
     },
 
     /**
@@ -66,22 +73,40 @@ export function selectServerState(state: ExplorerState): ServerState {
   return state[name];
 }
 
-export const selectServerSoftware = createSelector(selectServerState, server => server.software);
+export const selectServerSoftware = createSelector(
+  selectServerState,
+  server => server.software
+);
 
-export const selectServerEndpoint = createSelector(selectServerState, server => server.endpoint);
+export const selectServerEndpoint = createSelector(
+  selectServerState,
+  server => server.endpoint
+);
 
 export const selectServerFormatsEnabled = createSelector(
   selectServerSoftware,
-  software => software === TesseractDataSource.softwareName
-    ? [Format.csv, Format.jsonarrays, Format.jsonrecords]
-    : [Format.csv, Format.json, Format.jsonrecords, Format.xls]
+  software => {
+    if (software === MondrianDataSource.softwareName) {
+      return [Format.csv, Format.json, Format.jsonrecords, Format.xls];
+    }
+    if (software === PyTesseractDataSource.softwareName) {
+      return [Format.csv, Format.jsonarrays, Format.jsonrecords];
+    }
+    return [Format.csv, Format.jsonarrays, Format.jsonrecords];
+  }
 );
 
 export const selectServerBooleansEnabled = createSelector(
   selectServerSoftware,
-  software => software === TesseractDataSource.softwareName
-    ? ["debug", "exclude_default_members", "parents", "sparse"]
-    : ["debug", "distinct", "nonempty", "parents", "sparse"]
+  software => {
+    if (software === MondrianDataSource.softwareName) {
+      return ["debug", "distinct", "nonempty", "parents", "sparse"];
+    }
+    if (software === TesseractDataSource.softwareName) {
+      return ["debug", "exclude_default_members", "parents", "sparse"];
+    }
+    return ["debug", "parents"];
+  }
 );
 
 export const selectOlapCubeMap = createSelector(

@@ -36,7 +36,7 @@
     "tesseract-ui"
   ],
   "dependencies": {
-    "@datawheel/olap-client": "^2.0.2",
+    "@datawheel/olap-client": "^2.1.1",
     "@datawheel/use-translation": "^0.2.0",
     "@reduxjs/toolkit": "^1.9.3",
     "@tabler/icons-react": "^2.7.0",

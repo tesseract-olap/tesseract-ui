@@ -1,15 +1,15 @@
-import {Format, LevelDescriptor, Client as OLAPClient, PlainCube, PlainMember, ServerConfig, TesseractDataSource} from "@datawheel/olap-client";
+import {type Format, type LevelDescriptor, Client as OLAPClient, type PlainCube, type PlainMember, PyTesseractDataSource, type ServerConfig, TesseractDataSource} from "@datawheel/olap-client";
 import {filterMap} from "../utils/array";
 import {describeData} from "../utils/object";
 import {applyQueryParams, extractQueryParams} from "../utils/query";
-import {QueryItem, buildMeasure, buildQuery} from "../utils/structs";
+import {type QueryItem, buildMeasure, buildQuery} from "../utils/structs";
 import {keyBy} from "../utils/transform";
-import {FileDescriptor} from "../utils/types";
+import type {FileDescriptor} from "../utils/types";
 import {isValidQuery} from "../utils/validation";
 import {loadingActions} from "./loading";
 import {queriesActions, selectCubeName, selectCurrentQueryParams, selectLocale, selectMeasureItems, selectQueryItems} from "./queries";
 import {selectOlapCubeMap, selectServerEndpoint, serverActions} from "./server";
-import {ExplorerThunk} from "./store";
+import type {ExplorerThunk} from "./store";
 import {calcMaxMemberCount, hydrateDrilldownProperties} from "./utils";
 
 /**
@@ -25,6 +25,7 @@ export function willDownloadQuery(
   return (dispatch, getState, {olapClient, previewLimit, rowLimit}) => {
     const state = getState();
     const params = selectCurrentQueryParams(state);
+    const endpoint = selectServerEndpoint(state);
 
     if (!isValidQuery(params)) {
       return Promise.reject(new Error("The current query is not valid."));
@@ -36,7 +37,7 @@ export function willDownloadQuery(
       .then(cube => {
         const filename = `${cube.name}_${new Date().toISOString()}`;
         const query = applyQueryParams(cube.query, params, {previewLimit, rowLimit}).setFormat(format);
-        const dataURL = query.toString("logiclayer").replace(olapClient.datasource.serverUrl, "");
+        const dataURL = query.toString(endpoint).replace(olapClient.datasource.serverUrl, "");
 
         return Promise.all([
           axios({url: dataURL, responseType: "blob"})
@@ -294,14 +295,19 @@ export function willSetupClient(
         return client.checkStatus();
       })
       .then(serverInfo => {
+        let endpoint = "aggregate";
+        if (serverInfo.software === TesseractDataSource.softwareName) {
+          endpoint = "logiclayer";
+        }
+        else if (serverInfo.software === PyTesseractDataSource.softwareName) {
+          endpoint = "";
+        }
         dispatch(serverActions.updateServer({
           online: serverInfo.online,
           software: serverInfo.software,
           url: serverInfo.url,
           version: serverInfo.version,
-          endpoint: serverInfo.software === TesseractDataSource.softwareName
-            ? "logiclayer"
-            : "aggregate"
+          endpoint
         }));
       }, error => {
         dispatch(serverActions.updateServer({
