@@ -1,6 +1,6 @@
-import {ActionIcon, ActionIconProps, Menu, useMantineTheme} from "@mantine/core";
+import {ActionIcon, ActionIconProps, Box, Menu, Portal, useMantineTheme} from "@mantine/core";
 import {useMediaQuery} from "@mantine/hooks";
-import React from "react";
+import React, {useState} from "react";
 import {stringifyName} from "../utils/transform";
 import type {LevelDescriptor} from "../utils/types";
 import {DimensionMenu} from "./MenuDimension";
@@ -14,26 +14,58 @@ export const ButtonSelectLevel = (props: ActionIconProps & {
 
   const theme = useMantineTheme();
   const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`);
+  const [opened, setOpened] = useState(false);
+
+  const handleItemSelect: typeof onItemSelect = (level, hierarchy, dimension) => {
+    onItemSelect(level, hierarchy, dimension);
+    setOpened(false);
+  };
+
+  const closeAll = () => setOpened(false);
 
   return (
-    <Menu
-      closeOnClickOutside
-      closeOnEscape
-      position={isMediumScreen ? "left" : "right"}
-      shadow="md"
-      withArrow
-      withinPortal
-    >
-      <Menu.Target>
-        <ActionIcon {...buttonProps}>{children}</ActionIcon>
-      </Menu.Target>
-      <Menu.Dropdown>
-        <DimensionMenu
-          isMediumScreen={isMediumScreen}
-          selectedItems={selectedItems.map(stringifyName)}
-          onItemSelect={onItemSelect}
-        />
-      </Menu.Dropdown>
-    </Menu>
+    <>
+      {/* Overlay that closes all menus when clicked */}
+      {opened && (
+        <Portal>
+          <Box
+            onClick={closeAll}
+            sx={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 99,
+              cursor: "default"
+            }}
+          />
+        </Portal>
+      )}
+      <Menu
+        closeOnEscape
+        closeOnClickOutside={false}
+        position={isMediumScreen ? "left" : "right"}
+        shadow="md"
+        styles={{dropdown: {maxHeight: "60vh", overflowY: "auto", zIndex: 100}}}
+        withArrow
+        withinPortal
+        opened={opened}
+      >
+        <Menu.Target>
+          <ActionIcon {...buttonProps} onClick={() => setOpened(o => !o)}>{children}</ActionIcon>
+        </Menu.Target>
+        {opened && (
+          <Menu.Dropdown>
+            <DimensionMenu
+              isMediumScreen={isMediumScreen}
+              selectedItems={selectedItems.map(stringifyName)}
+              onItemSelect={handleItemSelect}
+              onCloseRoot={closeAll}
+            />
+          </Menu.Dropdown>
+        )}
+      </Menu>
+    </>
   );
 };
