@@ -2,6 +2,10 @@
 
 A data exploration UI framework, to work with [`olap-client`](https://www.npmjs.com/package/@datawheel/olap-client)-compatible data servers.
 
+## 📚 Documentation
+
+- **[Publishing & Releases](./PUBLISHING.md)** - How to publish packages and create new releases
+
 ## Packages
 
 ### [create-tesseract-ui](./packages/create-tesseract-ui/)

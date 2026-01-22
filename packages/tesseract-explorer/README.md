@@ -205,6 +205,25 @@ In order to reduce the amount of big queries/responses we implemented the `previ
 ### Row limit for queries feature
 We implemented the `rowLimit` property in order to add a constraint in the number of rows that the api serves. Default value is `0` which means `no limit`.
 
+## 🛠️ Development & Contributing
+
+### Publishing & Releases
+
+For information about how to publish new versions and create releases for this package, see the [Publishing Guide](../../PUBLISHING.md) in the root of the monorepo.
+
+### Development Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
 ## License
 
 ©2018-2022 [Datawheel, LLC](https://datawheel.us/)
