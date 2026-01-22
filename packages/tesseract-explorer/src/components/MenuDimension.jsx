@@ -190,6 +190,8 @@ export const DimensionMenu = props => {
                         key={dim.uri}
                         onItemSelect={props.onItemSelect}
                         selectedItems={props.selectedItems}
+                        opened={openMenuUri === dim.uri}
+                        onOpenChange={opened => setOpenMenuUri(opened ? dim.uri : null)}
                         onCloseAll={closeAllMenus}
                       />
                     )}
