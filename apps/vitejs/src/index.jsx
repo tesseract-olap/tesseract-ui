@@ -46,6 +46,7 @@ function mount(container) {
         formatters={formatters}
         dataLocale="en,es"
         // height="90vh"
+        maxHeightMenu="50vh" // Optional: customize menu max height (default: "60vh")
         previewLimit={75}
         panels={PANELS}
         translations={{
