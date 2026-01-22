@@ -16,8 +16,10 @@ interface SettingsContextProps {
   actions: ExplorerBoundActionMap;
   defaultMembersFilter: "id" | "name" | "any";
   formatters: Record<string, Formatter>;
+  maxHeightMenu: string | number;
   previewLimit: number;
   rowLimit: number;
+  version: string;
 }
 
 /**
@@ -35,6 +37,7 @@ export function SettingsProvider(props: {
   children?: React.ReactElement;
   defaultMembersFilter?: "id" | "name" | "any";
   formatters?: Record<string, Formatter>;
+  maxHeightMenu?: string | number;
   previewLimit?: number;
   rowLimit?: number;
   withPermalink: boolean | undefined;
@@ -45,9 +48,11 @@ export function SettingsProvider(props: {
     actions: props.actions,
     defaultMembersFilter: props.defaultMembersFilter || "id",
     formatters: props.formatters || {},
+    maxHeightMenu: props.maxHeightMenu || "60vh",
     previewLimit: props.previewLimit || 50,
     rowLimit: props.rowLimit || 0,
-  }), [props.formatters, props.previewLimit]);
+    version: process.env.BUILD_VERSION || "dev",
+  }), [props.formatters, props.maxHeightMenu, props.previewLimit]);
 
   return <ContextProvider value={value}>{props.children}</ContextProvider>;
 }

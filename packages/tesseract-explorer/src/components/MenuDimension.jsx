@@ -2,6 +2,7 @@ import {Accordion, Box, Flex, Group, Menu, Text, UnstyledButton} from "@mantine/
 import {IconChevronRight, IconStack, IconStack2, IconStack3, IconStackMiddle} from "@tabler/icons-react";
 import React, {useMemo, useState} from "react";
 import {useSelector} from "react-redux";
+import {useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
 import {selectOlapDimensionItems} from "../state/selectors";
@@ -231,6 +232,7 @@ export const DimensionMenu = props => {
  */
 export const DimensionMenuItem = props => {
   const {dimension, locale, opened, onOpenChange, onCloseAll} = props;
+  const {maxHeightMenu} = useSettings();
 
   const {translate: t} = useTranslation();
 
@@ -289,7 +291,7 @@ export const DimensionMenuItem = props => {
       key={dimension.uri}
       position={props.isMediumScreen ? "bottom" : "right"}
       shadow="md"
-      styles={{dropdown: {maxHeight: "60vh", overflowY: "auto", zIndex: 100}}}
+      styles={{dropdown: {maxHeight: maxHeightMenu, overflowY: "auto", zIndex: 100}}}
       closeOnItemClick
       closeOnClickOutside={false}
       withArrow
@@ -346,6 +348,7 @@ export const DimensionMenuItem = props => {
  */
 export const HierarchyMenuItem = props => {
   const {dimension, hierarchy, locale, onItemSelect, selectedItems, opened, onOpenChange, onCloseAll} = props;
+  const {maxHeightMenu} = useSettings();
 
   const {translate: t} = useTranslation();
 
@@ -397,7 +400,7 @@ export const HierarchyMenuItem = props => {
       key={hierarchy.uri}
       position={props.isMediumScreen ? "bottom" : "right"}
       shadow="md"
-      styles={{dropdown: {maxHeight: "60vh", overflowY: "auto", zIndex: 100}}}
+      styles={{dropdown: {maxHeight: maxHeightMenu, overflowY: "auto", zIndex: 100}}}
       closeOnItemClick
       closeOnClickOutside={false}
       withArrow

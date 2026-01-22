@@ -62,6 +62,12 @@ export function ExplorerComponent(props: {
   height?: CSSObject["height"];
 
   /**
+   * Maximum height for dropdown menus.
+   * @default "60vh"
+   */
+  maxHeightMenu?: string | number;
+
+  /**
    * The list of tabs to offer to the user to render the results.
    * Must be an array of objects with the following properties:
    * - `key`: a string to distinguish each panel, will be used in the URL params
@@ -134,12 +140,6 @@ export function ExplorerComponent(props: {
    * @default false
    */
   withPermalink?: boolean;
-
-  /**
-   * The version of the component.
-   * @default process.env.BUILD_VERSION || "dev"
-   */
-  version?: string;
 }) {
   const {
     dataLocale = "en",
@@ -147,7 +147,6 @@ export function ExplorerComponent(props: {
     height = "100vh",
     previewLimit = 50,
     rowLimit = 0,
-    version = process.env.BUILD_VERSION || "dev",
     withinMantineProvider = true,
     withinReduxProvider = false,
     withMultiQuery = false
@@ -180,6 +179,7 @@ export function ExplorerComponent(props: {
       actions={boundActions}
       defaultMembersFilter={props.defaultMembersFilter}
       formatters={props.formatters}
+      maxHeightMenu={props.maxHeightMenu}
       previewLimit={previewLimit}
       rowLimit={rowLimit}
       withPermalink={props.withPermalink}
