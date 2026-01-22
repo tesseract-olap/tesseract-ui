@@ -134,6 +134,12 @@ export function ExplorerComponent(props: {
    * @default false
    */
   withPermalink?: boolean;
+
+  /**
+   * The version of the component.
+   * @default process.env.BUILD_VERSION || "dev"
+   */
+  version?: string;
 }) {
   const {
     dataLocale = "en",
@@ -141,6 +147,7 @@ export function ExplorerComponent(props: {
     height = "100vh",
     previewLimit = 50,
     rowLimit = 0,
+    version = process.env.BUILD_VERSION || "dev",
     withinMantineProvider = true,
     withinReduxProvider = false,
     withMultiQuery = false
@@ -204,7 +211,4 @@ export function ExplorerComponent(props: {
   return content;
 }
 
-ExplorerComponent.defaultProps = {
-  version: process.env.BUILD_VERSION || "dev"
-};
 ExplorerComponent.displayName = "TesseractExplorer";
