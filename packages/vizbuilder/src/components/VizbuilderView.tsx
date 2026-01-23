@@ -45,11 +45,13 @@ export function createVizbuilderView(settings: {
   const chartLimits = {...DEFAULT_CHART_LIMITS, ...settings.chartLimits};
   const chartGenOptions = {chartLimits, chartTypes, datacap, topojsonConfig};
 
+  VizbuilderView.displayName = "VizbuilderView/" + process.env.BUILD_VERSION;
+
   return VizbuilderView;
 
   /** Enclosed PanelView component. */
   function VizbuilderView(props: ViewProps) {
-    const {cube, panelKey, params, result, version = process.env.BUILD_VERSION} = props;
+    const {cube, panelKey, params, result} = props;
 
     const {actions, formatters} = useSettings();
 

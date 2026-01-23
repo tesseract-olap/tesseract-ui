@@ -37,5 +37,4 @@ export interface ViewProps<TData = Record<string, string | number>> {
   panelKey: string | null;
   params: QueryParams;
   result: QueryResult<TData>;
-  version?: string;
 }

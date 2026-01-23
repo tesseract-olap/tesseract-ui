@@ -186,7 +186,9 @@ export const defaultTranslation = {
   }
 };
 
-export type TranslationDict = typeof defaultTranslation;
+type _TranslationDict = typeof defaultTranslation;
+
+export interface TranslationDict extends _TranslationDict {}
 
 export const {
   useTranslation,

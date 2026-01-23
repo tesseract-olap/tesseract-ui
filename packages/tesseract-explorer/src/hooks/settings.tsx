@@ -19,7 +19,6 @@ interface SettingsContextProps {
   maxHeightMenu: string | number;
   previewLimit: number;
   rowLimit: number;
-  version: string;
 }
 
 /**
@@ -51,7 +50,6 @@ export function SettingsProvider(props: {
     maxHeightMenu: props.maxHeightMenu || "60vh",
     previewLimit: props.previewLimit || 50,
     rowLimit: props.rowLimit || 0,
-    version: process.env.BUILD_VERSION || "dev",
   }), [props.formatters, props.maxHeightMenu, props.previewLimit]);
 
   return <ContextProvider value={value}>{props.children}</ContextProvider>;

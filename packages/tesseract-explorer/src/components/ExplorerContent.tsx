@@ -12,7 +12,6 @@ import {ExplorerParams} from "./ExplorerParams";
 import {ExplorerQueries} from "./ExplorerQueries";
 import {ExplorerResults} from "./ExplorerResults";
 import {LoadingOverlay} from "./LoadingOverlay";
-import {useSettings} from "../hooks/settings";
 
 const useStyles = createStyles((theme, params: {height: CSSObject["height"]}) => ({
   root: {
@@ -49,8 +48,6 @@ export function ExplorerContent(props: {
 }) {
   const translation = useTranslation();
 
-  const {version} = useSettings();
-
   const isSetupDone = useSetup(props.source, props.dataLocale);
 
   const serverState = useSelector(selectServerState);
@@ -71,7 +68,6 @@ export function ExplorerContent(props: {
 
   return (
     <div className={classes.root}>
-      <span style={{display: "none"}}>{`Version: ${version}`}</span>
       <LoadingOverlay />
       {isSetupDone && serverState.online && props.withMultiQuery
         ? <ExplorerQueries />

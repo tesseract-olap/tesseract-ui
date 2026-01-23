@@ -211,4 +211,4 @@ export function ExplorerComponent(props: {
   return content;
 }
 
-ExplorerComponent.displayName = "TesseractExplorer";
+ExplorerComponent.displayName = "TesseractExplorer/" + process.env.BUILD_VERSION;
