@@ -45,9 +45,7 @@ export function createVizbuilderView(settings: {
   const chartLimits = {...DEFAULT_CHART_LIMITS, ...settings.chartLimits};
   const chartGenOptions = {chartLimits, chartTypes, datacap, topojsonConfig};
 
-  VizbuilderView.defaultProps = {
-    version: process.env.BUILD_VERSION
-  };
+  VizbuilderView.displayName = "VizbuilderView/" + process.env.BUILD_VERSION;
 
   return VizbuilderView;
 

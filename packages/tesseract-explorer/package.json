@@ -68,7 +68,7 @@
     "eslint-config-tesseract-ui": "*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "tsup": "^6.6.3"
+    "tsup": "^8.0.0"
   },
   "eslintConfig": {
     "env": {

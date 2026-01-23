@@ -62,6 +62,12 @@ export function ExplorerComponent(props: {
   height?: CSSObject["height"];
 
   /**
+   * Maximum height for dropdown menus.
+   * @default "60vh"
+   */
+  maxHeightMenu?: string | number;
+
+  /**
    * The list of tabs to offer to the user to render the results.
    * Must be an array of objects with the following properties:
    * - `key`: a string to distinguish each panel, will be used in the URL params
@@ -173,6 +179,7 @@ export function ExplorerComponent(props: {
       actions={boundActions}
       defaultMembersFilter={props.defaultMembersFilter}
       formatters={props.formatters}
+      maxHeightMenu={props.maxHeightMenu}
       previewLimit={previewLimit}
       rowLimit={rowLimit}
       withPermalink={props.withPermalink}
@@ -204,7 +211,4 @@ export function ExplorerComponent(props: {
   return content;
 }
 
-ExplorerComponent.defaultProps = {
-  version: process.env.BUILD_VERSION || "dev"
-};
-ExplorerComponent.displayName = "TesseractExplorer";
+ExplorerComponent.displayName = "TesseractExplorer/" + process.env.BUILD_VERSION;

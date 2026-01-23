@@ -24,9 +24,10 @@ export const selectOlapMeasureMap = createSelector(
 /** @type {(state: import("./store").ExplorerState) => import("@datawheel/olap-client").PlainDimension[]} */
 export const selectOlapDimensionItems = createSelector(
   selectOlapCube,
-  cube => !cube
-    ? []
-    : cube.dimensions
+  cube => {
+    if (!cube) return [];
+
+    return cube.dimensions
       .map(dim => ({
         item: {
           ...dim,
@@ -52,7 +53,8 @@ export const selectOlapDimensionItems = createSelector(
         b.count - a.count ||
         a.alpha.localeCompare(b.alpha)
       )
-      .map(i => i.item)
+      .map(i => i.item);
+  }
 );
 
 export const selectOlapDimensionMap = createSelector(

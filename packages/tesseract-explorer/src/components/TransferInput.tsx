@@ -25,7 +25,7 @@ export function TransferInput<T extends QueryParamsItem>(props: {
     method: ItemPredicateFunction<T>;
   }[];
 }) {
-  const {activeItems, getLabel, items, itemPredicate, onChange} = props;
+  const {activeItems, getLabel = item => `${item}`, items, itemPredicate, onChange} = props;
   const sideLabelRenderer = props.getSecondLabel || (() => undefined);
 
   const unselectedRef = useRef(null);
@@ -270,7 +270,3 @@ export function TransferInput<T extends QueryParamsItem>(props: {
     </Box>
   );
 }
-
-TransferInput.defaultProps = {
-  getLabel: item => `${item}`
-};
