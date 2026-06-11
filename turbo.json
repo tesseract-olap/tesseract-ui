@@ -10,6 +10,7 @@
       "cache": false,
       "env": ["OLAPPROXY_TARGET", "OLAPPROXY_JWTAUTH"],
       "persistent": true
-    }
+    },
+    "test": {}
   }
 }

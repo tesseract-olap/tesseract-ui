@@ -7,6 +7,8 @@
     "lint": "oxlint .",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
+    "test": "turbo run test",
+    "test:run": "vitest run",
     "mono:publish": "node scripts/publish.js",
     "mono:release": "node scripts/release.js",
     "release:status": "changeset status",

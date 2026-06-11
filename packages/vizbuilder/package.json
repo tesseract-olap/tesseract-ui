@@ -10,21 +10,22 @@
       "require": "./dist/index.cjs.js",
       "default": "./dist/index.cjs.js"
     },
-    "./vizbuilder.css": "./dist/index.css"
+    "./vizbuilder.css": "./dist/tesseract-vizbuilder.css"
   },
   "types": "./dist/index.d.ts",
-  "style": "./dist/index.css",
+  "style": "./dist/tesseract-vizbuilder.css",
   "readme": "README.md",
   "files": [
     "dist/index.cjs.js",
-    "dist/index.css",
+    "dist/tesseract-vizbuilder.css",
     "dist/index.d.ts",
     "dist/index.esm.js"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "prepublishOnly": "tsup"
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "prepublishOnly": "vite build",
+    "types": "tsc --emitDeclarationOnly"
   },
   "keywords": [
     "charts",
@@ -51,14 +52,15 @@
   "peerDependencies": {
     "@datawheel/olap-client": "^2.0.0",
     "@datawheel/tesseract-explorer": "^2.0.0-0",
-    "@tabler/icons-react": "^2.0.0",
     "@mantine/core": "^6.0.0",
+    "@tabler/icons-react": "^2.0.0",
     "react": "^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@datawheel/tesseract-explorer": "workspace:*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "tsup": "^6.6.3"
+    "typescript": "^5.9.3",
+    "vite": "^7.3.5"
   }
 }

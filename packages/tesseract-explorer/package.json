@@ -19,9 +19,10 @@
     "dist/index.d.ts"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "prepublishOnly": "tsup"
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "prepublishOnly": "vite build",
+    "types": "tsc --emitDeclarationOnly"
   },
   "author": "Francisco Abarzúa <francisco@datawheel.us>",
   "license": "MIT",
@@ -66,6 +67,7 @@
     "@mantine/prism": "^6.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "tsup": "^8.0.0"
+    "typescript": "^5.9.3",
+    "vite": "^7.3.5"
   }
 }

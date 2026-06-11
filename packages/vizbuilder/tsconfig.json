@@ -5,11 +5,12 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "jsx": "react",
-    "lib": ["dom", "es2018"],
-    "moduleResolution": "node",
+    "lib": ["dom", "es2020"],
+    "moduleResolution": "bundler",
     "outDir": "dist",
     "strictNullChecks": true,
-    "target": "es2015"
+    "skipLibCheck": true,
+    "target": "es2020"
   },
   "include": [
     "./src",
