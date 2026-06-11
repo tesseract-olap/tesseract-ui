@@ -1,246 +1,233 @@
-# 📦 Publishing & Releases
+# Publishing & Releases
 
-This guide explains how to publish and create releases for packages in this Tesseract UI monorepo.
+This monorepo publishes several packages to npm under the `@datawheel` scope. Version management and publishing are handled by [Changesets](https://github.com/changesets/changesets) — no conventional commits required.
 
-## 📋 Prerequisites
+## Packages
 
-### 🔐 NPM Authentication
-Make sure you have NPM access configured:
+| Package | npm | Version | Description |
+|---------|-----|---------|-------------|
+| `@datawheel/tesseract-explorer` | [npm](https://www.npmjs.com/package/@datawheel/tesseract-explorer) | 2.0.0 | Core React component for exploring tesseract-olap data |
+| `@datawheel/tesseract-vizbuilder` | [npm](https://www.npmjs.com/package/@datawheel/tesseract-vizbuilder) | 0.5.1 | Charting plugin for tesseract-explorer |
+| `@datawheel/tesseract-client` | [npm](https://www.npmjs.com/package/@datawheel/tesseract-client) | 1.0.0 | TypeScript types + query builder for tesseract-olap |
+| `@datawheel/cube-audit` | [npm](https://www.npmjs.com/package/@datawheel/cube-audit) | 1.0.4 | CLI tool to audit OLAP server metadata annotations |
+| `@datawheel/create-tesseract-ui` | [npm](https://www.npmjs.com/package/@datawheel/create-tesseract-ui) | 0.8.1 | Scaffolding CLI to create new tesseract-ui instances |
 
-```bash
-npm login
-```
+## How Changesets Work
 
-You must have write permissions for the `@datawheel/*` packages.
+Changesets are markdown files stored in `.changeset/`. Each file contains:
+- Which packages changed
+- The semver bump type for each (`patch`, `minor`, `major`)
+- A human-written changelog entry
 
-### 🏗️ Development Environment
-- Node.js >= 18.0.0
-- npm >= 8.11.0
-- Git configured with credentials
+Unlike conventional-commits tooling, changesets don't parse your commit messages. You write the changelog entry yourself when you create the changeset. This means:
 
-## 🚀 Release and Publishing Process
+- Commit messages can be whatever is useful to developers (scoped commits, free text, ticket references)
+- Changelogs are written for end-users, not generated from commit dumps
+- A single PR can contain multiple changesets (e.g., one for a new feature, one for a bugfix)
 
-### Step 1: Create a new release
+## Workflow
 
-Run the release command to detect changes and create new versions:
+### Step 1: Create a changeset alongside your code
 
-```bash
-npm run mono:release
-```
-
-#### What this command does:
-
-1. **Detects changes** in each package since the last release
-2. **Analyzes commits** that affect each package
-3. **Shows summary** of changes per package
-4. **Asks for version type** for each package with changes
-
-#### Available version types:
-
-- `patch` - Minor changes (bug fixes) - `1.0.0` → `1.0.1`
-- `minor` - New features (backward compatible) - `1.0.0` → `1.1.0`
-- `major` - Breaking changes - `1.0.0` → `2.0.0`
-- `prerelease` - Pre-release versions (alpha/beta) - `1.0.0` → `1.0.1-alpha.0`
-- `prepatch/preminor/premajor` - Specific pre-versions
-- `skip` - Skip this package
-
-#### Example output:
-
-```
-----------------------------------------------------------------------
-Changes found for package @datawheel/tesseract-explorer v2.0.0-alpha.17:
-* [a1b2c3d] Fix defaultProps deprecation warning
-* [e4f5g6h] Add Portuguese group annotations
-
-Which type of version increment apply?
-❯ patch
-  minor
-  major
-  skip
-```
-
-### Step 2: Publish the package
-
-Once the release is created, publish the package to NPM:
+When you make changes that should be released to npm, run:
 
 ```bash
-npm run mono:publish <package-name>
+pnpm changeset
 ```
 
-#### Examples:
+This launches an interactive prompt:
+
+```
+🦋  Which packages have changed?
+◯ @datawheel/tesseract-explorer
+◯ @datawheel/tesseract-vizbuilder
+...
+```
+
+1. **Select the packages** affected by your change (spacebar to select, enter to confirm).
+2. **Choose the bump type** for each selected package (`patch`, `minor`, or `major`).
+3. **Write a changelog entry** — a short description of the change from an end-user perspective.
+
+This creates a file at `.changeset/<random-name>.md` looking like:
+
+```md
+---
+"@datawheel/tesseract-explorer": minor
+---
+
+Add Portuguese group annotations to the dimension hierarchy view.
+```
+
+Commit and push this file as part of your PR. If your PR touches multiple unrelated changes, create multiple changeset files (run `pnpm changeset` again after the first one completes).
+
+### Step 2: Merge the PR to master
+
+After your PR (including the changeset file) is merged to `master`, the Release CI workflow runs. It detects the changeset files and creates or updates a **"Version Packages"** pull request. This PR:
+- Consumes the changeset files (deletes them from `.changeset/`)
+- Bumps version numbers in each affected `package.json`
+- Updates `CHANGELOG.md` files with the changelog entries you wrote
+- Updates internal workspace dependencies to use the new versions
+
+The "Version Packages" PR is kept up to date as more changesets are merged.
+
+### Step 3: Merge the Version Packages PR
+
+When you're ready to release, merge the "Version Packages" PR. This triggers the publish step in CI:
+- All packages are built (`pnpm run build`)
+- Published to npm with `changeset publish`
+- Git tags are created for each published version
+
+## Writing Good Changelog Entries
+
+A changelog entry should tell an end-user what changed from a functional perspective.
+
+### Good examples:
+
+```
+Add Portuguese group annotations to the dimension hierarchy view.
+```
+```
+Fix table rendering when measure values contain null data points.
+```
+```
+Remove deprecated `useLegacyParser` option from query builder.
+```
+
+### Bad examples (too vague or developer-focused):
+
+```
+Refactored state management.  (user doesn't care about internals)
+```
+```
+Fixed lint errors.  (not a user-facing change)
+```
+```
+Updated dependencies.  (irrelevant to consumers)
+```
+
+If your change doesn't affect end-users (e.g., CI configuration, README typos, internal refactoring), you can create an empty changeset:
 
 ```bash
-# Publish tesseract-explorer
-npm run mono:publish tesseract-explorer
-
-# Publish vizbuilder
-npm run mono:publish vizbuilder
-
-# You can also use the directory name
-npm run mono:publish tesseract-explorer
+pnpm changeset --empty
 ```
 
-#### What this command does:
+## Choosing the Right Bump Type
 
-1. **Builds the package** using `npm run build`
-2. **Runs dry-run** to verify everything is correct
-3. **Publishes to NPM** the package from `packages/<package-name>/`
+| Bump | When to use |
+|------|-------------|
+| `patch` | Bug fixes, performance improvements, dependency updates with no API change |
+| `minor` | New features, new exports, backwards-compatible additions |
+| `major` | Breaking API changes, removed exports, changed behavior that requires consumer action |
 
-## 📝 Complete Workflow
+Internal packages (demo apps, eslint-config) are marked `"private": true` in their `package.json` and are skipped by Changesets.
 
-### For a single package:
+## How the Release CI Works
+
+The release workflow (`.github/workflows/release.yml`) runs on every push to `master`:
+
+1. **Checkout + Setup**: Node 22, pnpm 10, with caching
+2. **Install**: `pnpm install --frozen-lockfile`
+3. **Build**: `pnpm run build` (via Turbo)
+4. **changesets/action**: This is the key step. It checks for changeset files:
+   - If changeset files exist and haven't been versioned → it opens/updates a "Version Packages" PR
+   - If changeset files have been consumed (the Version Packages PR was merged) → it publishes to npm
+
+The action needs two tokens:
+- `GITHUB_TOKEN`: Auto-provided by GitHub, used to create the Version Packages PR. Needs `contents: write` and `pull-requests: write` permissions.
+- `NPM_TOKEN`: Must be set as a repository secret. Must have publish access for the `@datawheel` scope.
+
+## Available Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `pnpm changeset` | Create a new changeset file (interactive) |
+| `pnpm changeset --empty` | Mark a change as "no release needed" |
+| `pnpm release:status` | Show which packages have pending changesets |
+| `pnpm release:version` | Consume changesets and bump versions (called by CI) |
+| `pnpm release:publish` | Build + publish to npm (called by CI) |
+| `pnpm mono:release` | **Legacy** — interactive release (see below) |
+| `pnpm mono:publish` | **Legacy** — manual publish (see below) |
+
+## First-Time Package Setup
+
+When adding a new package to the monorepo that should be published:
+
+1. Ensure the package is NOT marked `"private": true` in its `package.json`.
+2. Make sure it has a build script (`"build": "tsup"` or similar).
+3. Publish the first version manually:
+   ```bash
+   cd packages/my-new-package
+   npm publish --access public
+   git tag "@datawheel/my-new-package@1.0.0"
+   git push origin "@datawheel/my-new-package@1.0.0"
+   ```
+4. Subsequent releases go through the normal Changesets workflow.
+
+## Legacy Scripts
+
+The old release tooling is preserved at `scripts/release.js` and `scripts/publish.js` for manual use. These work without CI or Changesets:
 
 ```bash
-# 1. Make code changes
-git add .
-git commit -m "feat: add new feature"
+# Interactive release: shows commits since last tag, prompts for bump type
+pnpm mono:release
 
-# 2. Create release (increment version)
-npm run mono:release
-
-# 3. Publish to NPM
-npm run mono:publish tesseract-explorer
+# Publish a specific package to npm
+pnpm mono:publish tesseract-explorer
 ```
 
-### For multiple packages:
+Prefer the Changesets workflow above. The legacy scripts are maintained for emergencies or when working offline.
+
+## Troubleshooting
+
+**"Some packages have been changed but no changesets were found"**
+
+Changesets requires that every PR touching a publishable package includes a changeset. If your change truly doesn't need a release (docs, CI, refactoring), create an empty changeset:
 
 ```bash
-# 1. Make changes and commits
-git add .
-git commit -m "feat: update multiple packages"
-
-# 2. Create releases for all affected packages
-npm run mono:release
-
-# 3. Publish each package individually
-npm run mono:publish tesseract-explorer
-npm run mono:publish vizbuilder
+pnpm changeset --empty
 ```
 
-## 🔧 Available Scripts
+**"No packages matched" during `pnpm changeset`**
 
-### In root package.json:
+Your package may be marked `"private": true`. Only non-private packages can have changesets. If the package should be published, remove the `"private": true` field.
 
-```json
-{
-  "scripts": {
-    "mono:release": "node scripts/release.js",
-    "mono:publish": "node scripts/publish.js"
-  }
-}
-```
+**CI creates version bumps but doesn't publish**
 
-### Custom scripts:
-
-- **`scripts/release.js`** - Logic for automatically creating releases
-- **`scripts/publish.js`** - Logic for publishing packages
-- **`scripts/toolbox/`** - Utilities for the publishing workflow
-
-## ⚙️ Technical Configuration
-
-### Turbo (Parallel Building)
-
-The project uses [Turbo](https://turbo.build/) for parallel building:
-
-```json
-// turbo.json
-{
-  "pipeline": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
-    }
-  }
-}
-```
-
-### Package Building
-
-Each package is built with [tsup](https://tsup.egoist.sh/):
-
-```json
-// packages/tesseract-explorer/package.json
-{
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "prepublishOnly": "tsup"
-  }
-}
-```
-
-## 🚨 Important Notes
-
-### First release of a package
-
-If it's the **first time** you're publishing a package, the release script won't work automatically. You need to:
-
-1. **Create the tag manually** for the first release
-2. **Run release** normally for subsequent releases
-
-### Semantic Versioning
-
-Follow [Semantic Versioning](https://semver.org/):
-
-- **`PATCH`**: Bug fixes (1.0.0 → 1.0.1)
-- **`MINOR`**: New backward-compatible features (1.0.0 → 1.1.0)
-- **`MAJOR`**: Breaking changes (1.0.0 → 2.0.0)
-
-### Automatic Publishing
-
-Packages are published with the `@datawheel/` scope:
-- `@datawheel/tesseract-explorer`
-- `@datawheel/tesseract-vizbuilder`
-- `@datawheel/cube-audit`
-- `@datawheel/create-tesseract-ui`
-
-## 🐛 Troubleshooting
-
-### Error: "Package has no previous releases"
-
-**Solution**: For new packages, create the first release manually:
+Check that `NPM_TOKEN` is set as a repository secret in GitHub and has write access to the `@datawheel` scope:
 
 ```bash
-# Update package.json manually
-npm version patch  # or minor/major as appropriate
-
-# Create tag
-git tag "@datawheel/package-name@v1.0.0"
-
-# Push tag
-git push origin "@datawheel/package-name@v1.0.0"
+# Verify token has access
+npm access list packages @datawheel/tesseract-explorer
 ```
 
-### Error: "npm publish failed"
+**"Version Packages" PR not created**
 
-**Solution**: Verify:
-- ✅ `npm login` configured correctly
-- ✅ Write permissions for `@datawheel/*`
-- ✅ No version conflicts
-- ✅ Build completed successfully
+Check the Release workflow logs on GitHub. Common causes:
+- The workflow file has `branches: [master]` but you pushed to a different branch
+- `GITHUB_TOKEN` doesn't have `contents: write` and `pull-requests: write` permissions
+- There are no changeset files in `.changeset/`
 
-### Error: "Cannot find module"
+**Node version issues**
 
-**Solution**: Make sure all dependencies are built first:
+This repo requires Node >= 18 and pnpm >= 10:
 
 ```bash
-# Build entire monorepo
-npm run build
-
-# Or use turbo directly
-npx turbo run build
+node --version    # should be >= 18
+pnpm --version    # should be >= 10
 ```
 
-## 📊 Package Status
+If you use Nix, run `nix-shell` to get the correct toolchain.
 
-You can check the publishing status on NPM:
+## Configuration Reference
 
-- [@datawheel/tesseract-explorer](https://www.npmjs.com/package/@datawheel/tesseract-explorer)
-- [@datawheel/tesseract-vizbuilder](https://www.npmjs.com/package/@datawheel/tesseract-vizbuilder)
-- [@datawheel/cube-audit](https://www.npmjs.com/package/@datawheel/cube-audit)
-- [@datawheel/create-tesseract-ui](https://www.npmjs.com/package/@datawheel/create-tesseract-ui)
+Changeset behavior is configured in `.changeset/config.json`:
 
-## 📞 Contact
+| Key | Value | Meaning |
+|-----|-------|---------|
+| `access` | `public` | Publish to public npm registry (not restricted) |
+| `baseBranch` | `master` | Compare against this branch to detect changes |
+| `commit` | `false` | Don't add conventional commit footers to automated commits |
+| `updateInternalDependencies` | `patch` | When a dependency gets bumped, bump dependents by patch |
+| `changelog` | `@changesets/cli/changelog` | Default changelog format |
 
-For questions about the publishing process, contact the development team.</contents>
-</xai:function_call">PUBLISHING.md
+The `onlyUpdatePeerDependentsWhenOutOfRange` experimental option prevents peer-dependent bumps unless the peer range is actually broken.

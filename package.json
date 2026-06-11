@@ -2,23 +2,31 @@
   "name": "@datawheel/tesseract-ui-repo",
   "private": true,
   "scripts": {
+    "build": "turbo run build",
     "dev": "turbo run dev",
+    "lint": "turbo run lint",
     "mono:publish": "node scripts/publish.js",
-    "mono:release": "node scripts/release.js"
+    "mono:release": "node scripts/release.js",
+    "release:status": "changeset status",
+    "release:version": "changeset version",
+    "release:publish": "pnpm run build && changeset publish"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "dependencies": {
     "args": "^5.0.0",
     "chosen": "0.0.2",
     "semver": "^7.3.0",
     "simple-git": "^3.16.1",
-    "turbo": "^1.8.2"
+    "turbo": "^2.5.0"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.28.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "pnpm": ">=10.0.0"
   },
-  "packageManager": "npm@8.11.0"
+  "packageManager": "pnpm@10.8.0",
+  "pnpm": {
+    "onlyBuiltDependencies": ["core-js", "esbuild"]
+  }
 }

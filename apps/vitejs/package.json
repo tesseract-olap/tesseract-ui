@@ -5,8 +5,8 @@
     "dev": "vite serve"
   },
   "dependencies": {
-    "@datawheel/tesseract-explorer": "*",
-    "@datawheel/tesseract-vizbuilder": "*",
+    "@datawheel/tesseract-explorer": "workspace:*",
+    "@datawheel/tesseract-vizbuilder": "workspace:*",
     "@emotion/react": "^11.10.6",
     "@mantine/core": "^6.0.7",
     "@mantine/dates": "^6.0.7",

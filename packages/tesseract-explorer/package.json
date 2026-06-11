@@ -65,7 +65,7 @@
     "@mantine/hooks": "^6.0.0",
     "@mantine/prism": "^6.0.0",
     "eslint": "^8.0.0",
-    "eslint-config-tesseract-ui": "*",
+    "eslint-config-tesseract-ui": "workspace:*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "tsup": "^8.0.0"
