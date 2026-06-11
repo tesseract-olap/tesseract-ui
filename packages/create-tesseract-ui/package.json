@@ -23,16 +23,5 @@
   },
   "devDependencies": {
     "@types/node": "^14.0.0"
-  },
-  "keywords": [
-    "create",
-    "init",
-    "tesseract-olap",
-    "tesseract-ui"
-  ],
-  "eslintConfig": {
-    "env": {
-      "node": true
-    }
   }
 }

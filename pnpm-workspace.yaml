@@ -1,3 +1,5 @@
 packages:
   - "apps/*"
   - "packages/*"
+  - "!packages/data-explorer"
+  - "!packages/tesseract-client"

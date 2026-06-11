@@ -1,9 +1,0 @@
-{
-  "root": true,
-  "extends": ["tesseract-ui"],
-  "settings": {
-    "next": {
-      "rootDir": ["apps/*/"]
-    }
-  }
-}

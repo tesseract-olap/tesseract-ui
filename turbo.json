@@ -6,7 +6,6 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "lint": {},
     "dev": {
       "cache": false,
       "env": ["OLAPPROXY_TARGET", "OLAPPROXY_JWTAUTH"],

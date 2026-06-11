@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2021": true
+  },
+  "globals": {
+    "process": "readonly"
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "rules": {
+    "no-var": "error",
+    "prefer-const": "error",
+    "prefer-template": "warn",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "eqeqeq": ["error", "smart"],
+    "curly": ["error", "multi-line"],
+    "default-case": "error",
+    "dot-notation": "error",
+    "radix": "error",
+    "react/self-closing-comp": "error",
+    "typescript/no-explicit-any": "warn"
+  },
+  "ignorePatterns": ["**/dist/**", "**/node_modules/**", "**/*.config.*", "**/template/**", "packages/data-explorer/**", "packages/tesseract-client/**"]
+}

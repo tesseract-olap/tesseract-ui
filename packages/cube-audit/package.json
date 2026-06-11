@@ -39,10 +39,5 @@
   },
   "devDependencies": {
     "@types/node": "^12.20.0"
-  },
-  "eslintConfig": {
-    "parserOptions": {
-      "ecmaVersion": 11
-    }
   }
 }
