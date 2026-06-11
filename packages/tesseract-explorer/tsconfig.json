@@ -5,7 +5,7 @@
     "checkJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "lib": ["dom", "es2020"],
     "moduleResolution": "bundler",
     "outDir": "dist",
