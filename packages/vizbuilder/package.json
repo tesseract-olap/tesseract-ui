@@ -2,31 +2,6 @@
   "name": "@datawheel/tesseract-vizbuilder",
   "version": "0.5.1",
   "description": "Generates a vizbuilder view for results query in Tesseract Explorer.",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
-  "exports": {
-    ".": {
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.cjs.js",
-      "default": "./dist/index.cjs.js"
-    },
-    "./vizbuilder.css": "./dist/tesseract-vizbuilder.css"
-  },
-  "types": "./dist/index.d.ts",
-  "style": "./dist/tesseract-vizbuilder.css",
-  "readme": "README.md",
-  "files": [
-    "dist/index.cjs.js",
-    "dist/tesseract-vizbuilder.css",
-    "dist/index.d.ts",
-    "dist/index.esm.js"
-  ],
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite build --watch",
-    "prepublishOnly": "vite build",
-    "types": "tsc --emitDeclarationOnly"
-  },
   "keywords": [
     "charts",
     "d3plus",
@@ -36,18 +11,53 @@
     "tesseract-explorer",
     "tesseract-olap"
   ],
-  "author": "Francisco Abarzua <francisco@datawheel.us>",
   "license": "MIT",
+  "author": "Francisco Abarzua <francisco@datawheel.us>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Datawheel/tesseract-ui.git",
     "directory": "packages/vizbuilder"
+  },
+  "style": "./dist/tesseract-vizbuilder.css",
+  "files": [
+    "dist/index.cjs.js",
+    "dist/tesseract-vizbuilder.css",
+    "dist/index.d.ts",
+    "dist/index.esm.js"
+  ],
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.cjs.js"
+    },
+    "./vizbuilder.css": "./dist/tesseract-vizbuilder.css"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "prepublishOnly": "vite build",
+    "types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
     "@datawheel/vizbuilder": "^0.5.0",
     "clsx": "^2.0.0",
     "d3plus-export": "^1.3.0",
     "d3plus-react": "^1.0.0"
+  },
+  "devDependencies": {
+    "@datawheel/tesseract-explorer": "workspace:*",
+    "@microsoft/api-extractor": "^7.58.8",
+    "@types/react": "^18.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "typescript": "^5.9.3",
+    "unplugin-dts": "^1.0.2",
+    "vite": "^7.3.5"
   },
   "peerDependencies": {
     "@datawheel/olap-client": "^2.0.0",
@@ -56,12 +66,5 @@
     "@tabler/icons-react": "^2.0.0",
     "react": "^17.0.0 || ^18.0.0"
   },
-  "devDependencies": {
-    "@datawheel/tesseract-explorer": "workspace:*",
-    "@types/react": "^18",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.5"
-  }
+  "readme": "README.md"
 }

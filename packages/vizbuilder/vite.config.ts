@@ -1,7 +1,9 @@
-import pkg from "./package.json";
 import { defineConfig } from "vite";
+import dts from "unplugin-dts/vite";
+import pkg from "./package.json";
 
 export default defineConfig({
+  plugins: [dts({ bundleTypes: true })],
   build: {
     lib: {
       entry: "src/index.ts",
@@ -10,21 +12,18 @@ export default defineConfig({
         if (format === "es") return "index.esm.js";
         if (format === "cjs") return "index.cjs.js";
         return `index.${format}.js`;
-      }
+      },
     },
     sourcemap: true,
     emptyOutDir: true,
     rollupOptions: {
-      external: [
-        ...Object.keys(pkg.dependencies),
-        ...Object.keys(pkg.peerDependencies)
-      ],
+      external: [...Object.keys(pkg.dependencies), ...Object.keys(pkg.peerDependencies)],
       output: {
-        exports: "named"
-      }
-    }
+        exports: "named",
+      },
+    },
   },
   define: {
-    "process.env.BUILD_VERSION": JSON.stringify(pkg.version)
-  }
+    "process.env.BUILD_VERSION": JSON.stringify(pkg.version),
+  },
 });

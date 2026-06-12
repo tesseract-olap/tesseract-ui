@@ -8,10 +8,11 @@
     "jsx": "react-jsx",
     "lib": ["dom", "es2020"],
     "moduleResolution": "bundler",
+    "rootDir": "./src",
     "outDir": "dist",
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "target": "es2020",
+    "target": "es2020"
   },
   "include": ["./src"]
 }

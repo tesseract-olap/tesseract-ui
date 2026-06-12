@@ -1,7 +1,10 @@
+import dts from "unplugin-dts/vite";
 import {defineConfig} from "vite";
+
 import pkg from "./package.json";
 
 export default defineConfig({
+  plugins: [dts({bundleTypes: true})],
   build: {
     lib: {
       entry: "src/index.ts",

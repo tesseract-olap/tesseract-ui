@@ -27,8 +27,8 @@ The main functionality is provided by the `TesseractExplorer` component exported
 ```js
 function PageComponent(props) {
   return (
-    <TesseractExplorer 
-      src="https://tesseract.server.url/" 
+    <TesseractExplorer
+      src="https://tesseract.server.url/"
       withinReduxProvider
     />;
   )
@@ -50,7 +50,7 @@ export const store = configureStore({
       otherKey: otherReducer(state, action),
       // you must merge the Explorer state in your root app state
       ...explorerReducer(state, action),
-    }
+    };
   },
   middleware(getDefaultMiddleware) {
     return getDefaultMiddleware({
@@ -60,10 +60,10 @@ export const store = configureStore({
         extraArgument: {
           otherExtraArg: otherValue,
           ...explorerThunkExtraArg(),
-        }
+        },
       },
     });
-  }
+  },
 });
 
 // app/pages/explorer.js
@@ -74,9 +74,7 @@ import {store} from "app/store.js";
 function PageComponent(props) {
   return (
     <ReduxProvider store={store}>
-      <TesseractExplorer
-        src="https://tesseract.server.url/"
-      />;
+      <TesseractExplorer src="https://tesseract.server.url/" />;
     </ReduxProvider>
   );
 }
@@ -85,6 +83,7 @@ function PageComponent(props) {
 ### Customize views
 
 By default, the results obtained by a query can be presented in three views:
+
 - `Data table`, a spreadsheet-like table that shows a fragment of the data
 - `Pivot table`, a mini-app where you can export the data in a 2-dimensional matrix
 - `Raw response`, a debugging view to get more info about the query and how to replicate it in code
@@ -131,12 +130,14 @@ If the data server is configured to output data in multiple locales, you can let
 
 ```jsx
 function PageComponent(props) {
-  return <TesseractExplorer
-    src="https://tesseract.server.url/"
-    locale={["en", "es"]}
-    // The property also accepts a comma-separated string
-    locale="es,en"
-  />;
+  return (
+    <TesseractExplorer
+      src="https://tesseract.server.url/"
+      locale={["en", "es"]}
+      // The property also accepts a comma-separated string
+      locale="es,en"
+    />
+  );
 }
 ```
 
@@ -149,28 +150,30 @@ By default the user interface will be in English, but you can localize it using 
 
 ```jsx
 function PageComponent(props) {
-  return <TesseractExplorer
-    src="https://tesseract.server.url/"
-    translations={translations}
-    uiLocale="es"
-  />;
+  return (
+    <TesseractExplorer
+      src="https://tesseract.server.url/"
+      translations={translations}
+      uiLocale="es"
+    />
+  );
 }
 ```
 
-* `translations` must be an object where the keys are the locale codes you intend to make available in the app, and the values are dictionaries that complies with the labels [defined in this file](./src/hooks/translation.ts).
+- `translations` must be an object where the keys are the locale codes you intend to make available in the app, and the values are dictionaries that complies with the labels [defined in this file](./src/hooks/translation.ts).
   This object is also exported by this package so you can check it yourself.
-* `uiLocale`, which is not related to the `locale` property mentioned in the earlier section, must be a string matching one of the keys defined in the `translations` property.
+- `uiLocale`, which is not related to the `locale` property mentioned in the earlier section, must be a string matching one of the keys defined in the `translations` property.
 
 When used, both properties are required.  
 The locale keys used not necesarily must be ISO 639 codes; any string can do, but must match on both properties.
 
 Some translation labels do interpolation of values when used. These are optional, but encouraged, and some can have additional values available:
 
-* `params.current_endpoint` replaces `{label}` with the current kind of endpoint (`"aggregate"` or `"logiclayer"`) if the server is Tesseract OLAP
-* `params.label_cube` has the `{name}` and `{caption}` properties of the cube (though `caption` comes from `annotations.caption`)
-* `params.label_locale` has `{code}`, `{name}`, and `{nativeName}`, which would match to `"es"`, `"Spanish"`, and `"Español"`, respectively (and these values come from the options passed to `locale`)
-* `params.label_topic` and `label_subtopic` replace `{label}` with its respective values from the cube annotations
-* Wherever a number is used, the `{n}` tag contains the value, and you can define a label for the singular and plural forms: `key` for the singular, and `key_plural` for the plural.
+- `params.current_endpoint` replaces `{label}` with the current kind of endpoint (`"aggregate"` or `"logiclayer"`) if the server is Tesseract OLAP
+- `params.label_cube` has the `{name}` and `{caption}` properties of the cube (though `caption` comes from `annotations.caption`)
+- `params.label_locale` has `{code}`, `{name}`, and `{nativeName}`, which would match to `"es"`, `"Spanish"`, and `"Español"`, respectively (and these values come from the options passed to `locale`)
+- `params.label_topic` and `label_subtopic` replace `{label}` with its respective values from the cube annotations
+- Wherever a number is used, the `{n}` tag contains the value, and you can define a label for the singular and plural forms: `key` for the singular, and `key_plural` for the plural.
 
 ### Additional formatters
 
@@ -191,18 +194,22 @@ const formatterIndex = useMemo(() => ({
 
 The app comes with a limited list of default ones: `Decimal` (1234.567), `Milliards` (1,234.567), `Dollars` ($1,234.57), and `Human` (1.23k).
 The key used to select a formatter comes from the `format_template` annotation, and if not present, the `units_of_measurement` annotation in the measure data.
-* If the measure contains the `format_template` annotation, it is used to create a custom formatter on runtime. [Check the documentation](https://github.com/d3plus/d3plus-format#readme) for details on how to build and customize a template.
-* If the `units_of_measurement` set is an official [ISO 4217 currency alpha code](https://en.wikipedia.org/wiki/ISO_4217#Alpha_codes) (three letters in caps), it will be parsed into a currency formatter using the browser's [`Intl.NumberFormat`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) constructor. Otherwise, the key is looked in the `formatters` property object and in the default formatters list.
-* If any of these are present, numbers are presented in Decimal format.
+
+- If the measure contains the `format_template` annotation, it is used to create a custom formatter on runtime. [Check the documentation](https://github.com/d3plus/d3plus-format#readme) for details on how to build and customize a template.
+- If the `units_of_measurement` set is an official [ISO 4217 currency alpha code](https://en.wikipedia.org/wiki/ISO_4217#Alpha_codes) (three letters in caps), it will be parsed into a currency formatter using the browser's [`Intl.NumberFormat`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) constructor. Otherwise, the key is looked in the `formatters` property object and in the default formatters list.
+- If any of these are present, numbers are presented in Decimal format.
 
 ### Cube sources and descriptions
+
 When a cube contains the `description`, `source_name`, `source_link`, and/or `source_description` annotations, they're shown under the Cube selector in the parameter column.  
 These annotations can also be localized using additional annotations with [the supported locale code](#data-locale) as suffix: `source_name_es` will be used when the locale selector is set to `"es"`; if not present in the cube, `source_name` will be used instead, and if not present, nothing will be shown. Note the locale used here is the _Data Locale_, not the _UI Locale_.
 
 ### Preview queries feature
+
 In order to reduce the amount of big queries/responses we implemented the `previewLimit` property. Default value is `50`. In this initial version, it allows the user fine tune the query receiving small payloads truncating the amout of records with `limit` value until the user explicity enable the `Full results options`.
 
 ### Row limit for queries feature
+
 We implemented the `rowLimit` property in order to add a constraint in the number of rows that the api serves. Default value is `0` which means `no limit`.
 
 ## 🛠️ Development & Contributing

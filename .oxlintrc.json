@@ -9,23 +9,34 @@
   "globals": {
     "process": "readonly"
   },
+  "options": {
+    "typeAware": true
+  },
   "categories": {
     "correctness": "error",
     "suspicious": "warn",
     "perf": "warn"
   },
   "rules": {
+    "curly": ["error", "all"],
+    "default-case": "error",
+    "dot-notation": "error",
+    "eqeqeq": ["error", "smart"],
+    "no-unused-vars": ["error", {"argsIgnorePattern": "^_"}],
     "no-var": "error",
     "prefer-const": "error",
     "prefer-template": "warn",
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "eqeqeq": ["error", "smart"],
-    "curly": ["error", "multi-line"],
-    "default-case": "error",
-    "dot-notation": "error",
     "radix": "error",
     "react/self-closing-comp": "error",
-    "typescript/no-explicit-any": "warn"
+    "typescript/no-explicit-any": "warn",
+    "unicorn/empty-brace-spaces": "error"
   },
-  "ignorePatterns": ["**/dist/**", "**/node_modules/**", "**/*.config.*", "**/template/**", "packages/data-explorer/**", "packages/tesseract-client/**"]
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/*.config.*",
+    "**/template/**",
+    "packages/data-explorer/**",
+    "packages/tesseract-client/**"
+  ]
 }

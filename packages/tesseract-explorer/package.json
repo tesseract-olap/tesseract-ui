@@ -2,10 +2,26 @@
   "name": "@datawheel/tesseract-explorer",
   "version": "2.0.0",
   "description": "A react component to explore data from a tesseract-olap server.",
+  "keywords": [
+    "tesseract-explorer",
+    "tesseract-olap",
+    "tesseract-ui"
+  ],
+  "license": "MIT",
+  "author": "Francisco Abarzúa <francisco@datawheel.us>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Datawheel/tesseract-ui.git",
+    "directory": "packages/tesseract-explorer"
+  },
+  "files": [
+    "dist/index.esm.js",
+    "dist/index.cjs.js",
+    "dist/index.d.ts"
+  ],
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",
-  "readme": "./README.md",
   "exports": {
     ".": {
       "import": "./dist/index.esm.js",
@@ -13,29 +29,12 @@
       "default": "./dist/index.cjs.js"
     }
   },
-  "files": [
-    "dist/index.esm.js",
-    "dist/index.cjs.js",
-    "dist/index.d.ts"
-  ],
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",
     "prepublishOnly": "vite build",
     "types": "tsc --emitDeclarationOnly"
   },
-  "author": "Francisco Abarzúa <francisco@datawheel.us>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Datawheel/tesseract-ui.git",
-    "directory": "packages/tesseract-explorer"
-  },
-  "keywords": [
-    "tesseract-explorer",
-    "tesseract-olap",
-    "tesseract-ui"
-  ],
   "dependencies": {
     "@datawheel/olap-client": "^2.1.1",
     "@datawheel/use-translation": "^0.2.0",
@@ -50,6 +49,20 @@
     "react-redux": "^7.0.0",
     "react-viewport-list": "^3.0.0"
   },
+  "devDependencies": {
+    "@emotion/react": "^11.9.0",
+    "@mantine/core": "^6.0.0",
+    "@mantine/dates": "^6.0.0",
+    "@mantine/hooks": "^6.0.0",
+    "@mantine/prism": "^6.0.0",
+    "@microsoft/api-extractor": "^7.58.8",
+    "@types/react": "^18.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "typescript": "^5.9.3",
+    "unplugin-dts": "^1.0.2",
+    "vite": "^7.3.5"
+  },
   "peerDependencies": {
     "@emotion/react": "^11.0.0",
     "@mantine/core": "^6.0.0",
@@ -59,16 +72,5 @@
     "react": "^16.14.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.14.0 || ^17.0.0 || ^18.0.0"
   },
-  "devDependencies": {
-    "@emotion/react": "^11.10.6",
-    "@mantine/core": "^6.0.0",
-    "@mantine/dates": "^6.0.0",
-    "@mantine/hooks": "^6.0.0",
-    "@mantine/prism": "^6.0.0",
-    "@types/react": "^18",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.5"
-  }
+  "readme": "./README.md"
 }

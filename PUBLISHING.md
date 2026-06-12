@@ -2,19 +2,10 @@
 
 This monorepo publishes several packages to npm under the `@datawheel` scope. Version management and publishing are handled by [Changesets](https://github.com/changesets/changesets) — no conventional commits required.
 
-## Packages
-
-| Package | npm | Version | Description |
-|---------|-----|---------|-------------|
-| `@datawheel/tesseract-explorer` | [npm](https://www.npmjs.com/package/@datawheel/tesseract-explorer) | 2.0.0 | Core React component for exploring tesseract-olap data |
-| `@datawheel/tesseract-vizbuilder` | [npm](https://www.npmjs.com/package/@datawheel/tesseract-vizbuilder) | 0.5.1 | Charting plugin for tesseract-explorer |
-| `@datawheel/tesseract-client` | [npm](https://www.npmjs.com/package/@datawheel/tesseract-client) | 1.0.0 | TypeScript types + query builder for tesseract-olap |
-| `@datawheel/cube-audit` | [npm](https://www.npmjs.com/package/@datawheel/cube-audit) | 1.0.4 | CLI tool to audit OLAP server metadata annotations |
-| `@datawheel/create-tesseract-ui` | [npm](https://www.npmjs.com/package/@datawheel/create-tesseract-ui) | 0.8.1 | Scaffolding CLI to create new tesseract-ui instances |
-
 ## How Changesets Work
 
 Changesets are markdown files stored in `.changeset/`. Each file contains:
+
 - Which packages changed
 - The semver bump type for each (`patch`, `minor`, `major`)
 - A human-written changelog entry
@@ -63,6 +54,7 @@ Commit and push this file as part of your PR. If your PR touches multiple unrela
 ### Step 2: Merge the PR to master
 
 After your PR (including the changeset file) is merged to `master`, the Release CI workflow runs. It detects the changeset files and creates or updates a **"Version Packages"** pull request. This PR:
+
 - Consumes the changeset files (deletes them from `.changeset/`)
 - Bumps version numbers in each affected `package.json`
 - Updates `CHANGELOG.md` files with the changelog entries you wrote
@@ -73,6 +65,7 @@ The "Version Packages" PR is kept up to date as more changesets are merged.
 ### Step 3: Merge the Version Packages PR
 
 When you're ready to release, merge the "Version Packages" PR. This triggers the publish step in CI:
+
 - All packages are built (`pnpm run build`)
 - Published to npm with `changeset publish`
 - Git tags are created for each published version
@@ -86,9 +79,11 @@ A changelog entry should tell an end-user what changed from a functional perspec
 ```
 Add Portuguese group annotations to the dimension hierarchy view.
 ```
+
 ```
 Fix table rendering when measure values contain null data points.
 ```
+
 ```
 Remove deprecated `useLegacyParser` option from query builder.
 ```
@@ -98,9 +93,11 @@ Remove deprecated `useLegacyParser` option from query builder.
 ```
 Refactored state management.  (user doesn't care about internals)
 ```
+
 ```
 Fixed lint errors.  (not a user-facing change)
 ```
+
 ```
 Updated dependencies.  (irrelevant to consumers)
 ```
@@ -113,10 +110,10 @@ pnpm changeset --empty
 
 ## Choosing the Right Bump Type
 
-| Bump | When to use |
-|------|-------------|
-| `patch` | Bug fixes, performance improvements, dependency updates with no API change |
-| `minor` | New features, new exports, backwards-compatible additions |
+| Bump    | When to use                                                                           |
+| ------- | ------------------------------------------------------------------------------------- |
+| `patch` | Bug fixes, performance improvements, dependency updates with no API change            |
+| `minor` | New features, new exports, backwards-compatible additions                             |
 | `major` | Breaking API changes, removed exports, changed behavior that requires consumer action |
 
 Internal packages (demo apps, eslint-config) are marked `"private": true` in their `package.json` and are skipped by Changesets.
@@ -133,20 +130,21 @@ The release workflow (`.github/workflows/release.yml`) runs on every push to `ma
    - If changeset files have been consumed (the Version Packages PR was merged) → it publishes to npm
 
 The action needs two tokens:
+
 - `GITHUB_TOKEN`: Auto-provided by GitHub, used to create the Version Packages PR. Needs `contents: write` and `pull-requests: write` permissions.
 - `NPM_TOKEN`: Must be set as a repository secret. Must have publish access for the `@datawheel` scope.
 
 ## Available Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `pnpm changeset` | Create a new changeset file (interactive) |
-| `pnpm changeset --empty` | Mark a change as "no release needed" |
-| `pnpm release:status` | Show which packages have pending changesets |
-| `pnpm release:version` | Consume changesets and bump versions (called by CI) |
-| `pnpm release:publish` | Build + publish to npm (called by CI) |
-| `pnpm mono:release` | **Legacy** — interactive release (see below) |
-| `pnpm mono:publish` | **Legacy** — manual publish (see below) |
+| Script                   | Purpose                                             |
+| ------------------------ | --------------------------------------------------- |
+| `pnpm changeset`         | Create a new changeset file (interactive)           |
+| `pnpm changeset --empty` | Mark a change as "no release needed"                |
+| `pnpm release:status`    | Show which packages have pending changesets         |
+| `pnpm release:version`   | Consume changesets and bump versions (called by CI) |
+| `pnpm release:publish`   | Build + publish to npm (called by CI)               |
+| `pnpm mono:release`      | **Legacy** — interactive release (see below)        |
+| `pnpm mono:publish`      | **Legacy** — manual publish (see below)             |
 
 ## First-Time Package Setup
 
@@ -203,6 +201,7 @@ npm access list packages @datawheel/tesseract-explorer
 **"Version Packages" PR not created**
 
 Check the Release workflow logs on GitHub. Common causes:
+
 - The workflow file has `branches: [master]` but you pushed to a different branch
 - `GITHUB_TOKEN` doesn't have `contents: write` and `pull-requests: write` permissions
 - There are no changeset files in `.changeset/`
@@ -222,12 +221,12 @@ If you use Nix, run `nix-shell` to get the correct toolchain.
 
 Changeset behavior is configured in `.changeset/config.json`:
 
-| Key | Value | Meaning |
-|-----|-------|---------|
-| `access` | `public` | Publish to public npm registry (not restricted) |
-| `baseBranch` | `master` | Compare against this branch to detect changes |
-| `commit` | `false` | Don't add conventional commit footers to automated commits |
-| `updateInternalDependencies` | `patch` | When a dependency gets bumped, bump dependents by patch |
-| `changelog` | `@changesets/cli/changelog` | Default changelog format |
+| Key                          | Value                       | Meaning                                                    |
+| ---------------------------- | --------------------------- | ---------------------------------------------------------- |
+| `access`                     | `public`                    | Publish to public npm registry (not restricted)            |
+| `baseBranch`                 | `master`                    | Compare against this branch to detect changes              |
+| `commit`                     | `false`                     | Don't add conventional commit footers to automated commits |
+| `updateInternalDependencies` | `patch`                     | When a dependency gets bumped, bump dependents by patch    |
+| `changelog`                  | `@changesets/cli/changelog` | Default changelog format                                   |
 
 The `onlyUpdatePeerDependentsWhenOutOfRange` experimental option prevents peer-dependent bumps unless the peer range is actually broken.

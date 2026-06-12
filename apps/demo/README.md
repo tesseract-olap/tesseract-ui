@@ -1,6 +1,6 @@
 # ViteJS demo for the tesseract-ui monorepo
 
-This folder contains a minimal implementation for the components of the  tesseract-ui monorepo. It's intended to help with the development of the associated react components.
+This folder contains a minimal implementation for the components of the tesseract-ui monorepo. It's intended to help with the development of the associated react components.
 
 ## Usage
 

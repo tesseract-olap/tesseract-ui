@@ -6,7 +6,7 @@ import { defineConfig } from "vite";
 const {
   OLAPPROXY_BASICAUTH,
   OLAPPROXY_JWTAUTH,
-  OLAPPROXY_TARGET = "http://localhost:7777"
+  OLAPPROXY_TARGET = "http://localhost:7777",
 } = process.env;
 
 const target = new URL(OLAPPROXY_TARGET);
@@ -27,7 +27,7 @@ export default defineConfig(({ command }) => {
   return {
     define: {
       "process.env.BUILD_VERSION": JSON.stringify("x.y.z"),
-      "process.env.OLAPPROXY_JWTAUTH": JSON.stringify(OLAPPROXY_JWTAUTH ?? "")
+      "process.env.OLAPPROXY_JWTAUTH": JSON.stringify(OLAPPROXY_JWTAUTH ?? ""),
     },
     plugins,
     server: {
@@ -42,14 +42,14 @@ export default defineConfig(({ command }) => {
           rewrite: (path) => {
             const newPath = path.replace(/^\/olap\//, target.pathname);
             return newPath;
-          }
-        }
-      }
+          },
+        },
+      },
     },
     test: {
       environment: "jsdom",
       globals: true,
-      setupFiles: []
-    }
+      setupFiles: [],
+    },
   };
 });

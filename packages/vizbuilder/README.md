@@ -19,18 +19,18 @@ import Vizbuilder from "@datawheel/tesseract-vizbuilder";
 import React from "react";
 
 const TOPOJSON = {
-  "State": {
+  State: {
     topojson: "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json",
     projection: "geoAlbersUsaTerritories",
     tiles: false,
-  }
+  },
 };
 
 const FORMATTERS = {
-  Dollars: value => `USD $${value}`
+  Dollars: (value) => `USD $${value}`,
 };
 
-const VizbuilderView = props => (
+const VizbuilderView = (props) => (
   <Vizbuilder
     // The following three parameters are given by Tesseract Explorer, so bypass them
     cube={props.cube}
