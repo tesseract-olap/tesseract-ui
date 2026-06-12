@@ -1,17 +1,8 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "checkJs": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "jsx": "react",
-    "lib": ["dom", "es2019.array", "es2019.object"],
-    "moduleResolution": "node",
-    "outDir": "dist",
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "target": "es2018",
+    "lib": ["dom", "es2018", "es2019.array", "es2019.object"],
+    "outDir": "dist"
   },
   "include": ["./src"]
 }

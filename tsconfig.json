@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "checkJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": ["dom", "es2018"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "target": "es2018"
+  }
+}
