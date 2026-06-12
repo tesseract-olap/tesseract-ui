@@ -2,6 +2,7 @@ import {Box, Input} from "@mantine/core";
 import ISO6391, {LanguageCode} from "iso-639-1";
 import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
+import {useLogger} from "../context/EventContext";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
@@ -13,6 +14,7 @@ type LocaleOptions = {label: string, value: LanguageCode};
 /** */
 export function SelectLocale() {
   const actions = useActions();
+  const log = useLogger();
 
   const {translate: t, locale} = useTranslation();
 
@@ -33,6 +35,7 @@ export function SelectLocale() {
   }, [locale, localeOptions]);
 
   const localeChangeHandler = useCallback((locale: LocaleOptions) => {
+    log("locale_change", {code: locale.value});
     actions.updateLocale(locale.value);
   }, []);
 

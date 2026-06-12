@@ -1,5 +1,6 @@
 import {Checkbox, Stack} from "@mantine/core";
 import React from "react";
+import {useLogger} from "../context/EventContext";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectBooleans} from "../state/queries";
@@ -11,6 +12,7 @@ import {SortingInput} from "./SortingInput";
 
 export const AreaOptions = () => {
   const actions = useActions();
+  const log = useLogger();
 
   const {translate: t} = useTranslation();
 
@@ -32,6 +34,7 @@ export const AreaOptions = () => {
               label={t(`params.label_boolean_${key}`)}
               checked={booleans[key] || false}
               onChange={() => {
+                log("boolean_toggle", {key, value: !booleans[key]});
                 actions.updateBoolean({key});
               }}
             />

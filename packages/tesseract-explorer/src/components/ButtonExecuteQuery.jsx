@@ -7,16 +7,19 @@ import {useTranslation} from "../hooks/translation";
 import {selectCurrentQueryParams, selectValidQueryStatus} from "../state/queries";
 import {buildMeasure} from "../utils/structs";
 import {keyBy} from "../utils/transform";
+import { useLogger } from "../context/EventContext";
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
   const actions = useActions();
+  const log = useLogger()
 
   const {translate: t} = useTranslation();
 
   const {isValid, error} = useSelector(selectValidQueryStatus);
-  const {cube, locale, measures} = useSelector(selectCurrentQueryParams);
+  const params = useSelector(selectCurrentQueryParams);
 
+  const { cube, locale, measures } = params;
   const errorText = error ? t(error) : "";
 
   return (
@@ -40,6 +43,7 @@ export const ButtonExecuteQuery = () => {
           id="button-execute-query"
           leftIcon={<IconDatabase />}
           onClick={useCallback(() => {
+            log("execute_query", { params });
             actions.willRequestQuery();
           }, [])}
           sx={{"&[data-disabled]": {pointerEvents: "all"}}}

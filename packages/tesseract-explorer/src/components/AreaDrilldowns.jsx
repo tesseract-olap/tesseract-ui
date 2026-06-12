@@ -2,6 +2,7 @@ import {ActionIcon, Alert, Stack} from "@mantine/core";
 import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
+import {useLogger} from "../context/EventContext";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectDrilldownItems} from "../state/queries";
@@ -15,6 +16,7 @@ import {TagDrilldown} from "./TagDrilldown";
 /** @type {React.FC} */
 export const AreaDrilldowns = () => {
   const actions = useActions();
+  const log = useLogger();
 
   const {translate: t} = useTranslation();
 
@@ -22,12 +24,14 @@ export const AreaDrilldowns = () => {
   const dimensions = useSelector(selectOlapDimensionItems);
 
   const clearHandler = useCallback(() => {
+    log("drilldowns_clear", {count: items.length});
     actions.resetDrilldowns({});
-  }, []);
+  }, [items.length]);
 
   /** @type {(level: import("@datawheel/olap-client").PlainLevel) => void} */
   const createHandler = useCallback(level => {
     const drilldownItem = buildDrilldown(level);
+    log("drilldown_add", {...drilldownItem});
     actions.updateDrilldown(drilldownItem);
     actions.willFetchMembers({...level, level: level.name})
       .then(members => {

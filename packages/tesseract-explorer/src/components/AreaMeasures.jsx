@@ -2,6 +2,7 @@ import {ActionIcon, Checkbox, CloseButton, Input, Popover, Stack} from "@mantine
 import {IconFilter, IconFilterOff, IconSearch, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
+import {useLogger} from "../context/EventContext";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale, selectMeasureMap} from "../state/queries";
@@ -18,6 +19,7 @@ import {LayoutParamsArea} from "./LayoutParamsArea";
  */
 export function AreaMeasures() {
   const actions = useActions();
+  const log = useLogger();
 
   const {code: locale} = useSelector(selectLocale);
   const itemMap = useSelector(selectMeasureMap);
@@ -27,6 +29,11 @@ export function AreaMeasures() {
   const [filter, setFilter] = useState("");
 
   const {translate: t} = useTranslation();
+
+  const setFilterLogged = useCallback(value => {
+    log("measure_search", {query: value});
+    setFilter(value);
+  }, []);
 
   const filteredItems = useMemo(() => {
     const query = filter ? safeRegExp(filter, "i") : null;
@@ -47,7 +54,9 @@ export function AreaMeasures() {
       checked={item.active}
       label={getCaption(measure, locale)}
       onChange={() => {
-        actions.updateMeasure({...item, active: !item.active});
+        const active = !item.active;
+        log("measure_toggle", {name: item.name, active});
+        actions.updateMeasure({...item, active});
       }}
     />;
   }), [filteredItems, measureMap]);
@@ -57,10 +66,11 @@ export function AreaMeasures() {
       ...itemMap[item.name],
       active: false
     }));
+    log("measures_clear", {count: measures.length});
     actions.resetMeasures(keyBy(nextMeasures, "key"));
   }, [itemMap, measures]);
 
-  const resetFilter = useCallback(() => setFilter(""), []);
+  const resetFilter = useCallback(() => setFilterLogged(""), []);
 
   const toolbar =
     <>
@@ -85,7 +95,7 @@ export function AreaMeasures() {
         <Popover.Dropdown>
           <Input
             icon={<IconSearch />}
-            onChange={evt => setFilter(evt.target.value)}
+            onChange={evt => setFilterLogged(evt.target.value)}
             placeholder={t("params.search_placeholder")}
             rightSection={
               filter.length > 0

@@ -25,6 +25,7 @@ import {
 } from "@tabler/icons-react";
 import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
+import {useLogger} from "../context/EventContext";
 import {useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
@@ -43,6 +44,7 @@ export function TagCut(props: {
   const {item} = props;
 
   const theme = useMantineTheme();
+  const log = useLogger();
   const {actions, defaultMembersFilter} = useSettings();
   const {translate: t} = useTranslation();
 
@@ -58,19 +60,24 @@ export function TagCut(props: {
   const triad = levelTriadMap[`${item.dimension}.${item.hierarchy}.${item.level}`];
 
   const toggleHandler = useCallback(() => {
-    actions.updateCut({...item, active: !item.active});
+    const active = !item.active;
+    log("cut_toggle", {key: item.key, dimension: item.dimension, hierarchy: item.hierarchy, level: item.level, active});
+    actions.updateCut({...item, active});
   }, [item]);
 
   const removeHandler = useCallback(evt => {
     evt.stopPropagation();
+    log("cut_remove", {key: item.key});
     actions.removeCut(item.key);
   }, [item.key]);
 
   const membersUpdateHandler = useCallback((members: string[]) => {
+    log("cut_members", {key: item.key, members});
     actions.updateCut({...item, members});
   }, [item]);
 
   const reloadHandler = useCallback(() => {
+    log("cut_reload", {key: item.key});
     const activeMembers = item.members;
     actions
       .willFetchMembers(item)

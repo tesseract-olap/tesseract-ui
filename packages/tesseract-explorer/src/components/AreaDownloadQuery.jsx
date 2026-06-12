@@ -18,6 +18,7 @@ export const AreaDownloadQuery = () => {
   const buttons = useMemo(() => formats.map(format =>
     <ButtonDownload
       key={format}
+      format={format}
       provider={() => {
         actions.setLoadingState("FETCHING");
         return actions.willDownloadQuery(format)

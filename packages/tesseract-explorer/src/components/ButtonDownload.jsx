@@ -1,5 +1,6 @@
 import {Button, Text} from "@mantine/core";
 import React, {useCallback} from "react";
+import {useLogger} from "../context/EventContext";
 
 /**
  * @template T
@@ -10,6 +11,7 @@ import React, {useCallback} from "react";
  * @typedef ButtonDownloadProps
  * @property {string} children
  * @property {ContentOrGenerator<import("../utils/types").FileDescriptor | Promise<import("../utils/types").FileDescriptor>>} provider
+ * @property {string} [format]
  */
 
 const mimeTypes = {
@@ -22,11 +24,14 @@ const mimeTypes = {
 
 /** @type {React.FC<ButtonDownloadProps>} */
 export const ButtonDownload = props => {
-  const {provider, ...buttonProps} = props;
+  const log = useLogger();
+  const {provider, format, ...buttonProps} = props;
 
   const onClick = useCallback(evt => {
     evt.stopPropagation();
     evt.preventDefault();
+
+    log("download", {format});
 
     const anchor = document.createElement("a");
     const content = typeof provider === "function" ? provider() : provider;

@@ -4,6 +4,7 @@ import {CSSObject, MantineProvider} from "@mantine/core";
 import {bindActionCreators} from "@reduxjs/toolkit";
 import React, {useMemo} from "react";
 import {Provider as ReduxProvider, useStore} from "react-redux";
+import {EventHandler, EventProvider} from "../context/EventContext";
 import {ExplorerBoundActionMap, SettingsProvider} from "../hooks/settings";
 import {TranslationDict, TranslationProvider} from "../hooks/translation";
 import {ExplorerActionMap, ExplorerStore, actions, storeFactory} from "../state";
@@ -140,6 +141,12 @@ export function ExplorerComponent(props: {
    * @default false
    */
   withPermalink?: boolean;
+
+  /**
+   * An optional callback to log user interactions with the UI.
+   * Receives an event type string and an optional payload object.
+   */
+  onEvent?: EventHandler;
 }) {
   const {
     dataLocale = "en",
@@ -188,16 +195,18 @@ export function ExplorerComponent(props: {
         defaultLocale={props.uiLocale}
         translations={props.translations}
       >
-        <ExplorerContent
-          dataLocale={locale}
-          defaultOpenParams={defaultOpenParams}
-          height={height}
-          panels={panels}
-          source={props.source}
-          splash={props.splash}
-          uiLocale={props.uiLocale}
-          withMultiQuery={withMultiQuery}
-        />
+        <EventProvider onEvent={props.onEvent}>
+          <ExplorerContent
+            dataLocale={locale}
+            defaultOpenParams={defaultOpenParams}
+            height={height}
+            panels={panels}
+            source={props.source}
+            splash={props.splash}
+            uiLocale={props.uiLocale}
+            withMultiQuery={withMultiQuery}
+          />
+        </EventProvider>
       </TranslationProvider>
     </SettingsProvider>;
 

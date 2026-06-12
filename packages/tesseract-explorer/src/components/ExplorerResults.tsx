@@ -11,6 +11,7 @@ import {selectServerState} from "../state/server";
 import {QueryParams, QueryResult} from "../utils/structs";
 import {PanelDescriptor} from "../utils/types";
 import {PreviewModeSwitch} from "./PreviewModeSwitch";
+import { useLogger } from "../context/EventContext";
 
 const useStyles = createStyles(() => ({
   container: {
@@ -164,6 +165,7 @@ function SuccessResult(props: {
 
   const {translate: t} = useTranslation();
 
+  const log = useLogger();
   const {previewLimit, rowLimit, actions} = useSettings();
 
   const queryItem = useSelector(selectCurrentQueryItem);
@@ -177,8 +179,9 @@ function SuccessResult(props: {
   }, [panels, queryItem.panel]);
 
   const tabHandler = useCallback((newTab: TabsValue) => {
+    log("tab_switch", { from: queryItem.panel, to: newTab });
     actions.switchPanel(newTab);
-  }, []);
+  }, [queryItem.panel]);
 
   return (
     <Paper

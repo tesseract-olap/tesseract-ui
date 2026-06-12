@@ -2,6 +2,7 @@ import {type PlainCube} from "@datawheel/olap-client";
 import {Anchor, Stack, Text, TextProps} from "@mantine/core";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
+import {useLogger} from "../context/EventContext";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
@@ -35,8 +36,10 @@ function SelectCubeInternal(props: {
   const {items, selectedItem} = props;
 
   const actions = useActions();
+  const log = useLogger();
 
   const onItemSelect = useCallback((cube: PlainCube) => {
+    log("cube_select", {name: cube.name});
     actions.willSetCube(cube.name);
   }, []);
 
@@ -100,21 +103,30 @@ function SelectCubeInternal(props: {
         hidden={level1 === "Hidden"}
         items={level1Keys}
         label={t("params.label_topic")}
-        onItemSelect={setLevel1}
+        onItemSelect={value => {
+          log("cube_topic", {value});
+          setLevel1(value);
+        }}
         selectedItem={level1}
       />
       <SelectLevel
         hidden={level2 === "Hidden"}
         items={level2Keys}
         label={t("params.label_subtopic")}
-        onItemSelect={setLevel2}
+        onItemSelect={value => {
+          log("cube_subtopic", {value});
+          setLevel2(value);
+        }}
         selectedItem={level2}
       />
       <SelectLevel
         hidden={level3 === "Hidden"}
         items={level3Keys}
         label={t("params.label_table")}
-        onItemSelect={setLevel3}
+        onItemSelect={value => {
+          log("cube_table", {value});
+          setLevel3(value);
+        }}
         selectedItem={level3}
       />
       {<SelectPlainCube

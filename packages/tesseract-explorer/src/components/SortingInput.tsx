@@ -2,6 +2,7 @@ import {PlainMeasure} from "@datawheel/olap-client";
 import {Group, Input} from "@mantine/core";
 import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
+import {useLogger} from "../context/EventContext";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectSortingParams} from "../state/queries";
@@ -13,6 +14,7 @@ type DirectionOptions = {label: string, value: "asc" | "desc"};
 /** */
 export function SortingInput() {
   const actions = useActions();
+  const log = useLogger();
   const {locale, translate: t} = useTranslation();
 
   const {sortDir, sortKey} = useSelector(selectSortingParams);
@@ -30,10 +32,12 @@ export function SortingInput() {
   }, [locale]);
 
   const measureChangeHandler = useCallback((measure: PlainMeasure) => {
+    log("sort_measure", {key: measure.name});
     actions.updateSorting({key: measure.name, dir: sortDir});
   }, []);
 
   const directionChangeHandler = useCallback((direction: DirectionOptions) => {
+    log("sort_direction", {dir: direction.value});
     actions.updateSorting({key: sortKey, dir: direction.value});
   }, []);
 

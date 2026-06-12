@@ -1,6 +1,7 @@
 import {ActionIcon, Alert, Stack} from "@mantine/core";
 import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback, useMemo} from "react";
+import {useLogger} from "../context/EventContext";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectCutItems} from "../state/queries";
@@ -13,19 +14,22 @@ import {MemoTagCut as TagCut} from "./TagCut";
 
 export const AreaCuts = () => {
   const actions = useActions();
+  const log = useLogger();
 
   const items = useSelector(selectCutItems);
 
   const {translate: t} = useTranslation();
 
   const clearHandler = useCallback(() => {
+    log("cuts_clear", {count: items.length});
     actions.resetCuts({});
-  }, []);
+  }, [items.length]);
 
   /** @type {(level: import("@datawheel/olap-client").PlainLevel) => void} */
   const createHandler = useCallback(level => {
     const cutItem = buildCut(level);
     cutItem.active = false;
+    log("cut_add", {...cutItem});
     actions.updateCut(cutItem);
   }, []);
 

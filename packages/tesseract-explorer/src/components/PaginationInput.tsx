@@ -1,12 +1,14 @@
 import {Group, Input, NumberInput} from "@mantine/core";
 import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
+import {useLogger} from "../context/EventContext";
 import {useActions, useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectIsPreviewMode, selectPaginationParams} from "../state/queries";
 
 export const PaginationInput = () => {
   const actions = useActions();
+  const log = useLogger();
 
   const {translate: t} = useTranslation();
 
@@ -17,11 +19,15 @@ export const PaginationInput = () => {
   const {rowLimit} = useSettings();
 
   const onLimitChange = useCallback((value: number | "") => {
-    actions.updatePagination({limit: value ? value : 0, offset});
+    const nextLimit = value ? value : 0;
+    log("pagination_limit", {limit: nextLimit, offset});
+    actions.updatePagination({limit: nextLimit, offset});
   }, [offset]);
 
   const onOffsetChange = useCallback((value: number | "") => {
-    actions.updatePagination({limit, offset: value ? value : 0});
+    const nextOffset = value ? value : 0;
+    log("pagination_offset", {limit, offset: nextOffset});
+    actions.updatePagination({limit, offset: nextOffset});
   }, [limit]);
 
   return (
