@@ -42,7 +42,8 @@ export function getOrderValue<T extends Annotated>(schemaObject: T) {
 export function describeData(
   cube: PlainCube,
   params: QueryParams,
-  data: Record<string, any>[]
+  data: Record<string, any>[],
+  columnNames: string[],
 ): Record<string, AnyResultColumn> {
   const {locale} = params;
 
@@ -60,11 +61,14 @@ export function describeData(
     const levelMap = hierarchyMap?.get(item.hierarchy);
     const level = levelMap?.get(item.level);
     if (!level) return null;
+    const parents = params.booleans.parents
+      ? Array.from(levelMap?.values() || []).filter(lvl => lvl.depth < level.depth)
+      : [];
     const properties = filterMap(item.properties, prop => prop.active
       ? level.properties.find(item => item.name === prop.name) || null
       : null
     );
-    return [level, ...properties];
+    return [...parents, level, ...properties];
   }).flat(1);
 
   const entityFinder = (name: string) => {
@@ -76,8 +80,6 @@ export function describeData(
       drilldowns.find(item => item.name === nameWoId)
     );
   };
-
-  const columnNames = Object.keys(data[0]);
 
   return Object.fromEntries(
     filterMap<string, [string, AnyResultColumn]>(columnNames, columnName => {

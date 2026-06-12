@@ -85,10 +85,13 @@ export function willExecuteQuery(): ExplorerThunk<Promise<void>> {
           })
         ]).then(result => {
           const [aggregation] = result;
+          const { data } = aggregation;
+          const headers = { ...aggregation.headers };
+          const columnNames = headers["x-tesseract-columns"] || Object.keys(data[0]).join(",");
           dispatch(queriesActions.updateResult({
-            data: aggregation.data,
-            types: describeData(cube.toJSON(), params, aggregation.data),
-            headers: {...aggregation.headers},
+            data,
+            headers,
+            types: describeData(cube.toJSON(), params, aggregation.data, columnNames.split(",")),
             sourceCall: query.toSource(),
             status: aggregation.status || 500,
             url: query.toString(endpoint)
