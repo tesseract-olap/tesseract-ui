@@ -67,9 +67,10 @@ async function publishPackage(packageMeta) {
 }
 
 /**
- * Publishes a new version for all packages that have a newer version than the one published on npm.
+ * Publishes packages that have a newer version than the one published on npm.
+ * @param {string} [targetPackage] Optional package name or folder name to publish a specific package.
  */
-async function monorepoPublish() {
+async function monorepoPublish(targetPackage) {
     console.log("Checking for packages to publish...");
 
     const rootPath = await git.revparse(["--show-toplevel"]);
@@ -79,11 +80,15 @@ async function monorepoPublish() {
 
     const packagesIterator = await traversePackages(packagesPath);
     for (const packageMeta of packagesIterator) {
-        const { manifest } = packageMeta;
+        const { manifest, folderName } = packageMeta;
         const packageName = manifest.name;
         const localVersion = manifest.version;
 
         if (!packageName || !localVersion) {
+            continue;
+        }
+
+        if (targetPackage && packageName !== targetPackage && folderName !== targetPackage) {
             continue;
         }
 
@@ -115,7 +120,8 @@ async function monorepoPublish() {
     console.log("\nAll packages published successfully.");
 }
 
-monorepoPublish().catch(error => {
+const targetPackage = process.argv[2];
+monorepoPublish(targetPackage).catch(error => {
   console.error("\nAn unexpected error occurred:");
   console.error(error);
   process.exit(1);
