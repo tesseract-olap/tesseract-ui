@@ -1,4 +1,4 @@
-import {type Format, type LevelDescriptor, Client as OLAPClient, type PlainCube, type PlainMember, PyTesseractDataSource, type ServerConfig, TesseractDataSource} from "@datawheel/olap-client";
+import {Cube, type Format, type LevelDescriptor, Client as OLAPClient, type PlainCube, type PlainMember, PyTesseractDataSource, type ServerConfig, TesseractDataSource} from "@datawheel/olap-client";
 import {filterMap} from "../utils/array";
 import {describeData} from "../utils/object";
 import {applyQueryParams, extractQueryParams} from "../utils/query";
@@ -26,6 +26,7 @@ export function willDownloadQuery(
     const state = getState();
     const params = selectCurrentQueryParams(state);
     const endpoint = selectServerEndpoint(state);
+    const locale = selectLocale(state);
 
     if (!isValidQuery(params)) {
       return Promise.reject(new Error("The current query is not valid."));
@@ -33,9 +34,10 @@ export function willDownloadQuery(
 
     const axios = olapClient.datasource.axiosInstance;
 
-    return olapClient.getCube(params.cube)
-      .then(cube => {
-        const filename = `${cube.name}_${new Date().toISOString()}`;
+    return olapClient.datasource.fetchCube(params.cube, {locale: locale.code})
+      .then(plainCube => {
+        const filename = `${plainCube.name}_${new Date().toISOString()}`;
+        const cube = new Cube(plainCube, olapClient.datasource);
         const query = applyQueryParams(cube.query, params, {previewLimit, rowLimit}).setFormat(format);
         const dataURL = query.toString(endpoint).replace(olapClient.datasource.serverUrl, "");
 
@@ -70,11 +72,13 @@ export function willExecuteQuery(): ExplorerThunk<Promise<void>> {
     const state = getState();
     const params = selectCurrentQueryParams(state);
     const endpoint = selectServerEndpoint(state);
+    const locale = selectLocale(state);
 
     if (!isValidQuery(params)) return Promise.resolve();
 
-    return olapClient.getCube(params.cube)
-      .then(cube => {
+    return olapClient.datasource.fetchCube(params.cube, {locale: locale.code})
+      .then(plainCube => {
+        const cube = new Cube(plainCube, olapClient.datasource);
         const query = applyQueryParams(cube.query, params, {previewLimit, rowLimit});
         return Promise.all([
           olapClient.execQuery(query, endpoint),
@@ -91,7 +95,7 @@ export function willExecuteQuery(): ExplorerThunk<Promise<void>> {
           dispatch(queriesActions.updateResult({
             data,
             headers,
-            types: describeData(cube.toJSON(), params, aggregation.data, columnNames.split(",")),
+            types: describeData(plainCube, params, aggregation.data, columnNames.split(",")),
             sourceCall: query.toSource(),
             status: aggregation.status || 500,
             url: query.toString(endpoint)
@@ -129,10 +133,11 @@ export function willFetchMembers(
     const cubeName = selectCubeName(state);
     const locale = selectLocale(state);
 
-    return olapClient.getCube(cubeName)
-      .then(cube => {
+    return olapClient.datasource.fetchCube(cubeName, {locale: locale.code})
+      .then(plainCube => {
+        const cube = new Cube(plainCube)
         const level = cube.getLevel(levelRef);
-        return cube.datasource.fetchMembers(level, {locale: locale.code});
+        return olapClient.datasource.fetchMembers(level, {locale: locale.code});
       })
       .catch(() => {
         const serialRef = JSON.stringify(levelRef);
@@ -155,6 +160,7 @@ export function willHydrateParams(
     const state = getState();
     const cubeMap = selectOlapCubeMap(state);
     const queries = selectQueryItems(state);
+    const locale = selectLocale(state);
 
     const queryPromises = queries.map(queryItem => {
       const {params} = queryItem;
@@ -169,8 +175,9 @@ export function willHydrateParams(
         /* else                              */   Object.keys(cubeMap)[0];
       /* eslint-enable */
 
-      return olapClient.getCube(cubeName)
-        .then((cube): QueryItem => {
+      return olapClient.datasource.fetchCube(cubeName, {locale: locale.code})
+        .then((plainCube): QueryItem => {
+          const cube = new Cube(plainCube, olapClient.datasource);
           const resolvedMeasures = cube.measures
             .map(measure => buildMeasure(measureItems[measure.name] || {
               active: false,
@@ -221,15 +228,17 @@ export function willParseQueryUrl(
  * from the server.
  */
 export function willReloadCubes(): ExplorerThunk<Promise<{[k: string]: PlainCube}>> {
-  return (dispatch, getState, {olapClient}) => olapClient.getCubes()
-    .then(cubes => {
-      const plainCubes = filterMap(cubes, cube =>
-        cube.annotations.hide_in_ui === "true" ? null : cube.toJSON()
-      );
-      const cubeMap = keyBy(plainCubes, i => i.name);
-      dispatch(serverActions.updateServer({cubeMap}));
-      return cubeMap;
-    });
+  return (dispatch, getState, { olapClient }) => {
+    const state = getState();
+    const locale = state.explorerServer.localeOptions[0];
+    return olapClient.datasource.fetchCubes({locale: locale})
+      .then(cubes => {
+        const plainCubes = cubes.filter(cube => cube.annotations.hide_in_ui !== "true");
+        const cubeMap = keyBy(plainCubes, i => i.name);
+        dispatch(serverActions.updateServer({cubeMap}));
+        return cubeMap;
+      });
+  }
 }
 
 /**
@@ -264,12 +273,14 @@ export function willSetCube(cubeName: string): ExplorerThunk<Promise<void>> {
   return (dispatch, getState, {olapClient}) => {
     const state = getState();
     const currentMeasures = selectMeasureItems(state);
+    const locale = selectLocale(state);
     const currentActiveMeasures = filterMap(currentMeasures, item =>
       item.active ? item.name : null
     );
 
-    return olapClient.getCube(cubeName)
-      .then(cube => {
+    return olapClient.datasource.fetchCube(cubeName, {locale: locale.code})
+      .then(plainCube => {
+        const cube = new Cube(plainCube, olapClient.datasource);
         const measures = filterMap(cube.measures, measure => buildMeasure({
           active: currentActiveMeasures.includes(measure.name),
           key: measure.name,
