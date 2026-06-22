@@ -7,7 +7,8 @@ import {useTranslation} from "../hooks/translation";
 import {selectCurrentQueryParams, selectValidQueryStatus} from "../state/queries";
 import {buildMeasure} from "../utils/structs";
 import {keyBy} from "../utils/transform";
-import { useLogger } from "../context/EventContext";
+import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
@@ -43,7 +44,7 @@ export const ButtonExecuteQuery = () => {
           id="button-execute-query"
           leftIcon={<IconDatabase />}
           onClick={useCallback(() => {
-            log("execute_query", { params });
+            log(EventType.ExecuteQuery, { params });
             actions.willRequestQuery();
           }, [])}
           sx={{"&[data-disabled]": {pointerEvents: "all"}}}

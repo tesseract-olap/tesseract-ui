@@ -3,6 +3,7 @@ import {IconFilter, IconFilterOff, IconSearch, IconTrashX} from "@tabler/icons-r
 import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale, selectMeasureMap} from "../state/queries";
@@ -31,7 +32,7 @@ export function AreaMeasures() {
   const {translate: t} = useTranslation();
 
   const setFilterLogged = useCallback(value => {
-    log("measure_search", {query: value});
+    log(EventType.MeasureSearch, {query: value});
     setFilter(value);
   }, []);
 
@@ -55,7 +56,7 @@ export function AreaMeasures() {
       label={getCaption(measure, locale)}
       onChange={() => {
         const active = !item.active;
-        log("measure_toggle", {name: item.name, active});
+        log(EventType.MeasureToggle, {name: item.name, active});
         actions.updateMeasure({...item, active});
       }}
     />;
@@ -66,7 +67,7 @@ export function AreaMeasures() {
       ...itemMap[item.name],
       active: false
     }));
-    log("measures_clear", {count: measures.length});
+    log(EventType.MeasuresClear, {count: measures.length});
     actions.resetMeasures(keyBy(nextMeasures, "key"));
   }, [itemMap, measures]);
 

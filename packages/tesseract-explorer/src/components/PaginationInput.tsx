@@ -2,6 +2,7 @@ import {Group, Input, NumberInput} from "@mantine/core";
 import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 import {useActions, useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectIsPreviewMode, selectPaginationParams} from "../state/queries";
@@ -20,13 +21,13 @@ export const PaginationInput = () => {
 
   const onLimitChange = useCallback((value: number | "") => {
     const nextLimit = value ? value : 0;
-    log("pagination_limit", {limit: nextLimit, offset});
+    log(EventType.PaginationLimit, {limit: nextLimit, offset});
     actions.updatePagination({limit: nextLimit, offset});
   }, [offset]);
 
   const onOffsetChange = useCallback((value: number | "") => {
     const nextOffset = value ? value : 0;
-    log("pagination_offset", {limit, offset: nextOffset});
+    log(EventType.PaginationOffset, {limit, offset: nextOffset});
     actions.updatePagination({limit, offset: nextOffset});
   }, [limit]);
 

@@ -14,6 +14,7 @@ import {IconWindowMaximize, IconWindowMinimize} from "@tabler/icons-react";
 import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
 import {selectLevelTriadMap} from "../state/selectors";
@@ -50,24 +51,24 @@ export function TagDrilldown(props: {
 
   const toggleHandler = useCallback(() => {
     const active = !item.active;
-    log("drilldown_toggle", {key: item.key, dimension: item.dimension, hierarchy: item.hierarchy, level: item.level, active});
+    log(EventType.DrilldownToggle, {key: item.key, dimension: item.dimension, hierarchy: item.hierarchy, level: item.level, active});
     actions.updateDrilldown({...item, active});
   }, [item]);
 
   const removeHandler = useCallback(evt => {
     evt.stopPropagation();
-    log("drilldown_remove", {key: item.key});
+    log(EventType.DrilldownRemove, {key: item.key});
     actions.removeDrilldown(item.key);
   }, [item.key]);
 
   const captionUpdateHandler = useCallback((caption: CaptionItem) => {
     const captionProperty = caption.level ? caption.name : "";
-    log("drilldown_caption", {key: item.key, caption: captionProperty});
+    log(EventType.DrilldownCaption, {key: item.key, caption: captionProperty});
     actions.updateDrilldown({...item, captionProperty});
   }, [item]);
 
   const propertiesUpdateHandler = useCallback((activeProps: string[]) => {
-    log("drilldown_properties", {key: item.key, props: activeProps});
+    log(EventType.DrilldownProperties, {key: item.key, props: activeProps});
     const properties = item.properties.map(prop => buildProperty({
       ...prop,
       active: activeProps.includes(prop.key)

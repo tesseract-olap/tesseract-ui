@@ -3,6 +3,7 @@ import {IconInfoCircleFilled} from "@tabler/icons-react";
 import React, {useCallback, useEffect} from "react";
 import {useSelector} from "react-redux";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 import {useActions, useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectIsPreviewMode} from "../state/queries";
@@ -32,7 +33,7 @@ export const PreviewModeSwitch = props => {
   }, [isPreviewMode, serialParams]);
 
   const onClickLoadAllResults = useCallback(() => {
-    log("preview_toggle", {isPreviewMode: !isPreviewMode});
+    log(EventType.PreviewToggle, {isPreviewMode: !isPreviewMode});
     actions.updateIsPreview(!isPreviewMode);
   }, [isPreviewMode]);
 

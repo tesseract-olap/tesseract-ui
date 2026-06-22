@@ -3,6 +3,7 @@ import {Anchor, Stack, Text, TextProps} from "@mantine/core";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
@@ -39,7 +40,7 @@ function SelectCubeInternal(props: {
   const log = useLogger();
 
   const onItemSelect = useCallback((cube: PlainCube) => {
-    log("cube_select", {name: cube.name});
+    log(EventType.CubeSelect, {name: cube.name});
     actions.willSetCube(cube.name);
   }, []);
 
@@ -104,7 +105,7 @@ function SelectCubeInternal(props: {
         items={level1Keys}
         label={t("params.label_topic")}
         onItemSelect={value => {
-          log("cube_topic", {value});
+          log(EventType.CubeTopic, {value});
           setLevel1(value);
         }}
         selectedItem={level1}
@@ -114,7 +115,7 @@ function SelectCubeInternal(props: {
         items={level2Keys}
         label={t("params.label_subtopic")}
         onItemSelect={value => {
-          log("cube_subtopic", {value});
+          log(EventType.CubeSubtopic, {value});
           setLevel2(value);
         }}
         selectedItem={level2}
@@ -124,7 +125,7 @@ function SelectCubeInternal(props: {
         items={level3Keys}
         label={t("params.label_table")}
         onItemSelect={value => {
-          log("cube_table", {value});
+          log(EventType.CubeTable, {value});
           setLevel3(value);
         }}
         selectedItem={level3}

@@ -1,6 +1,7 @@
 import {Button, Text} from "@mantine/core";
 import React, {useCallback} from "react";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 
 /**
  * @template T
@@ -31,7 +32,7 @@ export const ButtonDownload = props => {
     evt.stopPropagation();
     evt.preventDefault();
 
-    log("download", {format});
+    log(EventType.Download, {format});
 
     const anchor = document.createElement("a");
     const content = typeof provider === "function" ? provider() : provider;

@@ -2,6 +2,7 @@ import {ActionIcon, Alert, Stack} from "@mantine/core";
 import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback, useMemo} from "react";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectCutItems} from "../state/queries";
@@ -21,7 +22,7 @@ export const AreaCuts = () => {
   const {translate: t} = useTranslation();
 
   const clearHandler = useCallback(() => {
-    log("cuts_clear", {count: items.length});
+    log(EventType.CutsClear, {count: items.length});
     actions.resetCuts({});
   }, [items.length]);
 
@@ -29,7 +30,7 @@ export const AreaCuts = () => {
   const createHandler = useCallback(level => {
     const cutItem = buildCut(level);
     cutItem.active = false;
-    log("cut_add", {...cutItem});
+    log(EventType.CutAdd, {...cutItem});
     actions.updateCut(cutItem);
   }, []);
 

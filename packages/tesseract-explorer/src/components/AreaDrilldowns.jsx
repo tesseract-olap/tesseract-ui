@@ -3,6 +3,7 @@ import {IconAlertCircle, IconCirclePlus, IconTrashX} from "@tabler/icons-react";
 import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectDrilldownItems} from "../state/queries";
@@ -24,14 +25,14 @@ export const AreaDrilldowns = () => {
   const dimensions = useSelector(selectOlapDimensionItems);
 
   const clearHandler = useCallback(() => {
-    log("drilldowns_clear", {count: items.length});
+    log(EventType.DrilldownsClear, {count: items.length});
     actions.resetDrilldowns({});
   }, [items.length]);
 
   /** @type {(level: import("@datawheel/olap-client").PlainLevel) => void} */
   const createHandler = useCallback(level => {
     const drilldownItem = buildDrilldown(level);
-    log("drilldown_add", {...drilldownItem});
+    log(EventType.DrilldownAdd, {...drilldownItem});
     actions.updateDrilldown(drilldownItem);
     actions.willFetchMembers({...level, level: level.name})
       .then(members => {

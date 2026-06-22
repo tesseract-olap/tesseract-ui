@@ -3,6 +3,7 @@ import ISO6391, {LanguageCode} from "iso-639-1";
 import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
@@ -35,7 +36,7 @@ export function SelectLocale() {
   }, [locale, localeOptions]);
 
   const localeChangeHandler = useCallback((locale: LocaleOptions) => {
-    log("locale_change", {code: locale.value});
+    log(EventType.LocaleChange, {code: locale.value});
     actions.updateLocale(locale.value);
   }, []);
 

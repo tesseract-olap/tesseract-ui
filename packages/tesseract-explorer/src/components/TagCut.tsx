@@ -26,6 +26,7 @@ import {
 import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 import {useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
@@ -61,23 +62,23 @@ export function TagCut(props: {
 
   const toggleHandler = useCallback(() => {
     const active = !item.active;
-    log("cut_toggle", {key: item.key, dimension: item.dimension, hierarchy: item.hierarchy, level: item.level, active});
+    log(EventType.CutToggle, {key: item.key, dimension: item.dimension, hierarchy: item.hierarchy, level: item.level, active});
     actions.updateCut({...item, active});
   }, [item]);
 
   const removeHandler = useCallback(evt => {
     evt.stopPropagation();
-    log("cut_remove", {key: item.key});
+    log(EventType.CutRemove, {key: item.key});
     actions.removeCut(item.key);
   }, [item.key]);
 
   const membersUpdateHandler = useCallback((members: string[]) => {
-    log("cut_members", {key: item.key, members});
+    log(EventType.CutMembers, {key: item.key, members});
     actions.updateCut({...item, members});
   }, [item]);
 
   const reloadHandler = useCallback(() => {
-    log("cut_reload", {key: item.key});
+    log(EventType.CutReload, {key: item.key});
     const activeMembers = item.members;
     actions
       .willFetchMembers(item)

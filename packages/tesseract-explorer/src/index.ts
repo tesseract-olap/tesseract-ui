@@ -6,4 +6,5 @@ export {EventConsumer, EventProvider, EventHandler, useLogger} from "./context/E
 export {SettingsConsumer, useSettings} from "./hooks/settings";
 export {TranslationConsumer, TranslationDict, defaultTranslation as translationDict, useTranslation} from "./hooks/translation";
 export {ExplorerState, reducer as explorerReducer, thunkExtraArg as explorerThunkExtraArg} from "./state";
+export {EventType} from "./events";
 export {ViewProps} from "./utils/types";

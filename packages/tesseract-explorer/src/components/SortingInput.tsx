@@ -3,6 +3,7 @@ import {Group, Input} from "@mantine/core";
 import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 import {useActions} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectSortingParams} from "../state/queries";
@@ -32,12 +33,12 @@ export function SortingInput() {
   }, [locale]);
 
   const measureChangeHandler = useCallback((measure: PlainMeasure) => {
-    log("sort_measure", {key: measure.name});
+    log(EventType.SortMeasure, {key: measure.name});
     actions.updateSorting({key: measure.name, dir: sortDir});
   }, []);
 
   const directionChangeHandler = useCallback((direction: DirectionOptions) => {
-    log("sort_direction", {dir: direction.value});
+    log(EventType.SortDirection, {dir: direction.value});
     actions.updateSorting({key: sortKey, dir: direction.value});
   }, []);
 

@@ -11,7 +11,8 @@ import {selectServerState} from "../state/server";
 import {QueryParams, QueryResult} from "../utils/structs";
 import {PanelDescriptor} from "../utils/types";
 import {PreviewModeSwitch} from "./PreviewModeSwitch";
-import { useLogger } from "../context/EventContext";
+import {useLogger} from "../context/EventContext";
+import {EventType} from "../events";
 
 const useStyles = createStyles(() => ({
   container: {
@@ -179,7 +180,7 @@ function SuccessResult(props: {
   }, [panels, queryItem.panel]);
 
   const tabHandler = useCallback((newTab: TabsValue) => {
-    log("tab_switch", { from: queryItem.panel, to: newTab });
+    log(EventType.TabSwitch, { from: queryItem.panel, to: newTab });
     actions.switchPanel(newTab);
   }, [queryItem.panel]);
 

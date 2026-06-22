@@ -1,27 +1,29 @@
 {
   "name": "@datawheel/tesseract-ui-repo",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "turbo run dev",
     "mono:publish": "node scripts/publish.js",
     "mono:release": "node scripts/release.js"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "dependencies": {
     "args": "^5.0.0",
     "chosen": "0.0.2",
+    "oxfmt": "^0.55.0",
+    "oxlint": "^1.70.0",
     "semver": "^7.3.0",
     "simple-git": "^3.16.1",
     "turbo": "^1.8.2"
   },
+  "devDependencies": {
+    "@types/node": "^24.13.2"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
-  "packageManager": "npm@8.11.0",
-  "devDependencies": {
-    "@types/node": "^24.13.2"
-  }
+  "packageManager": "npm@8.11.0"
 }
