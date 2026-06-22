@@ -93,7 +93,11 @@ function SelectCubeInternal(props: {
   // We need to keep the selectedItem in sync if at some point the
   // user selection leaves it out of the final subset of options
   useEffect(() => {
-    if (selectedItem && cubeItems.length > 0 && !cubeItems.includes(selectedItem)) {
+    if (
+      selectedItem &&
+      cubeItems.length > 0 &&
+      !cubeItems.find((cube) => cube.name === selectedItem.name)
+    ) {
       onItemSelect(cubeItems[0]);
     }
   }, [cubeItems, selectedItem]);
