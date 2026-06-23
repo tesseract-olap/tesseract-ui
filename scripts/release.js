@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const path = require("path");
-const {promises: fs} = require("fs");
+const {promises: fs, existsSync} = require("fs");
 const simpleGit = require("simple-git");
 const semverInc = require("semver/functions/inc");
 const prompt = require("chosen");
@@ -12,48 +12,72 @@ const {traversePackages} = require("./toolbox/traverse");
 /** @type {simpleGit.SimpleGit} */
 const git = simpleGit();
 
-monorepoRelease().catch(error => {
-  console.log(new Array(80).fill("=").join(""));
+monorepoRelease(process.argv[2]).catch(error => {
+  console.log("=".repeat(70));
   console.error(error);
   process.exit(1);
 });
 
 /**
  * Creates new releases for all packages
+ *
+ * @param {string} folderName
  */
-async function monorepoRelease() {
+async function monorepoRelease(folderName) {
   // get the root path to the git repo
   const rootPath = await git.revparse(["--show-toplevel"]);
   const packagesPath = path.resolve(rootPath, "packages");
 
-  // iterate over the things inside the packages/ folder
-  const packagesIterator = await traversePackages(packagesPath);
-  for (const packageMeta of packagesIterator) {
-    const {folderName, manifest} = packageMeta;
-
-    const packageName = manifest.name;
-    const packageVersion = manifest.version;
-    const packageTag = `${packageName}@${packageVersion}`;
-
-    let commitsInvolved = [];
-    try {
-      commitsInvolved = await summaryCommits(folderName, packageTag);
+  const packagePath = folderName ? path.join(packagesPath, folderName) : null;
+  if (packagePath && existsSync(packagePath)) {
+    // pick the specified package
+    const manifestPath = path.join(packagePath, "package.json");
+    const manifest = require(manifestPath);
+    await packageRelease({folderName, manifestPath, manifest, packagePath});
+  }
+  else {
+    // iterate over the things inside the packages/ folder
+    const packagesIterator = await traversePackages(packagesPath);
+    for (const packageMeta of packagesIterator) {
+      await packageRelease(packageMeta);
     }
-    catch {
-      console.log(LINE);
-      console.log(`Package ${folderName} has no previous releases, a first one must be done manually.`);
-      continue;
-    }
+  }
+}
 
-    // if any of these commits touched a file of this package
-    if (commitsInvolved.length > 0) {
-      console.log(LINE);
-      console.log(`Changes found for package ${packageName} v${packageVersion}:`);
-      console.log(commitsInvolved.join("\n"));
+/**
+ * Checks and performs the release of a new version for a given package.
+ *
+ * @param {import("./toolbox/traverse").PackageMeta} packageMeta
+ */
+async function packageRelease(packageMeta) {
+  const {folderName, manifest} = packageMeta;
 
-      const newRelease = await incrementVersion(packageMeta, commitsInvolved);
-      newRelease && console.log(`Created version release ${newRelease}`);
-    }
+  const packageName = manifest.name;
+  const packageVersion = manifest.version;
+  const packageTag = `${packageName}@${packageVersion}`;
+
+  console.log(LINE);
+  console.log(`${packageName} v${packageVersion}`);
+
+  let commitsInvolved = [];
+  try {
+    commitsInvolved = await summaryCommits(folderName, packageTag);
+  }
+  catch {
+    console.log("\nPackage has no previous releases, a first one must be done manually.");
+    return;
+  }
+
+  // if any of these commits touched a file of this package
+  if (commitsInvolved.length > 0) {
+    console.log("\nChanges found by these commits:");
+    console.log(commitsInvolved.join("\n"));
+
+    const newRelease = await incrementVersion(packageMeta, commitsInvolved);
+    newRelease && console.log(`\nCreated version release ${newRelease}`);
+  }
+  else {
+    console.log("\nNo changes found on this package.")
   }
 }
 
