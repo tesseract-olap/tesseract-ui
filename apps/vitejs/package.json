@@ -12,20 +12,15 @@
     "@mantine/dates": "^6.0.7",
     "@mantine/hooks": "^6.0.7",
     "@mantine/prism": "^6.0.7",
-    "@tabler/icons-react": "^2.7.0",
-    "@vitejs/plugin-legacy": "^7.0.0",
-    "@vitejs/plugin-react": "^5.0.0",
+    "@tabler/icons-react": "^3.0.0",
+    "@vitejs/plugin-legacy": "^8.0.0",
+    "@vitejs/plugin-react": "^6.0.0",
     "dayjs": "^1.11.7",
     "normalize.css": "^8.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-redux": "^7.2.0",
     "redux": "^4.2.0",
-    "vite": "^7.0.0"
-  },
-  "eslintConfig": {
-    "env": {
-      "browser": true
-    }
+    "vite": "^8.0.0"
   }
 }
