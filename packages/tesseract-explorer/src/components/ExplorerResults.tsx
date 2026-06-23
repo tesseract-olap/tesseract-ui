@@ -1,5 +1,17 @@
-import {PlainCube} from "@datawheel/olap-client";
-import {Alert, Anchor, Box, Group, Paper, Stack, Tabs, TabsValue, Text, Title, createStyles} from "@mantine/core";
+import type {PlainCube} from "@datawheel/olap-client";
+import {
+  Alert,
+  Anchor,
+  Box,
+  createStyles,
+  Group,
+  Paper,
+  Stack,
+  Tabs,
+  type TabsValue,
+  Text,
+  Title
+} from "@mantine/core";
 import {IconAlertTriangle, IconBox, IconWorld} from "@tabler/icons-react";
 import React, {Suspense, useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
@@ -8,8 +20,9 @@ import {useTranslation} from "../hooks/translation";
 import {selectCurrentQueryItem, selectIsPreviewMode} from "../state/queries";
 import {selectOlapCube} from "../state/selectors";
 import {selectServerState} from "../state/server";
-import {QueryParams, QueryResult} from "../utils/structs";
-import {PanelDescriptor} from "../utils/types";
+import type {QueryParams, QueryResult} from "../utils/structs";
+import type {PanelDescriptor} from "../utils/types";
+import {Anchorify} from "./Anchorify";
 import {PreviewModeSwitch} from "./PreviewModeSwitch";
 import {useLogger} from "../context/EventContext";
 import {EventType} from "../events";
@@ -62,7 +75,10 @@ export function ExplorerResults(props: {
         description={
           <Text span>
             {t("results.error_serveroffline_detail")}
-            <Anchor href={serverUrl} target="_blank" rel="noopener noreferrer">{serverUrl}</Anchor>.
+            <Anchor href={serverUrl} target="_blank" rel="noopener noreferrer">
+              {serverUrl}
+            </Anchor>
+            .
           </Text>
         }
       />
@@ -77,9 +93,11 @@ export function ExplorerResults(props: {
         className={cx(classes.container, props.className)}
         icon={<IconAlertTriangle color="orange" size="5rem" />}
         title={t("results.error_execquery_title", error)}
-        description={description.startsWith("results.error_")
-          ? t("results.error_execquery_default", error)
-          : description}
+        description={
+          description.startsWith("results.error_")
+            ? t("results.error_execquery_default", error)
+            : description
+        }
       />
     );
   }
@@ -143,7 +161,11 @@ function FailureResult(props: {
       <Stack align="center" spacing="xs">
         {props.icon && props.icon}
         {props.title && <Title order={5}>{props.title}</Title>}
-        {props.description && <Text ta="center" sx={{whiteSpace: "pre"}}>{props.description}</Text>}
+        {props.description && 
+          <Text ta="center" sx={{whiteSpace: "pre"}}>
+            {props.description}
+          </Text>
+        }
         {props.children && props.children}
         {props.action && props.action}
       </Stack>
@@ -185,15 +207,10 @@ function SuccessResult(props: {
   }, [queryItem.panel]);
 
   return (
-    <Paper
-      id="query-results-success"
-      className={props.className}
-      radius={0}
-      withBorder
-    >
+    <Paper id="query-results-success" className={props.className} radius={0} withBorder>
       <Tabs id="query-results-tabs" onTabChange={tabHandler} value={panelKey}>
         <Tabs.List>
-          {panels.map(panel =>
+          {panels.map(panel => 
             <Tabs.Tab key={panel.key} id={panel.key} value={panel.key}>
               {t(panel.label)}
             </Tabs.Tab>
@@ -204,24 +221,40 @@ function SuccessResult(props: {
         </Tabs.List>
       </Tabs>
 
-      {isPreviewMode &&
-        <Alert id="alert-load-all-results" color="yellow" radius={0} sx={{flex: "0 0 auto"}}>
+      {isPreviewMode && 
+        <Alert
+          id="alert-load-all-results"
+          color="yellow"
+          radius={0}
+          sx={{flex: "0 0 auto"}}
+        >
           <Group position="apart">
             <Text>
-              <Text fw={700} span>{t("preview_mode.title_preview")}: </Text>
-              <Text span>{t("preview_mode.description_preview", {limit: previewLimit})}</Text>
+              <Text fw={700} span>
+                {t("preview_mode.title_preview")}:{" "}
+              </Text>
+              <Text span>
+                {t("preview_mode.description_preview", {limit: previewLimit})}
+              </Text>
             </Text>
             <PreviewModeSwitch />
           </Group>
-        </Alert>}
+        </Alert>
+      }
 
-      {!isPreviewMode && rowLimit > 0 && rowLimit === result.data.length &&
-        <Alert id="alert-limit-hit-results" color="orange" radius={0} sx={{flex: "0 0 auto"}}>
-          <Text>
-            <Text fw={700} span>{t("row_limit.title")}: </Text>
-            <Text span>{t("row_limit.description", {limit: rowLimit})}</Text>
+      {!isPreviewMode && rowLimit > 0 && rowLimit === result.data.length && 
+        <Alert
+          id="alert-limit-hit-results"
+          color="orange"
+          radius={0}
+          sx={{flex: "0 0 auto"}}
+        >
+          <Text fw={700} span>
+            {t("row_limit.title")}:{" "}
           </Text>
-        </Alert>}
+          <Anchorify text={t("row_limit.description", {limit: rowLimit})} />
+        </Alert>
+      }
 
       <Box id="query-results-content" sx={{flex: "1 1"}} h={{base: "auto", md: 0}}>
         <Suspense fallback={props.children}>
