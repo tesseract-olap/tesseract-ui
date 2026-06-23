@@ -10,7 +10,7 @@ import {selectSortingParams} from "../state/queries";
 import {SelectObject} from "./Select";
 import {MemoSelectMeasure as SelectMeasure} from "./SelectMeasure";
 
-type DirectionOptions = {label: string, value: "asc" | "desc"};
+type DirectionOptions = {label: string; value: "asc" | "desc"};
 
 /** */
 export function SortingInput() {
@@ -23,33 +23,29 @@ export function SortingInput() {
   const sort = useMemo(() => {
     const directions = {
       asc: t("direction.ASC"),
-      desc: t("direction.DESC")
+      desc: t("direction.DESC"),
     };
     const options: DirectionOptions[] = [
       {value: "asc", label: directions.asc},
-      {value: "desc", label: directions.desc}
+      {value: "desc", label: directions.desc},
     ];
     return {directions, options};
   }, [locale]);
 
   const measureChangeHandler = useCallback((measure: PlainMeasure) => {
-    log(EventType.SortMeasure, {key: measure.name});
+    log(EventType.SortMeasure, {value: measure.name});
     actions.updateSorting({key: measure.name, dir: sortDir});
   }, []);
 
   const directionChangeHandler = useCallback((direction: DirectionOptions) => {
-    log(EventType.SortDirection, {dir: direction.value});
+    log(EventType.SortDirection, {value: direction.value});
     actions.updateSorting({key: sortKey, dir: direction.value});
   }, []);
 
   return (
     <Input.Wrapper label={t("params.label_sorting_key")}>
       <Group noWrap spacing="xs" align="end">
-        <SelectMeasure
-          activeOnly
-          selectedItem={sortKey}
-          onItemSelect={measureChangeHandler}
-        />
+        <SelectMeasure activeOnly selectedItem={sortKey} onItemSelect={measureChangeHandler} />
         <SelectObject
           getValue="value"
           getLabel="label"

@@ -7,7 +7,7 @@ import {
   Input,
   Popover,
   Switch,
-  useMantineTheme
+  useMantineTheme,
 } from "@mantine/core";
 import {useMediaQuery} from "@mantine/hooks";
 import {IconWindowMaximize, IconWindowMinimize} from "@tabler/icons-react";
@@ -28,14 +28,12 @@ import {TransferInput} from "./TransferInput";
 import {DrilldownItem, PropertyItem, buildProperty} from "../utils/structs";
 import {useActions} from "../hooks/settings";
 
-type CaptionItem = {name: string, level?: string};
+type CaptionItem = {name: string; level?: string};
 
 const PropertiesTransferInput = TransferInput<PropertyItem>;
 
 /** */
-export function TagDrilldown(props: {
-  item: DrilldownItem;
-}) {
+export function TagDrilldown(props: {item: DrilldownItem}) {
   const {item} = props;
 
   const actions = useActions();
@@ -51,68 +49,85 @@ export function TagDrilldown(props: {
 
   const toggleHandler = useCallback(() => {
     const active = !item.active;
-    log(EventType.DrilldownToggle, {key: item.key, dimension: item.dimension, hierarchy: item.hierarchy, level: item.level, active});
+    log(EventType.DrilldownToggle, {
+      dimension: item.dimension,
+      hierarchy: item.hierarchy,
+      level: item.level,
+      active,
+    });
     actions.updateDrilldown({...item, active});
   }, [item]);
 
-  const removeHandler = useCallback(evt => {
-    evt.stopPropagation();
-    log(EventType.DrilldownRemove, {key: item.key});
-    actions.removeDrilldown(item.key);
-  }, [item.key]);
-
-  const captionUpdateHandler = useCallback((caption: CaptionItem) => {
-    const captionProperty = caption.level ? caption.name : "";
-    log(EventType.DrilldownCaption, {key: item.key, caption: captionProperty});
-    actions.updateDrilldown({...item, captionProperty});
-  }, [item]);
-
-  const propertiesUpdateHandler = useCallback((activeProps: string[]) => {
-    log(EventType.DrilldownProperties, {key: item.key, props: activeProps});
-    const properties = item.properties.map(prop => buildProperty({
-      ...prop,
-      active: activeProps.includes(prop.key)
-    }));
-    actions.updateDrilldown({...item, properties});
-  }, [item]);
-
-  const propertyRecords = useMemo(
-    () => keyBy(item.properties, item => item.key),
-    [item.properties]
+  const removeHandler = useCallback(
+    (evt) => {
+      evt.stopPropagation();
+      log(EventType.DrilldownRemove, {level: item.fullName});
+      actions.removeDrilldown(item.key);
+    },
+    [item.key],
   );
 
-  const captionItems: CaptionItem[] = useMemo(() => [
-    {name: t("placeholders.unselected")},
-    ...item.properties
-  ], [locale.code, item.properties]);
+  const captionUpdateHandler = useCallback(
+    (caption: CaptionItem) => {
+      const captionProperty = caption.level ? caption.name : "";
+      log(EventType.DrilldownCaption, {level: item.fullName, caption: captionProperty});
+      actions.updateDrilldown({...item, captionProperty});
+    },
+    [item],
+  );
 
-  const activeProperties = filterMap(item.properties, item =>
-    isActiveItem(item) ? item.key : null
+  const propertiesUpdateHandler = useCallback(
+    (activeProps: string[]) => {
+      log(EventType.DrilldownProperties, {level: item.fullName, props: activeProps});
+      const properties = item.properties.map((prop) =>
+        buildProperty({
+          ...prop,
+          active: activeProps.includes(prop.key),
+        }),
+      );
+      actions.updateDrilldown({...item, properties});
+    },
+    [item],
+  );
+
+  const propertyRecords = useMemo(
+    () => keyBy(item.properties, (item) => item.key),
+    [item.properties],
+  );
+
+  const captionItems: CaptionItem[] = useMemo(
+    () => [{name: t("placeholders.unselected")}, ...item.properties],
+    [locale.code, item.properties],
+  );
+
+  const activeProperties = filterMap(item.properties, (item) =>
+    isActiveItem(item) ? item.key : null,
   );
 
   const label = useMemo(() => {
     const triad = levelTriadMap[`${item.dimension}.${item.hierarchy}.${item.level}`];
-    const triadCaptions = triad.map(item => getCaption(item, locale.code));
+    const triadCaptions = triad.map((item) => getCaption(item, locale.code));
     return t("params.tag_drilldowns", {
       abbr: abbreviateFullName(triadCaptions, t("params.tag_drilldowns_abbrjoint")),
       dimension: triadCaptions[0],
       hierarchy: triadCaptions[1],
       level: triadCaptions[2],
-      propCount: activeProperties.length
+      propCount: activeProperties.length,
     });
   }, [activeProperties.join("-"), item, locale.code]);
 
-  const popoverButton = item.properties.length > 0 &&
+  const popoverButton = item.properties.length > 0 && (
     <Popover.Target>
       <ActionIcon
         variant={isOpen ? "filled" : undefined}
-        onClick={useCallback(() => setIsOpen(value => !value), [])}
+        onClick={useCallback(() => setIsOpen((value) => !value), [])}
       >
         {isOpen ? <IconWindowMinimize /> : <IconWindowMaximize />}
       </ActionIcon>
-    </Popover.Target>;
+    </Popover.Target>
+  );
 
-  const target =
+  const target = (
     <Card padding="xs" withBorder>
       <Group noWrap position="apart">
         <Switch
@@ -127,20 +142,21 @@ export function TagDrilldown(props: {
           <CloseButton onClick={removeHandler} />
         </Group>
       </Group>
-    </Card>;
+    </Card>
+  );
 
   if (item.properties.length === 0) {
     return target;
   }
 
-  const content =
+  const content = (
     <Box
       miw={400}
-      sx={theme => ({
+      sx={(theme) => ({
         [theme.fn.smallerThan("md")]: {
           minWidth: "unset",
-          maxWidth: 250
-        }
+          maxWidth: 250,
+        },
       })}
     >
       <SelectObject
@@ -153,13 +169,14 @@ export function TagDrilldown(props: {
       <Input.Wrapper label={t("params.title_properties")}>
         <PropertiesTransferInput
           activeItems={activeProperties}
-          getLabel={item => item.name}
+          getLabel={(item) => item.name}
           items={propertyRecords}
           itemPredicate={(query, item) => query.test(item.name)}
           onChange={propertiesUpdateHandler}
         />
       </Input.Wrapper>
-    </Box>;
+    </Box>
+  );
 
   return (
     <Popover

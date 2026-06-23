@@ -6,7 +6,7 @@ export const EventType = {
   CubeTopic: "cube_topic",
   CutAdd: "cut_add",
   CutMembers: "cut_members",
-  CutReload: "cut_reload",
+  CutFetch: "cut_fetch",
   CutRemove: "cut_remove",
   CutToggle: "cut_toggle",
   CutsClear: "cuts_clear",

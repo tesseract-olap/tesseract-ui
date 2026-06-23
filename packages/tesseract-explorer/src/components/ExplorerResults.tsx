@@ -10,7 +10,7 @@ import {
   Tabs,
   type TabsValue,
   Text,
-  Title
+  Title,
 } from "@mantine/core";
 import {IconAlertTriangle, IconBox, IconWorld} from "@tabler/icons-react";
 import React, {Suspense, useCallback, useMemo} from "react";
@@ -31,8 +31,8 @@ const useStyles = createStyles(() => ({
   container: {
     minHeight: "40vh",
     display: "flex",
-    flexFlow: "column nowrap"
-  }
+    flexFlow: "column nowrap",
+  },
 }));
 
 /**
@@ -161,11 +161,11 @@ function FailureResult(props: {
       <Stack align="center" spacing="xs">
         {props.icon && props.icon}
         {props.title && <Title order={5}>{props.title}</Title>}
-        {props.description && 
+        {props.description && (
           <Text ta="center" sx={{whiteSpace: "pre"}}>
             {props.description}
           </Text>
-        }
+        )}
         {props.children && props.children}
         {props.action && props.action}
       </Stack>
@@ -197,64 +197,55 @@ function SuccessResult(props: {
   const [CurrentComponent, panelKey, panelMeta] = useMemo(() => {
     const currentPanel = queryItem.panel || `${panels[0].key}-`;
     const [panelKey, ...panelMeta] = currentPanel.split("-");
-    const panel = panels.find(item => item.key === panelKey) || panels[0];
+    const panel = panels.find((item) => item.key === panelKey) || panels[0];
     return [panel.component, panel.key, panelMeta.join("-")];
   }, [panels, queryItem.panel]);
 
-  const tabHandler = useCallback((newTab: TabsValue) => {
-    log(EventType.TabSwitch, { from: queryItem.panel, to: newTab });
-    actions.switchPanel(newTab);
-  }, [queryItem.panel]);
+  const tabHandler = useCallback(
+    (newTab: TabsValue) => {
+      log(EventType.TabSwitch, {from: queryItem.panel || "table", to: newTab});
+      actions.switchPanel(newTab);
+    },
+    [queryItem.panel],
+  );
 
   return (
     <Paper id="query-results-success" className={props.className} radius={0} withBorder>
       <Tabs id="query-results-tabs" onTabChange={tabHandler} value={panelKey}>
         <Tabs.List>
-          {panels.map(panel => 
+          {panels.map((panel) => (
             <Tabs.Tab key={panel.key} id={panel.key} value={panel.key}>
               {t(panel.label)}
             </Tabs.Tab>
-          )}
+          ))}
           <Tabs.Tab disabled ml="auto" value="_results">
             <Title order={5}>{t("results.count_rows", {n: result.data.length})}</Title>
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>
 
-      {isPreviewMode && 
-        <Alert
-          id="alert-load-all-results"
-          color="yellow"
-          radius={0}
-          sx={{flex: "0 0 auto"}}
-        >
+      {isPreviewMode && (
+        <Alert id="alert-load-all-results" color="yellow" radius={0} sx={{flex: "0 0 auto"}}>
           <Group position="apart">
             <Text>
               <Text fw={700} span>
                 {t("preview_mode.title_preview")}:{" "}
               </Text>
-              <Text span>
-                {t("preview_mode.description_preview", {limit: previewLimit})}
-              </Text>
+              <Text span>{t("preview_mode.description_preview", {limit: previewLimit})}</Text>
             </Text>
             <PreviewModeSwitch />
           </Group>
         </Alert>
-      }
+      )}
 
-      {!isPreviewMode && rowLimit > 0 && rowLimit === result.data.length && 
-        <Alert
-          id="alert-limit-hit-results"
-          color="orange"
-          radius={0}
-          sx={{flex: "0 0 auto"}}
-        >
+      {!isPreviewMode && rowLimit > 0 && rowLimit === result.data.length && (
+        <Alert id="alert-limit-hit-results" color="orange" radius={0} sx={{flex: "0 0 auto"}}>
           <Text fw={700} span>
             {t("row_limit.title")}:{" "}
           </Text>
           <Anchorify text={t("row_limit.description", {limit: rowLimit})} />
         </Alert>
-      }
+      )}
 
       <Box id="query-results-content" sx={{flex: "1 1"}} h={{base: "auto", md: 0}}>
         <Suspense fallback={props.children}>

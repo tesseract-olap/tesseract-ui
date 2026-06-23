@@ -14,14 +14,14 @@ import {
   Switch,
   Text,
   ThemeIcon,
-  useMantineTheme
+  useMantineTheme,
 } from "@mantine/core";
 import {useMediaQuery} from "@mantine/hooks";
 import {
   IconAlertTriangle,
   IconRefresh,
   IconWindowMaximize,
-  IconWindowMinimize
+  IconWindowMinimize,
 } from "@tabler/icons-react";
 import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
@@ -39,9 +39,7 @@ import {ItemPredicateMethod, TransferInput} from "./TransferInput";
 const MembersTransferInput = TransferInput<MemberItem>;
 
 /** */
-export function TagCut(props: {
-  item: CutItem;
-}) {
+export function TagCut(props: {item: CutItem}) {
   const {item} = props;
 
   const theme = useMantineTheme();
@@ -62,27 +60,42 @@ export function TagCut(props: {
 
   const toggleHandler = useCallback(() => {
     const active = !item.active;
-    log(EventType.CutToggle, {key: item.key, dimension: item.dimension, hierarchy: item.hierarchy, level: item.level, active});
+    log(EventType.CutToggle, {
+      dimension: item.dimension,
+      hierarchy: item.hierarchy,
+      level: item.level,
+      active,
+    });
     actions.updateCut({...item, active});
   }, [item]);
 
-  const removeHandler = useCallback(evt => {
-    evt.stopPropagation();
-    log(EventType.CutRemove, {key: item.key});
-    actions.removeCut(item.key);
-  }, [item.key]);
+  const removeHandler = useCallback(
+    (evt) => {
+      evt.stopPropagation();
+      log(EventType.CutRemove, {...item});
+      actions.removeCut(item.key);
+    },
+    [item.key],
+  );
 
-  const membersUpdateHandler = useCallback((members: string[]) => {
-    log(EventType.CutMembers, {key: item.key, members});
-    actions.updateCut({...item, members});
-  }, [item]);
+  const membersUpdateHandler = useCallback(
+    (members: string[]) => {
+      log(EventType.CutMembers, {level: item.fullName, members: members.map(String)});
+      actions.updateCut({...item, members: members.map(String)});
+    },
+    [item],
+  );
 
   const reloadHandler = useCallback(() => {
-    log(EventType.CutReload, {key: item.key});
+    log(EventType.CutFetch, {
+      level: item.fullName,
+      members: item.members,
+      loaded: Object.keys(members).length,
+    });
     const activeMembers = item.members;
     actions
       .willFetchMembers(item)
-      .then(members => {
+      .then((members) => {
         const memberRecords = {};
         let i = members.length;
         while (i--) {
@@ -90,12 +103,12 @@ export function TagCut(props: {
           const active = activeMembers.includes(`${member.key}`);
           memberRecords[member.key] = buildMember({name: member.caption, key: member.key, active});
         }
-        !item.active && actions.updateCut({...item, active: true});
+        if (!item.active) actions.updateCut({...item, active: true});
         setError("");
         setMembers(memberRecords);
         setLoadingMembers(false);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(`${err.message}`);
         setMembers({});
         setLoadingMembers(false);
@@ -105,30 +118,33 @@ export function TagCut(props: {
   useEffect(reloadHandler, [item.key, locale.code]);
 
   const label = useMemo(() => {
-    const triadCaptions = triad.map(item => getCaption(item, locale.code));
+    const triadCaptions = triad.map((item) => getCaption(item, locale.code));
     return t("params.tag_drilldowns", {
       abbr: abbreviateFullName(triadCaptions, t("params.tag_drilldowns_abbrjoint")),
       dimension: triadCaptions[0],
       hierarchy: triadCaptions[1],
       level: triadCaptions[2],
-      memberCount: item.members.length
+      memberCount: item.members.length,
     });
   }, [item.members.join("-"), item, locale.code]);
 
-  const itemPredicate = useMemo((): ItemPredicateMethod<MemberItem>[] => [
-    {
-      label: t("params.label_cuts_filterby_id"),
-      method: (query, item) => query.test(item.key)
-    },
-    {
-      label: t("params.label_cuts_filterby_name"),
-      method: (query, item) => query.test(item.name)
-    },
-    {
-      label: t("params.label_cuts_filterby_any"),
-      method: (query, item) => query.test(item.key) || query.test(item.name)
-    }
-  ], [locale.code]);
+  const itemPredicate = useMemo(
+    (): ItemPredicateMethod<MemberItem>[] => [
+      {
+        label: t("params.label_cuts_filterby_id"),
+        method: (query, item) => query.test(item.key),
+      },
+      {
+        label: t("params.label_cuts_filterby_name"),
+        method: (query, item) => query.test(item.name),
+      },
+      {
+        label: t("params.label_cuts_filterby_any"),
+        method: (query, item) => query.test(item.key) || query.test(item.name),
+      },
+    ],
+    [locale.code],
+  );
 
   const initialItemPredicateIndex = {id: 0, name: 1, any: 2}[defaultMembersFilter];
 
@@ -171,7 +187,7 @@ export function TagCut(props: {
               {t("params.tag_cuts", {
                 abbr: label,
                 first_member: uniqueActive ? uniqueActive.name : "",
-                n: activeCount
+                n: activeCount,
               })}
             </Text>
           </Group>
@@ -179,7 +195,7 @@ export function TagCut(props: {
             <Group noWrap position="right" spacing="xs">
               <ActionIcon
                 variant={opened ? "filled" : undefined}
-                onClick={() => setOpened(o => !o)}
+                onClick={() => setOpened((o) => !o)}
               >
                 {opened ? <IconWindowMinimize /> : <IconWindowMaximize />}
               </ActionIcon>
@@ -191,20 +207,20 @@ export function TagCut(props: {
       <Popover.Dropdown>
         <Box
           miw={400}
-          sx={theme => ({
+          sx={(theme) => ({
             [theme.fn.smallerThan("md")]: {
               minWidth: "unset",
-              maxWidth: 250
-            }
+              maxWidth: 250,
+            },
           })}
         >
           <Input.Wrapper label={t("params.title_members")}>
             <MembersTransferInput
               activeItems={item.members}
-              getLabel={item => item.name}
+              getLabel={(item) => item.name}
               getSecondLabel={
                 showMemberKey // eslint-disable-next-line eqeqeq
-                  ? item => item.key != item.name ? item.key : undefined
+                  ? (item) => (item.key != item.name ? item.key : undefined)
                   : undefined
               }
               initialItemPredicateIndex={initialItemPredicateIndex}

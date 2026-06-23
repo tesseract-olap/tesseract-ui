@@ -22,36 +22,39 @@ export const AreaCuts = () => {
   const {translate: t} = useTranslation();
 
   const clearHandler = useCallback(() => {
-    log(EventType.CutsClear, {count: items.length});
+    log(EventType.CutsClear, {prev_count: items.length});
     actions.resetCuts({});
   }, [items.length]);
 
   /** @type {(level: import("@datawheel/olap-client").PlainLevel) => void} */
-  const createHandler = useCallback(level => {
+  const createHandler = useCallback((level) => {
     const cutItem = buildCut(level);
     cutItem.active = false;
-    log(EventType.CutAdd, {...cutItem});
+    log(EventType.CutAdd, {
+      level: cutItem.fullName,
+      members: cutItem.members,
+      active: cutItem.active,
+    });
     actions.updateCut(cutItem);
   }, []);
 
-  const cutTags = useMemo(() => items.map(item =>
-    <TagCut key={item.key} item={item} />
-  ), [items]);
+  const cutTags = useMemo(
+    () => items.map((item) => <TagCut key={item.key} item={item} />),
+    [items],
+  );
 
-  const toolbar =
+  const toolbar = (
     <>
-      {items.length > 0 &&
+      {items.length > 0 && (
         <ActionIcon color="red" onClick={clearHandler} variant="subtle">
           <IconTrashX />
-        </ActionIcon>}
-      <ButtonSelectLevel
-        onItemSelect={createHandler}
-        selectedItems={items}
-        variant="subtle"
-      >
+        </ActionIcon>
+      )}
+      <ButtonSelectLevel onItemSelect={createHandler} selectedItems={items} variant="subtle">
         <IconCirclePlus />
       </ButtonSelectLevel>
-    </>;
+    </>
+  );
 
   return (
     <LayoutParamsArea
@@ -62,11 +65,15 @@ export const AreaCuts = () => {
       value="cuts"
     >
       <Stack spacing="xs">
-        {items.length === 0 && <Alert
-          color="yellow"
-          icon={<IconAlertCircle size="2rem" />}
-          title={t("params.error_no_cut_selected_title")}
-        >{t("params.error_no_cut_selected_detail")}</Alert>}
+        {items.length === 0 && (
+          <Alert
+            color="yellow"
+            icon={<IconAlertCircle size="2rem" />}
+            title={t("params.error_no_cut_selected_title")}
+          >
+            {t("params.error_no_cut_selected_detail")}
+          </Alert>
+        )}
         {cutTags}
       </Stack>
     </LayoutParamsArea>

@@ -25,46 +25,46 @@ export const AreaDrilldowns = () => {
   const dimensions = useSelector(selectOlapDimensionItems);
 
   const clearHandler = useCallback(() => {
-    log(EventType.DrilldownsClear, {count: items.length});
+    log(EventType.DrilldownsClear, {prev_count: items.length});
     actions.resetDrilldowns({});
   }, [items.length]);
 
   /** @type {(level: import("@datawheel/olap-client").PlainLevel) => void} */
-  const createHandler = useCallback(level => {
-    const drilldownItem = buildDrilldown(level);
-    log(EventType.DrilldownAdd, {...drilldownItem});
-    actions.updateDrilldown(drilldownItem);
-    actions.willFetchMembers({...level, level: level.name})
-      .then(members => {
-        const dimension = dimensions.find(dim => dim.name === level.dimension);
+  const createHandler = useCallback(
+    (level) => {
+      const drilldownItem = buildDrilldown(level);
+      log(EventType.DrilldownAdd, {level: drilldownItem.fullName, active: drilldownItem.active});
+      actions.updateDrilldown(drilldownItem);
+      actions.willFetchMembers({...level, level: level.name}).then((members) => {
+        const dimension = dimensions.find((dim) => dim.name === level.dimension);
         if (!dimension) return;
         actions.updateDrilldown({
           ...drilldownItem,
           dimType: dimension.dimensionType,
-          memberCount: members.length
+          memberCount: members.length,
         });
       });
-  }, [dimensions]);
+    },
+    [dimensions],
+  );
 
-  const drilldownTags = useMemo(() => items.map(item =>
-    <TagDrilldown key={item.key} item={item} />
-  ), [items]);
+  const drilldownTags = useMemo(
+    () => items.map((item) => <TagDrilldown key={item.key} item={item} />),
+    [items],
+  );
 
-  const toolbar =
+  const toolbar = (
     <>
-      {items.length > 0 &&
+      {items.length > 0 && (
         <ActionIcon onClick={clearHandler} variant="subtle">
           <IconTrashX />
         </ActionIcon>
-      }
-      <ButtonSelectLevel
-        onItemSelect={createHandler}
-        selectedItems={items}
-        variant="subtle"
-      >
+      )}
+      <ButtonSelectLevel onItemSelect={createHandler} selectedItems={items} variant="subtle">
         <IconCirclePlus />
       </ButtonSelectLevel>
-    </>;
+    </>
+  );
 
   return (
     <LayoutParamsArea
@@ -75,11 +75,15 @@ export const AreaDrilldowns = () => {
       value="drilldowns"
     >
       <Stack spacing="xs">
-        {items.length === 0 && <Alert
-          color="yellow"
-          icon={<IconAlertCircle size="2rem" />}
-          title={t("params.error_no_dimension_selected_title")}
-        >{t("params.error_no_dimension_selected_detail")}</Alert>}
+        {items.length === 0 && (
+          <Alert
+            color="yellow"
+            icon={<IconAlertCircle size="2rem" />}
+            title={t("params.error_no_dimension_selected_title")}
+          >
+            {t("params.error_no_dimension_selected_detail")}
+          </Alert>
+        )}
         {drilldownTags}
       </Stack>
     </LayoutParamsArea>

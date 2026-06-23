@@ -13,14 +13,14 @@ import {EventType} from "../events";
 /** @type {React.FC<{}>} */
 export const ButtonExecuteQuery = () => {
   const actions = useActions();
-  const log = useLogger()
+  const log = useLogger();
 
   const {translate: t} = useTranslation();
 
   const {isValid, error} = useSelector(selectValidQueryStatus);
   const params = useSelector(selectCurrentQueryParams);
 
-  const { cube, locale, measures } = params;
+  const {cube, locale, measures} = params;
   const errorText = error ? t(error) : "";
 
   return (
@@ -31,7 +31,7 @@ export const ButtonExecuteQuery = () => {
         events={{
           hover: true,
           focus: false,
-          touch: true
+          touch: true,
         }}
         label={errorText}
         multiline
@@ -44,7 +44,7 @@ export const ButtonExecuteQuery = () => {
           id="button-execute-query"
           leftIcon={<IconDatabase />}
           onClick={useCallback(() => {
-            log(EventType.ExecuteQuery, { params });
+            log(EventType.ExecuteQuery, {...params});
             actions.willRequestQuery();
           }, [])}
           sx={{"&[data-disabled]": {pointerEvents: "all"}}}
@@ -64,12 +64,13 @@ export const ButtonExecuteQuery = () => {
           color="red"
           id="button-clear-params"
           onClick={useCallback(() => {
-            const resetMeasures = Object.values(measures)
-              .map(item => buildMeasure({...item, active: false}));
+            const resetMeasures = Object.values(measures).map((item) =>
+              buildMeasure({...item, active: false}),
+            );
             actions.resetAllParams({
               cube,
               locale,
-              measures: keyBy(resetMeasures, "key")
+              measures: keyBy(resetMeasures, "key"),
             });
           }, [])}
           size="lg"
