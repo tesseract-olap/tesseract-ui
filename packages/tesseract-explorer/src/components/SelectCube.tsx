@@ -1,192 +1,171 @@
-import {type PlainCube} from "@datawheel/olap-client";
-import {Anchor, Stack, Text, TextProps} from "@mantine/core";
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {useSelector} from "react-redux";
-import {useLogger} from "../context/EventContext";
-import {EventType} from "../events";
-import {useActions} from "../hooks/settings";
-import {useTranslation} from "../hooks/translation";
-import {selectLocale} from "../state/queries";
-import {selectOlapCube} from "../state/selectors";
-import {selectOlapCubeItems} from "../state/server";
-import {getAnnotation, getCaption} from "../utils/string";
-import {groupBy} from "../utils/transform";
-import {Annotated} from "../utils/types";
-import {SelectWithButtons} from "./Select";
+import { type PlainCube } from "@datawheel/olap-client";
+import { Anchor, Stack, Text, TextProps } from "@mantine/core";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLogger } from "../context/EventContext";
+import { EventType } from "../events";
+import { useActions } from "../hooks/settings";
+import { useTranslation } from "../hooks/translation";
+import { selectLocale } from "../state/queries";
+import { selectOlapCube } from "../state/selectors";
+import { selectOlapCubeItems } from "../state/server";
+import { getAnnotation, getCaption } from "../utils/string";
+import { groupBy } from "../utils/transform";
+import { Annotated } from "../utils/types";
+import { SelectWithButtons } from "./Select";
 
 const SelectLevel = SelectWithButtons<string>;
 const SelectPlainCube = SelectWithButtons<PlainCube>;
 
 /** */
 export function SelectCube() {
-  const items = useSelector(selectOlapCubeItems);
-  const selectedItem = useSelector(selectOlapCube);
-
-  if (items.length === 1) {
-    return null;
-  }
-
-  return <SelectCubeInternal items={items} selectedItem={selectedItem} />;
-}
-
-/** */
-function SelectCubeInternal(props: {
-  items: PlainCube[];
-  selectedItem: PlainCube | undefined;
-}) {
-  const {items, selectedItem} = props;
+  const items: PlainCube[] = useSelector(selectOlapCubeItems);
+  const selectedItem: PlainCube | undefined = useSelector(selectOlapCube);
 
   const actions = useActions();
   const log = useLogger();
+  const { translate: t } = useTranslation();
+  const { code: locale } = useSelector(selectLocale);
 
-  const onItemSelect = useCallback((cube: PlainCube) => {
-    log(EventType.CubeSelect, {name: cube.name});
-    actions.willSetCube(cube.name);
+  const handleCategoryChange = useCallback((newSubset: PlainCube[]) => {
+    // If the category changes, automatically pick the first cube in that new category
+    if (newSubset.length > 0) {
+      actions.willSetCube(newSubset[0].name);
+    }
   }, []);
 
-  const {translate: t} = useTranslation();
-  const {code: locale} = useSelector(selectLocale);
+  if (items.length < 2) {
+    return null;
+  }
 
-  // Each level limits the available cubes for the next level
-  const {
-    level: level1,
-    setLevel: setLevel1,
-    keys: level1Keys,
-    values: level1Values
-  } = useSyncedSubset(
-    items, selectedItem,
-    item => getAnnotation(item, "topic", locale),
-    [locale]
-  );
+  // Derive current UI levels directly from the selected item
+  const currentTopic = selectedItem ? getAnnotation(selectedItem, "topic", locale) || "" : "";
+  const currentSubtopic = selectedItem ? getAnnotation(selectedItem, "subtopic", locale) || "" : "";
+  const currentTable = selectedItem ? getAnnotation(selectedItem, "table", locale) || "" : "";
 
-  const {
-    level: level2,
-    setLevel: setLevel2,
-    keys: level2Keys,
-    values: level2Values
-  } = useSyncedSubset(
-    level1Values, selectedItem,
-    item => getAnnotation(item, "subtopic", locale),
-    [locale]
-  );
+  // Calculate Topic subset synchronously during render
+  const topicTree = groupBy(items, (item) => getAnnotation(item, "topic", locale));
+  const topicKeys = [...topicTree.keys()];
+  const level1Values = currentTopic ? topicTree.get(currentTopic) || [] : items;
 
-  const {
-    level: level3,
-    setLevel: setLevel3,
-    keys: level3Keys,
-    values: level3Values
-  } = useSyncedSubset(
-    level2Values, selectedItem,
-    item => getAnnotation(item, "table", locale),
-    [locale]
-  );
+  // Calculate Subtopic subset from Topic subset
+  const subtopicTree = groupBy(level1Values, (item) => getAnnotation(item, "subtopic", locale));
+  const subtopicKeys = [...subtopicTree.keys()];
+  const level2Values = currentSubtopic
+    ? subtopicTree.get(currentSubtopic) || level1Values
+    : level1Values;
 
-  // The list available to the last selector is the one that contains any item.
-  /* eslint-disable indent, operator-linebreak */
+  // Calculate Table subset from Subtopic subset
+  const tableTree = groupBy(level2Values, (item) => getAnnotation(item, "table", locale));
+  const tableKeys = [...tableTree.keys()];
+  const level3Values = currentTable ? tableTree.get(currentTable) || level2Values : level2Values;
+
+  // Use the most specific non-empty list of cubes for the final selector
   const cubeItems =
-    level3Values.length > 0 ? level3Values :
-    level2Values.length > 0 ? level2Values :
-    level1Values.length > 0 ? level1Values :
-    /* else */                items;
-  /* eslint-enable indent, operator-linebreak */
-
-  // We need to keep the selectedItem in sync if at some point the
-  // user selection leaves it out of the final subset of options
-  useEffect(() => {
-    if (
-      selectedItem &&
-      cubeItems.length > 0 &&
-      !cubeItems.find((cube) => cube.name === selectedItem.name)
-    ) {
-      onItemSelect(cubeItems[0]);
-    }
-  }, [cubeItems, selectedItem]);
+    level3Values.length > 0
+      ? level3Values
+      : level2Values.length > 0
+        ? level2Values
+        : level1Values.length > 0
+          ? level1Values
+          : items;
 
   return (
     <Stack id="select-cube" spacing={0}>
       <SelectLevel
-        hidden={level1 === "Hidden"}
-        items={level1Keys}
+        hidden={topicKeys.length === 0 || currentTopic === "Hidden"}
+        items={topicKeys}
         label={t("params.label_topic")}
-        onItemSelect={value => {
-          log(EventType.CubeTopic, {value});
-          setLevel1(value);
+        selectedItem={currentTopic}
+        onItemSelect={(value) => {
+          log(EventType.CubeTopic, { value });
+          handleCategoryChange(topicTree.get(value) || []);
         }}
-        selectedItem={level1}
       />
+
       <SelectLevel
-        hidden={level2 === "Hidden"}
-        items={level2Keys}
+        hidden={subtopicKeys.length === 0 || currentSubtopic === "Hidden"}
+        items={subtopicKeys}
         label={t("params.label_subtopic")}
-        onItemSelect={value => {
-          log(EventType.CubeSubtopic, {value});
-          setLevel2(value);
+        selectedItem={currentSubtopic}
+        onItemSelect={(value) => {
+          log(EventType.CubeSubtopic, { value });
+          handleCategoryChange(subtopicTree.get(value) || []);
         }}
-        selectedItem={level2}
       />
+
       <SelectLevel
-        hidden={level3 === "Hidden"}
-        items={level3Keys}
+        hidden={tableKeys.length === 0 || currentTable === "Hidden"}
+        items={tableKeys}
         label={t("params.label_table")}
-        onItemSelect={value => {
-          log(EventType.CubeTable, {value});
-          setLevel3(value);
+        selectedItem={currentTable}
+        onItemSelect={(value) => {
+          log(EventType.CubeTable, { value });
+          handleCategoryChange(tableTree.get(value) || []);
         }}
-        selectedItem={level3}
       />
-      {<SelectPlainCube
+
+      <SelectPlainCube
         hidden={cubeItems.length < 2}
-        getLabel={item => getCaption(item, locale)}
+        getLabel={(item) => getCaption(item, locale)}
         getValue="name"
         items={cubeItems}
         label={t("params.label_cube")}
-        onItemSelect={onItemSelect}
+        onItemSelect={(cube) => {
+          log(EventType.CubeSelect, { name: cube.name });
+          actions.willSetCube(cube.name);
+        }}
         selectedItem={selectedItem}
-      />}
-      {selectedItem && <Text mt="sm" sx={{"& p": {margin: 0}}}>
-        <CubeAnnotation
-          annotation="description"
-          className="dex-cube-description"
-          item={selectedItem}
-          locale={locale}
-        />
-        <CubeSourceAnchor
-          item={selectedItem}
-          locale={locale}
-          fz="xs"
-        />
-        <CubeAnnotation
-          annotation="source_description"
-          className="dex-cube-srcdescription"
-          fz="xs"
-          item={selectedItem}
-          locale={locale}
-        />
-      </Text>}
+      />
+
+      {selectedItem && (
+        <Text mt="sm" sx={{ "& p": { margin: 0 } }}>
+          <CubeAnnotation
+            annotation="description"
+            className="dex-cube-description"
+            item={selectedItem}
+            locale={locale}
+          />
+          <CubeSourceAnchor item={selectedItem} locale={locale} fz="xs" />
+          <CubeAnnotation
+            annotation="source_description"
+            className="dex-cube-srcdescription"
+            fz="xs"
+            item={selectedItem}
+            locale={locale}
+          />
+        </Text>
+      )}
     </Stack>
   );
 }
 
 /** */
-function CubeAnnotation(props: TextProps & {
-  annotation: string;
-  item: Annotated;
-  locale: string;
-}) {
-  const {annotation, item, locale, ...textProps} = props;
+function CubeAnnotation(
+  props: TextProps & {
+    annotation: string;
+    item: Annotated;
+    locale: string;
+  },
+) {
+  const { annotation, item, locale, ...textProps } = props;
   const content = getAnnotation(item, annotation, locale);
-  return content
-    ? <Text component="p" {...textProps}>{content}</Text>
-    : null;
+  return content ? (
+    <Text component="p" {...textProps}>
+      {content}
+    </Text>
+  ) : null;
 }
 
 /** */
-function CubeSourceAnchor(props: TextProps & {
-  item: Annotated;
-  locale: string;
-}) {
-  const {item, locale, ...textProps} = props;
-  const {translate: t} = useTranslation();
+function CubeSourceAnchor(
+  props: TextProps & {
+    item: Annotated;
+    locale: string;
+  },
+) {
+  const { item, locale, ...textProps } = props;
+  const { translate: t } = useTranslation();
 
   const srcName = getAnnotation(item, "source_name", locale);
   const srcLink = getAnnotation(item, "source_link", locale);
@@ -196,59 +175,7 @@ function CubeSourceAnchor(props: TextProps & {
   return (
     <Text component="p" {...textProps}>
       {`${t("params.label_source")}: `}
-      {srcLink
-        ? <Anchor href={srcLink}>{srcName}</Anchor>
-        : <Text span>{srcName}</Text>}
+      {srcLink ? <Anchor href={srcLink}>{srcName}</Anchor> : <Text span>{srcName}</Text>}
     </Text>
   );
-}
-
-/**
- * Keeps the state for the selector at that level, and limits the values passed
- * to the next one depending on this state.
- *
- * The returned object contains the following properties:
- * - `level`: The value selected by the user for this level of filtering.
- * - `setLevel`: The dispatcher function to change the value of `level`.
- * - `keys`: An array containing the possible values returned by the accessor
- * for all the available `items`.
- * - `values`: The subset of `items`, whose `accessor(item)` matches the `level`
- * selected by the user.
- *
- * Initially `level` is the value obtained from `accessor(currentItem)`.
- * Afterwards it's recalculated and updated each time `currentItem` changes.
- * Properties `level` and `setLevel` come from a `useState` hook, and can be
- * treated as such.
- * If the accessor function returns `undefined` for all items, both `keys` and
- * `values` in the returned object will be empty.
- *
- * @param items
- * The list of items to to select from.
- * @param currentItem
- * The currently selected item, must belong to the `items` array.
- * @param accessor
- * The value returned by this function will be used as filtering step
- * @param dependencies
- * Manual dependencies to declare for internal calculation.
- */
-function useSyncedSubset<T>(
-  items: T[],
-  currentItem: T | undefined,
-  accessor: (item: T) => string | null | undefined,
-  dependencies: string[] = []
-) {
-  const [level, setLevel] = useState(() => currentItem && accessor(currentItem) || "");
-
-  useEffect(() => {
-    currentItem && setLevel(accessor(currentItem) || "");
-  }, [currentItem, ...dependencies]);
-
-  const [keys, values] = useMemo(() => {
-    const tree = groupBy(items, accessor);
-    const keys = [...tree.keys()];
-    const values = tree.get(level) || [];
-    return [keys, values];
-  }, [items, level, ...dependencies]);
-
-  return {level, setLevel, keys, values};
 }
