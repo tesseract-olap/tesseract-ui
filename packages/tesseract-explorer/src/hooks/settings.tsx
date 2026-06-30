@@ -1,4 +1,5 @@
 /* eslint-disable comma-dangle */
+import {PlainCube} from "@datawheel/olap-client";
 import React, {createContext, useCallback, useContext, useMemo} from "react";
 import {type ExplorerActionMap} from "../state";
 import {Formatter} from "../utils/types";
@@ -6,11 +7,16 @@ import {usePermalink} from "./permalink";
 
 // These types are needed to `.then()` over the returned value of dispatched thunks
 export type ExplorerBoundActionMap = {
-  [K in keyof ExplorerActionMap]:
-    ExplorerActionMap[K] extends (...args: infer Params) => (...args) => infer R
-      ? (...args: Params) => R
-      : ExplorerActionMap[K];
-}
+  [K in keyof ExplorerActionMap]: ExplorerActionMap[K] extends (
+    ...args: infer Params
+  ) => (...args) => infer R
+    ? (...args: Params) => R
+    : ExplorerActionMap[K];
+};
+
+export type CubeSortingFunction = (
+  locale?: string,
+) => (a: PlainCube, b: PlainCube) => number;
 
 interface SettingsContextProps {
   actions: ExplorerBoundActionMap;
@@ -19,6 +25,7 @@ interface SettingsContextProps {
   maxHeightMenu: string | number;
   previewLimit: number;
   rowLimit: number;
+  sortCubes?: CubeSortingFunction;
 }
 
 /**
@@ -39,18 +46,23 @@ export function SettingsProvider(props: {
   maxHeightMenu?: string | number;
   previewLimit?: number;
   rowLimit?: number;
+  sortCubes?: CubeSortingFunction;
   withPermalink: boolean | undefined;
 }) {
   usePermalink(props.withPermalink, {onChange: props.actions.resetAllParams});
 
-  const value: SettingsContextProps = useMemo(() => ({
-    actions: props.actions,
-    defaultMembersFilter: props.defaultMembersFilter || "id",
-    formatters: props.formatters || {},
-    maxHeightMenu: props.maxHeightMenu || "60vh",
-    previewLimit: props.previewLimit || 50,
-    rowLimit: props.rowLimit || 0,
-  }), [props.formatters, props.maxHeightMenu, props.previewLimit]);
+  const value: SettingsContextProps = useMemo(
+    () => ({
+      actions: props.actions,
+      defaultMembersFilter: props.defaultMembersFilter || "id",
+      formatters: props.formatters || {},
+      maxHeightMenu: props.maxHeightMenu || "60vh",
+      previewLimit: props.previewLimit || 50,
+      rowLimit: props.rowLimit || 0,
+      sortCubes: props.sortCubes,
+    }),
+    [props.formatters, props.maxHeightMenu, props.previewLimit],
+  );
 
   return <ContextProvider value={value}>{props.children}</ContextProvider>;
 }
@@ -61,12 +73,15 @@ export function SettingsProvider(props: {
 export function SettingsConsumer(props: React.ConsumerProps<SettingsContextProps>) {
   return (
     <ContextConsumer>
-      {useCallback(context => {
-        if (context === undefined) {
-          throw new Error("SettingsConsumer must be used within a SettingsProvider.");
-        }
-        return props.children(context);
-      }, [props.children])}
+      {useCallback(
+        (context) => {
+          if (context === undefined) {
+            throw new Error("SettingsConsumer must be used within a SettingsProvider.");
+          }
+          return props.children(context);
+        },
+        [props.children],
+      )}
     </ContextConsumer>
   );
 }
