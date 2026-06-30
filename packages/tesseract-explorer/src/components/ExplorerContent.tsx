@@ -38,6 +38,7 @@ const useStyles = createStyles((theme, params: {height: CSSObject["height"]}) =>
 /** */
 export function ExplorerContent(props: {
   dataLocale: string[];
+  defaultCube: string | undefined;
   defaultOpenParams: string;
   height: CSSObject["height"];
   panels: PanelDescriptor[];
@@ -48,7 +49,7 @@ export function ExplorerContent(props: {
 }) {
   const translation = useTranslation();
 
-  const isSetupDone = useSetup(props.source, props.dataLocale);
+  const isSetupDone = useSetup(props.source, props.defaultCube, props.dataLocale);
 
   const serverState = useSelector(selectServerState);
 

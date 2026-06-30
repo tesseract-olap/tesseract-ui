@@ -15,7 +15,8 @@ import {ExplorerBoundActionMap, useActions} from "./settings";
  */
 export function useSetup(
   serverConfig: ServerConfig,
-  locale: string | string[] | undefined
+  defaultCube: string | undefined,
+  locale: string | string[] | undefined,
 ) {
   const actions = useActions();
 
@@ -25,7 +26,7 @@ export function useSetup(
   // keep the value in sync with the server state
   const cleanLocale = useMemo(() => {
     const normLocale = asArray(locale ? `${locale}`.split(",") : []);
-    const cleanLocale = normLocale.map(item => item.trim());
+    const cleanLocale = normLocale.map((item) => item.trim());
     actions.updateLocaleList(cleanLocale);
     return cleanLocale;
   }, [`${locale}`]);
@@ -38,28 +39,30 @@ export function useSetup(
 
     Promise.all([
       getInitialQuery(actions),
-      actions.willSetupClient(serverConfig)
-        .then(() => actions.willReloadCubes())
-    ]).then(result => {
-      const [query, cubeMap] = result;
+      actions.willSetupClient(serverConfig).then(() => actions.willReloadCubes()),
+    ])
+      .then((result) => {
+        const [query, cubeMap] = result;
 
-      if (!query || !hasOwnProperty(cubeMap, query.params.cube)) {
-        const defaultCube = Object.keys(cubeMap)[0];
-        return actions.willHydrateParams(defaultCube);
-      }
+        if (!query || !hasOwnProperty(cubeMap, query.params.cube)) {
+          return actions.willHydrateParams(defaultCube);
+        }
 
-      query.params.locale = query.params.locale || cleanLocale[0];
-      actions.resetQueries({[query.key]: query});
-      return actions.willHydrateParams()
-        .then(() => actions.willExecuteQuery());
-    }).then(() => {
-      actions.setLoadingState("SUCCESS");
-      setDone(true);
-    }, error => {
-      console.dir("There was an error during setup:", error);
-      actions.setLoadingState("FAILURE", error.message);
-      setDone(true);
-    });
+        query.params.locale = query.params.locale || cleanLocale[0];
+        actions.resetQueries({[query.key]: query});
+        return actions.willHydrateParams().then(() => actions.willExecuteQuery());
+      })
+      .then(
+        () => {
+          actions.setLoadingState("SUCCESS");
+          setDone(true);
+        },
+        (error) => {
+          console.dir("There was an error during setup:", error);
+          actions.setLoadingState("FAILURE", error.message);
+          setDone(true);
+        },
+      );
   }, []);
 
   return done;
@@ -78,7 +81,7 @@ function getInitialQuery(actions: ExplorerBoundActionMap) {
       const searchObject = formUrlDecode<SerializedQuery | {query: string}>(searchString);
 
       if ("query" in searchObject) {
-      // Search params are a base64-encoded OLAP server URL
+        // Search params are a base64-encoded OLAP server URL
         const decodedURL = decodeUrlFromBase64(searchObject.query);
         const url = new URL(decodedURL);
         return actions.willParseQueryUrl(url);
@@ -89,7 +92,7 @@ function getInitialQuery(actions: ExplorerBoundActionMap) {
       if (isValidQuery(locationState)) {
         return buildQuery({
           panel: searchObject.panel,
-          params: buildQueryParams({...locationState})
+          params: buildQueryParams({...locationState}),
         });
       }
     }

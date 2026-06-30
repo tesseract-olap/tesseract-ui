@@ -1,5 +1,8 @@
 import {ServerConfig} from "@datawheel/olap-client";
-import {TranslationContextProps, TranslationProviderProps} from "@datawheel/use-translation";
+import {
+  TranslationContextProps,
+  TranslationProviderProps,
+} from "@datawheel/use-translation";
 import {CSSObject, MantineProvider} from "@mantine/core";
 import {bindActionCreators} from "@reduxjs/toolkit";
 import React, {useMemo} from "react";
@@ -20,7 +23,6 @@ import {TableView} from "./TableView";
  * and pass the other properties to them.
  */
 export function ExplorerComponent(props: {
-
   /**
    * A reference to the server with the data.
    * Can be setup as a string with the URL of the server, or a
@@ -34,6 +36,12 @@ export function ExplorerComponent(props: {
    * If passed a string, will be splitted by commas (`,`) to try to interpret a list.
    */
   dataLocale?: string | string[];
+
+  /**
+   * The cube to automatically select when the application first loads and
+   * there's no preloaded query.
+   */
+  defaultCube?: string;
 
   /**
    * Defines the parameter panel which will be opened when the component first loads.
@@ -99,7 +107,7 @@ export function ExplorerComponent(props: {
    * the screen that is shown in the results panel when there is no query,
    * or a query has been dirtied.
    */
-  splash?: React.ComponentType<{ translation: TranslationContextProps }>;
+  splash?: React.ComponentType<{translation: TranslationContextProps}>;
 
   /**
    * The Translation labels to use in the UI.
@@ -126,7 +134,7 @@ export function ExplorerComponent(props: {
    * encapsulating its state, and making easier to install.
    * @default false
    */
-  withinReduxProvider?: boolean,
+  withinReduxProvider?: boolean;
 
   /**
    * Enables multiple queries mode.
@@ -156,21 +164,33 @@ export function ExplorerComponent(props: {
     rowLimit = 0,
     withinMantineProvider = true,
     withinReduxProvider = false,
-    withMultiQuery = false
+    withMultiQuery = false,
   } = props;
 
   const locale = useMemo(() => dataLocale.toString().split(","), [dataLocale]);
 
-  const panels = useMemo(() => props.panels || [
-    {key: "table", label: "table_view.tab_label", component: TableView},
-    {key: "pivot", label: "pivot_view.tab_label", component: PivotView},
-    {key: "debug", label: "debug_view.tab_label", component: DebugView}
-  ], [props.panels]);
+  const panels = useMemo(
+    () =>
+      props.panels || [
+        {key: "table", label: "table_view.tab_label", component: TableView},
+        {key: "pivot", label: "pivot_view.tab_label", component: PivotView},
+        {key: "debug", label: "debug_view.tab_label", component: DebugView},
+      ],
+    [props.panels],
+  );
 
-  const store: ExplorerStore = withinReduxProvider ? useMemo(storeFactory, []) : useStore();
+  const store: ExplorerStore = withinReduxProvider
+    ? useMemo(storeFactory, [])
+    : useStore();
 
-  const boundActions = useMemo(() =>
-    bindActionCreators<ExplorerActionMap, ExplorerBoundActionMap>(actions, store.dispatch), []);
+  const boundActions = useMemo(
+    () =>
+      bindActionCreators<ExplorerActionMap, ExplorerBoundActionMap>(
+        actions,
+        store.dispatch,
+      ),
+    [],
+  );
 
   useMemo(() => {
     // Keep the previewLimit value in sync with the value stored in Settings
@@ -181,7 +201,7 @@ export function ExplorerComponent(props: {
     });
   }, [previewLimit, rowLimit]);
 
-  let content =
+  let content = (
     <SettingsProvider
       actions={boundActions}
       defaultMembersFilter={props.defaultMembersFilter}
@@ -198,6 +218,7 @@ export function ExplorerComponent(props: {
         <EventProvider onEvent={props.onEvent}>
           <ExplorerContent
             dataLocale={locale}
+            defaultCube={props.defaultCube}
             defaultOpenParams={defaultOpenParams}
             height={height}
             panels={panels}
@@ -208,7 +229,8 @@ export function ExplorerComponent(props: {
           />
         </EventProvider>
       </TranslationProvider>
-    </SettingsProvider>;
+    </SettingsProvider>
+  );
 
   if (withinMantineProvider) {
     content = <MantineProvider withNormalizeCSS>{content}</MantineProvider>;
