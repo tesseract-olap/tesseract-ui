@@ -8,7 +8,11 @@ import {bindActionCreators} from "@reduxjs/toolkit";
 import React, {useMemo} from "react";
 import {Provider as ReduxProvider, useStore} from "react-redux";
 import {EventHandler, EventProvider} from "../context/EventContext";
-import {ExplorerBoundActionMap, SettingsProvider} from "../hooks/settings";
+import {
+  CubeSortingFunction,
+  ExplorerBoundActionMap,
+  SettingsProvider,
+} from "../hooks/settings";
 import {TranslationDict, TranslationProvider} from "../hooks/translation";
 import {ExplorerActionMap, ExplorerStore, actions, storeFactory} from "../state";
 import {Formatter, PanelDescriptor} from "../utils/types";
@@ -101,6 +105,13 @@ export function ExplorerComponent(props: {
    * @default 0
    */
   rowLimit?: number;
+
+  /**
+   * Allows to define a custom method to sort the cube selector list.
+   * This is a factory function that receives the current locale code,
+   * and should return an Array<PlainCube>.prototype.sort compatible function.
+   */
+  sortCubes?: CubeSortingFunction;
 
   /**
    * A component that is rendered to display the default "splash screen";
@@ -209,6 +220,7 @@ export function ExplorerComponent(props: {
       maxHeightMenu={props.maxHeightMenu}
       previewLimit={previewLimit}
       rowLimit={rowLimit}
+      sortCubes={props.sortCubes}
       withPermalink={props.withPermalink}
     >
       <TranslationProvider

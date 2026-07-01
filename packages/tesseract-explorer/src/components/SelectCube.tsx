@@ -4,7 +4,7 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 import {useLogger} from "../context/EventContext";
 import {EventType} from "../events";
-import {useActions, useSettings} from "../hooks/settings";
+import {useSettings} from "../hooks/settings";
 import {useTranslation} from "../hooks/translation";
 import {selectLocale} from "../state/queries";
 import {selectOlapCube} from "../state/selectors";
